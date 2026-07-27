@@ -174,8 +174,8 @@ section{
 .trust i{color:var(--brand);font-size:24px;flex-shrink:0;margin-top:2px;}
 .trust p{font-size:14px;color:var(--ts);line-height:1.6;}
 
-/* ── SLIDE 7 · START ── */
-#s7{background:radial-gradient(130% 140% at 35% 110%,#3D0066 0%,#08081A 55%);}
+/* ── SLIDE 9 · START ── */
+#s9{background:radial-gradient(130% 140% at 35% 110%,#3D0066 0%,#08081A 55%);}
 .start-inner{text-align:center;}
 .start-h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(44px,7vw,80px);font-weight:700;color:#fff;line-height:1.0;letter-spacing:-.02em;}
 .start-sub{font-family:'Inter',sans-serif;font-size:18px;color:rgba(255,255,255,.55);max-width:500px;margin:24px auto 0;line-height:1.6;text-align:center;}
@@ -253,6 +253,50 @@ section{
 .ops-body{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--ts);line-height:1.5;}
 .ops-highlight{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--tp);white-space:nowrap;margin-left:auto;}
 
+/* ── MATURITY TRACK (SLIDE 3) ── */
+.mat-outer{margin-top:36px;position:relative;}
+.mat-spine{position:absolute;left:10%;right:10%;top:24px;height:3px;background:rgba(255,255,255,.07);border-radius:2px;z-index:0;overflow:hidden;}
+.mat-spine-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#4B5563 0%,#0891B2 25%,#7C3AED 50%,#A100FF 75%,#FF50C8 100%);}
+.mat-spine-fill.reveal{opacity:1!important;transform:scaleX(0)!important;transform-origin:left center;transition:transform 1.4s cubic-bezier(.22,1,.36,1) .5s!important;}
+.mat-spine-fill.reveal.visible{transform:scaleX(1)!important;}
+.mat-levels{display:flex;gap:10px;position:relative;z-index:1;}
+.mat-col{flex:1;display:flex;flex-direction:column;align-items:center;}
+.mat-node{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#fff;margin-bottom:14px;flex-shrink:0;border:2px solid transparent;}
+.mat-card{width:100%;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px 12px;text-align:center;}
+.mat-lnum{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--tm);margin-bottom:4px;}
+.mat-lname{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--tp);line-height:1.1;}
+.mat-ldesc{font-family:'Inter',sans-serif;font-size:11px;color:var(--ts);line-height:1.4;margin-top:5px;}
+.mat-badge{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:3px 8px;border-radius:10px;display:inline-block;margin-top:8px;letter-spacing:.06em;}
+.mat-zone{display:flex;margin-top:14px;gap:10px;}
+.mat-zone-band{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;padding:7px 10px;border-radius:8px;text-transform:uppercase;}
+.mat-zone-legacy{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);color:var(--tm);}
+.mat-zone-ai{background:rgba(161,0,255,.1);border:1px solid rgba(161,0,255,.3);color:var(--brand);}
+
+/* ── TECHNICAL TRANSFORMATION (SLIDE 5) ── */
+.tech-split{display:flex;gap:16px;margin-top:28px;align-items:flex-start;}
+.tech-pane{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.tech-pane-head{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.tph-dots{display:flex;gap:5px;}
+.tph-dot{width:8px;height:8px;border-radius:50%;}
+.tph-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tm);margin-left:auto;}
+.tech-pane-body{padding:16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.8;color:var(--ts);}
+.tp-comment{color:var(--tm);}
+.tp-key{color:#22D3EE;}
+.tp-val{color:#86EFAC;}
+.tp-str{color:#FCA5A5;}
+.tp-punct{color:var(--ts);}
+.tech-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex-shrink:0;padding:0 6px;}
+.tech-arrow-box{background:linear-gradient(135deg,rgba(161,0,255,.18),rgba(255,80,200,.1));border:1px solid rgba(199,123,255,.4);border-radius:12px;padding:12px 14px;text-align:center;min-width:82px;}
+.tech-arrow-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--brand);letter-spacing:.08em;text-transform:uppercase;}
+.tech-arrow-icon{font-size:24px;color:var(--brand);margin:5px 0;display:block;animation:aiGlow 3s ease-in-out infinite;}
+.tech-pillars{display:flex;gap:12px;margin-top:16px;}
+.tech-pillar{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.tech-pillar i{font-size:22px;color:var(--brand);display:block;margin-bottom:8px;}
+.tech-pillar-h{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--tp);margin-bottom:5px;}
+.tech-pillar-body{font-family:'Inter',sans-serif;font-size:11.5px;color:var(--ts);line-height:1.5;}
+.tech-stack-bar{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.tech-stack-chip{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:var(--ts);}
+
 @media(max-width:960px){
   section{height:auto;min-height:100vh;padding:80px 24px 48px;}
   .trans-row{flex-wrap:wrap;}
@@ -268,6 +312,14 @@ section{
   .arch-engine{flex-wrap:wrap;gap:20px;}
   .ops-banner{flex-wrap:wrap;}
   .ops-highlight{margin-left:0;}
+  .mat-levels{flex-wrap:wrap;}
+  .mat-col{flex:1 1 45%;}
+  .mat-spine{display:none;}
+  .tech-split{flex-wrap:wrap;}
+  .tech-pane,.tech-center{flex:1 1 100%;}
+  .tech-center{flex-direction:row;padding:8px 0;}
+  .tech-pillars{flex-wrap:wrap;}
+  .tech-pillar{flex:1 1 100%;}
 }
 </style>
 </head>
@@ -290,7 +342,7 @@ section{
   <div class="dots" id="dots"></div>
   <div class="nav-right">
     <button class="nav-btn" onclick="goTo(current-1)" aria-label="Previous"><i class="ti ti-chevron-left"></i></button>
-    <span class="counter" id="counter">1 / 8</span>
+    <span class="counter" id="counter">1 / 10</span>
     <button class="nav-btn" onclick="goTo(current+1)" aria-label="Next"><i class="ti ti-chevron-right"></i></button>
   </div>
 </div>
@@ -347,10 +399,86 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 3 · YOUR FUTURE INFRASTRUCTURE ── -->
+<!-- ── SLIDE 3 · MATURITY LEVELS ── -->
 <section data-slide="2" style="background:var(--surface)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">02 — YOUR FUTURE STATE</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">02 — WHERE DO YOU STAND?</div>
+    <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(32px,4.2vw,46px)">Five levels.<br><span class="grad">One journey.</span></h2>
+    <p class="slide-sub reveal" style="transition-delay:280ms">Every NFR function sits somewhere on this track. AI moves you from monitored to intelligent — and, eventually, autonomous.</p>
+
+    <div class="mat-outer">
+      <div class="mat-spine"><div class="mat-spine-fill reveal"></div></div>
+
+      <div class="mat-levels">
+
+        <!-- L1 -->
+        <div class="mat-col reveal" style="transition-delay:400ms">
+          <div class="mat-node" style="background:#2D3748;border-color:#4A5568">L1</div>
+          <div class="mat-card" style="border-color:rgba(74,85,104,.3)">
+            <div class="mat-lnum">LEVEL 1</div>
+            <div class="mat-lname">Manual</div>
+            <div class="mat-ldesc">Spreadsheets, email chains, annual workshops. No shared data model.</div>
+          </div>
+        </div>
+
+        <!-- L2 -->
+        <div class="mat-col reveal" style="transition-delay:520ms">
+          <div class="mat-node" style="background:rgba(8,145,178,.28);border-color:#0891B2">L2</div>
+          <div class="mat-card" style="border-color:rgba(8,145,178,.25)">
+            <div class="mat-lnum">LEVEL 2</div>
+            <div class="mat-lname">Structured</div>
+            <div class="mat-ldesc">Defined owners, templates, scheduled reviews. Still mostly static.</div>
+            <div class="mat-badge" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#F59E0B">Most banks today</div>
+          </div>
+        </div>
+
+        <!-- L3 -->
+        <div class="mat-col reveal" style="transition-delay:640ms">
+          <div class="mat-node" style="background:rgba(124,58,237,.28);border-color:#7C3AED">L3</div>
+          <div class="mat-card" style="border-color:rgba(124,58,237,.25)">
+            <div class="mat-lnum">LEVEL 3</div>
+            <div class="mat-lname">Monitored</div>
+            <div class="mat-ldesc">KRIs tracked, tooling in place, some automation. Manual bridges remain.</div>
+            <div class="mat-badge" style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.35);color:#A78BFA">Progressive banks</div>
+          </div>
+        </div>
+
+        <!-- L4 — TARGET STATE, GLOWING -->
+        <div class="mat-col reveal" style="transition-delay:760ms">
+          <div class="mat-node" style="background:rgba(161,0,255,.35);border-color:#A100FF;box-shadow:0 0 22px rgba(161,0,255,.5),0 0 44px rgba(161,0,255,.2);animation:aiGlow 3s ease-in-out infinite">L4</div>
+          <div class="mat-card" style="background:rgba(161,0,255,.1);border-color:rgba(199,123,255,.45);box-shadow:0 0 28px rgba(161,0,255,.12)">
+            <div class="mat-lnum" style="color:var(--brand)">LEVEL 4</div>
+            <div class="mat-lname" style="color:#C77BFF">Intelligent</div>
+            <div class="mat-ldesc" style="color:rgba(181,174,207,.85)">AI-assisted, real-time signals, cross-process awareness. Risks caught before they materialise.</div>
+            <div class="mat-badge" style="background:rgba(161,0,255,.16);border:1px solid rgba(199,123,255,.45);color:#C77BFF">Our target for you</div>
+          </div>
+        </div>
+
+        <!-- L5 -->
+        <div class="mat-col reveal" style="transition-delay:880ms">
+          <div class="mat-node" style="background:rgba(255,80,200,.22);border-color:#FF50C8;box-shadow:0 0 18px rgba(255,80,200,.3)">L5</div>
+          <div class="mat-card" style="background:rgba(255,80,200,.06);border-color:rgba(255,80,200,.3)">
+            <div class="mat-lnum" style="color:#FF80D5">LEVEL 5</div>
+            <div class="mat-lname" style="color:#FF80D5">Autonomous</div>
+            <div class="mat-ldesc">Self-updating, proactive. Regulatory change absorbed and re-mapped without workshops.</div>
+            <div class="mat-badge" style="background:rgba(255,80,200,.1);border:1px solid rgba(255,80,200,.35);color:#FF80D5">The horizon</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mat-zone reveal" style="transition-delay:1000ms">
+        <div class="mat-zone-band mat-zone-legacy" style="flex:3">← Manual · Monitored &nbsp;—&nbsp; where most banks operate today</div>
+        <div class="mat-zone-band mat-zone-ai" style="flex:2">AI-native zone &nbsp;—&nbsp; where we take you →</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 4 · YOUR FUTURE INFRASTRUCTURE ── -->
+<section data-slide="3" style="background:var(--surface)">
+  <div class="inner">
+    <div class="sec-tag reveal" style="transition-delay:0ms">03 — YOUR FUTURE STATE</div>
     <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(32px,4.2vw,46px);margin-bottom:0">This is what your NFR function looks like in 12 months.</h2>
 
     <div class="arch-diagram">
@@ -425,10 +553,112 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 4 · WHAT YOUR TEAM WILL SEE ── -->
-<section data-slide="3" style="background:var(--canvas)">
+<!-- ── SLIDE 5 · TECHNICAL TRANSFORMATION ── -->
+<section data-slide="4" style="background:var(--surface)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">03 — YOUR DASHBOARDS</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">04 — UNDER THE HOOD</div>
+    <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px);margin-bottom:8px">170 pages in.<br><span class="grad">One action item out.</span></h2>
+    <p class="slide-sub reveal" style="transition-delay:280ms;max-width:680px">The AI reads regulatory publications and returns structured, audit-ready outputs. No manual translation needed.</p>
+
+    <div class="tech-split">
+
+      <!-- LEFT: RAW INPUT -->
+      <div class="tech-pane reveal-left" style="transition-delay:400ms">
+        <div class="tech-pane-head">
+          <div class="tph-dots">
+            <span class="tph-dot" style="background:#EF4444"></span>
+            <span class="tph-dot" style="background:#F59E0B"></span>
+            <span class="tph-dot" style="background:#10B981"></span>
+          </div>
+          <span class="tph-label">REGULATORY INPUT</span>
+        </div>
+        <div class="tech-pane-body">
+          <div class="tp-comment">// EBA/CP/2024/18 — Draft RTS on DORA</div>
+          <div style="margin-top:10px;color:var(--tp);font-family:'Inter',sans-serif;font-size:12px;line-height:1.8;font-style:italic">"…financial entities shall identify all ICT third-party service providers in their ICT supply chain and document the functions supported… registers shall be updated upon any relevant change…"</div>
+          <div style="margin-top:12px" class="tp-comment">// + 47 further obligation clauses</div>
+          <div style="margin-top:4px" class="tp-comment">// + 3 annexes · 170 pages total</div>
+          <div style="margin-top:14px;display:flex;gap:7px;flex-wrap:wrap">
+            <span style="background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.3);color:#FCA5A5;border-radius:6px;padding:3px 8px;font-size:9px">DORA</span>
+            <span style="background:rgba(8,145,178,.14);border:1px solid rgba(8,145,178,.3);color:#67E8F9;border-radius:6px;padding:3px 8px;font-size:9px">EBA</span>
+            <span style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.3);color:#C4B5FD;border-radius:6px;padding:3px 8px;font-size:9px">EU AI Act</span>
+            <span style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--ts);border-radius:6px;padding:3px 8px;font-size:9px">MaRisk</span>
+            <span style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--ts);border-radius:6px;padding:3px 8px;font-size:9px">Basel IV</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER: AI ENGINE -->
+      <div class="tech-center reveal" style="transition-delay:480ms">
+        <div class="tech-arrow-box">
+          <div class="tech-arrow-label">AI Engine</div>
+          <i class="ti ti-brain tech-arrow-icon"></i>
+          <div class="tech-arrow-label" style="color:var(--pink)">LLM + Rules</div>
+        </div>
+        <div style="font-size:20px;color:rgba(161,0,255,.55);animation:flowPulse 1.5s ease-in-out infinite"><i class="ti ti-chevron-right"></i></div>
+      </div>
+
+      <!-- RIGHT: STRUCTURED OUTPUT -->
+      <div class="tech-pane reveal-right" style="transition-delay:400ms;border-color:rgba(199,123,255,.35)">
+        <div class="tech-pane-head" style="border-color:rgba(199,123,255,.3);background:rgba(161,0,255,.08)">
+          <div class="tph-dots">
+            <span class="tph-dot" style="background:#EF4444"></span>
+            <span class="tph-dot" style="background:#F59E0B"></span>
+            <span class="tph-dot" style="background:#10B981"></span>
+          </div>
+          <span class="tph-label" style="color:var(--brand)">STRUCTURED OUTPUT</span>
+          <span class="live-badge"><span class="live-dot"></span>AI OUTPUT</span>
+        </div>
+        <div class="tech-pane-body">
+          <span class="tp-punct">{</span><br>
+          &nbsp;&nbsp;<span class="tp-key">"id"</span><span class="tp-punct">: </span><span class="tp-str">"DORA-Art30-§1"</span><span class="tp-punct">,</span><br>
+          &nbsp;&nbsp;<span class="tp-key">"domain"</span><span class="tp-punct">: </span><span class="tp-str">"TPRM"</span><span class="tp-punct">,</span><br>
+          &nbsp;&nbsp;<span class="tp-key">"obligation"</span><span class="tp-punct">: </span><span class="tp-str">"Maintain ICT supply<br>&nbsp;&nbsp;&nbsp;&nbsp;chain register"</span><span class="tp-punct">,</span><br>
+          &nbsp;&nbsp;<span class="tp-key">"deadline"</span><span class="tp-punct">: </span><span class="tp-str">"2025-01-17"</span><span class="tp-punct">,</span><br>
+          &nbsp;&nbsp;<span class="tp-key">"control"</span><span class="tp-punct">: </span><span class="tp-str">"C-TPRM-019"</span><span class="tp-punct">,</span><br>
+          &nbsp;&nbsp;<span class="tp-key">"gap"</span><span class="tp-punct">: </span><span class="tp-val">true</span><span class="tp-punct">,</span><br>
+          &nbsp;&nbsp;<span class="tp-key">"priority"</span><span class="tp-punct">: </span><span class="tp-str">"HIGH"</span><span class="tp-punct">,</span><br>
+          &nbsp;&nbsp;<span class="tp-key">"reasoning"</span><span class="tp-punct">: </span><span class="tp-str">"Tier 2 providers<br>&nbsp;&nbsp;&nbsp;&nbsp;missing from register"</span><br>
+          <span class="tp-punct">}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- THREE TECHNICAL PILLARS -->
+    <div class="tech-pillars">
+      <div class="tech-pillar reveal" style="transition-delay:600ms">
+        <i class="ti ti-file-text"></i>
+        <div class="tech-pillar-h">Reads every regulatory document</div>
+        <div class="tech-pillar-body">LLM scans publications from EBA, BaFin, ESMA and ECB. It extracts obligations, maps them to your control framework, and flags gaps — continuously.</div>
+      </div>
+      <div class="tech-pillar reveal" style="transition-delay:700ms">
+        <i class="ti ti-circles-relation"></i>
+        <div class="tech-pillar-h">Connects processes automatically</div>
+        <div class="tech-pillar-body">A TPRM vendor incident triggers an ORM risk entry. BCM and IS Risk are notified. No manual bridging — event-driven cross-process intelligence.</div>
+      </div>
+      <div class="tech-pillar reveal" style="transition-delay:800ms">
+        <i class="ti ti-certificate"></i>
+        <div class="tech-pillar-h">Explainable by design</div>
+        <div class="tech-pillar-body">Every AI output carries a reasoning trace. Your internal audit team can follow every step. Zero black-box decisions — audit-ready from day one.</div>
+      </div>
+    </div>
+
+    <div class="tech-stack-bar reveal" style="transition-delay:950ms">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tm);letter-spacing:.1em;text-transform:uppercase;flex-shrink:0">Tech stack:</span>
+      <span class="tech-stack-chip">LLM API</span>
+      <span class="tech-stack-chip">REST APIs</span>
+      <span class="tech-stack-chip">Modern web</span>
+      <span class="tech-stack-chip">No on-premise</span>
+      <span class="tech-stack-chip">No database footprint</span>
+      <span class="tech-stack-chip">Audit-logged</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 6 · WHAT YOUR TEAM WILL SEE ── -->
+<section data-slide="5" style="background:var(--canvas)">
+  <div class="inner">
+    <div class="sec-tag reveal" style="transition-delay:0ms">05 — YOUR DASHBOARDS</div>
     <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px);margin-bottom:8px">Live intelligence. Every morning.</h2>
     <p class="slide-sub reveal" style="transition-delay:280ms">Three views your risk team will use every day.</p>
 
@@ -548,10 +778,10 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 5 · THE INVESTMENT ── -->
-<section data-slide="4" style="background:var(--surface)">
+<!-- ── SLIDE 7 · THE INVESTMENT ── -->
+<section data-slide="6" style="background:var(--surface)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">04 — THE INVESTMENT</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">06 — THE INVESTMENT</div>
     <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px);margin-bottom:8px">Transparent from day one.</h2>
     <p class="slide-sub reveal" style="transition-delay:280ms;max-width:640px;font-size:15px">Three entry points. Low ongoing run costs — our tools run on modern web infrastructure, not legacy licensing.</p>
 
@@ -619,10 +849,10 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 6 · YOUR JOURNEY ── -->
-<section data-slide="5" style="background:var(--canvas)">
+<!-- ── SLIDE 8 · YOUR JOURNEY ── -->
+<section data-slide="7" style="background:var(--canvas)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">05 — HOW WE GET THERE</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">07 — HOW WE GET THERE</div>
     <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px)">
       We build this for your bank.<br>
       <span class="grad">Not a template. Your configuration.</span>
@@ -649,17 +879,17 @@ section{
         <div class="jstep-accent" style="background:#FF50C8"></div>
         <div class="jstep-dur" style="color:#FF50C8">6 – 18 MONTHS</div>
         <div class="jstep-h">Scale</div>
-        <p class="jstep-body">The full infrastructure from slide 3 becomes reality. Your team owns every layer. We're on call for enhancements and regulatory updates.</p>
+        <p class="jstep-body">The full infrastructure from slide 4 becomes reality. Your team owns every layer. We're on call for enhancements and regulatory updates.</p>
         <div class="jstep-tools">Full toolkit · Production infrastructure · Your team trained</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── SLIDE 7 · THE TEAM ── -->
-<section data-slide="6" style="background:var(--surface)">
+<!-- ── SLIDE 9 · THE TEAM ── -->
+<section data-slide="8" style="background:var(--surface)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">06 — The Team</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">08 — The Team</div>
     <h2 class="slide-h reveal" style="transition-delay:150ms">
       The practitioners who built it<br>
       <span class="grad">will deliver yours.</span>
@@ -679,10 +909,10 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 8 · START ── -->
-<section id="s7" data-slide="7">
+<!-- ── SLIDE 10 · START ── -->
+<section id="s9" data-slide="9">
   <div class="inner start-inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">07 — Next Steps</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">09 — Next Steps</div>
     <h1 class="start-h1 reveal" style="transition-delay:200ms">
       See it working.<br><span class="grad">In 30 minutes.</span>
     </h1>
