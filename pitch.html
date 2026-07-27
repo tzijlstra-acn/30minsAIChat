@@ -138,6 +138,8 @@ section.bg-surface{background:var(--surface);}
 .cap-how li::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--brand);}
 .open-btn{margin-top:auto;align-self:flex-start;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;padding:8px 15px;border-radius:8px;background:linear-gradient(135deg,#3D0066,#A100FF);color:#fff;transition:filter .15s,transform .15s;}
 .open-btn:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.cap-tailor{font-size:10.5px;color:var(--tm);border-top:1px solid var(--border);margin:12px 0 14px;padding-top:10px;line-height:1.55;}
+.cap-tailor b{color:var(--ts);font-weight:500;}
 
 /* ── MATURITY (s5) ── */
 .mat-flow{display:flex;align-items:stretch;gap:0;margin-bottom:34px;}
@@ -227,7 +229,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
 <section id="s1" data-slide="0">
   <canvas id="heroCanvas" aria-hidden="true"></canvas>
   <div class="hero-in">
-    <div class="hero-eyebrow">Accenture · NFR AI Risk Practice · 2026</div>
+    <div class="hero-eyebrow">Accenture · NFR AI Risk Practice · <span class="yr">2026</span></div>
     <h1 class="hero-h1">Non-Financial Risk<br><span class="grad-txt">is at a turning point.</span></h1>
     <p class="hero-sub">DORA is live. The EU AI Act is coming. Basel IV is in force. Your risk function needs to do more — with the same team.</p>
     <div class="stat-row">
@@ -311,7 +313,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
   <div class="inner">
     <div class="sec-tag">03 — What We Offer</div>
     <h2 class="sec-h2">Not slides. Working tools, deployed today.</h2>
-    <p class="sec-sub">Accenture's NFR AI Practice has built five production-grade assets — each targeting a specific pain point. You can see them live in this conversation.</p>
+    <p class="sec-sub">Five working discussion tools — each can be opened live during this conversation and configured to your bank's regulatory profile, team structure and target state.</p>
     <div class="grid" style="grid-template-columns:repeat(5,1fr);gap:15px;">
       <div class="cap">
         <div class="card-accent" style="background:#A100FF"></div>
@@ -323,6 +325,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
           <li>Toggle AI Governance on: cost, team and deliverables recalculate with the AI layer</li>
           <li>Walk out with a 28-week delivery plan and a defensible business case</li>
         </ul>
+        <div class="cap-tailor"><b>Tailor:</b> Swap in your ICS scope, adjust org lanes for your structure, apply your MaRisk chapter mapping.</div>
         <a class="open-btn" href="https://tzijlstra-acn.github.io/AIDataProcessing/" target="_blank" rel="noopener">Open live →</a>
       </div>
       <div class="cap">
@@ -335,6 +338,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
           <li>Compare model providers, adjust workload mix, and see the TCO recalculate in real time</li>
           <li>Include risk-reduction value and avoided regulatory findings in the ROI — not just infrastructure</li>
         </ul>
+        <div class="cap-tailor"><b>Tailor:</b> Input your existing AI workloads, infrastructure contracts and run-rate costs for a precise TCO.</div>
         <a class="open-btn" style="background:linear-gradient(135deg,#0B4A31,#1A7A52)" href="https://tzijlstra-acn.github.io/AICostSimulator/" target="_blank" rel="noopener">Open live →</a>
       </div>
       <div class="cap">
@@ -347,6 +351,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
           <li>Every component mapped to DORA Art.17–30, Basel IV and the EU AI Act article by article</li>
           <li>Vendor evaluation framework across data, integration and AI platform layers — ready for an RFP</li>
         </ul>
+        <div class="cap-tailor"><b>Tailor:</b> Overlay your current vendor landscape and map gaps to your specific DORA and EU AI Act obligations.</div>
         <a class="open-btn" style="background:linear-gradient(135deg,#075E70,#0891B2)" href="https://janikjugl.github.io/NFR-Architecture/" target="_blank" rel="noopener">Open live →</a>
       </div>
       <div class="cap">
@@ -359,6 +364,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
           <li>Regulatory heat-map across DORA, GDPR, SR 11-7, ECOA/Reg B and EU AI Act in one view</li>
           <li>Model inventory, shadow AI detection, vendor risk and full MRM audit trail in one cockpit</li>
         </ul>
+        <div class="cap-tailor"><b>Tailor:</b> Configure your model inventory categories and apply your bank's risk taxonomy and SR 11-7 tier definitions.</div>
         <a class="open-btn" href="https://tzijlstra-acn.github.io/ai-risk-dashboard/" target="_blank" rel="noopener">Open live →</a>
       </div>
       <div class="cap">
@@ -371,6 +377,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
           <li>Toggle Roles to see step ownership; Data to see what flows in and out; AI to highlight automation</li>
           <li>DACH bank base case — built around the reality of a German, Austrian or Swiss institution</li>
         </ul>
+        <div class="cap-tailor"><b>Tailor:</b> Select the 2–3 processes most relevant to your regulatory priorities for a focused walkthrough.</div>
         <a class="open-btn" href="https://tzijlstra-acn.github.io/NFRProcesses/" target="_blank" rel="noopener">Open live →</a>
       </div>
     </div>
@@ -405,6 +412,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
           <li>NFR maturity assessment against DORA, EU AI Act, MaRisk and Basel IV</li>
           <li>Prioritised gap analysis — what is missing, what is urgent, what can wait</li>
           <li>A business case with investment ranges and a sequenced roadmap</li>
+          <li>We use the ICS Blueprint and NFR Process Intelligence as structured discussion templates — making your current state visible from the first session</li>
           <li class="out"><span>Output:</span> a board-ready presentation your CRO can take to the Vorstand</li>
         </ul>
       </div>
@@ -418,6 +426,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
           <li>Deploy one or two tools from our library into your environment</li>
           <li>Configured for your architecture, your regulatory context, your team</li>
           <li>Upskill your risk professionals — so it runs without us</li>
+          <li>We configure one tool to your bank's exact context — adapting regulatory mapping, process flows or cost models to your way of working</li>
           <li class="out"><span>Output:</span> a live, working capability your team owns</li>
         </ul>
       </div>
@@ -431,6 +440,7 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
           <li>Full NFR AI operating model across all 8 process domains</li>
           <li>Regulatory change programme management built in</li>
           <li>Technology, process and people — not just the platform</li>
+          <li>All five tools evolve into production infrastructure, mapped to your target operating model and maintained by your team</li>
           <li class="out"><span>Output:</span> an NFR function that keeps pace with the regulatory environment</li>
         </ul>
       </div>
@@ -467,14 +477,14 @@ if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html
     <div class="cta-primary">
       <h3>Book a 2-week NFR AI Assessment</h3>
       <p>We assess your current state against DORA, EU AI Act, MaRisk and Basel IV. You walk away with a gap analysis, a prioritised roadmap and a business case — regardless of whether we work together further.</p>
-      <a class="btn-primary" href="mailto:thomas.zijlstra@accenture.com?subject=NFR%20AI%20Assessment"><i class="ti ti-mail"></i>Get in touch → thomas.zijlstra@accenture.com</a>
+      <a class="btn-primary" href="mailto:thomas.zijlstra@accenture.com?subject=NFR%20AI%20Assessment"><i class="ti ti-mail"></i>Request an Assessment</a>
     </div>
     <div class="sec-opts">
       <a class="sec-opt" href="https://tzijlstra-acn.github.io/NFRAIAssets/" target="_blank" rel="noopener"><i class="ti ti-external-link"></i>Explore the tools live</a>
       <a class="sec-opt" href="mailto:thomas.zijlstra@accenture.com?subject=NFR%20AI%20—%20Regulatory%20Question"><i class="ti ti-help-circle"></i>Ask a regulatory question</a>
       <div class="sec-opt" onclick="copyShare()"><i class="ti ti-copy"></i><span id="shareTxt">Share this with your team</span></div>
     </div>
-    <div class="foot-note">All assets are access-code protected. Contact us for access. · Accenture NFR AI Risk Practice · 2026</div>
+    <div class="foot-note">All assets are access-code protected. Contact us for access. · Accenture NFR AI Risk Practice · <span class="yr">2026</span></div>
     <a class="hub-link" href="https://tzijlstra-acn.github.io/NFRAIAssets/" target="_blank" rel="noopener">NFR AI Asset Library →</a>
   </div>
 </section>
@@ -501,7 +511,6 @@ experts.forEach(function(e){
   card.innerHTML=
     '<img class="expert-photo" src="'+base+e.f+'.jpg" alt="'+e.n+'" onerror="this.outerHTML=\'<div class=&quot;expert-ph-fallback&quot;>'+ini+'</div>\'">'+
     '<div class="expert-name">'+e.n+'</div>'+
-    '<div class="expert-title">'+e.t+'</div>'+
     '<div class="expert-tags">'+tagsHtml+'</div>'+
     '<div class="expert-mail">'+e.m+'@accenture.com</div>';
   tr.appendChild(card);
@@ -554,6 +563,9 @@ var obs=new IntersectionObserver(function(entries){
   });
 },{threshold:0.5});
 sections.forEach(function(s){obs.observe(s);});
+
+/* ── DYNAMIC YEAR ── */
+document.querySelectorAll('.yr').forEach(function(e){e.textContent=new Date().getFullYear();});
 
 /* ── HERO NEURAL CANVAS ── */
 (function(){
