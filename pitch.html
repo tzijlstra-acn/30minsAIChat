@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFR AI Client Pitch — Accenture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
+<style>
+:root{
+  --canvas:#08081A;
+  --surface:#0F0F22;
+  --s1:#131325;
+  --s2:#1A1A30;
+  --tp:#EDE8F7;
+  --ts:#B5AECF;
+  --tm:#7A7295;
+  --brand:#C77BFF;
+  --brandMid:#A100FF;
+  --border:rgba(161,0,255,.18);
+  --radius:10px;
+  --radiusL:16px;
+  --pink:#FF50C8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--canvas);
+  color:var(--tp);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4,.font-head{font-family:'Space Grotesk',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+
+/* ── NAV ── */
+.nav{
+  position:fixed;top:0;left:0;right:0;height:56px;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  background:rgba(8,0,20,.85);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--tp);}
+.nav-brand svg{width:22px;height:22px;}
+.dots{display:flex;gap:9px;align-items:center;}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.18);border:none;cursor:pointer;padding:0;transition:background .2s,transform .2s;}
+.dot:hover{background:rgba(255,255,255,.4);}
+.dot.active{background:var(--brand);transform:scale(1.25);box-shadow:0 0 10px rgba(199,123,255,.6);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-btn{
+  width:30px;height:30px;border-radius:8px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  color:var(--ts);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s,color .15s;font-size:16px;
+}
+.nav-btn:hover{background:rgba(161,0,255,.25);color:#fff;}
+.counter{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tm);min-width:44px;text-align:center;}
+
+/* ── SECTIONS ── */
+section{
+  height:100vh;overflow-y:auto;
+  scroll-snap-align:start;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 0 48px;position:relative;
+}
+section.bg-canvas{background:var(--canvas);}
+section.bg-surface{background:var(--surface);}
+.inner{max-width:1200px;margin:0 auto;padding:0 48px;width:100%;}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--tm);margin-bottom:14px;}
+.sec-h2{font-size:44px;font-weight:700;letter-spacing:-.02em;color:var(--tp);line-height:1.05;margin-bottom:14px;}
+.sec-sub{font-size:17px;color:var(--ts);max-width:680px;line-height:1.5;margin-bottom:40px;}
+
+/* ── SECTION 1 HERO ── */
+#s1{background:radial-gradient(130% 140% at 65% -10%,#52088F 0%,#08081A 58%);text-align:center;overflow:hidden;}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.4;}
+.hero-in{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 32px;}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.24em;color:var(--pink);text-transform:uppercase;margin-bottom:28px;}
+.hero-h1{font-size:clamp(42px,7vw,72px);font-weight:700;letter-spacing:-.03em;line-height:1.02;color:#fff;margin-bottom:24px;}
+.grad-txt{background:linear-gradient(100deg,#C77BFF 10%,#FF50C8 90%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.hero-sub{font-size:18px;color:rgba(255,255,255,.62);line-height:1.6;max-width:640px;margin:0 auto 44px;}
+.stat-row{display:flex;justify-content:center;gap:56px;margin-bottom:52px;flex-wrap:wrap;}
+.stat-pill{text-align:center;}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;line-height:1;background:linear-gradient(180deg,#fff,#C77BFF);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.stat-lbl{font-size:12.5px;color:rgba(255,255,255,.5);margin-top:10px;letter-spacing:.02em;}
+.scroll-hint{font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,255,255,.4);animation:bob 2.2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+/* ── CARDS GENERIC ── */
+.grid{display:grid;gap:22px;}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g4{grid-template-columns:repeat(4,1fr);}
+.g2{grid-template-columns:repeat(2,1fr);}
+.card{
+  background:var(--s1);border:1px solid var(--border);border-radius:var(--radiusL);
+  padding:26px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;
+}
+.card:hover{transform:translateY(-3px);border-color:rgba(161,0,255,.4);}
+.card-accent{position:absolute;top:0;left:0;right:0;height:3px;}
+
+/* ── REG CARDS (s2) ── */
+.reg-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;}
+.reg-h{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-bottom:4px;}
+.reg-sub{font-family:'JetBrains Mono',monospace;font-size:11.5px;margin-bottom:16px;}
+.reg-body{font-size:13.5px;color:var(--ts);line-height:1.6;margin-bottom:18px;}
+.tags{display:flex;flex-wrap:wrap;gap:7px;}
+.tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:4px 9px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:var(--ts);}
+.banner{
+  margin-top:26px;background:rgba(161,0,255,.06);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px 24px;font-size:13.5px;color:var(--ts);line-height:1.6;
+}
+.banner b{color:var(--tp);font-weight:600;}
+
+/* ── DOMAIN GRID (s3) ── */
+.dom{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;}
+.dom:hover{transform:translateY(-3px);border-color:rgba(161,0,255,.4);}
+.dom-abbr{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;letter-spacing:.02em;}
+.dom-name{font-size:12px;color:var(--tm);margin:3px 0 10px;font-weight:500;}
+.dom-impact{font-size:12.5px;color:var(--ts);line-height:1.5;}
+.callout{
+  margin-top:26px;text-align:center;background:linear-gradient(100deg,rgba(161,0,255,.14),rgba(255,80,200,.1));
+  border:1px solid rgba(199,123,255,.3);border-radius:var(--radiusL);padding:20px 28px;
+  font-size:15.5px;font-weight:500;color:var(--tp);
+}
+
+/* ── CAPABILITY CARDS (s4) ── */
+.cap{background:var(--s1);border:1px solid var(--border);border-radius:var(--radiusL);padding:22px;display:flex;flex-direction:column;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;}
+.cap:hover{transform:translateY(-3px);border-color:rgba(161,0,255,.4);}
+.cap-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.cap-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.cap-name{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;line-height:1.15;}
+.cap-badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:2px 7px;border-radius:5px;display:inline-block;margin-top:4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--ts);}
+.cap-desc{font-size:12.5px;color:var(--ts);line-height:1.55;margin-bottom:12px;}
+.cap-feat{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--tm);line-height:1.7;margin-bottom:16px;}
+.open-btn{margin-top:auto;align-self:flex-start;font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:8px;background:linear-gradient(135deg,#3D0066,#A100FF);color:#fff;transition:filter .15s,transform .15s;}
+.open-btn:hover{filter:brightness(1.15);transform:translateY(-1px);}
+
+/* ── MATURITY (s5) ── */
+.mat-flow{display:flex;align-items:stretch;gap:0;margin-bottom:36px;}
+.mat-step{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;position:relative;}
+.mat-arrow{display:flex;align-items:center;justify-content:center;color:var(--tm);font-size:20px;padding:0 6px;flex-shrink:0;}
+.mat-lvl{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--brand);}
+.mat-name{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin:5px 0 8px;}
+.mat-desc{font-size:11.5px;color:var(--tm);line-height:1.5;}
+.ai-badge{position:absolute;top:10px;right:10px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.05em;padding:2px 6px;border-radius:5px;background:rgba(161,0,255,.22);border:1px solid rgba(199,123,255,.4);color:var(--brand);}
+.eng-h{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;margin-bottom:2px;}
+.eng-dur{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--pink);margin-bottom:14px;}
+.eng-list{list-style:none;margin-bottom:14px;}
+.eng-list li{font-size:12.5px;color:var(--ts);line-height:1.5;padding-left:18px;position:relative;margin-bottom:7px;}
+.eng-list li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:var(--brand);}
+.eng-del{font-size:12px;color:var(--tp);font-weight:500;padding-top:12px;border-top:1px solid var(--border);}
+.eng-del span{color:var(--tm);}
+
+/* ── WHY (s6) ── */
+.why{background:var(--s1);border:1px solid var(--border);border-radius:var(--radiusL);padding:26px;}
+.why-h{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;margin-bottom:12px;}
+.why-h i{color:var(--brand);font-size:24px;}
+.why-body{font-size:13.5px;color:var(--ts);line-height:1.6;}
+.quote{margin-top:26px;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:500;font-style:italic;color:var(--tp);line-height:1.4;padding:0 40px;}
+.quote span{background:linear-gradient(100deg,#C77BFF,#FF50C8);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+/* ── TEAM (s7) ── */
+.team-row{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-bottom:28px;}
+.expert{width:150px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:var(--radiusL);padding:20px 12px;transition:transform .2s,border-color .2s;}
+.expert:hover{transform:translateY(-3px);border-color:rgba(161,0,255,.4);}
+.expert-photo{width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;border:2px solid var(--brand);box-shadow:0 0 0 4px rgba(161,0,255,.12);}
+.expert-ph-fallback{width:80px;height:80px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3D0066,#A100FF);color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;border:2px solid var(--brand);}
+.expert-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--tp);}
+.expert-title{font-size:11.5px;color:var(--tm);margin:3px 0 9px;line-height:1.3;}
+.expert-tags{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);line-height:1.5;}
+.expert-mail{display:inline-block;margin-top:9px;font-size:10px;color:var(--brand);opacity:0;transition:opacity .2s;}
+.expert:hover .expert-mail{opacity:1;}
+.creds-ph{border:1.5px dashed rgba(199,123,255,.35);border-radius:var(--radiusL);padding:22px;text-align:center;max-width:620px;margin:0 auto;}
+.creds-ph h4{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--ts);margin-bottom:6px;}
+.creds-ph p{font-size:12.5px;color:var(--tm);}
+
+/* ── CTA (s8) ── */
+.cta{background:var(--s1);border:1px solid var(--border);border-radius:var(--radiusL);padding:30px 26px;display:flex;flex-direction:column;text-align:center;position:relative;overflow:hidden;}
+.cta-ico{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 18px;}
+.cta-h{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;margin-bottom:12px;}
+.cta-body{font-size:13.5px;color:var(--ts);line-height:1.6;margin-bottom:22px;}
+.cta-mail{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--brand);margin-bottom:16px;}
+.cta-btn{margin-top:auto;align-self:center;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;padding:12px 26px;border-radius:10px;color:#fff;transition:filter .15s,transform .15s;}
+.cta-btn:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.foot-note{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--tm);margin-top:28px;}
+.hub-link{display:block;text-align:center;margin-top:14px;font-size:14px;font-weight:600;color:var(--brand);}
+.hub-link:hover{color:var(--pink);}
+
+@media(max-width:960px){
+  .g3,.g4{grid-template-columns:repeat(2,1fr);}
+  .g4{grid-template-columns:repeat(2,1fr);}
+  .mat-flow{flex-wrap:wrap;}
+  .sec-h2{font-size:34px;}
+  section{height:auto;min-height:100vh;}
+}
+</style>
+<script>
+if (sessionStorage.getItem('pitch_auth') !== '1') { location.replace('index.html'); }
+</script>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<div class="nav">
+  <div class="nav-brand">
+    <svg viewBox="0 0 100 100" fill="none">
+      <path d="M18 10 L58 50 L18 90 L32 90 L72 50 L32 10 Z" fill="url(#nv)"/>
+      <defs><linearGradient id="nv" x1="18" y1="10" x2="72" y2="90" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#C77BFF"/><stop offset="100%" stop-color="#FF50C8"/>
+      </linearGradient></defs>
+    </svg>
+    NFR AI Practice
+  </div>
+  <div class="dots" id="dots"></div>
+  <div class="nav-right">
+    <button class="nav-btn" onclick="goTo(current-1)" aria-label="Previous"><i class="ti ti-chevron-left"></i></button>
+    <span class="counter" id="counter">1 / 8</span>
+    <button class="nav-btn" onclick="goTo(current+1)" aria-label="Next"><i class="ti ti-chevron-right"></i></button>
+  </div>
+</div>
+
+<!-- ── SECTION 1 · HERO ── -->
+<section id="s1" data-slide="0">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-in">
+    <div class="hero-eyebrow">Accenture · NFR AI Practice · 2026</div>
+    <h1 class="hero-h1">Non-Financial Risk<br><span class="grad-txt">Reimagined with AI</span></h1>
+    <p class="hero-sub">DORA. EU AI Act. Basel IV. The regulatory moment has arrived. Here's how Accenture turns compliance pressure into competitive advantage.</p>
+    <div class="stat-row">
+      <div class="stat-pill"><div class="stat-num">8</div><div class="stat-lbl">NFR Process Domains</div></div>
+      <div class="stat-pill"><div class="stat-num">5</div><div class="stat-lbl">Production-Grade Assets</div></div>
+      <div class="stat-pill"><div class="stat-num">25+</div><div class="stat-lbl">Regulatory Anchors Mapped</div></div>
+    </div>
+    <div class="scroll-hint">↓ scroll or use arrow keys to navigate</div>
+  </div>
+</section>
+
+<!-- ── SECTION 2 · BURNING PLATFORM ── -->
+<section class="bg-surface" data-slide="1">
+  <div class="inner">
+    <div class="sec-tag">02 / 08 · THE BURNING PLATFORM</div>
+    <h2 class="sec-h2">The Regulatory Moment</h2>
+    <p class="sec-sub">Three converging forces are reshaping Non-Financial Risk at European banks.</p>
+    <div class="grid g3">
+      <div class="card">
+        <div class="card-accent" style="background:#2563EB"></div>
+        <div class="reg-icon" style="background:rgba(37,99,235,.15);color:#60A5FA"><i class="ti ti-shield-bolt"></i></div>
+        <div class="reg-h">DORA</div>
+        <div class="reg-sub" style="color:#60A5FA">In force 17 January 2025</div>
+        <p class="reg-body">EU Regulation 2022/2554 mandates ICT risk management, incident reporting within 4 hours, TLPT testing and ICT third-party registers for all EU financial entities. Non-compliance exposed to supervisory sanctions under Art.50.</p>
+        <div class="tags"><span class="tag">BCM</span><span class="tag">TPRM</span><span class="tag">IS Risk</span><span class="tag">Incident Reporting</span></div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:#7C3AED"></div>
+        <div class="reg-icon" style="background:rgba(124,58,237,.15);color:#A78BFA"><i class="ti ti-brain"></i></div>
+        <div class="reg-h">EU AI Act</div>
+        <div class="reg-sub" style="color:#A78BFA">Applies from August 2026 for high-risk AI</div>
+        <p class="reg-body">Regulation 2024/1689 classifies credit scoring, fraud detection and model-based risk management as high-risk AI systems. Banks must implement conformity assessments, model documentation and human oversight before deployment.</p>
+        <div class="tags"><span class="tag">MRM</span><span class="tag">Model Governance</span><span class="tag">Compliance</span></div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:#0891B2"></div>
+        <div class="reg-icon" style="background:rgba(8,145,178,.15);color:#22D3EE"><i class="ti ti-scale"></i></div>
+        <div class="reg-h">Basel IV / CRR III</div>
+        <div class="reg-sub" style="color:#22D3EE">Applies from 1 January 2025</div>
+        <p class="reg-body">The Standardised Measurement Approach replaces the Advanced Measurement Approach for operational risk capital from CRR III. Banks must maintain a 10-year internal loss database and apply the Internal Loss Multiplier (ILM) to their Business Indicator Component.</p>
+        <div class="tags"><span class="tag">ORM</span><span class="tag">Capital</span><span class="tag">RCSA</span></div>
+      </div>
+    </div>
+    <div class="banner"><b>MaRisk (DE) · BWG (AT) · FINMA Circular 2023/1 (CH) · ECB SREP · EBA Guidelines</b> — add to this a BaFin BAIT update, PSD3, EMIR Refit and the incoming AML package, and the volume of compliance obligations for a DACH bank has reached a tipping point.</div>
+  </div>
+</section>
+
+<!-- ── SECTION 3 · OPPORTUNITY ── -->
+<section class="bg-canvas" data-slide="2">
+  <div class="inner">
+    <div class="sec-tag">03 / 08 · THE NFR AI OPPORTUNITY</div>
+    <h2 class="sec-h2">Where AI Transforms Non-Financial Risk</h2>
+    <p class="sec-sub">Eight domains. One connected system. Measurable impact.</p>
+    <div class="grid g4">
+      <div class="dom"><div class="card-accent" style="background:#0891B2"></div><div class="dom-abbr" style="color:#22D3EE">TPRM</div><div class="dom-name">Third-Party Risk Management</div><div class="dom-impact">AI-driven sanctions screening cuts false positives; NLP automates ISAE 3402 extraction</div></div>
+      <div class="dom"><div class="card-accent" style="background:#2563EB"></div><div class="dom-abbr" style="color:#60A5FA">BCM</div><div class="dom-name">Business Continuity Management</div><div class="dom-impact">ML dependency mapping replaces manual BIA interviews; GenAI drafts DORA-compliant BCPs</div></div>
+      <div class="dom"><div class="card-accent" style="background:#A100FF"></div><div class="dom-abbr" style="color:#C77BFF">RCSA</div><div class="dom-name">Risk & Control Self-Assessment</div><div class="dom-impact">NLP surfaces hidden risks from incident narratives; ML calibrates scores against ORX data</div></div>
+      <div class="dom"><div class="card-accent" style="background:#FF50C8"></div><div class="dom-abbr" style="color:#FF50C8">PKS</div><div class="dom-name">Policy & Control System</div><div class="dom-impact">Automated regulatory change monitoring triggers policy reviews without human scanning</div></div>
+      <div class="dom"><div class="card-accent" style="background:#0891B2"></div><div class="dom-abbr" style="color:#22D3EE">ORM</div><div class="dom-name">Operational Risk Management</div><div class="dom-impact">ML root-cause pattern detection across loss databases; automated SMA capital calculation</div></div>
+      <div class="dom"><div class="card-accent" style="background:#7C3AED"></div><div class="dom-abbr" style="color:#A78BFA">Compliance</div><div class="dom-name">Regulatory Compliance</div><div class="dom-impact">NLP obligation extraction reduces manual gap-analysis time on new regulations</div></div>
+      <div class="dom"><div class="card-accent" style="background:#A100FF"></div><div class="dom-abbr" style="color:#C77BFF">MRM</div><div class="dom-name">Model Risk Management</div><div class="dom-impact">Automated model performance monitoring and drift detection at scale</div></div>
+      <div class="dom"><div class="card-accent" style="background:#2563EB"></div><div class="dom-abbr" style="color:#60A5FA">IS Risk</div><div class="dom-name">Information Security Risk</div><div class="dom-impact">UEBA anomaly detection reduces mean time to detect; AI-assisted TLPT scope definition</div></div>
+    </div>
+    <div class="callout">Accenture has built production-grade tools for each of these domains — live, tested, and deployable.</div>
+  </div>
+</section>
+
+<!-- ── SECTION 4 · CAPABILITIES ── -->
+<section class="bg-surface" data-slide="3">
+  <div class="inner">
+    <div class="sec-tag">04 / 08 · OUR CAPABILITIES</div>
+    <h2 class="sec-h2">Five Production Assets, Ready to Deploy</h2>
+    <p class="sec-sub">Not a roadmap. Not a vision. Live tools built by the NFR AI practice.</p>
+    <div class="grid" style="grid-template-columns:repeat(5,1fr);gap:16px;">
+      <div class="cap">
+        <div class="card-accent" style="background:#A100FF"></div>
+        <div class="cap-top"><div class="cap-ico" style="background:rgba(161,0,255,.15);color:#C77BFF"><i class="ti ti-blueprint"></i></div><div><div class="cap-name">ICS Implementation Blueprint</div><span class="cap-badge">Blueprint</span></div></div>
+        <p class="cap-desc">An end-to-end maturity blueprint for ICS modernisation — L1 to L5 — with live ROI modelling, phased delivery plan, team blueprint and AI Governance overlay.</p>
+        <div class="cap-feat">L1–L5 maturity selector<br>Live cost &amp; ROI model<br>28-week delivery plan</div>
+        <a class="open-btn" href="https://tzijlstra-acn.github.io/AIDataProcessing/" target="_blank" rel="noopener">Open ↗</a>
+      </div>
+      <div class="cap">
+        <div class="card-accent" style="background:#1A7A52"></div>
+        <div class="cap-top"><div class="cap-ico" style="background:rgba(26,122,82,.18);color:#34D399"><i class="ti ti-calculator"></i></div><div><div class="cap-name">AI Cost Simulator</div><span class="cap-badge">AI Tool</span></div></div>
+        <p class="cap-desc">Model the total cost of ownership of any AI deployment across banking, insurance, health and telecom. Generates a defensible TCO for client conversations.</p>
+        <div class="cap-feat">Multi-provider cost modelling<br>Scenario comparison<br>Avoided-findings ROI</div>
+        <a class="open-btn" href="https://tzijlstra-acn.github.io/AICostSimulator/" target="_blank" rel="noopener">Open ↗</a>
+      </div>
+      <div class="cap">
+        <div class="card-accent" style="background:#0891B2"></div>
+        <div class="cap-top"><div class="cap-ico" style="background:rgba(8,145,178,.18);color:#22D3EE"><i class="ti ti-sitemap"></i></div><div><div class="cap-name">NFR AI Infrastructure</div><span class="cap-badge">Architecture</span></div></div>
+        <p class="cap-desc">A reference target architecture for the AI-enabled NFR function — risk taxonomy, technology stack, DORA/Basel IV mapping and vendor evaluation framework.</p>
+        <div class="cap-feat">Article-level regulatory mapping<br>Vendor landscape<br>Accelerator-ready</div>
+        <a class="open-btn" href="https://janikjugl.github.io/NFR-Architecture/" target="_blank" rel="noopener">Open ↗</a>
+      </div>
+      <div class="cap">
+        <div class="card-accent" style="background:#A100FF"></div>
+        <div class="cap-top"><div class="cap-ico" style="background:rgba(161,0,255,.15);color:#C77BFF"><i class="ti ti-dashboard"></i></div><div><div class="cap-name">AI Risk Dashboard</div><span class="cap-badge">Dashboard</span></div></div>
+        <p class="cap-desc">A complete AI governance cockpit for European banks — model inventory, shadow AI detection, regulatory heat-map, vendor risk and a full audit trail.</p>
+        <div class="cap-feat">25+ AI assets tracked<br>DORA · SR 11-7 · GDPR<br>EU AI Act exposure</div>
+        <a class="open-btn" href="https://tzijlstra-acn.github.io/ai-risk-dashboard/" target="_blank" rel="noopener">Open ↗</a>
+      </div>
+      <div class="cap">
+        <div class="card-accent" style="background:#A100FF"></div>
+        <div class="cap-top"><div class="cap-ico" style="background:rgba(161,0,255,.15);color:#C77BFF"><i class="ti ti-timeline"></i></div><div><div class="cap-name">NFR Process Intelligence</div><span class="cap-badge">Dashboard</span></div></div>
+        <p class="cap-desc">Consulting-grade swimlane diagrams for all 8 NFR processes — 74 process steps, five toggleable data layers, DACH bank base case with BaFin/DORA/FINMA anchors.</p>
+        <div class="cap-feat">Roles · Data flows<br>AI opportunities<br>Regulatory touch points</div>
+        <a class="open-btn" href="https://tzijlstra-acn.github.io/NFRProcesses/" target="_blank" rel="noopener">Open ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 5 · APPROACH ── -->
+<section class="bg-canvas" data-slide="4">
+  <div class="inner">
+    <div class="sec-tag">05 / 08 · THE ACCENTURE APPROACH</div>
+    <h2 class="sec-h2">How We Engage</h2>
+    <p class="sec-sub">A structured journey from assessment to operating model — calibrated to your maturity.</p>
+    <div class="mat-flow">
+      <div class="mat-step"><div class="mat-lvl">L1</div><div class="mat-name">Awareness</div><div class="mat-desc">Manual processes, spreadsheet-based controls, reactive risk management</div></div>
+      <div class="mat-arrow"><i class="ti ti-chevron-right"></i></div>
+      <div class="mat-step"><div class="mat-lvl">L2</div><div class="mat-name">Structured</div><div class="mat-desc">Documented processes, basic tooling, periodic reporting</div></div>
+      <div class="mat-arrow"><i class="ti ti-chevron-right"></i></div>
+      <div class="mat-step"><span class="ai-badge">AI-enabled</span><div class="mat-lvl">L3</div><div class="mat-name">Integrated</div><div class="mat-desc">Connected data, automated workflows, forward-looking analytics</div></div>
+      <div class="mat-arrow"><i class="ti ti-chevron-right"></i></div>
+      <div class="mat-step"><span class="ai-badge">AI-enabled</span><div class="mat-lvl">L4</div><div class="mat-name">Predictive</div><div class="mat-desc">AI-enhanced monitoring, predictive models, real-time dashboards</div></div>
+      <div class="mat-arrow"><i class="ti ti-chevron-right"></i></div>
+      <div class="mat-step"><span class="ai-badge">AI-enabled</span><div class="mat-lvl">L5</div><div class="mat-name">Autonomous</div><div class="mat-desc">AI-driven risk management, continuous monitoring, agentic processes</div></div>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <div class="card-accent" style="background:#0891B2"></div>
+        <div class="eng-h">Assessment</div>
+        <div class="eng-dur">2–4 weeks</div>
+        <ul class="eng-list">
+          <li>NFR maturity assessment against MaRisk / DORA / EU AI Act</li>
+          <li>Gap analysis and prioritised roadmap</li>
+          <li>Investment estimate and business case</li>
+        </ul>
+        <div class="eng-del"><span>Deliverable:</span> Roadmap + Business Case</div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:#A100FF"></div>
+        <div class="eng-h">Accelerator</div>
+        <div class="eng-dur">8–12 weeks</div>
+        <ul class="eng-list">
+          <li>Deploy one or two production assets from our library</li>
+          <li>Configure for your architecture and regulatory context</li>
+          <li>Upskill your risk team</li>
+        </ul>
+        <div class="eng-del"><span>Deliverable:</span> Live tool + trained team</div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:#FF50C8"></div>
+        <div class="eng-h">Transformation</div>
+        <div class="eng-dur">6–18 months</div>
+        <ul class="eng-list">
+          <li>Full NFR AI operating model build</li>
+          <li>All 8 process domains covered</li>
+          <li>Regulatory change programme management</li>
+        </ul>
+        <div class="eng-del"><span>Deliverable:</span> Target operating model</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 6 · WHY ACCENTURE ── -->
+<section class="bg-surface" data-slide="5">
+  <div class="inner">
+    <div class="sec-tag">06 / 08 · WHY ACCENTURE</div>
+    <h2 class="sec-h2">Why Accenture</h2>
+    <p class="sec-sub">We don't just advise. We build.</p>
+    <div class="grid g2">
+      <div class="why"><div class="why-h"><i class="ti ti-gavel"></i>Regulatory depth</div><p class="why-body">Deep regulatory expertise across BaFin, FMA, FINMA and ECB SSM. Our team has delivered MaRisk implementations, DORA readiness programmes and Basel IV transformations across DACH.</p></div>
+      <div class="why"><div class="why-h"><i class="ti ti-cpu"></i>AI engineering</div><p class="why-body">We don't just recommend AI — we build it. Five production tools already deployed and running in this practice alone. Our engineers work alongside our risk specialists.</p></div>
+      <div class="why"><div class="why-h"><i class="ti ti-rocket"></i>Speed to value</div><p class="why-body">Our asset library means you don't start from zero. A working prototype can be in front of your risk committee in weeks, not months.</p></div>
+      <div class="why"><div class="why-h"><i class="ti ti-world"></i>Global scale, local knowledge</div><p class="why-body">Accenture's global network of 40,000+ risk professionals, combined with a practice that speaks the language of BaFin, OeNB and FINMA.</p></div>
+    </div>
+    <div class="quote">"The question is no longer whether AI will transform Non-Financial Risk — <span>it's whether your bank will lead or follow.</span>"</div>
+  </div>
+</section>
+
+<!-- ── SECTION 7 · TEAM ── -->
+<section class="bg-canvas" data-slide="6">
+  <div class="inner">
+    <div class="sec-tag">07 / 08 · THE TEAM</div>
+    <h2 class="sec-h2">Meet the Practice</h2>
+    <p class="sec-sub">Specialists who built the tools and have the scars to prove it.</p>
+    <div class="team-row" id="teamRow"></div>
+    <div class="creds-ph">
+      <h4>Client Credentials — Coming Soon</h4>
+      <p>References and case studies available under NDA upon request.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 8 · CTA ── -->
+<section class="bg-surface" data-slide="7">
+  <div class="inner">
+    <div class="sec-tag">08 / 08 · NEXT STEPS</div>
+    <h2 class="sec-h2">Let's Start</h2>
+    <p class="sec-sub">Three ways to begin — choose the one that fits your mandate.</p>
+    <div class="grid g3">
+      <div class="cta">
+        <div class="card-accent" style="background:#0891B2"></div>
+        <div class="cta-ico" style="background:rgba(8,145,178,.15);color:#22D3EE"><i class="ti ti-zoom-scan"></i></div>
+        <div class="cta-h">Rapid Assessment</div>
+        <p class="cta-body">In 2–4 weeks, we map your current NFR maturity against DORA, EU AI Act and MaRisk, identify your highest-impact AI opportunities and build the business case.</p>
+        <a class="cta-btn" style="background:linear-gradient(135deg,#075E70,#0891B2)" href="mailto:thomas.zijlstra@accenture.com?subject=NFR%20AI%20—%20Rapid%20Assessment">Book an Assessment →</a>
+      </div>
+      <div class="cta">
+        <div class="card-accent" style="background:#A100FF"></div>
+        <div class="cta-ico" style="background:rgba(161,0,255,.15);color:#C77BFF"><i class="ti ti-sparkles"></i></div>
+        <div class="cta-h">Asset Demo</div>
+        <p class="cta-body">We walk your risk team through our live tools — the process intelligence dashboard, the AI cost simulator and the ICS blueprint — calibrated to your context.</p>
+        <a class="cta-btn" style="background:linear-gradient(135deg,#3D0066,#A100FF)" href="mailto:thomas.zijlstra@accenture.com?subject=NFR%20AI%20—%20Asset%20Demo">Schedule a Demo →</a>
+      </div>
+      <div class="cta">
+        <div class="card-accent" style="background:#FF50C8"></div>
+        <div class="cta-ico" style="background:rgba(255,80,200,.15);color:#FF50C8"><i class="ti ti-message-2"></i></div>
+        <div class="cta-h">Start a Conversation</div>
+        <p class="cta-body">Not ready for a formal engagement? Reach out and let's explore what's possible.</p>
+        <div class="cta-mail">thomas.zijlstra@accenture.com</div>
+        <a class="cta-btn" style="background:linear-gradient(135deg,#B0286F,#FF50C8)" href="mailto:thomas.zijlstra@accenture.com?subject=NFR%20AI%20—%20Conversation">Get in Touch →</a>
+      </div>
+    </div>
+    <div class="foot-note">All assets are protected — access codes available upon engagement.</div>
+    <a class="hub-link" href="https://tzijlstra-acn.github.io/NFRAIAssets/" target="_blank" rel="noopener">Explore all assets → NFR AI Asset Library</a>
+  </div>
+</section>
+
+<script>
+/* ── TEAM RENDER ── */
+var experts=[
+  {f:'thomas-zijlstra',n:'Thomas Zijlstra',t:'NFR AI Practice Lead',s:'ICS · TPRM · AI Cost Modelling',m:'thomas.zijlstra'},
+  {f:'marcel-frater',n:'Marcel Frater',t:'NFR Process Intelligence',s:'RCSA · ORM · Process Mining',m:'marcel.frater'},
+  {f:'tobias-drouin',n:'Tobias Drouin',t:'AI Risk & Governance',s:'MRM · AI Act · Model Validation',m:'tobias.drouin'},
+  {f:'oliver-moine',n:'Oliver Moine',t:'ICS & Controls',s:'ICS · GRC · Automation',m:'oliver.moine'},
+  {f:'janik-jugl',n:'Janik Jugl',t:'NFR Architecture',s:'Reference Architecture · DORA · Technology',m:'janik.jugl'},
+  {f:'nicola-jenni',n:'Nicola Jenni',t:'Risk Analytics',s:'Data · Analytics · FINMA',m:'nicola.jenni'},
+  {f:'marek-polak',n:'Marek Polak',t:'Agentic AI & NFR',s:'AI Agents · Automation · RCSA',m:'marek.polak'}
+];
+var base='https://tzijlstra-acn.github.io/NFRAIAssets/assets/';
+var tr=document.getElementById('teamRow');
+experts.forEach(function(e){
+  var ini=e.n.split(' ').map(function(x){return x[0];}).join('');
+  var card=document.createElement('a');
+  card.className='expert';
+  card.href='mailto:'+e.m+'@accenture.com';
+  card.innerHTML=
+    '<img class="expert-photo" src="'+base+e.f+'.jpg" alt="'+e.n+'" onerror="this.outerHTML=\'<div class=&quot;expert-ph-fallback&quot;>'+ini+'</div>\'">'+
+    '<div class="expert-name">'+e.n+'</div>'+
+    '<div class="expert-title">'+e.t+'</div>'+
+    '<div class="expert-tags">'+e.s+'</div>'+
+    '<div class="expert-mail">'+e.m+'@accenture.com</div>';
+  tr.appendChild(card);
+});
+
+/* ── NAV / SLIDES ── */
+var sections=document.querySelectorAll('section[data-slide]');
+var total=sections.length;
+var current=0;
+var dotsWrap=document.getElementById('dots');
+for(var i=0;i<total;i++){
+  (function(idx){
+    var d=document.createElement('button');
+    d.className='dot'+(idx===0?' active':'');
+    d.setAttribute('aria-label','Slide '+(idx+1));
+    d.onclick=function(){goTo(idx);};
+    dotsWrap.appendChild(d);
+  })(i);
+}
+function updateNav(){
+  document.getElementById('counter').textContent=(current+1)+' / '+total;
+  var ds=dotsWrap.querySelectorAll('.dot');
+  ds.forEach(function(d,i){d.classList.toggle('active',i===current);});
+}
+function goTo(n){
+  n=Math.max(0,Math.min(total-1,n));
+  current=n;
+  sections[n].scrollIntoView({behavior:'smooth'});
+  updateNav();
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();goTo(current+1);}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();goTo(current-1);}
+});
+var obs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting&&e.intersectionRatio>0.5){
+      current=+e.target.dataset.slide;
+      updateNav();
+    }
+  });
+},{threshold:0.5});
+sections.forEach(function(s){obs.observe(s);});
+
+/* ── HERO NEURAL CANVAS ── */
+(function(){
+  var canvas=document.getElementById('heroCanvas');
+  if(!canvas||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var ctx=canvas.getContext('2d'),W,H,pts,sparks,rings,scanY,mx=-9999,my=-9999;
+  function rnd(a,b){return a+Math.random()*(b-a);}
+  function build(){
+    var n=Math.min(Math.max(Math.floor(W*H/8500),35),70);
+    pts=Array.from({length:n},function(){var hub=Math.random()<.09;return{x:rnd(0,W),y:rnd(0,H),vx:rnd(-.13,.13),vy:rnd(-.09,.09),r:hub?rnd(3,4.8):rnd(1,2.3),hub:hub,hue:Math.random()<.6?274:Math.random()<.55?316:248,ph:rnd(0,Math.PI*2)};});
+    sparks=[];rings=[];scanY=0;
+  }
+  function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;build();}
+  setInterval(function(){if(!pts||sparks.length>14)return;var a=Math.floor(Math.random()*pts.length),b=Math.floor(Math.random()*pts.length);if(a===b)return;var dx=pts[a].x-pts[b].x,dy=pts[a].y-pts[b].y;if(Math.sqrt(dx*dx+dy*dy)<130)sparks.push({a:a,b:b,t:0});},330);
+  setInterval(function(){if(!pts||rings.length>3)return;var hubs=pts.filter(function(p){return p.hub;});if(!hubs.length)return;var h=hubs[Math.floor(Math.random()*hubs.length)];rings.push({x:h.x,y:h.y,r:h.r+2,alpha:.55,hue:h.hue});},2700);
+  function draw(ts){
+    if(!W)return;
+    ctx.clearRect(0,0,W,H);
+    scanY=(scanY||0)+.22;if(scanY>H+16)scanY=-16;
+    var sg=ctx.createLinearGradient(0,scanY-12,0,scanY+12);sg.addColorStop(0,'rgba(161,0,255,0)');sg.addColorStop(.5,'rgba(161,0,255,.055)');sg.addColorStop(1,'rgba(161,0,255,0)');ctx.fillStyle=sg;ctx.fillRect(0,scanY-12,W,24);
+    pts.forEach(function(p){var dx=p.x-mx,dy=p.y-my,d=Math.sqrt(dx*dx+dy*dy);if(d<90&&d>0){var f=(90-d)/90*.55;p.x+=dx/d*f;p.y+=dy/d*f;}p.x+=p.vx;p.y+=p.vy;if(p.x<-32)p.x=W+32;if(p.x>W+32)p.x=-32;if(p.y<-32)p.y=H+32;if(p.y>H+32)p.y=-32;});
+    for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle='rgba(161,0,255,'+(Math.pow(1-d/130,2)*.42)+')';ctx.lineWidth=.75;ctx.stroke();}}
+    rings=rings.filter(function(r){r.r+=.7;r.alpha-=.0065;if(r.alpha<=0)return false;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.strokeStyle='hsla('+r.hue+',100%,68%,'+r.alpha+')';ctx.lineWidth=1.3;ctx.stroke();return true;});
+    sparks=sparks.filter(function(s){s.t+=.007;if(s.t>=1)return false;var a=pts[s.a],b=pts[s.b];if(!a||!b)return false;var edx=b.x-a.x,edy=b.y-a.y;if(Math.sqrt(edx*edx+edy*edy)>182)return false;var sx=a.x+edx*s.t,sy=a.y+edy*s.t,g=ctx.createRadialGradient(sx,sy,0,sx,sy,8);g.addColorStop(0,'rgba(255,80,200,1)');g.addColorStop(.4,'rgba(255,80,200,.3)');g.addColorStop(1,'rgba(255,80,200,0)');ctx.beginPath();ctx.arc(sx,sy,8,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();return true;});
+    var t=ts*.001;
+    pts.forEach(function(p){var pulse=Math.sin(t+p.ph)*.5+.5;if(p.hub){var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*10);g.addColorStop(0,'hsla('+p.hue+',100%,68%,'+(0.3+pulse*.2)+')');g.addColorStop(1,'hsla('+p.hue+',100%,68%,0)');ctx.beginPath();ctx.arc(p.x,p.y,p.r*10,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();}ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.hub?'hsla('+p.hue+',100%,80%,'+(0.85+pulse*.15)+')':'rgba(210,175,255,'+(0.2+pulse*.14)+')';ctx.fill();});
+    requestAnimationFrame(draw);
+  }
+  canvas.addEventListener('mousemove',function(e){var r=canvas.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;});
+  window.addEventListener('resize',resize);
+  resize();requestAnimationFrame(draw);
+}());
+</script>
+</body>
+</html>
