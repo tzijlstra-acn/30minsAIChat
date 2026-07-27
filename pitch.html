@@ -189,6 +189,70 @@ section{
 .hub-link{display:block;text-align:center;margin-top:10px;font-size:14px;font-weight:600;color:var(--brand);}
 .hub-link:hover{color:var(--pink);}
 
+/* ── ARCH DIAGRAM (SLIDE 3) ── */
+.arch-diagram{position:relative;width:100%;margin-top:28px;}
+.arch-layer-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:var(--tm);margin-bottom:8px;text-transform:uppercase;text-align:center;}
+.arch-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;justify-content:center;}
+.arch-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:8px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--ts);}
+.arch-chip{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);}
+.arch-engine{background:linear-gradient(135deg,rgba(161,0,255,.14),rgba(255,80,200,.08));border:1px solid rgba(199,123,255,.4);border-radius:16px;padding:20px 32px;display:flex;gap:32px;justify-content:center;animation:aiGlow 3s ease-in-out infinite;margin:8px 0;}
+@keyframes aiGlow{0%,100%{box-shadow:0 0 20px rgba(161,0,255,.15)}50%{box-shadow:0 0 48px rgba(161,0,255,.38)}}
+.engine-item{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;max-width:220px;}
+.engine-item i{font-size:26px;color:var(--brand);}
+.engine-label{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--tp);}
+.engine-sub{font-family:'Inter',sans-serif;font-size:11px;color:var(--ts);line-height:1.4;}
+.arch-output-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.arch-tile{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 18px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.arch-tile i{font-size:20px;color:var(--brand);}
+.arch-tile span{font-family:'Inter',sans-serif;font-size:11px;color:var(--ts);}
+.arch-connector{text-align:center;padding:4px 0;font-size:18px;color:rgba(161,0,255,.5);animation:flowPulse 1.5s ease-in-out infinite;}
+@keyframes flowPulse{0%,100%{opacity:.4;transform:translateY(0)}50%{opacity:1;transform:translateY(3px)}}
+
+/* ── DASHBOARD MOCKUPS (SLIDE 4) ── */
+.mock-row{display:flex;gap:18px;margin-top:32px;}
+.mock-card{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}
+.mock-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.mock-dots{display:flex;gap:5px;}
+.mock-dot{width:8px;height:8px;border-radius:50%;}
+.mock-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tm);margin-left:auto;}
+.mock-body{padding:14px 16px;flex:1;}
+.live-badge{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#10B981;margin-left:auto;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#10B981;animation:livePulse 1.8s ease-in-out infinite;}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.2}}
+.heat-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin-bottom:8px;}
+.heat-cell{aspect-ratio:1.6;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:7px;font-weight:700;color:rgba(255,255,255,.85);}
+.heat-col-labels{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin-bottom:4px;}
+.heat-col-label{font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--tm);text-align:center;}
+.heat-row-label{font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--tm);margin-bottom:3px;}
+.proc-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.proc-name{font-family:'Inter',sans-serif;font-size:11px;color:var(--ts);flex:1;}
+.proc-bar-bg{width:80px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;flex-shrink:0;}
+.proc-bar-fill{height:100%;border-radius:3px;}
+.proc-pct{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tp);min-width:28px;text-align:right;}
+.reg-timeline-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;position:relative;}
+.reg-timeline-item:not(:last-child)::before{content:'';position:absolute;left:5px;top:14px;bottom:-12px;width:1px;background:var(--border);}
+.reg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:2px;position:relative;z-index:1;}
+.reg-event-name{font-family:'Inter',sans-serif;font-size:11px;color:var(--tp);line-height:1.3;}
+.reg-date{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tm);margin-top:2px;}
+.reg-badge{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 6px;border-radius:5px;white-space:nowrap;margin-left:auto;flex-shrink:0;}
+
+/* ── INVESTMENT (SLIDE 5) ── */
+.inv-row{display:flex;gap:16px;margin-top:32px;}
+.inv-card{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:26px;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+.inv-dur{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.02em;}
+.inv-h{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--tp);margin-top:8px;}
+.inv-inv-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--tm);margin-top:18px;}
+.inv-bar-bg{height:6px;border-radius:3px;background:var(--border);margin:8px 0 16px;}
+.inv-bar-fill{height:100%;border-radius:3px;}
+.inv-scope div{font-family:'Inter',sans-serif;font-size:12px;color:var(--ts);line-height:1.8;padding-left:12px;position:relative;}
+.inv-scope div::before{content:'—';position:absolute;left:0;color:var(--tm);}
+.inv-output{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tm);border-top:1px solid var(--border);margin-top:auto;padding-top:14px;}
+.ops-banner{display:flex;align-items:center;gap:16px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:16px 24px;margin-top:20px;}
+.ops-banner i{font-size:24px;color:#10B981;flex-shrink:0;}
+.ops-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#10B981;margin-bottom:4px;}
+.ops-body{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--ts);line-height:1.5;}
+.ops-highlight{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--tp);white-space:nowrap;margin-left:auto;}
+
 @media(max-width:960px){
   section{height:auto;min-height:100vh;padding:80px 24px 48px;}
   .trans-row{flex-wrap:wrap;}
@@ -199,6 +263,11 @@ section{
   .jstep{flex:1 1 100%;}
   .jarrow{transform:rotate(90deg);width:100%;padding:8px 0;}
   .trust-row{grid-template-columns:1fr;}
+  .mock-row,.inv-row{flex-wrap:wrap;}
+  .mock-card,.inv-card{flex:1 1 100%;}
+  .arch-engine{flex-wrap:wrap;gap:20px;}
+  .ops-banner{flex-wrap:wrap;}
+  .ops-highlight{margin-left:0;}
 }
 </style>
 </head>
@@ -221,7 +290,7 @@ section{
   <div class="dots" id="dots"></div>
   <div class="nav-right">
     <button class="nav-btn" onclick="goTo(current-1)" aria-label="Previous"><i class="ti ti-chevron-left"></i></button>
-    <span class="counter" id="counter">1 / 7</span>
+    <span class="counter" id="counter">1 / 8</span>
     <button class="nav-btn" onclick="goTo(current+1)" aria-label="Next"><i class="ti ti-chevron-right"></i></button>
   </div>
 </div>
@@ -278,58 +347,77 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 3 · THE TRANSFORMATION ── -->
+<!-- ── SLIDE 3 · YOUR FUTURE INFRASTRUCTURE ── -->
 <section data-slide="2" style="background:var(--surface)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">02 — What Changes</div>
-    <h2 class="slide-h reveal" style="transition-delay:150ms">
-      AI doesn't automate your processes.<br>
-      <span class="grad">It reimagines them.</span>
-    </h2>
-    <div class="trans-row">
+    <div class="sec-tag reveal" style="transition-delay:0ms">02 — YOUR FUTURE STATE</div>
+    <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(32px,4.2vw,46px);margin-bottom:0">This is what your NFR function looks like in 12 months.</h2>
 
-      <div class="trans-panel reveal-left" style="transition-delay:350ms;--c:#2563EB">
-        <div class="trans-accent" style="background:#2563EB"></div>
-        <div class="trans-domain" style="color:#2563EB">Risk Assessment</div>
-        <div class="trans-before">
-          <div class="trans-blabel">BEFORE</div>
-          <div class="trans-btext">Annual process. 3–4 months of workshops. Snapshot delivered. Already outdated.</div>
-        </div>
-        <i class="ti ti-arrow-down trans-arrow" style="color:#2563EB"></i>
-        <div class="trans-after" style="background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(37,99,235,.02));border:1px solid rgba(37,99,235,.3)">
-          <div class="trans-alabel" style="color:#2563EB">WITH AI</div>
-          <div class="trans-atext">Continuous monitoring. Automated control testing. Risk picture updated in real time.</div>
-          <div class="trans-dot" style="background:#2563EB;box-shadow:0 0 8px #2563EB"></div>
+    <div class="arch-diagram">
+
+      <!-- LAYER A — REGULATORY INPUTS -->
+      <div class="reveal" style="transition-delay:300ms">
+        <div class="arch-layer-label">Regulatory Context</div>
+        <div class="arch-row">
+          <span class="arch-pill">DORA</span>
+          <span class="arch-pill">EU AI Act</span>
+          <span class="arch-pill">Basel IV</span>
+          <span class="arch-pill">MaRisk</span>
         </div>
       </div>
 
-      <div class="trans-panel reveal" style="transition-delay:450ms;--c:#A100FF">
-        <div class="trans-accent" style="background:#A100FF"></div>
-        <div class="trans-domain" style="color:#A100FF">Regulatory Monitoring</div>
-        <div class="trans-before">
-          <div class="trans-blabel">BEFORE</div>
-          <div class="trans-btext">Compliance teams reading PDFs. Obligations discovered weeks after publication.</div>
-        </div>
-        <i class="ti ti-arrow-down trans-arrow" style="color:#A100FF"></i>
-        <div class="trans-after" style="background:linear-gradient(135deg,rgba(161,0,255,.08),rgba(161,0,255,.02));border:1px solid rgba(161,0,255,.3)">
-          <div class="trans-alabel" style="color:#A100FF">WITH AI</div>
-          <div class="trans-atext">Automated horizon scanning. Material changes flagged the day they drop. Prioritised by impact.</div>
-          <div class="trans-dot" style="background:#A100FF;box-shadow:0 0 8px #A100FF"></div>
+      <div class="arch-connector reveal" style="transition-delay:380ms"><i class="ti ti-chevron-down"></i></div>
+
+      <!-- LAYER B — NFR DATA SOURCES -->
+      <div class="reveal" style="transition-delay:500ms">
+        <div class="arch-layer-label">Process Data Layer</div>
+        <div class="arch-row">
+          <span class="arch-chip">RCSA</span>
+          <span class="arch-chip">TPRM</span>
+          <span class="arch-chip">ORM</span>
+          <span class="arch-chip">MRM</span>
+          <span class="arch-chip">BCM</span>
+          <span class="arch-chip">IS Risk</span>
+          <span class="arch-chip">Compliance</span>
+          <span class="arch-chip">PKS</span>
         </div>
       </div>
 
-      <div class="trans-panel reveal-right" style="transition-delay:550ms;--c:#0891B2">
-        <div class="trans-accent" style="background:#0891B2"></div>
-        <div class="trans-domain" style="color:#0891B2">Process Intelligence</div>
-        <div class="trans-before">
-          <div class="trans-blabel">BEFORE</div>
-          <div class="trans-btext">Eight processes. Disconnected data. A vendor incident in TPRM never reaches ORM.</div>
+      <div class="arch-connector reveal" style="transition-delay:580ms"><i class="ti ti-chevron-down"></i></div>
+
+      <!-- LAYER C — AI ENGINE -->
+      <div class="reveal" style="transition-delay:700ms">
+        <div class="arch-layer-label" style="color:var(--brand)">AI Engine</div>
+        <div class="arch-engine">
+          <div class="engine-item">
+            <i class="ti ti-brain"></i>
+            <div class="engine-label">Process Intelligence</div>
+            <div class="engine-sub">Continuous RCSA · Cross-process triggers</div>
+          </div>
+          <div class="engine-item">
+            <i class="ti ti-shield-check"></i>
+            <div class="engine-label">Risk Automation</div>
+            <div class="engine-sub">Automated control testing · Shadow AI detection</div>
+          </div>
+          <div class="engine-item">
+            <i class="ti ti-antenna"></i>
+            <div class="engine-label">Regulatory Monitoring</div>
+            <div class="engine-sub">Horizon scanning · Obligation mapping</div>
+          </div>
         </div>
-        <i class="ti ti-arrow-down trans-arrow" style="color:#0891B2"></i>
-        <div class="trans-after" style="background:linear-gradient(135deg,rgba(8,145,178,.08),rgba(8,145,178,.02));border:1px solid rgba(8,145,178,.3)">
-          <div class="trans-alabel" style="color:#0891B2">WITH AI</div>
-          <div class="trans-atext">Unified risk intelligence. Cross-process triggers. One incident propagates everywhere it matters.</div>
-          <div class="trans-dot" style="background:#0891B2;box-shadow:0 0 8px #0891B2"></div>
+      </div>
+
+      <div class="arch-connector reveal" style="transition-delay:780ms"><i class="ti ti-chevron-down"></i></div>
+
+      <!-- LAYER D — TEAM OUTPUTS -->
+      <div class="reveal" style="transition-delay:900ms">
+        <div class="arch-layer-label">What Your Team Sees</div>
+        <div class="arch-output-row">
+          <div class="arch-tile"><i class="ti ti-layout-dashboard"></i><span>Risk Dashboard</span></div>
+          <div class="arch-tile"><i class="ti ti-sitemap"></i><span>Process Maps</span></div>
+          <div class="arch-tile"><i class="ti ti-bell-ringing"></i><span>Reg Alerts</span></div>
+          <div class="arch-tile"><i class="ti ti-file-certificate"></i><span>Audit Trail</span></div>
+          <div class="arch-tile"><i class="ti ti-calculator"></i><span>Cost Model</span></div>
         </div>
       </div>
 
@@ -337,96 +425,241 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 4 · THE PROOF ── -->
+<!-- ── SLIDE 4 · WHAT YOUR TEAM WILL SEE ── -->
 <section data-slide="3" style="background:var(--canvas)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">03 — What We've Built</div>
-    <h2 class="slide-h reveal" style="transition-delay:150ms">
-      We didn't design this in workshops.<br>
-      <span class="grad">We built it.</span>
-    </h2>
-    <p class="slide-sub reveal" style="transition-delay:280ms">Five working tools. Open any one live, right now.</p>
-    <div class="tools-row">
-      <a class="tool-block reveal-scale" style="transition-delay:360ms" href="https://tzijlstra-acn.github.io/AIDataProcessing/" target="_blank" rel="noopener">
-        <div class="tool-accent" style="background:#A100FF"></div>
-        <div class="tool-num" style="color:#A100FF">01</div>
-        <div class="tool-name">ICS Implementation Blueprint</div>
-        <div class="tool-outcome">Configure your ICS target state. Full maturity model with live cost and team calculations.</div>
-        <div class="tool-open" style="color:#A100FF">Open →</div>
-      </a>
-      <a class="tool-block reveal-scale" style="transition-delay:440ms" href="https://tzijlstra-acn.github.io/AICostSimulator/" target="_blank" rel="noopener">
-        <div class="tool-accent" style="background:#10B981"></div>
-        <div class="tool-num" style="color:#10B981">02</div>
-        <div class="tool-name">AI Cost Simulator</div>
-        <div class="tool-outcome">Build an AI business case your CFO will sign. TCO, ROI and regulatory value in one model.</div>
-        <div class="tool-open" style="color:#10B981">Open →</div>
-      </a>
-      <a class="tool-block reveal-scale" style="transition-delay:520ms" href="https://janikjugl.github.io/NFR-Architecture/" target="_blank" rel="noopener">
-        <div class="tool-accent" style="background:#0891B2"></div>
-        <div class="tool-num" style="color:#0891B2">03</div>
-        <div class="tool-name">NFR AI Infrastructure</div>
-        <div class="tool-outcome">A regulatory-mapped reference architecture. Every component tied to DORA, EU AI Act, Basel IV.</div>
-        <div class="tool-open" style="color:#0891B2">Open →</div>
-      </a>
-      <a class="tool-block reveal-scale" style="transition-delay:600ms" href="https://tzijlstra-acn.github.io/ai-risk-dashboard/" target="_blank" rel="noopener">
-        <div class="tool-accent" style="background:#A100FF"></div>
-        <div class="tool-num" style="color:#A100FF">04</div>
-        <div class="tool-name">AI Risk Dashboard</div>
-        <div class="tool-outcome">Live view of your entire AI exposure. Model inventory, shadow AI detection, regulatory heat-map.</div>
-        <div class="tool-open" style="color:#A100FF">Open →</div>
-      </a>
-      <a class="tool-block reveal-scale" style="transition-delay:680ms" href="https://tzijlstra-acn.github.io/NFRProcesses/" target="_blank" rel="noopener">
-        <div class="tool-accent" style="background:#C77BFF"></div>
-        <div class="tool-num" style="color:#C77BFF">05</div>
-        <div class="tool-name">NFR Process Intelligence</div>
-        <div class="tool-outcome">Step-by-step swimlane maps for all 8 NFR processes. Roles, data flows, AI opportunities.</div>
-        <div class="tool-open" style="color:#C77BFF">Open →</div>
-      </a>
+    <div class="sec-tag reveal" style="transition-delay:0ms">03 — YOUR DASHBOARDS</div>
+    <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px);margin-bottom:8px">Live intelligence. Every morning.</h2>
+    <p class="slide-sub reveal" style="transition-delay:280ms">Three views your risk team will use every day.</p>
+
+    <div class="mock-row">
+
+      <!-- MOCKUP 1 — NFR RISK INTELLIGENCE -->
+      <div class="mock-card reveal-left" style="transition-delay:400ms">
+        <div class="mock-header">
+          <div class="mock-dots">
+            <span class="mock-dot" style="background:#EF4444"></span>
+            <span class="mock-dot" style="background:#F59E0B"></span>
+            <span class="mock-dot" style="background:#10B981"></span>
+          </div>
+          <span class="mock-title" style="margin-left:0">NFR RISK INTELLIGENCE</span>
+          <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+        </div>
+        <div class="mock-body">
+          <div class="heat-col-labels">
+            <div class="heat-col-label">TPRM</div>
+            <div class="heat-col-label">RCSA</div>
+            <div class="heat-col-label">ORM</div>
+            <div class="heat-col-label">MRM</div>
+            <div class="heat-col-label">BCM</div>
+            <div class="heat-col-label">IS Risk</div>
+            <div class="heat-col-label">Comp</div>
+            <div class="heat-col-label">PKS</div>
+          </div>
+          <div class="heat-row-label">Controls</div>
+          <div class="heat-grid">
+            <div class="heat-cell" style="background:#10B981">OK</div>
+            <div class="heat-cell" style="background:#F59E0B">!</div>
+            <div class="heat-cell" style="background:#10B981">OK</div>
+            <div class="heat-cell" style="background:#10B981">OK</div>
+            <div class="heat-cell" style="background:#EF4444">HIGH</div>
+            <div class="heat-cell" style="background:#F59E0B">!</div>
+            <div class="heat-cell" style="background:#10B981">OK</div>
+            <div class="heat-cell" style="background:#10B981">OK</div>
+          </div>
+          <div class="heat-row-label">Exposure</div>
+          <div class="heat-grid">
+            <div class="heat-cell" style="background:#F59E0B">!</div>
+            <div class="heat-cell" style="background:#10B981">OK</div>
+            <div class="heat-cell" style="background:#F59E0B">!</div>
+            <div class="heat-cell" style="background:#EF4444">HIGH</div>
+            <div class="heat-cell" style="background:#10B981">OK</div>
+            <div class="heat-cell" style="background:#10B981">OK</div>
+            <div class="heat-cell" style="background:#F59E0B">!</div>
+            <div class="heat-cell" style="background:#10B981">OK</div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tm);margin-top:8px">Last updated: 2 mins ago</div>
+        </div>
+      </div>
+
+      <!-- MOCKUP 2 — RCSA AUTOMATION MONITOR -->
+      <div class="mock-card reveal" style="transition-delay:500ms">
+        <div class="mock-header">
+          <div class="mock-dots">
+            <span class="mock-dot" style="background:#EF4444"></span>
+            <span class="mock-dot" style="background:#F59E0B"></span>
+            <span class="mock-dot" style="background:#10B981"></span>
+          </div>
+          <span class="mock-title" style="margin-left:0">PROCESS AUTOMATION</span>
+        </div>
+        <div class="mock-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tm);margin-bottom:6px">67% automated</div>
+          <div style="background:rgba(255,255,255,.05);border-radius:4px;height:3px;width:100%;margin-bottom:16px"><div style="width:67%;height:100%;background:var(--brandMid);border-radius:4px"></div></div>
+          <div class="proc-row"><span class="proc-name">TPRM</span><div class="proc-bar-bg"><div class="proc-bar-fill" style="width:85%;background:var(--brandMid)"></div></div><span class="proc-pct">85%</span></div>
+          <div class="proc-row"><span class="proc-name">RCSA</span><div class="proc-bar-bg"><div class="proc-bar-fill" style="width:72%;background:var(--brandMid)"></div></div><span class="proc-pct">72%</span></div>
+          <div class="proc-row"><span class="proc-name">ORM</span><div class="proc-bar-bg"><div class="proc-bar-fill" style="width:61%;background:var(--brandMid)"></div></div><span class="proc-pct">61%</span></div>
+          <div class="proc-row"><span class="proc-name">BCM</span><div class="proc-bar-bg"><div class="proc-bar-fill" style="width:45%;background:#F59E0B"></div></div><span class="proc-pct">45%</span></div>
+          <div class="proc-row"><span class="proc-name">MRM</span><div class="proc-bar-bg"><div class="proc-bar-fill" style="width:40%;background:#F59E0B"></div></div><span class="proc-pct">40%</span></div>
+          <div class="proc-row"><span class="proc-name">IS Risk</span><div class="proc-bar-bg"><div class="proc-bar-fill" style="width:28%;background:var(--tm)"></div></div><span class="proc-pct">28%</span></div>
+        </div>
+      </div>
+
+      <!-- MOCKUP 3 — REGULATORY RADAR -->
+      <div class="mock-card reveal-right" style="transition-delay:600ms">
+        <div class="mock-header">
+          <div class="mock-dots">
+            <span class="mock-dot" style="background:#EF4444"></span>
+            <span class="mock-dot" style="background:#F59E0B"></span>
+            <span class="mock-dot" style="background:#10B981"></span>
+          </div>
+          <span class="mock-title" style="margin-left:0">REGULATORY RADAR</span>
+          <span style="margin-left:auto;background:rgba(161,0,255,.2);color:var(--brand);border-radius:12px;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:9px">4 actions this month</span>
+        </div>
+        <div class="mock-body">
+          <div class="reg-timeline-item">
+            <div class="reg-dot" style="background:#EF4444"></div>
+            <div style="flex:1"><div class="reg-event-name">DORA TLPT deadline — significant institutions</div><div class="reg-date">Oct 2025</div></div>
+            <span class="reg-badge" style="color:#EF4444;background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.4)">ACTION</span>
+          </div>
+          <div class="reg-timeline-item">
+            <div class="reg-dot" style="background:#F59E0B"></div>
+            <div style="flex:1"><div class="reg-event-name">EBA ICT risk reporting — Q3 submission</div><div class="reg-date">Aug 2025</div></div>
+            <span class="reg-badge" style="color:#F59E0B;background:rgba(245,158,11,.2);border:1px solid rgba(245,158,11,.4)">REVIEW</span>
+          </div>
+          <div class="reg-timeline-item">
+            <div class="reg-dot" style="background:#A100FF"></div>
+            <div style="flex:1"><div class="reg-event-name">EU AI Act — high-risk AI conformity</div><div class="reg-date">Aug 2026</div></div>
+            <span class="reg-badge" style="color:var(--brand);background:rgba(161,0,255,.2);border:1px solid rgba(161,0,255,.4)">IN PROGRESS</span>
+          </div>
+          <div class="reg-timeline-item">
+            <div class="reg-dot" style="background:#10B981"></div>
+            <div style="flex:1"><div class="reg-event-name">MaRisk annual review cycle</div><div class="reg-date">Dec 2025</div></div>
+            <span class="reg-badge" style="color:#10B981;background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.4)">SCHEDULED</span>
+          </div>
+          <div class="reg-timeline-item">
+            <div class="reg-dot" style="background:var(--tm)"></div>
+            <div style="flex:1"><div class="reg-event-name">Basel IV ILM recalibration</div><div class="reg-date">Jan 2026</div></div>
+            <span class="reg-badge" style="color:var(--tm);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15)">MONITORED</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- ── SLIDE 5 · YOUR JOURNEY ── -->
+<!-- ── SLIDE 5 · THE INVESTMENT ── -->
 <section data-slide="4" style="background:var(--surface)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">04 — How We Work With You</div>
-    <h2 class="slide-h reveal" style="transition-delay:150ms">
-      Every bank's starting point is different.<br>
-      <span class="grad">We build your path.</span>
+    <div class="sec-tag reveal" style="transition-delay:0ms">04 — THE INVESTMENT</div>
+    <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px);margin-bottom:8px">Transparent from day one.</h2>
+    <p class="slide-sub reveal" style="transition-delay:280ms;max-width:640px;font-size:15px">Three entry points. Low ongoing run costs — our tools run on modern web infrastructure, not legacy licensing.</p>
+
+    <div class="inv-row">
+
+      <!-- CARD 1 — ASSESS -->
+      <div class="inv-card reveal-left" style="transition-delay:400ms">
+        <div class="jstep-accent" style="background:#0891B2"></div>
+        <div class="inv-dur" style="color:#22D3EE">2 – 4 WEEKS</div>
+        <div class="inv-h">Assess</div>
+        <div class="inv-inv-label">INDICATIVE INVESTMENT</div>
+        <div class="inv-bar-bg"><div class="inv-bar-fill" style="width:25%;background:#0891B2"></div></div>
+        <div class="inv-scope">
+          <div>NFR maturity assessment</div>
+          <div>Regulatory gap analysis</div>
+          <div>Prioritised roadmap</div>
+          <div>Board-ready business case</div>
+        </div>
+        <div class="inv-output">Output: CRO-ready presentation</div>
+      </div>
+
+      <!-- CARD 2 — DEPLOY -->
+      <div class="inv-card reveal" style="transition-delay:550ms">
+        <div class="jstep-accent" style="background:#A100FF"></div>
+        <div class="inv-dur" style="color:var(--brand)">8 – 12 WEEKS</div>
+        <div class="inv-h">Deploy</div>
+        <div class="inv-inv-label">INDICATIVE INVESTMENT</div>
+        <div class="inv-bar-bg"><div class="inv-bar-fill" style="width:55%;background:#A100FF"></div></div>
+        <div class="inv-scope">
+          <div>One capability, fully configured</div>
+          <div>Your regulatory context mapped</div>
+          <div>Team trained, handover included</div>
+          <div>Live on real client data</div>
+        </div>
+        <div class="inv-output">Output: Working tool, owned by your team</div>
+      </div>
+
+      <!-- CARD 3 — TRANSFORM -->
+      <div class="inv-card reveal-right" style="transition-delay:700ms">
+        <div class="jstep-accent" style="background:#FF50C8"></div>
+        <div class="inv-dur" style="color:#FF50C8">6 – 18 MONTHS</div>
+        <div class="inv-h">Transform</div>
+        <div class="inv-inv-label">INDICATIVE INVESTMENT</div>
+        <div class="inv-bar-bg"><div class="inv-bar-fill" style="width:100%;background:linear-gradient(90deg,#A100FF,#FF50C8)"></div></div>
+        <div class="inv-scope">
+          <div>All 8 NFR process domains</div>
+          <div>Full AI operating model</div>
+          <div>Regulatory change programme</div>
+          <div>Technology + process + people</div>
+        </div>
+        <div class="inv-output">Output: AI-native NFR function</div>
+      </div>
+
+    </div>
+
+    <!-- OPERATING COST BANNER -->
+    <div class="ops-banner reveal" style="transition-delay:900ms">
+      <i class="ti ti-server"></i>
+      <div style="flex:1">
+        <div class="ops-label">ONGOING OPERATING COSTS</div>
+        <div class="ops-body">Our tools run on modern web infrastructure — no enterprise licensing, no heavy on-premise footprint. Post-delivery operating costs are a fraction of traditional GRC platform deployments.</div>
+      </div>
+      <div class="ops-highlight">No per-seat licensing</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 6 · YOUR JOURNEY ── -->
+<section data-slide="5" style="background:var(--canvas)">
+  <div class="inner">
+    <div class="sec-tag reveal" style="transition-delay:0ms">05 — HOW WE GET THERE</div>
+    <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px)">
+      We build this for your bank.<br>
+      <span class="grad">Not a template. Your configuration.</span>
     </h2>
-    <p class="slide-sub reveal" style="transition-delay:280ms;max-width:700px">We don't sell a template. We configure our toolkit to your bank's regulatory context, team structure and target state.</p>
+    <p class="slide-sub reveal" style="transition-delay:280ms;max-width:680px;font-size:15px">Every bank starts in a different place. We use our tools as a structured starting point — then adapt every layer to your regulatory scope, team structure and target state.</p>
     <div class="journey-row">
       <div class="jstep reveal-left" style="transition-delay:450ms">
         <div class="jstep-accent" style="background:#0891B2"></div>
         <div class="jstep-dur" style="color:#22D3EE">2 – 4 WEEKS</div>
         <div class="jstep-h">Understand</div>
-        <p class="jstep-body">We walk your processes against DORA, EU AI Act, MaRisk and Basel IV. We identify exactly where AI adds value — and where your current state falls short.</p>
-        <div class="jstep-tools">Tools we'll open: ICS Blueprint · Process Intelligence</div>
+        <p class="jstep-body">We open the ICS Blueprint and Process Intelligence live with your team. We map your current state against DORA, EU AI Act, MaRisk and Basel IV — in the room, together.</p>
+        <div class="jstep-tools">Opens in this conversation: ICS Blueprint · Process Intelligence</div>
       </div>
-      <div class="jarrow reveal" style="transition-delay:550ms">→</div>
+      <div class="jarrow reveal" style="transition-delay:650ms">→</div>
       <div class="jstep reveal" style="transition-delay:650ms">
         <div class="jstep-accent" style="background:#A100FF"></div>
         <div class="jstep-dur" style="color:var(--brand)">8 – 12 WEEKS</div>
         <div class="jstep-h">Configure</div>
-        <p class="jstep-body">We deploy one capability into your environment — configured to your architecture, your regulatory scope, your team. You see it working on real data before we leave.</p>
-        <div class="jstep-tools">Tools we'll configure: your chosen capability</div>
+        <p class="jstep-body">We take one capability from our library and configure it for your bank — your regulatory profile, your org structure, your data. You see it running on real data before sign-off.</p>
+        <div class="jstep-tools">Your chosen capability, configured to your environment</div>
       </div>
-      <div class="jarrow reveal" style="transition-delay:750ms">→</div>
+      <div class="jarrow reveal" style="transition-delay:850ms">→</div>
       <div class="jstep reveal-right" style="transition-delay:850ms">
         <div class="jstep-accent" style="background:#FF50C8"></div>
         <div class="jstep-dur" style="color:#FF50C8">6 – 18 MONTHS</div>
         <div class="jstep-h">Scale</div>
-        <p class="jstep-body">Your NFR function becomes AI-native. All eight process domains. Regulatory change programme built in. Your team owns it — we're there when you need us.</p>
-        <div class="jstep-tools">Tools we'll deploy: full toolkit, production-grade</div>
+        <p class="jstep-body">The full infrastructure from slide 3 becomes reality. Your team owns every layer. We're on call for enhancements and regulatory updates.</p>
+        <div class="jstep-tools">Full toolkit · Production infrastructure · Your team trained</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── SLIDE 6 · THE TEAM ── -->
-<section data-slide="5" style="background:var(--canvas)">
+<!-- ── SLIDE 7 · THE TEAM ── -->
+<section data-slide="6" style="background:var(--surface)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">05 — The Team</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">06 — The Team</div>
     <h2 class="slide-h reveal" style="transition-delay:150ms">
       The practitioners who built it<br>
       <span class="grad">will deliver yours.</span>
@@ -446,10 +679,10 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 7 · START ── -->
-<section id="s7" data-slide="6">
+<!-- ── SLIDE 8 · START ── -->
+<section id="s7" data-slide="7">
   <div class="inner start-inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">06 — Next Steps</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">07 — Next Steps</div>
     <h1 class="start-h1 reveal" style="transition-delay:200ms">
       See it working.<br><span class="grad">In 30 minutes.</span>
     </h1>
