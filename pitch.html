@@ -297,12 +297,38 @@ section{
 .tech-stack-bar{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap;}
 .tech-stack-chip{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:var(--ts);}
 
-/* ── MAT METRIC BARS ── */
+/* ── MAT DIAL + METRIC BARS ── */
+.mat-dial-wrap{display:flex;justify-content:center;margin-bottom:10px;}
+.mat-dial{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.mat-dial-inner{width:50px;height:50px;border-radius:50%;background:var(--s2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;}
+.mat-dial-pct{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:var(--tp);line-height:1.1;}
+.mat-dial-sub{font-family:'JetBrains Mono',monospace;font-size:6.5px;color:var(--tm);letter-spacing:.04em;text-transform:uppercase;}
 .mat-metrics{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
 .mat-metric{display:flex;align-items:center;gap:7px;}
-.mat-metric-lbl{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--tm);width:28px;flex-shrink:0;letter-spacing:.05em;text-transform:uppercase;}
-.mat-metric-bar{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+.mat-metric-lbl{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--tm);width:32px;flex-shrink:0;letter-spacing:.05em;text-transform:uppercase;}
+.mat-metric-bar{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
 .mat-metric-fill{height:100%;border-radius:2px;}
+.mat-metric-val{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--tm);flex-shrink:0;min-width:24px;text-align:right;}
+.mat-save{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--brand);margin-top:8px;letter-spacing:.05em;text-align:center;opacity:.8;}
+
+/* ── CTX FLOW (TECH SLIDE) ── */
+.ctx-outer{display:flex;gap:0;margin-top:28px;align-items:stretch;}
+.ctx-sources{display:flex;flex-direction:column;gap:8px;flex-shrink:0;width:195px;}
+.ctx-src{background:var(--s1);border-radius:10px;padding:11px 12px;border:1px solid var(--border);border-left-width:3px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.ctx-src i{font-size:16px;margin-bottom:2px;display:block;}
+.ctx-src-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--tm);letter-spacing:.1em;text-transform:uppercase;}
+.ctx-src-val{font-family:'Inter',sans-serif;font-size:11.5px;color:var(--tp);font-weight:500;line-height:1.3;margin-top:2px;}
+.ctx-svg-in{flex-shrink:0;align-self:stretch;}
+.ctx-engine-col{display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;padding:0;}
+.ctx-engine-box{background:linear-gradient(135deg,rgba(161,0,255,.2),rgba(255,80,200,.1));border:1.5px solid rgba(199,123,255,.5);border-radius:16px;padding:20px 16px;text-align:center;animation:aiGlow 3s ease-in-out infinite;width:100px;}
+.ctx-engine-i{font-size:32px;color:var(--brand);display:block;}
+.ctx-engine-lbl{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--brand);margin-top:8px;}
+.ctx-engine-st{display:flex;align-items:center;justify-content:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#10B981;margin-top:6px;}
+.ctx-engine-meta{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--tm);margin-top:3px;}
+.ctx-svg-out{flex-shrink:0;align-self:center;}
+.ctx-output{flex:1;background:var(--s1);border:1.5px solid rgba(199,123,255,.4);border-radius:14px;overflow:hidden;align-self:center;}
+.ctx-out-head{padding:10px 14px;border-bottom:1px solid rgba(199,123,255,.22);display:flex;align-items:center;gap:8px;background:rgba(161,0,255,.09);}
+.ctx-out-body{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2.1;color:var(--ts);}
 
 /* ── PHASE STRIP (ARCH SLIDE) ── */
 .phase-strip{display:flex;gap:0;margin-top:28px;align-items:stretch;}
@@ -356,6 +382,9 @@ section{
   .phase-strip{flex-wrap:wrap;}
   .phase-card{flex:1 1 100%;min-height:auto;}
   .phase-arrow{flex-direction:row;width:100%;height:32px;padding:0 16px;}
+  .ctx-outer{flex-wrap:wrap;}
+  .ctx-sources,.ctx-engine-col,.ctx-output{flex:1 1 100%;}
+  .ctx-svg-in,.ctx-svg-out{display:none;}
 }
 </style>
 </head>
@@ -440,83 +469,113 @@ section{
   <div class="inner">
     <div class="sec-tag reveal" style="transition-delay:0ms">02 — WHERE DO YOU STAND?</div>
     <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(28px,3.8vw,42px)">One scale.<br><span class="grad">Every tool maps to it.</span></h2>
-    <p class="slide-sub reveal" style="transition-delay:280ms;max-width:740px">Maturity here is about data &amp; process sophistication — not just AI. Higher levels mean faster decisions and stronger ROI, but also more investment. Higher adoption brings its own complexity.</p>
+    <p class="slide-sub reveal" style="transition-delay:280ms;max-width:740px">Defined by automation coverage and human review — the same KPIs used across all our tools. Higher levels unlock more ROI, but also require more investment to reach.</p>
 
     <div class="mat-outer">
       <div class="mat-spine"><div class="mat-spine-fill reveal"></div></div>
 
       <div class="mat-levels">
 
-        <!-- L1 -->
+        <!-- L1: Static Reporting — Auto 8%, Human 95%, Saving ~15% -->
         <div class="mat-col reveal" style="transition-delay:380ms">
           <div class="mat-node" style="background:#2D3748;border-color:#4A5568">L1</div>
           <div class="mat-card" style="border-color:rgba(74,85,104,.3)">
-            <div class="mat-lnum">LEVEL 1</div>
-            <div class="mat-lname">Foundational</div>
-            <div class="mat-ldesc">No data model. Processes run on email, spreadsheets and calendar-driven cycles.</div>
-            <div class="mat-metrics">
-              <div class="mat-metric"><span class="mat-metric-lbl">ROI</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:14%;background:#4A5568"></div></div></div>
-              <div class="mat-metric"><span class="mat-metric-lbl">Effort</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:9%;background:rgba(255,255,255,.18)"></div></div></div>
+            <div class="mat-dial-wrap">
+              <div class="mat-dial" style="background:conic-gradient(#4A5568 8%,rgba(255,255,255,.05) 8%)">
+                <div class="mat-dial-inner"><span class="mat-dial-pct">8%</span><span class="mat-dial-sub">auto</span></div>
+              </div>
             </div>
+            <div class="mat-lnum">LEVEL 1</div>
+            <div class="mat-lname">Static Reporting</div>
+            <div class="mat-ldesc">Answers questions from your current tools and policies. A person still does the work.</div>
+            <div class="mat-metrics">
+              <div class="mat-metric"><span class="mat-metric-lbl">Auto</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:8%;background:#4A5568"></div></div><span class="mat-metric-val">8%</span></div>
+              <div class="mat-metric"><span class="mat-metric-lbl">Human</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:95%;background:rgba(255,255,255,.2)"></div></div><span class="mat-metric-val">95%</span></div>
+            </div>
+            <div class="mat-save">Saving ~15%</div>
           </div>
         </div>
 
-        <!-- L2 -->
+        <!-- L2: AI-Assisted Analysis — Auto 20%, Human 80%, Saving ~25% -->
         <div class="mat-col reveal" style="transition-delay:490ms">
           <div class="mat-node" style="background:rgba(8,145,178,.28);border-color:#0891B2">L2</div>
-          <div class="mat-card" style="border-color:rgba(8,145,178,.25)">
-            <div class="mat-lnum">LEVEL 2</div>
-            <div class="mat-lname">Standardised</div>
-            <div class="mat-ldesc">Templates and defined owners. Data is captured consistently but stays siloed. Reviews scheduled, not triggered.</div>
-            <div class="mat-metrics">
-              <div class="mat-metric"><span class="mat-metric-lbl">ROI</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:30%;background:#0891B2"></div></div></div>
-              <div class="mat-metric"><span class="mat-metric-lbl">Effort</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:22%;background:rgba(255,255,255,.18)"></div></div></div>
+          <div class="mat-card" style="border-color:rgba(8,145,178,.28)">
+            <div class="mat-dial-wrap">
+              <div class="mat-dial" style="background:conic-gradient(#0891B2 20%,rgba(255,255,255,.05) 20%)">
+                <div class="mat-dial-inner"><span class="mat-dial-pct">20%</span><span class="mat-dial-sub">auto</span></div>
+              </div>
             </div>
+            <div class="mat-lnum">LEVEL 2</div>
+            <div class="mat-lname">AI-Assisted Analysis</div>
+            <div class="mat-ldesc">Looks up policies and data before it answers — your analyst gets a briefed starting point.</div>
+            <div class="mat-metrics">
+              <div class="mat-metric"><span class="mat-metric-lbl">Auto</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:20%;background:#0891B2"></div></div><span class="mat-metric-val">20%</span></div>
+              <div class="mat-metric"><span class="mat-metric-lbl">Human</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:80%;background:rgba(255,255,255,.2)"></div></div><span class="mat-metric-val">80%</span></div>
+            </div>
+            <div class="mat-save">Saving ~25%</div>
             <div class="mat-badge" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#F59E0B">Most banks today</div>
           </div>
         </div>
 
-        <!-- L3 -->
+        <!-- L3: Automated Workflows — Auto 65%, Human 45%, Saving ~45% -->
         <div class="mat-col reveal" style="transition-delay:600ms">
           <div class="mat-node" style="background:rgba(124,58,237,.28);border-color:#7C3AED">L3</div>
-          <div class="mat-card" style="border-color:rgba(124,58,237,.3)">
-            <div class="mat-lnum">LEVEL 3</div>
-            <div class="mat-lname">Smart Processing</div>
-            <div class="mat-ldesc">Structured, API-linked data flows. Workflows trigger on events. A shared data model emerges across processes.</div>
-            <div class="mat-metrics">
-              <div class="mat-metric"><span class="mat-metric-lbl">ROI</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:62%;background:#7C3AED"></div></div></div>
-              <div class="mat-metric"><span class="mat-metric-lbl">Effort</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:44%;background:rgba(255,255,255,.18)"></div></div></div>
+          <div class="mat-card" style="border-color:rgba(124,58,237,.32)">
+            <div class="mat-dial-wrap">
+              <div class="mat-dial" style="background:conic-gradient(#7C3AED 65%,rgba(255,255,255,.05) 65%)">
+                <div class="mat-dial-inner"><span class="mat-dial-pct">65%</span><span class="mat-dial-sub">auto</span></div>
+              </div>
             </div>
+            <div class="mat-lnum">LEVEL 3</div>
+            <div class="mat-lname">Automated Workflows</div>
+            <div class="mat-ldesc">Runs a complete task — retrieves, reasons, drafts — then hands the result back for sign-off.</div>
+            <div class="mat-metrics">
+              <div class="mat-metric"><span class="mat-metric-lbl">Auto</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:65%;background:#7C3AED"></div></div><span class="mat-metric-val">65%</span></div>
+              <div class="mat-metric"><span class="mat-metric-lbl">Human</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:45%;background:rgba(255,255,255,.2)"></div></div><span class="mat-metric-val">45%</span></div>
+            </div>
+            <div class="mat-save">Saving ~45%</div>
             <div class="mat-badge" style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.4);color:#A78BFA">Where our tools begin</div>
           </div>
         </div>
 
-        <!-- L4 — GLOWING TARGET -->
+        <!-- L4: Triggered Automation — Auto 85%, Human 15%, Saving ~70% -->
         <div class="mat-col reveal" style="transition-delay:710ms">
           <div class="mat-node" style="background:rgba(161,0,255,.35);border-color:#A100FF;box-shadow:0 0 22px rgba(161,0,255,.5),0 0 44px rgba(161,0,255,.2);animation:aiGlow 3s ease-in-out infinite">L4</div>
-          <div class="mat-card" style="background:rgba(161,0,255,.1);border-color:rgba(199,123,255,.45);box-shadow:0 0 28px rgba(161,0,255,.12)">
-            <div class="mat-lnum" style="color:var(--brand)">LEVEL 4</div>
-            <div class="mat-lname" style="color:#C77BFF">Intelligent</div>
-            <div class="mat-ldesc" style="color:rgba(181,174,207,.85)">Data flows across all 8 domains. Context-aware processing connects signals. AI interprets patterns and surfaces risk proactively.</div>
-            <div class="mat-metrics">
-              <div class="mat-metric"><span class="mat-metric-lbl" style="color:rgba(199,123,255,.6)">ROI</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:82%;background:linear-gradient(90deg,#A100FF,#C77BFF)"></div></div></div>
-              <div class="mat-metric"><span class="mat-metric-lbl" style="color:rgba(199,123,255,.6)">Effort</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:68%;background:rgba(199,123,255,.3)"></div></div></div>
+          <div class="mat-card" style="background:rgba(161,0,255,.1);border-color:rgba(199,123,255,.48);box-shadow:0 0 28px rgba(161,0,255,.12)">
+            <div class="mat-dial-wrap">
+              <div class="mat-dial" style="background:conic-gradient(#A100FF 85%,rgba(255,255,255,.05) 85%)">
+                <div class="mat-dial-inner" style="background:rgba(30,0,55,.9)"><span class="mat-dial-pct" style="color:#C77BFF">85%</span><span class="mat-dial-sub" style="color:rgba(199,123,255,.6)">auto</span></div>
+              </div>
             </div>
-            <div class="mat-badge" style="background:rgba(161,0,255,.16);border:1px solid rgba(199,123,255,.45);color:#C77BFF">Our target for you</div>
+            <div class="mat-lnum" style="color:var(--brand)">LEVEL 4</div>
+            <div class="mat-lname" style="color:#C77BFF">Triggered Automation</div>
+            <div class="mat-ldesc" style="color:rgba(181,174,207,.85)">Acts automatically when a trigger fires — your team handles only the exceptions.</div>
+            <div class="mat-metrics">
+              <div class="mat-metric"><span class="mat-metric-lbl" style="color:rgba(199,123,255,.6)">Auto</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:85%;background:linear-gradient(90deg,#A100FF,#C77BFF)"></div></div><span class="mat-metric-val" style="color:#C77BFF">85%</span></div>
+              <div class="mat-metric"><span class="mat-metric-lbl" style="color:rgba(199,123,255,.6)">Human</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:15%;background:rgba(199,123,255,.3)"></div></div><span class="mat-metric-val" style="color:#C77BFF">15%</span></div>
+            </div>
+            <div class="mat-save" style="color:#C77BFF">Saving ~70%</div>
+            <div class="mat-badge" style="background:rgba(161,0,255,.16);border:1px solid rgba(199,123,255,.48);color:#C77BFF">Our target for you</div>
           </div>
         </div>
 
-        <!-- L5 -->
+        <!-- L5: Autonomous Operations — Auto 95%, Human 5%, Saving ~90%+ -->
         <div class="mat-col reveal" style="transition-delay:820ms">
           <div class="mat-node" style="background:rgba(255,80,200,.22);border-color:#FF50C8;box-shadow:0 0 18px rgba(255,80,200,.3)">L5</div>
-          <div class="mat-card" style="background:rgba(255,80,200,.06);border-color:rgba(255,80,200,.3)">
-            <div class="mat-lnum" style="color:#FF80D5">LEVEL 5</div>
-            <div class="mat-lname" style="color:#FF80D5">Adaptive</div>
-            <div class="mat-ldesc">Self-updating risk models. Regulatory changes absorbed and re-mapped automatically. Zero manual intervention for standard processes.</div>
-            <div class="mat-metrics">
-              <div class="mat-metric"><span class="mat-metric-lbl" style="color:rgba(255,128,213,.5)">ROI</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:94%;background:linear-gradient(90deg,#FF50C8,#FF80D5)"></div></div></div>
-              <div class="mat-metric"><span class="mat-metric-lbl" style="color:rgba(255,128,213,.5)">Effort</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:87%;background:rgba(255,80,200,.22)"></div></div></div>
+          <div class="mat-card" style="background:rgba(255,80,200,.06);border-color:rgba(255,80,200,.32)">
+            <div class="mat-dial-wrap">
+              <div class="mat-dial" style="background:conic-gradient(#FF50C8 95%,rgba(255,255,255,.05) 95%)">
+                <div class="mat-dial-inner" style="background:rgba(40,0,25,.9)"><span class="mat-dial-pct" style="color:#FF80D5">95%</span><span class="mat-dial-sub" style="color:rgba(255,128,213,.5)">auto</span></div>
+              </div>
             </div>
+            <div class="mat-lnum" style="color:#FF80D5">LEVEL 5</div>
+            <div class="mat-lname" style="color:#FF80D5">Autonomous Operations</div>
+            <div class="mat-ldesc">Runs, monitors and improves itself — people step in only for genuine exceptions.</div>
+            <div class="mat-metrics">
+              <div class="mat-metric"><span class="mat-metric-lbl" style="color:rgba(255,128,213,.5)">Auto</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:95%;background:linear-gradient(90deg,#FF50C8,#FF80D5)"></div></div><span class="mat-metric-val" style="color:#FF80D5">95%</span></div>
+              <div class="mat-metric"><span class="mat-metric-lbl" style="color:rgba(255,128,213,.5)">Human</span><div class="mat-metric-bar"><div class="mat-metric-fill" style="width:5%;background:rgba(255,80,200,.25)"></div></div><span class="mat-metric-val" style="color:#FF80D5">5%</span></div>
+            </div>
+            <div class="mat-save" style="color:#FF80D5">Saving ~90%+</div>
             <div class="mat-badge" style="background:rgba(255,80,200,.1);border:1px solid rgba(255,80,200,.35);color:#FF80D5">The horizon</div>
           </div>
         </div>
@@ -558,7 +617,7 @@ section{
 
       <!-- ARROW 1 -->
       <div class="phase-arrow reveal" style="transition-delay:480ms">
-        <div class="phase-arrow-lbl">6–12 mo</div>
+        <div class="phase-arrow-lbl">8–28 wks</div>
         <i class="ti ti-chevron-right"></i>
       </div>
 
@@ -623,71 +682,91 @@ section{
     <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px);margin-bottom:8px">Context in.<br><span class="grad">Clarity out.</span></h2>
     <p class="slide-sub reveal" style="transition-delay:280ms;max-width:680px">Our tools process structured data from your NFR processes in context — connecting the signals that matter to generate precise, actionable outputs. Not document reading. Smart data processing.</p>
 
-    <div class="tech-split">
+    <div class="ctx-outer reveal" style="transition-delay:400ms">
 
-      <!-- LEFT: RAW INPUT -->
-      <div class="tech-pane reveal-left" style="transition-delay:400ms">
-        <div class="tech-pane-head">
-          <div class="tph-dots">
-            <span class="tph-dot" style="background:#EF4444"></span>
-            <span class="tph-dot" style="background:#F59E0B"></span>
-            <span class="tph-dot" style="background:#10B981"></span>
-          </div>
-          <span class="tph-label">STRUCTURED INPUTS</span>
+      <!-- SOURCES: 4 input chips -->
+      <div class="ctx-sources">
+        <div class="ctx-src" style="border-left-color:#0891B2">
+          <i class="ti ti-building-bank" style="color:#0891B2"></i>
+          <span class="ctx-src-lbl">TPRM</span>
+          <span class="ctx-src-val">Vendor SLA breach event</span>
         </div>
-        <div class="tech-pane-body">
-          <span class="tp-punct">{</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"event"</span><span class="tp-punct">: </span><span class="tp-str">"vendor_sla_breach"</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"process"</span><span class="tp-punct">: </span><span class="tp-str">"TPRM"</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"vendor_id"</span><span class="tp-punct">: </span><span class="tp-str">"V-1042"</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"reg_context"</span><span class="tp-punct">: [</span><span class="tp-str">"DORA-Art30"</span><span class="tp-punct">,</span> <span class="tp-str">"MaRisk"</span><span class="tp-punct">],</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"kri_breach"</span><span class="tp-punct">: </span><span class="tp-val">true</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"related_risks"</span><span class="tp-punct">: [</span><span class="tp-str">"ORM-R-2841"</span><span class="tp-punct">]</span><br>
-          <span class="tp-punct">}</span>
-          <div style="margin:12px 0 4px" class="tp-comment">// + RCSA risk entry R-2841</div>
-          <div class="tp-comment">// + Regulatory mapping: C-TPRM-019</div>
-          <div class="tp-comment">// + BCM exposure context</div>
-          <div style="margin-top:14px;display:flex;gap:7px;flex-wrap:wrap">
-            <span style="background:rgba(8,145,178,.14);border:1px solid rgba(8,145,178,.3);color:#67E8F9;border-radius:6px;padding:3px 8px;font-size:9px">TPRM event</span>
-            <span style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.3);color:#C4B5FD;border-radius:6px;padding:3px 8px;font-size:9px">ORM signal</span>
-            <span style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--ts);border-radius:6px;padding:3px 8px;font-size:9px">KRI breach</span>
-            <span style="background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.3);color:#FCA5A5;border-radius:6px;padding:3px 8px;font-size:9px">Reg flag</span>
-          </div>
+        <div class="ctx-src" style="border-left-color:#7C3AED">
+          <i class="ti ti-shield-check" style="color:#7C3AED"></i>
+          <span class="ctx-src-lbl">RCSA</span>
+          <span class="ctx-src-val">Risk signal R-2841</span>
+        </div>
+        <div class="ctx-src" style="border-left-color:#EF4444">
+          <i class="ti ti-alert-triangle" style="color:#EF4444"></i>
+          <span class="ctx-src-lbl">KRI</span>
+          <span class="ctx-src-val">Concentration breach flagged</span>
+        </div>
+        <div class="ctx-src" style="border-left-color:#F59E0B">
+          <i class="ti ti-book-2" style="color:#F59E0B"></i>
+          <span class="ctx-src-lbl">Regulation</span>
+          <span class="ctx-src-val">DORA Art.30 mapping</span>
         </div>
       </div>
 
-      <!-- CENTER: CONTEXT ENGINE -->
-      <div class="tech-center reveal" style="transition-delay:480ms">
-        <div class="tech-arrow-box">
-          <div class="tech-arrow-label">Context</div>
-          <i class="ti ti-brain tech-arrow-icon"></i>
-          <div class="tech-arrow-label" style="color:var(--pink)">Engine</div>
+      <!-- SVG: 4 paths converging into engine -->
+      <svg class="ctx-svg-in" viewBox="0 0 80 280" width="80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <path id="cp1" d="M0,35 C40,35 40,140 80,140"/>
+          <path id="cp2" d="M0,105 C40,105 40,140 80,140"/>
+          <path id="cp3" d="M0,175 C40,175 40,140 80,140"/>
+          <path id="cp4" d="M0,245 C40,245 40,140 80,140"/>
+        </defs>
+        <use href="#cp1" fill="none" stroke="rgba(8,145,178,.4)" stroke-width="1.5"/>
+        <use href="#cp2" fill="none" stroke="rgba(124,58,237,.4)" stroke-width="1.5"/>
+        <use href="#cp3" fill="none" stroke="rgba(239,68,68,.4)" stroke-width="1.5"/>
+        <use href="#cp4" fill="none" stroke="rgba(245,158,11,.4)" stroke-width="1.5"/>
+        <circle r="3.5" fill="#67E8F9" opacity=".9">
+          <animateMotion dur="2.4s" begin="0s" repeatCount="indefinite"><mpath href="#cp1"/></animateMotion>
+        </circle>
+        <circle r="3.5" fill="#A78BFA" opacity=".9">
+          <animateMotion dur="2.4s" begin="0.6s" repeatCount="indefinite"><mpath href="#cp2"/></animateMotion>
+        </circle>
+        <circle r="3.5" fill="#FCA5A5" opacity=".9">
+          <animateMotion dur="2.4s" begin="1.2s" repeatCount="indefinite"><mpath href="#cp3"/></animateMotion>
+        </circle>
+        <circle r="3.5" fill="#FCD34D" opacity=".9">
+          <animateMotion dur="2.4s" begin="1.8s" repeatCount="indefinite"><mpath href="#cp4"/></animateMotion>
+        </circle>
+      </svg>
+
+      <!-- ENGINE BOX -->
+      <div class="ctx-engine-col">
+        <div class="ctx-engine-box">
+          <i class="ti ti-brain ctx-engine-i"></i>
+          <div class="ctx-engine-lbl">Context Engine</div>
+          <div class="ctx-engine-st"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#10B981;flex-shrink:0"></span>Live</div>
+          <div class="ctx-engine-meta">Smart data processing</div>
         </div>
-        <div style="font-size:20px;color:rgba(161,0,255,.55);animation:flowPulse 1.5s ease-in-out infinite"><i class="ti ti-chevron-right"></i></div>
       </div>
 
-      <!-- RIGHT: STRUCTURED OUTPUT -->
-      <div class="tech-pane reveal-right" style="transition-delay:400ms;border-color:rgba(199,123,255,.35)">
-        <div class="tech-pane-head" style="border-color:rgba(199,123,255,.3);background:rgba(161,0,255,.08)">
-          <div class="tph-dots">
-            <span class="tph-dot" style="background:#EF4444"></span>
-            <span class="tph-dot" style="background:#F59E0B"></span>
-            <span class="tph-dot" style="background:#10B981"></span>
-          </div>
-          <span class="tph-label" style="color:var(--brand)">STRUCTURED OUTPUT</span>
-          <span class="live-badge"><span class="live-dot"></span>AI OUTPUT</span>
+      <!-- SVG: output path -->
+      <svg class="ctx-svg-out" viewBox="0 0 48 20" width="48" xmlns="http://www.w3.org/2000/svg">
+        <defs><path id="op1" d="M0,10 L48,10"/></defs>
+        <use href="#op1" fill="none" stroke="rgba(199,123,255,.5)" stroke-width="1.5"/>
+        <circle r="3.5" fill="#C77BFF" opacity=".9">
+          <animateMotion dur="1.4s" repeatCount="indefinite"><mpath href="#op1"/></animateMotion>
+        </circle>
+      </svg>
+
+      <!-- OUTPUT CARD -->
+      <div class="ctx-output">
+        <div class="ctx-out-head">
+          <i class="ti ti-file-check" style="font-size:16px;color:var(--brand)"></i>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--brand);letter-spacing:.1em;text-transform:uppercase">AI Action Output</span>
+          <span class="live-badge" style="margin-left:auto"><span class="live-dot"></span>LIVE</span>
         </div>
-        <div class="tech-pane-body">
-          <span class="tp-punct">{</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"id"</span><span class="tp-punct">: </span><span class="tp-str">"DORA-Art30-§1"</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"domain"</span><span class="tp-punct">: </span><span class="tp-str">"TPRM"</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"obligation"</span><span class="tp-punct">: </span><span class="tp-str">"Maintain ICT supply<br>&nbsp;&nbsp;&nbsp;&nbsp;chain register"</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"deadline"</span><span class="tp-punct">: </span><span class="tp-str">"2025-01-17"</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"control"</span><span class="tp-punct">: </span><span class="tp-str">"C-TPRM-019"</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"gap"</span><span class="tp-punct">: </span><span class="tp-val">true</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"priority"</span><span class="tp-punct">: </span><span class="tp-str">"HIGH"</span><span class="tp-punct">,</span><br>
-          &nbsp;&nbsp;<span class="tp-key">"reasoning"</span><span class="tp-punct">: </span><span class="tp-str">"Tier 2 providers<br>&nbsp;&nbsp;&nbsp;&nbsp;missing from register"</span><br>
-          <span class="tp-punct">}</span>
+        <div class="ctx-out-body">
+          <span style="color:var(--tm)">domain&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#67E8F9">TPRM × ORM</span><br>
+          <span style="color:var(--tm)">priority&nbsp;&nbsp;</span><span style="color:#EF4444;font-weight:700">HIGH</span><br>
+          <span style="color:var(--tm)">regulation</span><span style="color:#FCD34D"> DORA Art.30</span><br>
+          <span style="color:var(--tm)">control&nbsp;&nbsp;&nbsp;</span><span style="color:#A78BFA">C-TPRM-019</span><br>
+          <span style="color:var(--tm)">action&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:rgba(255,255,255,.85)">Update Tier 2<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;supply chain register</span><br>
+          <span style="color:var(--tm)">deadline&nbsp;&nbsp;</span><span style="color:#10B981">2025-01-17</span>
         </div>
       </div>
 
@@ -875,7 +954,7 @@ section{
       <!-- CARD 2 — DEPLOY -->
       <div class="inv-card reveal" style="transition-delay:550ms">
         <div class="jstep-accent" style="background:#A100FF"></div>
-        <div class="inv-dur" style="color:var(--brand)">8 – 12 WEEKS</div>
+        <div class="inv-dur" style="color:var(--brand)">8 – 28 WEEKS</div>
         <div class="inv-h">Deploy</div>
         <div class="inv-inv-label">INDICATIVE INVESTMENT</div>
         <div class="inv-bar-bg"><div class="inv-bar-fill" style="width:55%;background:#A100FF"></div></div>
@@ -938,7 +1017,7 @@ section{
       <div class="jarrow reveal" style="transition-delay:650ms">→</div>
       <div class="jstep reveal" style="transition-delay:650ms">
         <div class="jstep-accent" style="background:#A100FF"></div>
-        <div class="jstep-dur" style="color:var(--brand)">8 – 12 WEEKS</div>
+        <div class="jstep-dur" style="color:var(--brand)">8 – 28 WEEKS</div>
         <div class="jstep-h">Configure</div>
         <p class="jstep-body">We take one capability from our library and configure it for your bank — your regulatory profile, your org structure, your data. You see it running on real data before sign-off.</p>
         <div class="jstep-tools">Your chosen capability, configured to your environment</div>
