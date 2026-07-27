@@ -147,14 +147,7 @@ section{
 .tool-open{margin-top:auto;padding-top:14px;font-size:12px;font-weight:600;}
 
 /* ── SLIDE 5 · YOUR JOURNEY ── */
-.journey-row{display:flex;flex-direction:row;align-items:stretch;gap:0;width:100%;margin-top:36px;}
-.jstep{flex:1;padding:32px 28px;background:var(--s1);border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden;display:flex;flex-direction:column;}
 .jstep-accent{position:absolute;top:0;left:0;right:0;height:3px;}
-.jstep-dur{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.02em;}
-.jstep-h{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--tp);margin-top:10px;}
-.jstep-body{font-family:'Inter',sans-serif;font-size:14px;color:var(--ts);line-height:1.6;margin-top:14px;}
-.jstep-tools{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tm);margin-top:auto;padding-top:18px;line-height:1.5;}
-.jarrow{display:flex;align-items:center;justify-content:center;color:var(--brandMid);font-family:'Space Grotesk',sans-serif;font-size:28px;padding:0 14px;flex-shrink:0;}
 
 /* ── SLIDE 6 · TEAM ── */
 .team-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:36px;}
@@ -182,7 +175,7 @@ section{
 .btn-primary{display:inline-flex;align-items:center;gap:10px;padding:18px 44px;border-radius:14px;background:linear-gradient(135deg,#3D0066,#A100FF);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;box-shadow:0 8px 32px rgba(161,0,255,.4);transition:filter .15s,transform .15s;margin-top:16px;}
 .btn-primary:hover{filter:brightness(1.2);transform:translateY(-2px);}
 .start-opts{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin-top:24px;}
-.sec-opt{padding:12px 22px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:13px;font-weight:500;color:var(--tp);cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:background .15s,border-color .15s;}
+.sec-opt{padding:12px 22px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:13px;font-weight:500;color:var(--tp);cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:background .15s,border-color .15s;-webkit-appearance:none;appearance:none;font-family:inherit;}
 .sec-opt:hover{background:rgba(161,0,255,.2);border-color:rgba(199,123,255,.4);}
 .sec-opt i{color:var(--brand);font-size:17px;}
 .foot-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tm);text-align:center;margin-top:28px;line-height:1.6;}
@@ -262,7 +255,7 @@ section{
 .mat-levels{display:flex;gap:10px;position:relative;z-index:1;}
 .mat-col{flex:1;display:flex;flex-direction:column;align-items:center;}
 .mat-node{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#fff;margin-bottom:14px;flex-shrink:0;border:2px solid transparent;}
-.mat-card{width:100%;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px 12px;text-align:center;}
+.mat-card{width:100%;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:11px 10px;text-align:center;}
 .mat-lnum{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--tm);margin-bottom:4px;}
 .mat-lname{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--tp);line-height:1.1;}
 .mat-ldesc{font-family:'Inter',sans-serif;font-size:11px;color:var(--ts);line-height:1.4;margin-top:5px;}
@@ -273,22 +266,6 @@ section{
 .mat-zone-ai{background:rgba(161,0,255,.1);border:1px solid rgba(161,0,255,.3);color:var(--brand);}
 
 /* ── TECHNICAL TRANSFORMATION (SLIDE 5) ── */
-.tech-split{display:flex;gap:16px;margin-top:28px;align-items:flex-start;}
-.tech-pane{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-.tech-pane-head{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-.tph-dots{display:flex;gap:5px;}
-.tph-dot{width:8px;height:8px;border-radius:50%;}
-.tph-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tm);margin-left:auto;}
-.tech-pane-body{padding:16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.8;color:var(--ts);}
-.tp-comment{color:var(--tm);}
-.tp-key{color:#22D3EE;}
-.tp-val{color:#86EFAC;}
-.tp-str{color:#FCA5A5;}
-.tp-punct{color:var(--ts);}
-.tech-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex-shrink:0;padding:0 6px;}
-.tech-arrow-box{background:linear-gradient(135deg,rgba(161,0,255,.18),rgba(255,80,200,.1));border:1px solid rgba(199,123,255,.4);border-radius:12px;padding:12px 14px;text-align:center;min-width:82px;}
-.tech-arrow-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--brand);letter-spacing:.08em;text-transform:uppercase;}
-.tech-arrow-icon{font-size:24px;color:var(--brand);margin:5px 0;display:block;animation:aiGlow 3s ease-in-out infinite;}
 .tech-pillars{display:flex;gap:12px;margin-top:16px;}
 .tech-pillar{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;}
 .tech-pillar i{font-size:22px;color:var(--brand);display:block;margin-bottom:8px;}
@@ -298,9 +275,9 @@ section{
 .tech-stack-chip{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:var(--ts);}
 
 /* ── MAT DIAL + METRIC BARS ── */
-.mat-dial-wrap{display:flex;justify-content:center;margin-bottom:10px;}
-.mat-dial{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.mat-dial-inner{width:50px;height:50px;border-radius:50%;background:var(--s2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;}
+.mat-dial-wrap{display:flex;justify-content:center;margin-bottom:7px;}
+.mat-dial{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.mat-dial-inner{width:46px;height:46px;border-radius:50%;background:var(--s2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;}
 .mat-dial-pct{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:var(--tp);line-height:1.1;}
 .mat-dial-sub{font-family:'JetBrains Mono',monospace;font-size:6.5px;color:var(--tm);letter-spacing:.04em;text-transform:uppercase;}
 .mat-metrics{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
@@ -313,7 +290,7 @@ section{
 
 /* ── CTX FLOW (TECH SLIDE) ── */
 .ctx-outer{display:flex;gap:0;margin-top:28px;align-items:stretch;}
-.ctx-sources{display:flex;flex-direction:column;gap:8px;flex-shrink:0;width:195px;}
+.ctx-sources{display:flex;flex-direction:column;gap:8px;flex-shrink:0;width:195px;min-height:260px;}
 .ctx-src{background:var(--s1);border-radius:10px;padding:11px 12px;border:1px solid var(--border);border-left-width:3px;display:flex;flex-direction:column;gap:2px;flex:1;}
 .ctx-src i{font-size:16px;margin-bottom:2px;display:block;}
 .ctx-src-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--tm);letter-spacing:.1em;text-transform:uppercase;}
@@ -362,9 +339,6 @@ section{
   .trans-panel{flex:1 1 100%;}
   .tools-row{flex-wrap:wrap;}
   .tool-block{flex:1 1 45%;}
-  .journey-row{flex-wrap:wrap;}
-  .jstep{flex:1 1 100%;}
-  .jarrow{transform:rotate(90deg);width:100%;padding:8px 0;}
   .trust-row{grid-template-columns:1fr;}
   .mock-row,.inv-row{flex-wrap:wrap;}
   .mock-card,.inv-card{flex:1 1 100%;}
@@ -374,9 +348,6 @@ section{
   .mat-levels{flex-wrap:wrap;}
   .mat-col{flex:1 1 45%;}
   .mat-spine{display:none;}
-  .tech-split{flex-wrap:wrap;}
-  .tech-pane,.tech-center{flex:1 1 100%;}
-  .tech-center{flex-direction:row;padding:8px 0;}
   .tech-pillars{flex-wrap:wrap;}
   .tech-pillar{flex:1 1 100%;}
   .phase-strip{flex-wrap:wrap;}
@@ -407,7 +378,7 @@ section{
   <div class="dots" id="dots"></div>
   <div class="nav-right">
     <button class="nav-btn" onclick="goTo(current-1)" aria-label="Previous"><i class="ti ti-chevron-left"></i></button>
-    <span class="counter" id="counter">1 / 10</span>
+    <span class="counter" id="counter">1 / 9</span>
     <button class="nav-btn" onclick="goTo(current+1)" aria-label="Next"><i class="ti ti-chevron-right"></i></button>
   </div>
 </div>
@@ -422,11 +393,11 @@ section{
     </h1>
     <p class="hero-sub reveal" style="transition-delay:1000ms">For the first time, your risk function can move faster than the risk.</p>
     <div class="hero-pills">
-      <span class="hero-pill reveal" style="transition-delay:1400ms">Proactive risk intelligence</span>
-      <span class="hero-pill reveal" style="transition-delay:1600ms">AI-assisted processes</span>
-      <span class="hero-pill reveal" style="transition-delay:1800ms">Connected across all 8 NFR domains</span>
+      <span class="hero-pill reveal" style="transition-delay:700ms">Proactive risk intelligence</span>
+      <span class="hero-pill reveal" style="transition-delay:900ms">AI-assisted processes</span>
+      <span class="hero-pill reveal" style="transition-delay:1100ms">Connected across all 8 NFR domains</span>
     </div>
-    <div class="scroll-hint reveal" style="transition-delay:2200ms">→ arrow keys</div>
+    <div class="scroll-hint reveal" style="transition-delay:1400ms">↓ / → arrow keys</div>
   </div>
 </section>
 
@@ -583,7 +554,7 @@ section{
       </div>
 
       <div class="mat-zone reveal" style="transition-delay:960ms">
-        <div class="mat-zone-band mat-zone-legacy" style="flex:3">← Foundational to Smart Processing — where most banks operate today</div>
+        <div class="mat-zone-band mat-zone-legacy" style="flex:3">← Static Reporting to Automated Workflows — where most banks operate today</div>
         <div class="mat-zone-band mat-zone-ai" style="flex:2">AI-native zone — where we take you →</div>
       </div>
     </div>
@@ -896,27 +867,27 @@ section{
         <div class="mock-body">
           <div class="reg-timeline-item">
             <div class="reg-dot" style="background:#EF4444"></div>
-            <div style="flex:1"><div class="reg-event-name">DORA TLPT deadline — significant institutions</div><div class="reg-date">Oct 2025</div></div>
+            <div style="flex:1"><div class="reg-event-name">DORA TLPT — Threat-Led Penetration Testing</div><div class="reg-date">Jan 2027</div></div>
             <span class="reg-badge" style="color:#EF4444;background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.4)">ACTION</span>
           </div>
           <div class="reg-timeline-item">
             <div class="reg-dot" style="background:#F59E0B"></div>
-            <div style="flex:1"><div class="reg-event-name">EBA ICT risk reporting — Q3 submission</div><div class="reg-date">Aug 2025</div></div>
+            <div style="flex:1"><div class="reg-event-name">EBA ICT risk reporting — Q4 submission</div><div class="reg-date">Oct 2026</div></div>
             <span class="reg-badge" style="color:#F59E0B;background:rgba(245,158,11,.2);border:1px solid rgba(245,158,11,.4)">REVIEW</span>
           </div>
           <div class="reg-timeline-item">
             <div class="reg-dot" style="background:#A100FF"></div>
-            <div style="flex:1"><div class="reg-event-name">EU AI Act — high-risk AI conformity</div><div class="reg-date">Aug 2026</div></div>
+            <div style="flex:1"><div class="reg-event-name">EU AI Act — high-risk AI system conformity</div><div class="reg-date">Aug 2026</div></div>
             <span class="reg-badge" style="color:var(--brand);background:rgba(161,0,255,.2);border:1px solid rgba(161,0,255,.4)">IN PROGRESS</span>
           </div>
           <div class="reg-timeline-item">
             <div class="reg-dot" style="background:#10B981"></div>
-            <div style="flex:1"><div class="reg-event-name">MaRisk annual review cycle</div><div class="reg-date">Dec 2025</div></div>
+            <div style="flex:1"><div class="reg-event-name">MaRisk annual review cycle</div><div class="reg-date">Dec 2026</div></div>
             <span class="reg-badge" style="color:#10B981;background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.4)">SCHEDULED</span>
           </div>
           <div class="reg-timeline-item">
             <div class="reg-dot" style="background:var(--tm)"></div>
-            <div style="flex:1"><div class="reg-event-name">Basel IV ILM recalibration</div><div class="reg-date">Jan 2026</div></div>
+            <div style="flex:1"><div class="reg-event-name">Basel IV ILM recalibration</div><div class="reg-date">Jun 2027</div></div>
             <span class="reg-badge" style="color:var(--tm);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15)">MONITORED</span>
           </div>
         </div>
@@ -926,10 +897,33 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 7 · THE INVESTMENT ── -->
+<!-- ── SLIDE 7 · THE TEAM ── -->
 <section data-slide="6" style="background:var(--surface)">
   <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">06 — HOW TO GET STARTED</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">06 — THE TEAM</div>
+    <h2 class="slide-h reveal" style="transition-delay:150ms">
+      The practitioners who built it<br>
+      <span class="grad">will deliver yours.</span>
+    </h2>
+    <p class="slide-sub reveal" style="transition-delay:280ms">You work directly with the people who wrote the code and designed the process maps — not an account team.</p>
+    <div class="team-row" id="teamRow"></div>
+    <div class="trust-row">
+      <div class="trust solid reveal" style="transition-delay:600ms">
+        <i class="ti ti-world"></i>
+        <p>Our DACH practice sits within Accenture's global Financial Services Risk capability — 40+ jurisdictions, enterprise delivery, full technology ecosystem.</p>
+      </div>
+      <div class="trust dashed reveal" style="transition-delay:720ms">
+        <i class="ti ti-award"></i>
+        <p>References and case studies available under NDA. Delivered across Tier 1 and Tier 2 banks in Germany, Austria, Switzerland and the EU.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 8 · HOW TO GET STARTED ── -->
+<section data-slide="7" style="background:var(--surface)">
+  <div class="inner">
+    <div class="sec-tag reveal" style="transition-delay:0ms">07 — HOW TO GET STARTED</div>
     <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px);margin-bottom:8px">Three ways in.<br><span class="grad">One direction.</span></h2>
     <p class="slide-sub reveal" style="transition-delay:280ms;max-width:640px;font-size:15px">Every engagement starts with a clear scope and an honest cost. Choose your entry point — we meet you where you are.</p>
 
@@ -997,72 +991,12 @@ section{
   </div>
 </section>
 
-<!-- ── SLIDE 8 · YOUR JOURNEY ── -->
-<section data-slide="7" style="background:var(--canvas)">
-  <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">07 — HOW WE GET THERE</div>
-    <h2 class="slide-h reveal" style="transition-delay:150ms;font-size:clamp(30px,4vw,44px)">
-      We build this for your bank.<br>
-      <span class="grad">Not a template. Your configuration.</span>
-    </h2>
-    <p class="slide-sub reveal" style="transition-delay:280ms;max-width:680px;font-size:15px">Every bank starts in a different place. We use our tools as a structured starting point — then adapt every layer to your regulatory scope, team structure and target state.</p>
-    <div class="journey-row">
-      <div class="jstep reveal-left" style="transition-delay:450ms">
-        <div class="jstep-accent" style="background:#0891B2"></div>
-        <div class="jstep-dur" style="color:#22D3EE">2 – 4 WEEKS</div>
-        <div class="jstep-h">Understand</div>
-        <p class="jstep-body">We open the ICS Blueprint and Process Intelligence live with your team. We map your current state against DORA, EU AI Act, MaRisk and Basel IV — in the room, together.</p>
-        <div class="jstep-tools">Opens in this conversation: ICS Blueprint · Process Intelligence</div>
-      </div>
-      <div class="jarrow reveal" style="transition-delay:650ms">→</div>
-      <div class="jstep reveal" style="transition-delay:650ms">
-        <div class="jstep-accent" style="background:#A100FF"></div>
-        <div class="jstep-dur" style="color:var(--brand)">8 – 28 WEEKS</div>
-        <div class="jstep-h">Configure</div>
-        <p class="jstep-body">We take one capability from our library and configure it for your bank — your regulatory profile, your org structure, your data. You see it running on real data before sign-off.</p>
-        <div class="jstep-tools">Your chosen capability, configured to your environment</div>
-      </div>
-      <div class="jarrow reveal" style="transition-delay:850ms">→</div>
-      <div class="jstep reveal-right" style="transition-delay:850ms">
-        <div class="jstep-accent" style="background:#FF50C8"></div>
-        <div class="jstep-dur" style="color:#FF50C8">6 – 18 MONTHS</div>
-        <div class="jstep-h">Scale</div>
-        <p class="jstep-body">The three-phase transformation from slide 4 reaches its target. All 8 domains connected, AI layer fully operational, your team owns every layer.</p> Your team owns every layer. We're on call for enhancements and regulatory updates.</p>
-        <div class="jstep-tools">Full toolkit · Production infrastructure · Your team trained</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── SLIDE 9 · THE TEAM ── -->
-<section data-slide="8" style="background:var(--surface)">
-  <div class="inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">08 — The Team</div>
-    <h2 class="slide-h reveal" style="transition-delay:150ms">
-      The practitioners who built it<br>
-      <span class="grad">will deliver yours.</span>
-    </h2>
-    <p class="slide-sub reveal" style="transition-delay:280ms">You work directly with the people who wrote the code and designed the process maps — not an account team.</p>
-    <div class="team-row" id="teamRow"></div>
-    <div class="trust-row">
-      <div class="trust solid reveal" style="transition-delay:600ms">
-        <i class="ti ti-world"></i>
-        <p>Our DACH practice sits within Accenture's global Financial Services Risk capability — 40+ jurisdictions, enterprise delivery, full technology ecosystem.</p>
-      </div>
-      <div class="trust dashed reveal" style="transition-delay:720ms">
-        <i class="ti ti-award"></i>
-        <p>References and case studies available under NDA. Delivered across Tier 1 and Tier 2 banks in Germany, Austria, Switzerland and the EU.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── SLIDE 10 · START ── -->
-<section id="s9" data-slide="9">
+<!-- ── SLIDE 9 · NEXT STEPS ── -->
+<section id="s9" data-slide="8">
   <div class="inner start-inner">
-    <div class="sec-tag reveal" style="transition-delay:0ms">09 — Next Steps</div>
+    <div class="sec-tag reveal" style="transition-delay:0ms">08 — NEXT STEPS</div>
     <h1 class="start-h1 reveal" style="transition-delay:200ms">
-      See it working.<br><span class="grad">In 30 minutes.</span>
+      See it working.<br><span class="grad">In your bank.</span>
     </h1>
     <p class="start-sub reveal" style="transition-delay:500ms">A 2-week assessment. Your current state mapped against DORA, EU AI Act, MaRisk and Basel IV. A roadmap and business case — regardless of what comes next.</p>
     <div class="reveal-scale" style="transition-delay:700ms">
@@ -1071,7 +1005,7 @@ section{
     <div class="start-opts reveal" style="transition-delay:900ms">
       <a class="sec-opt" href="https://tzijlstra-acn.github.io/NFRAIAssets/" target="_blank" rel="noopener"><i class="ti ti-external-link"></i>Explore tools live</a>
       <a class="sec-opt" href="mailto:thomas.zijlstra@accenture.com?subject=NFR%20AI%20—%20Question"><i class="ti ti-help-circle"></i>Ask a question</a>
-      <div class="sec-opt" onclick="copyShare()"><i class="ti ti-copy"></i><span id="shareTxt">Share with your team</span></div>
+      <button class="sec-opt" onclick="copyShare()"><i class="ti ti-copy"></i><span id="shareTxt">Share with your team</span></button>
     </div>
     <div class="foot-note reveal" style="transition-delay:1100ms">All assets are access-code protected. · Accenture NFR AI Risk Practice · <span class="yr">2026</span></div>
     <a class="hub-link reveal" style="transition-delay:1200ms" href="https://tzijlstra-acn.github.io/NFRAIAssets/" target="_blank" rel="noopener">NFR AI Asset Library →</a>
@@ -1094,15 +1028,14 @@ var tr=document.getElementById('teamRow');
 experts.forEach(function(e,idx){
   var ini=e.n.split(' ').map(function(x){return x[0];}).join('');
   var tagsHtml=e.s.split(' · ').map(function(t){return '<span class="etag">'+t+'</span>';}).join('');
-  var card=document.createElement('a');
+  var card=document.createElement('div');
   card.className='expert reveal-scale';
   card.style.transitionDelay=(idx*80)+'ms';
-  card.href='mailto:'+e.m+'@accenture.com';
   card.innerHTML=
-    '<img class="expert-photo" src="'+base+e.f+'.jpg" alt="'+e.n+'" onerror="this.outerHTML=\'<div class=&quot;expert-ph-fallback&quot;>'+ini+'</div>\'">'+
+    '<img class="expert-photo" loading="lazy" src="'+base+e.f+'.jpg" alt="'+e.n+'" onerror="this.outerHTML=\'<div class=&quot;expert-ph-fallback&quot;>'+ini+'</div>\'">'+
     '<div class="expert-name">'+e.n+'</div>'+
     '<div class="expert-tags">'+tagsHtml+'</div>'+
-    '<div class="expert-mail">'+e.m+'@accenture.com</div>';
+    '<a class="expert-mail" href="mailto:'+e.m+'@accenture.com">'+e.m+'@accenture.com</a>';
   tr.appendChild(card);
 });
 
@@ -1139,13 +1072,16 @@ function updateNav(){
 function goTo(n){
   n=Math.max(0,Math.min(total-1,n));
   current=n;
-  sections[n].scrollIntoView({behavior:'smooth'});
+  sections[n].scrollIntoView();
   updateNav();
 }
 document.addEventListener('keydown',function(e){
   if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();goTo(current+1);}
   if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();goTo(current-1);}
 });
+var _tsy=0;
+document.addEventListener('touchstart',function(e){_tsy=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchend',function(e){var dy=e.changedTouches[0].clientY-_tsy;if(Math.abs(dy)>50){goTo(dy<0?current+1:current-1);}},{passive:true});
 var obs=new IntersectionObserver(function(entries){
   entries.forEach(function(e){
     if(e.isIntersecting&&e.intersectionRatio>0.5){
@@ -1185,6 +1121,8 @@ document.querySelectorAll('.yr').forEach(function(e){e.textContent=new Date().ge
   function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;build();}
   setInterval(function(){if(!pts||sparks.length>14)return;var a=Math.floor(Math.random()*pts.length),b=Math.floor(Math.random()*pts.length);if(a===b)return;var dx=pts[a].x-pts[b].x,dy=pts[a].y-pts[b].y;if(Math.sqrt(dx*dx+dy*dy)<130)sparks.push({a:a,b:b,t:0});},330);
   setInterval(function(){if(!pts||rings.length>3)return;var hubs=pts.filter(function(p){return p.hub;});if(!hubs.length)return;var h=hubs[Math.floor(Math.random()*hubs.length)];rings.push({x:h.x,y:h.y,r:h.r+2,alpha:.55,hue:h.hue});},2700);
+  var _rafId;
+  document.addEventListener('visibilitychange',function(){if(document.hidden){cancelAnimationFrame(_rafId);}else{_rafId=requestAnimationFrame(draw);}});
   function draw(ts){
     if(!W)return;
     ctx.clearRect(0,0,W,H);
@@ -1196,11 +1134,11 @@ document.querySelectorAll('.yr').forEach(function(e){e.textContent=new Date().ge
     sparks=sparks.filter(function(s){s.t+=.007;if(s.t>=1)return false;var a=pts[s.a],b=pts[s.b];if(!a||!b)return false;var edx=b.x-a.x,edy=b.y-a.y;if(Math.sqrt(edx*edx+edy*edy)>182)return false;var sx=a.x+edx*s.t,sy=a.y+edy*s.t,g=ctx.createRadialGradient(sx,sy,0,sx,sy,8);g.addColorStop(0,'rgba(255,80,200,1)');g.addColorStop(.4,'rgba(255,80,200,.3)');g.addColorStop(1,'rgba(255,80,200,0)');ctx.beginPath();ctx.arc(sx,sy,8,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();return true;});
     var t=ts*.001;
     pts.forEach(function(p){var pulse=Math.sin(t+p.ph)*.5+.5;if(p.hub){var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*10);g.addColorStop(0,'hsla('+p.hue+',100%,68%,'+(0.3+pulse*.2)+')');g.addColorStop(1,'hsla('+p.hue+',100%,68%,0)');ctx.beginPath();ctx.arc(p.x,p.y,p.r*10,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();}ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.hub?'hsla('+p.hue+',100%,80%,'+(0.85+pulse*.15)+')':'rgba(210,175,255,'+(0.2+pulse*.14)+')';ctx.fill();});
-    requestAnimationFrame(draw);
+    _rafId=requestAnimationFrame(draw);
   }
   window.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;});
   window.addEventListener('resize',resize);
-  resize();requestAnimationFrame(draw);
+  resize();_rafId=requestAnimationFrame(draw);
 }());
 </script>
 </body>
