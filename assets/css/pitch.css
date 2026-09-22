@@ -810,6 +810,23 @@ body[data-mode="explain"] .explain-only{display:block;}
 .ras-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;}
 .ras-val{font-size:14px;font-weight:600;color:var(--accent);min-width:32px;}
 
+/* ── PHASE 8: ECO COST STATIONS ── */
+.eco-stations{background:var(--surface-2);border:1px solid var(--border-1);border-radius:10px;padding:12px 14px;}
+.eco-stations-hd{display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;flex-wrap:wrap;gap:4px;}
+.eco-station-rows{display:flex;flex-direction:column;gap:8px;}
+.eco-station{background:var(--surface-1);border:1px solid var(--border-1);border-radius:7px;padding:8px 10px;}
+.eco-st-hd{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.eco-st-name{font-size:14px;font-weight:600;color:var(--text-1);flex:1;}
+.eco-st-val{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent);font-weight:700;}
+.eco-st-pct{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);min-width:30px;text-align:right;}
+.eco-st-bar-wrap{height:4px;background:var(--border-1);border-radius:2px;margin-bottom:6px;}
+.eco-st-bar{height:100%;border-radius:2px;transition:width .3s ease;}
+.eco-st-ctrl{display:flex;align-items:center;gap:7px;}
+.eco-st-ctrl-lbl{font-size:14px;color:var(--text-3);white-space:nowrap;}
+.eco-st-input{width:72px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:5px;padding:2px 6px;font-size:14px;color:var(--text-1);font-family:'JetBrains Mono',monospace;}
+.eco-st-total{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);padding-top:8px;border-top:1px solid var(--border-1);}
+.eco-st-total strong{color:var(--accent);}
+
 /* ── PHASE 7: ARCH SCALE MODES + PROOF EVIDENCE CONSOLE ── */
 .arch-scale-toggle{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;}
 .arch-scale-btn{padding:6px 14px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .14s,color .14s,border-color .14s;display:flex;flex-direction:column;align-items:center;gap:2px;}

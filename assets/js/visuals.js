@@ -1214,9 +1214,23 @@ function renderAccentureEdge(sec){
 
 function openEdgeDrawer(edgeId){
   var edge=ACCENTURE_EDGE.find(function(e){return e.id===edgeId;});if(!edge)return;
+  // Cost impact mapping: which stations does this edge primarily reduce?
+  var COST_MAP={
+    'ai-asset-reuse':'inference compute, fixed infra',
+    'risk-workforce':'human review',
+    'control-integration':'exception handling, human review',
+    'domain-specialisation':'inference compute',
+    'data-acceleration':'retrieval and embedding',
+    'model-risk-playbook':'exception handling'
+  };
+  var costImpact=COST_MAP[edgeId]||'Discuss with engagement lead';
+  var costHtml='<div class="drawer-section"><div class="dr-h">Cost stations primarily impacted</div>'
+    +'<div class="dr-item"><i class="ti ti-arrow-right dr-icon"></i>'+costImpact+'</div>'
+    +'<div class="dr-note" style="margin-top:8px">Impact magnitude and priority depend on client architecture and volume. Quantify during Diagnose phase with client data.</div></div>';
   var tabs=[
     {id:'mechanism',label:'Mechanism',html:'<div class="drawer-section"><div class="dr-h">What Accenture does differently</div><div class="dr-body">'+edge.mechanism+'</div></div>'},
     {id:'effect',label:'Client effect',html:'<div class="drawer-section"><div class="dr-q">'+edge.clientEffect+'</div><div class="dr-h">Evidence metrics</div>'+(edge.evidenceMetrics||[]).map(function(m){return '<div class="dr-item"><i class="ti ti-chart-bar dr-icon"></i>'+m+'</div>';}).join('')+'</div>'},
+    {id:'cost',label:'Cost impact',html:costHtml},
     {id:'deps',label:'Client dependency',html:'<div class="drawer-section"><div class="dr-h">What should be available or decided</div><div class="dr-body">'+edge.clientDependency+'</div><div class="dr-note">These are client-side prerequisites. Accenture can help assess and resolve them but cannot substitute for client authority and decisions.</div></div>'}
   ];
   openDrawer(edge.name,tabs,'mechanism');
@@ -1783,6 +1797,53 @@ function openProcessNodeDrawer(tpl,node){
   openDrawer(tpl.name+': '+node.label,tabs,'step');
 }
 
+// ── UNIT ECONOMICS STATIONS (Screen 14) -- Phase 8 ──
+function renderEcoStations(){
+  var area=document.getElementById('ecoStationArea');if(!area)return;
+  var state=(typeof store!=='undefined')?store.getState():null;
+  var eco=(state&&typeof selectUnitEconomics!=='undefined')?selectUnitEconomics(state):null;
+  if(!eco){area.innerHTML='';return;}
+  var fx=function(n){
+    if(n===undefined||n===null||isNaN(n))return 'n/a';
+    if(n<0.01)return '<$0.01';
+    return '$'+n.toFixed(3);
+  };
+  var STATIONS=[
+    {id:'model',label:'Inference compute',color:'#A100FF',icon:'ti-cpu',val:eco.modelCost,
+     ctrl:{label:'Input tokens',key:'inputTokens',val:state.economics.inputTokens,min:1,max:200,step:5}},
+    {id:'retrieval',label:'Retrieval and embedding',color:'#0E7490',icon:'ti-database',val:eco.retrievalCost,
+     ctrl:{label:'Retrieval calls',key:'retrievalCalls',val:state.economics.retrievalCalls,min:0,max:20,step:1}},
+    {id:'human',label:'Human review',color:'#B46A00',icon:'ti-users',val:eco.humanReviewCost,
+     ctrl:{label:'Review rate %',key:'reviewRate',val:Math.round((state.economics.reviewRate||0.3)*100),min:0,max:100,step:5,scale:0.01}},
+    {id:'exception',label:'Exception handling',color:'#0F8A62',icon:'ti-alert-triangle',val:eco.exceptionCost,
+     ctrl:{label:'Exception rate %',key:'exceptionRate',val:Math.round((state.economics.exceptionRate||0.05)*100),min:0,max:20,step:1,scale:0.01}},
+    {id:'fixed',label:'Fixed infra (per case)',color:'#6366F1',icon:'ti-tools',val:eco.allocatedFixed,
+     ctrl:{label:'Platform (per month)',key:'platformAllocation',val:state.economics.platformAllocation,min:500,max:20000,step:500}}
+  ];
+  var total=eco.costPerAttempt;
+  area.innerHTML='<div class="eco-stations">'
+    +'<div class="eco-stations-hd"><span>Cost station breakdown per case ('+(eco.currency||'CHF')+')</span>'
+    +'<span class="status-badge status-illustrative">ILLUSTRATIVE</span></div>'
+    +'<div class="eco-station-rows">'
+    +STATIONS.map(function(s){
+      var pct=total>0?Math.round((s.val/total)*100):0;
+      var ctrlVal=s.ctrl.val;
+      return '<div class="eco-station">'
+        +'<div class="eco-st-hd"><i class="ti '+s.icon+'" style="color:'+s.color+'"></i>'
+        +'<span class="eco-st-name">'+s.label+'</span>'
+        +'<span class="eco-st-val">'+fx(s.val)+'</span>'
+        +'<span class="eco-st-pct">'+pct+'%</span></div>'
+        +'<div class="eco-st-bar-wrap"><div class="eco-st-bar" style="width:'+pct+'%;background:'+s.color+'"></div></div>'
+        +'<div class="eco-st-ctrl"><label class="eco-st-ctrl-lbl">'+s.ctrl.label+'</label>'
+        +'<input type="number" class="eco-st-input" value="'+ctrlVal+'" min="'+s.ctrl.min+'" max="'+s.ctrl.max+'" step="'+s.ctrl.step+'"'
+        +' oninput="if(typeof store!==\'undefined\')store.dispatch({type:\'SET_ECONOMICS_PARAM\',payload:{key:\''+s.ctrl.key+'\',value:'+(s.ctrl.scale?'parseFloat(this.value)*'+s.ctrl.scale:'parseFloat(this.value)')+'}});renderEcoStations();">'
+        +'</div></div>';
+    }).join('')
+    +'</div>'
+    +'<div class="eco-st-total">Total per attempt: <strong>'+fx(total)+'</strong> | Cost per successful case: <strong>'+fx(eco.costPerSuccessful)+'</strong></div>'
+  +'</div>';
+}
+
 // ── ARCHITECTURE SCALE MODES (Screen 13) -- Phase 7 ──
 function renderArchScale(sec){
   var toggleEl=sec.querySelector('#archScaleModeToggle');if(!toggleEl)return;
@@ -1885,6 +1946,10 @@ document.addEventListener('nfr:statechange',function(e){
       rendered.delete(getSlideIndex('pressure-to-proof'));
       renderSection(ptpSec);
     }
+  }
+  // Eco stations: re-render on economics param changes
+  if(action.type==='SET_ECONOMICS_PARAM'){
+    if(typeof renderEcoStations==='function')renderEcoStations();
   }
   // Shortlist: re-render on weight changes, lens changes, capability or proof candidate changes
   if(action.type==='UPDATE_CANDIDATE_WEIGHT'||action.type==='SET_LENS'||action.type==='TOGGLE_CAPABILITY'||action.type==='SET_PROOF_CANDIDATE'){

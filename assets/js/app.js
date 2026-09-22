@@ -174,5 +174,5 @@ function formatEco(n){
 
 // Run initial calculation when run-economics screen is first visible
 document.addEventListener('DOMContentLoaded',function(){
-  setTimeout(calcEco,200);
+  setTimeout(function(){calcEco();if(typeof renderEcoStations==='function')renderEcoStations();},200);
 });
