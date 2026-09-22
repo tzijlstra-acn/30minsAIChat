@@ -64,7 +64,7 @@ function setupRouteMode(){
 function setRouteMode(mode){
   CLIENT_STATE.route=mode;
   document.querySelectorAll('.route-mode-btn').forEach(function(b){b.classList.toggle('active',b.dataset.route===mode);});
-  // Visual-only for now — filter can be applied to agenda
+  // Visual-only for now; filter can be applied to agenda
 }
 
 function goToIndex(i){
@@ -157,8 +157,8 @@ document.addEventListener('keydown',function(e){
 function copyTakeaway(){
   var fields=['ta-pressures','ta-arch','ta-caps','ta-proof','ta-usecase','ta-gaps','ta-decisions'];
   var labels=['Pressures','Archetype','Capabilities','Proof candidate','Proof use case','Maturity gaps','Open decisions'];
-  var lines=['NFR AI Executive Conversation — Session Summary',''];
-  fields.forEach(function(id,i){var e=document.getElementById(id);if(e)lines.push(labels[i]+': '+(e.textContent||'—'));});
+  var lines=['NFR AI Executive Conversation: Session Summary',''];
+  fields.forEach(function(id,i){var e=document.getElementById(id);if(e)lines.push(labels[i]+': '+(e.textContent||''));});
   if(navigator.clipboard){navigator.clipboard.writeText(lines.join('\n')).then(function(){showToast('Summary copied');});}
 }
 

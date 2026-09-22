@@ -88,7 +88,7 @@ function renderBlockDiagnose(b){
   return '<div class="drawer-section"><div class="dr-h">Diagnostic questions</div>'+(b.diagnosticQuestions||[]).map(function(q){return '<div class="dr-item"><i class="ti ti-question-mark dr-icon"></i>'+q+'</div>';}).join('')+'<div class="dr-h" style="margin-top:14px">Minimum evidence needed</div><div class="dr-body dr-muted">AI-assisted analysis available: Accenture can ingest and map existing policies, processes, controls, and inventory data to accelerate this evidence assembly.</div></div>';
 }
 function renderBlockTarget(b){
-  return '<div class="drawer-section"><div class="dr-h">Target-state principles</div>'+(b.targetPrinciples||[]).map(function(p){return '<div class="dr-item"><i class="ti ti-check dr-icon-good"></i>'+p+'</div>';}).join('')+'<div class="dr-h" style="margin-top:14px">Maturity to aim for</div><div class="dr-body dr-muted">Appropriate target maturity depends on use-case risk tier, data quality, and control environment — not the highest level by default.</div></div>';
+  return '<div class="drawer-section"><div class="dr-h">Target-state principles</div>'+(b.targetPrinciples||[]).map(function(p){return '<div class="dr-item"><i class="ti ti-check dr-icon-good"></i>'+p+'</div>';}).join('')+'<div class="dr-h" style="margin-top:14px">Maturity to aim for</div><div class="dr-body dr-muted">Appropriate target maturity depends on use-case risk tier, data quality, and control environment. Not the highest level by default.</div></div>';
 }
 function renderBlockChange(b){
   if(!b.interventions)return '<div class="drawer-section"><div class="dr-body dr-muted">Interventions to be scoped with client team.</div></div>';
@@ -110,11 +110,11 @@ function openCapabilityDrawer(capId){
   var blocks=getBlocksForCapabilities([capId]);
   var tabs=[
     {id:'overview',label:'Overview',html:'<div class="drawer-section"><div class="dr-q">'+cap.outcome+'</div><div class="dr-h">Typical processes and decisions</div><div class="dr-body">'+cap.process+'</div></div>'},
-    {id:'opps',label:'AI opportunities',html:'<div class="drawer-section"><div class="dr-h">Opportunity patterns</div>'+(opps.length?opps.map(function(o){return '<div class="dr-item"><span class="status-badge status-'+o.status+'">'+statusLabel(o.status)+'</span> '+o.name+'</div>';}).join(''):'<div class="dr-body dr-muted">No mapped opportunities yet — scope in working session.</div>')+'</div>'},
-    {id:'ucs',label:'Use cases',html:'<div class="drawer-section"><div class="dr-h">Accenture use cases</div>'+(ucs.length?ucs.map(function(u){return '<div class="dr-item"><span class="status-badge status-'+u.status+'">'+statusLabel(u.status)+'</span> '+u.name+'</div>';}).join(''):'<div class="dr-body dr-muted">No direct use-case mapping — use for discovery in working session.</div>')+'</div>'},
+    {id:'opps',label:'AI opportunities',html:'<div class="drawer-section"><div class="dr-h">Opportunity patterns</div>'+(opps.length?opps.map(function(o){return '<div class="dr-item"><span class="status-badge status-'+o.status+'">'+statusLabel(o.status)+'</span> '+o.name+'</div>';}).join(''):'<div class="dr-body dr-muted">No mapped opportunities yet. Scope in working session.</div>')+'</div>'},
+    {id:'ucs',label:'Use cases',html:'<div class="drawer-section"><div class="dr-h">Accenture use cases</div>'+(ucs.length?ucs.map(function(u){return '<div class="dr-item"><span class="status-badge status-'+u.status+'">'+statusLabel(u.status)+'</span> '+u.name+'</div>';}).join(''):'<div class="dr-body dr-muted">No direct use-case mapping. Use for discovery in working session.</div>')+'</div>'},
     {id:'blocks',label:'Transformation blocks',html:'<div class="drawer-section"><div class="dr-h">Required transformation blocks</div>'+(blocks.length?blocks.map(function(b){return '<div class="dr-item"><span style="color:'+b.color+';font-size:12px">●</span> '+b.name+' <button class="inline-link" onclick="openBlockDrawer(\''+b.id+'\')">→ Details</button></div>';}).join(''):'<div class="dr-body dr-muted">Block mapping to be confirmed in working session.</div>')+'</div>'}
   ];
-  openDrawer((cat?cat.name+' — ':'')+cap.name,tabs,'overview');
+  openDrawer((cat?cat.name+': ':'')+cap.name,tabs,'overview');
 }
 
 // ── STATUS LABELS ──

@@ -5,30 +5,122 @@
 function renderTransformationSystem(sec){
   var grid=sec.querySelector('#trSysGrid');if(!grid)return;
   var blocks=TRANSFORMATION_BLOCKS;
-  // Position map: each block maps to a CSS class for grid placement
   var posMap={top:'trsys-top','middle-left':'trsys-ml','middle-right':'trsys-mr','foundation-left':'trsys-fl','foundation-right':'trsys-fr','rail-left':'trsys-rl','rail-right':'trsys-rr',bridge:'trsys-bridge'};
-  grid.innerHTML=blocks.map(function(b){
-    var cls='trsys-block '+( posMap[b.position]||'' );
+  grid.innerHTML=blocks.map(function(b,i){
+    var cls='trsys-block '+(posMap[b.position]||'');
     var isBridge=b.position==='bridge';
-    return '<button class="'+cls+'" data-block-id="'+b.id+'" onclick="openBlockDrawer(\''+b.id+'\')" style="--block-color:'+b.color+'" aria-label="'+b.name+': '+b.executiveQuestion+'">'+(isBridge?'<span class="trsys-bridge-label">'+b.name+'</span>':'<div class="trsys-block-icon"><i class="ti ti-'+b.icon+'"></i></div><div class="trsys-block-name">'+b.name+'</div><div class="trsys-block-q">'+b.executiveQuestion+'</div>')+'</button>';
+    return '<button class="'+cls+'" data-block-id="'+b.id+'" onclick="openBlockDrawer(\''+b.id+'\')" style="--block-color:'+b.color+'" aria-label="'+b.name+'">'+(isBridge
+      ?'<span class="trsys-bridge-label">'+b.name+'</span>'
+      :'<div class="trsys-block-icon" style="color:'+b.color+'"><i class="ti ti-'+b.icon+'"></i></div>'+
+        '<div class="trsys-block-name">'+b.name+'</div>'+
+        '<div class="trsys-block-q">'+b.executiveQuestion+'</div>'+
+        '<div class="trsys-block-bar" style="background:'+b.color+'"></div>'
+    )+'</button>';
   }).join('');
+  // Stagger entrance
+  var btns=grid.querySelectorAll('.trsys-block');
+  btns.forEach(function(btn,i){
+    btn.style.opacity='0';
+    btn.style.transform='scale(.92) translateY(8px)';
+    setTimeout(function(){
+      btn.style.transition='opacity .35s ease, transform .35s ease, border-color .2s';
+      btn.style.opacity='1';
+      btn.style.transform='';
+    },40+i*60);
+  });
 }
 
 // ── AI LANDSCAPE GRID (Screen 2) ──
 function renderAILandscape(sec){
   var container=sec.querySelector('#aiLandscapeGrid');if(!container)return;
   var techs=[
-    {id:'rules',name:'Rules & workflow',icon:'git-branch',desc:'Deterministic routing, thresholds, conditional logic',tasks:'Approval flows, limit checks, routing',human:'Design rules and handle exceptions',control:'Are rules complete, current, and tested?',cost:'Lowest unit cost — no model calls',examples:['regulatory-compliance','control-monitoring']},
-    {id:'rpa',name:'RPA & orchestration',icon:'refresh',desc:'Repeatable cross-system execution, data movement',tasks:'Reconciliation, data extraction, report generation',human:'Monitor failures and edge cases',control:'What happens when the process breaks?',cost:'Low — compute only, no inference',examples:['regulatory-reporting','data-quality']},
-    {id:'ml',name:'Analytics & ML',icon:'chart-line',desc:'Prediction, scoring, anomaly detection',tasks:'Credit scoring, fraud detection, KRI monitoring',human:'Review model output; approve consequential actions',control:'Is the model validated and monitored for drift?',cost:'Medium — inference scales with volume',examples:['consumer-credit','aml']},
-    {id:'genai',name:'GenAI copilots',icon:'message-bolt',desc:'Search, summarise, draft, explain',tasks:'Report drafting, obligation mapping, document analysis',human:'Review every output before use or distribution',control:'Is output reviewed before leaving the team?',cost:'Medium-high — input/output tokens per call',examples:['regulatory-change-mgmt','board-reporting']},
-    {id:'agents',name:'Agents',icon:'robot',desc:'Plan, coordinate, and act across tools and systems',tasks:'Multi-step assessments, end-to-end workflows',human:'Define scope; approve consequential actions',control:'What can the agent do without approval?',cost:'Highest — orchestration overhead plus model calls',examples:['rcsa','operational-risk']}
+    {id:'rules',name:'Rules',full:'Rules & workflow',icon:'git-branch',pct:85,color:'#0F8A62',
+     desc:'Deterministic routing, thresholds, conditional logic',
+     human:'Design rules; handle exceptions',
+     control:'Are rules complete, current, and tested?',
+     cost:'Lowest unit cost. No model calls.'},
+    {id:'rpa',name:'RPA',full:'RPA & orchestration',icon:'refresh',pct:80,color:'#0E7490',
+     desc:'Repeatable cross-system execution, data movement',
+     human:'Monitor failures and edge cases',
+     control:'What happens when the process breaks?',
+     cost:'Low. Compute only, no inference.'},
+    {id:'ml',name:'Analytics & ML',full:'Analytics & ML',icon:'chart-line',pct:65,color:'#B46A00',
+     desc:'Prediction, scoring, anomaly detection',
+     human:'Review model output; approve consequential actions',
+     control:'Is the model validated and monitored for drift?',
+     cost:'Medium. Inference scales with volume.'},
+    {id:'genai',name:'GenAI',full:'GenAI copilots',icon:'message-bolt',pct:55,color:'#A100FF',
+     desc:'Search, summarise, draft, explain',
+     human:'Review every output before use or distribution',
+     control:'Is output reviewed before leaving the team?',
+     cost:'Medium-high. Input/output tokens per call.'},
+    {id:'agents',name:'Agents',full:'Agents',icon:'robot',pct:30,color:'#FF50C8',
+     desc:'Plan, coordinate, and act across tools and systems',
+     human:'Define scope; approve consequential actions',
+     control:'What can the agent do without approval?',
+     cost:'Highest. Orchestration overhead plus model calls.'}
   ];
-  var maturity=MATURITY_LEVELS;
-  // Render tech bands
-  container.innerHTML='<div class="ail-tech-bands">'+techs.map(function(t,i){
-    return '<button class="ail-band'+(i===0?' active':'')+'\" data-tech="'+t.id+'" onclick="focusAIBand(this,\''+t.id+'\')"><div class="ail-band-icon"><i class="ti ti-'+t.icon+'"></i></div><div class="ail-band-name">'+t.name+'</div><div class="ail-band-detail"><div class="ail-label">Best for</div><div class="ail-val">'+t.desc+'</div><div class="ail-label">Human role</div><div class="ail-val">'+t.human+'</div><div class="ail-label">Control question</div><div class="ail-val">'+t.control+'</div><div class="ail-label">Unit cost</div><div class="ail-val">'+t.cost+'</div></div></button>';
-  }).join('')+'</div><div class="ail-foundation"><span class="ail-foundation-label">Shared foundations</span><span class="ail-foundation-item">Trusted data & context</span><span class="ail-foundation-item">Identity & access</span><span class="ail-foundation-item">Human accountability</span><span class="ail-foundation-item">Testing & monitoring</span><span class="ail-foundation-item">Logging & evidence</span><span class="ail-foundation-item">Cost governance</span></div><div class="ail-principle">"Use the least complex technology that can own the work safely and economically."</div>';
+  var cats=RISK_CATEGORIES;
+  // heatmap data: [catIdx, techIdx, value]
+  var heatData=[
+    [0,0,4],[0,1,2],[0,2,5],[0,3,6],[0,4,3],
+    [1,0,7],[1,1,4],[1,2,3],[1,3,5],[1,4,1],
+    [2,0,3],[2,1,2],[2,2,8],[2,3,4],[2,4,2],
+    [3,0,5],[3,1,3],[3,2,4],[3,3,3],[3,4,1],
+    [4,0,6],[4,1,5],[4,2,4],[4,3,6],[4,4,2],
+    [5,0,4],[5,1,3],[5,2,3],[5,3,4],[5,4,2]
+  ];
+  var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  var bg=isDark?'#08081A':'#FCFBF9';
+  var textCol=isDark?'#EDE8F7':'#15181C';
+  var gridCol=isDark?'rgba(161,0,255,.14)':'rgba(0,0,0,.07)';
+
+  // Build HTML
+  container.innerHTML=
+    '<div id="ailHeatmap" style="width:100%;height:210px;margin-bottom:14px"></div>'+
+    '<div class="ail-tech-bands">'+
+    techs.map(function(t,i){
+      return '<button class="ail-band'+(i===0?' active':'')+'\" data-tech="'+t.id+'" onclick="focusAIBand(this,\''+t.id+'\')">'+
+        '<div class="ail-band-icon"><i class="ti ti-'+t.icon+'" style="color:'+t.color+'"></i></div>'+
+        '<div class="ail-band-name">'+t.full+'</div>'+
+        '<div class="ail-ready-bar-wrap"><div class="ail-ready-bar" style="width:'+t.pct+'%;background:'+t.color+'"></div><span class="ail-ready-pct" style="color:'+t.color+'">'+t.pct+'%</span></div>'+
+        '<div class="ail-band-detail">'+
+          '<div class="ail-label">What it does</div><div class="ail-val">'+t.desc+'</div>'+
+          '<div class="ail-label">Human role</div><div class="ail-val">'+t.human+'</div>'+
+          '<div class="ail-label">Control question</div><div class="ail-val">'+t.control+'</div>'+
+          '<div class="ail-label">Run cost profile</div><div class="ail-val">'+t.cost+'</div>'+
+        '</div>'+
+      '</button>';
+    }).join('')+
+    '</div>'+
+    '<div class="ail-foundation" style="margin-top:8px">'+
+      '<span class="ail-foundation-label">Shared foundations</span>'+
+      '<span class="ail-foundation-item">Trusted data</span>'+
+      '<span class="ail-foundation-item">Identity & access</span>'+
+      '<span class="ail-foundation-item">Human accountability</span>'+
+      '<span class="ail-foundation-item">Testing & monitoring</span>'+
+      '<span class="ail-foundation-item">Logging</span>'+
+      '<span class="ail-foundation-item">Cost governance</span>'+
+    '</div>'+
+    '<div class="ail-principle">Use the least complex technology that can own the work safely and economically.</div>';
+
+  // Render ECharts heatmap
+  if(typeof echarts!=='undefined'){
+    var chartDom=container.querySelector('#ailHeatmap');
+    var chart=echarts.init(chartDom,null,{renderer:'svg'});
+    chart.setOption({
+      backgroundColor:'transparent',
+      grid:{left:'140px',right:'20px',top:'10px',bottom:'24px'},
+      xAxis:{type:'category',data:techs.map(function(t){return t.full;}),axisLabel:{color:textCol,fontSize:10,fontFamily:'JetBrains Mono, monospace'},axisLine:{lineStyle:{color:gridCol}},splitLine:{lineStyle:{color:'transparent'}}},
+      yAxis:{type:'category',data:cats.map(function(c){return c.name;}),axisLabel:{color:textCol,fontSize:10,width:120,overflow:'truncate',fontFamily:'Inter, sans-serif'},axisLine:{lineStyle:{color:gridCol}},splitLine:{lineStyle:{color:'transparent'}}},
+      visualMap:{show:false,min:0,max:10,inRange:{color:isDark?['rgba(161,0,255,.06)','rgba(161,0,255,.65)']:['rgba(161,0,255,.04)','rgba(161,0,255,.55)']}},
+      series:[{type:'heatmap',data:heatData,label:{show:false},emphasis:{itemStyle:{shadowBlur:8,shadowColor:'rgba(161,0,255,.4)'}},itemStyle:{borderRadius:4,borderColor:'transparent',borderWidth:2}}],
+      tooltip:{trigger:'item',formatter:function(p){var cat=cats[p.data[0]];var tech=techs[p.data[1]];return tech.full+' in '+cat.name+'<br>Relevance: '+(p.data[2]>6?'High':p.data[2]>3?'Medium':'Low');}},
+      animation:true,animationDuration:800,animationEasing:'cubicOut'
+    });
+    // Resize on window resize
+    window.addEventListener('resize',function(){chart.resize();});
+  }
 }
 
 function focusAIBand(btn,id){
@@ -124,7 +216,7 @@ function openOppDrawer(oppId){
   var ucs=USE_CASES.filter(function(u){return u.oppIds&&u.oppIds.indexOf(oppId)>-1;});
   var tabs=[
     {id:'what',label:'What it is',html:'<div class="drawer-section"><div class="dr-q">'+opp.name+'</div><div class="dr-h">Mapped capabilities</div>'+(opp.capIds||[]).map(function(c){var cap=getCapabilityById(c);return cap?'<div class="dr-item"><i class="ti ti-arrow-right dr-icon"></i>'+cap.name+'</div>':'';}).join('')+'</div>'},
-    {id:'ucs',label:'Use cases',html:'<div class="drawer-section"><div class="dr-h">Accenture use cases for this opportunity</div>'+(ucs.length?ucs.map(function(u){return '<div class="dr-item"><span class="status-badge status-'+u.status+'">'+statusLabel(u.status)+'</span> '+u.name+'</div>';}).join(''):'<div class="dr-body dr-muted">No direct use case — discuss scope in working session.</div>')+'</div>'}
+    {id:'ucs',label:'Use cases',html:'<div class="drawer-section"><div class="dr-h">Accenture use cases for this opportunity</div>'+(ucs.length?ucs.map(function(u){return '<div class="dr-item"><span class="status-badge status-'+u.status+'">'+statusLabel(u.status)+'</span> '+u.name+'</div>';}).join(''):'<div class="dr-body dr-muted">No direct use case. Discuss scope in working session.</div>')+'</div>'}
   ];
   openDrawer(opp.name,tabs,'what');
 }
@@ -141,7 +233,7 @@ function renderShortlist(sec){
     var cat=getCategoryById(cap.cat);
     var isProof=CLIENT_STATE.proofCapabilityId===capId;
     var types=['Lighthouse proof','Enabling foundation','Next scale wave'];
-    return '<div class="shortlist-card'+(isProof?' proof-selected':'')+'\" data-capid="'+capId+'"><div class="sl-type-label">'+types[i]||'Option '+(i+1)+'</div><div class="sl-cap-name">'+cap.name+'</div><div class="sl-cat-name">'+(cat?cat.name:'')+'</div><div class="sl-row"><div class="sl-lbl">Outcome</div><div class="sl-val">'+cap.outcome+'</div></div><div class="sl-row"><div class="sl-lbl">Evidence needed</div><div class="sl-val dr-muted">Validate with client data — do not assume baseline.</div></div><div class="sl-row"><div class="sl-lbl">'+lensLabels[lens]+'</div><div class="sl-val dr-muted">Confirm with client before leading with this framing.</div></div><div class="sl-actions"><button class="sl-proof-btn'+(isProof?' active':'')+'\" onclick="setProofSelection(\''+capId+'\')">'+(isProof?'<i class="ti ti-check"></i> Proof candidate':'Set as proof candidate')+'</button><button class="sl-detail-btn" onclick="openCapabilityDrawer(\''+capId+'\')"><i class="ti ti-info-circle"></i></button></div></div>';
+    return '<div class="shortlist-card'+(isProof?' proof-selected':'')+'\" data-capid="'+capId+'"><div class="sl-type-label">'+types[i]||'Option '+(i+1)+'</div><div class="sl-cap-name">'+cap.name+'</div><div class="sl-cat-name">'+(cat?cat.name:'')+'</div><div class="sl-row"><div class="sl-lbl">Outcome</div><div class="sl-val">'+cap.outcome+'</div></div><div class="sl-row"><div class="sl-lbl">Evidence needed</div><div class="sl-val dr-muted">Validate with client data. Do not assume baseline.</div></div><div class="sl-row"><div class="sl-lbl">'+lensLabels[lens]+'</div><div class="sl-val dr-muted">Confirm with client before leading with this framing.</div></div><div class="sl-actions"><button class="sl-proof-btn'+(isProof?' active':'')+'\" onclick="setProofSelection(\''+capId+'\')">'+(isProof?'<i class="ti ti-check"></i> Proof candidate':'Set as proof candidate')+'</button><button class="sl-detail-btn" onclick="openCapabilityDrawer(\''+capId+'\')"><i class="ti ti-info-circle"></i></button></div></div>';
   }).join('');
 }
 
@@ -245,20 +337,20 @@ function cycleMaturity(blockId,levelId){
 
 // ── TAKEAWAY / DECISION (Screen 18) ──
 function renderTakeaway(sec){
-  function setTa(id,val){var e=sec.querySelector('#'+id);if(e)e.textContent=val||'—';}
+  function setTa(id,val){var e=sec.querySelector('#'+id);if(e)e.textContent=val||'';}
   var pLabels={'reg-vol':'Regulatory volume and change','cost-cap':'Cost and capacity pressure','frag-data':'Fragmented risk and control data','slow-dec':'Slow decisions and reporting','ctrl-ev':'Control effectiveness and evidence','ai-gov':'AI governance and model risk'};
-  setTa('ta-pressures',CLIENT_STATE.pressures.map(function(p){return pLabels[p]||p;}).join(', ')||'—');
+  setTa('ta-pressures',CLIENT_STATE.pressures.map(function(p){return pLabels[p]||p;}).join(', ')||'Not yet set');
   setTa('ta-arch',CLIENT_STATE.archetype==='A'?'Universal / cantonal bank':'Private / wealth bank');
   var selCaps=CLIENT_STATE.selectedCapabilityIds.map(getCapabilityById).filter(Boolean);
-  setTa('ta-caps',selCaps.map(function(c){return c.name;}).join(', ')||'—');
+  setTa('ta-caps',selCaps.map(function(c){return c.name;}).join(', ')||'Select capabilities on screen 07');
   var proofCap=CLIENT_STATE.proofCapabilityId?getCapabilityById(CLIENT_STATE.proofCapabilityId):null;
-  setTa('ta-proof',proofCap?proofCap.name:'—');
+  setTa('ta-proof',proofCap?proofCap.name:'Not yet selected');
   var proofUC=CLIENT_STATE.proofUseCaseId?getUseCaseById(CLIENT_STATE.proofUseCaseId):null;
-  setTa('ta-usecase',proofUC?proofUC.name:'—');
+  setTa('ta-usecase',proofUC?proofUC.name:'Not yet selected');
   // Maturity gaps
-  var gaps=TRANSFORMATION_BLOCKS.filter(function(b){return CLIENT_STATE.maturity[b.id]&&CLIENT_STATE.targetMaturity[b.id]&&CLIENT_STATE.maturity[b.id]!==CLIENT_STATE.targetMaturity[b.id];}).map(function(b){var cur=MATURITY_LEVELS.find(function(l){return l.id===CLIENT_STATE.maturity[b.id];});var tgt=MATURITY_LEVELS.find(function(l){return l.id===CLIENT_STATE.targetMaturity[b.id];});return b.name+': '+(cur?cur.label:'?')+' → '+(tgt?tgt.label:'?');});
-  setTa('ta-gaps',gaps.join('; ')||'—');
-  setTa('ta-decisions',CLIENT_STATE.openDecisions.map(function(d){return d.text;}).join('\n')||'—');
+  var gaps=TRANSFORMATION_BLOCKS.filter(function(b){return CLIENT_STATE.maturity[b.id]&&CLIENT_STATE.targetMaturity[b.id]&&CLIENT_STATE.maturity[b.id]!==CLIENT_STATE.targetMaturity[b.id];}).map(function(b){var cur=MATURITY_LEVELS.find(function(l){return l.id===CLIENT_STATE.maturity[b.id];});var tgt=MATURITY_LEVELS.find(function(l){return l.id===CLIENT_STATE.targetMaturity[b.id];});return b.name+': '+(cur?cur.label:'?')+' to '+(tgt?tgt.label:'?');});
+  setTa('ta-gaps',gaps.join('; ')||'Set current and target state on screen 06');
+  setTa('ta-decisions',CLIENT_STATE.openDecisions.map(function(d){return d.text;}).join('\n')||'None recorded');
 }
 
 // ── APPENDIX CAPABILITIES ──

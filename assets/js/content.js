@@ -148,10 +148,10 @@ var TRANSFORMATION_BLOCKS=[
     id:'ai-automation-platforms',name:'AI, automation, integration & platforms',icon:'cpu',color:'#FF50C8',position:'foundation-right',
     executiveQuestion:'Which technology pattern is appropriate, and what shared platform capabilities prevent every team from building its own stack?',
     why:'Without shared platform services, every use case builds its own AI stack, creating cost, security, and governance debt.',
-    failureModes:['Multiple disconnected AI tools deployed without governance','No model gateway or routing — every team calls models directly','Evaluation and observability absent until a failure occurs'],
+    failureModes:['Multiple disconnected AI tools deployed without governance','No model gateway or routing: every team calls models directly','Evaluation and observability absent until a failure occurs'],
     diagnosticQuestions:['What AI and automation tools are currently deployed and by whom?','Is there a model gateway or routing layer?','Who owns evaluation, observability, and model lifecycle?'],
     targetPrinciples:['Use the least complex technology that can own the work safely and economically','Shared platform services used by all use cases','Evaluation and observability built in from the start'],
-    interventions:{noRegret:['Inventory current AI tools and APIs','Define model governance standards'],lighthouse:['Deploy shared model gateway and orchestration for lighthouse'],industrialize:['Build reusable AI services layer'],scale:['Full platform as a product — shared, governed, cost-tracked']},
+    interventions:{noRegret:['Inventory current AI tools and APIs','Define model governance standards'],lighthouse:['Deploy shared model gateway and orchestration for lighthouse'],industrialize:['Build reusable AI services layer'],scale:['Full platform as a product: shared, governed, cost-tracked']},
     kpis:['Platform reuse rate (%)','Cost per task/decision','Model evaluation coverage','Incident and failure rate','Mean time to detect and recover']
   },
   {
@@ -168,9 +168,9 @@ var TRANSFORMATION_BLOCKS=[
     id:'governance-security',name:'Governance, security, resilience & assurance',icon:'shield',color:'#EF4444',position:'rail-left',
     executiveQuestion:'What must be proven before autonomy increases?',
     why:'Without proportionate governance, AI in risk functions creates new model risk, accountability gaps, and regulatory exposure.',
-    failureModes:['AI models deployed without validation or documented accountability','Agent access not controlled — can act beyond intended scope','No audit trail for AI-assisted decisions presented to regulators'],
+    failureModes:['AI models deployed without validation or documented accountability','Agent access not controlled: can act beyond intended scope','No audit trail for AI-assisted decisions presented to regulators'],
     diagnosticQuestions:['What is the current AI model risk governance framework?','Are agent identities and permissions documented and controlled?','Can you produce an evidence pack for an AI-assisted decision within 24 hours?'],
-    targetPrinciples:['Proportionate controls by use-case risk tier — not one size fits all','Audit trail is automatic, not assembled post-hoc','Autonomy increases only as evidence, controls, and adoption mature'],
+    targetPrinciples:['Proportionate controls by use-case risk tier: not one size fits all','Audit trail is automatic, not assembled post-hoc','Autonomy increases only as evidence, controls, and adoption mature'],
     interventions:{noRegret:['RAI assessment for all proposed use cases','Agent identity and permission model'],lighthouse:['Governance framework for lighthouse use case'],industrialize:['Shared control layer for all AI deployments'],scale:['Continuous governance monitoring and regulatory horizon alignment']},
     kpis:['RAI assessment coverage (%)','Evidence pack readiness time','Model validation completion rate','Regulatory finding rate related to AI']
   },
@@ -178,9 +178,9 @@ var TRANSFORMATION_BLOCKS=[
     id:'value-cost-performance',name:'Value, cost & performance management',icon:'chart-bar',color:'#0E7490',position:'rail-right',
     executiveQuestion:'How do we know value is real, and how do we keep AI unit cost proportional to the outcome?',
     why:'Without value governance, AI programmes produce effort and technology cost without demonstrated business return.',
-    failureModes:['No baseline before deployment — value cannot be measured','Cost per task unknown until cloud bills arrive','Capacity freed but not captured in headcount or output plan'],
+    failureModes:['No baseline before deployment: value cannot be measured','Cost per task unknown until cloud bills arrive','Capacity freed but not captured in headcount or output plan'],
     diagnosticQuestions:['Do you have a baseline for the processes in scope?','Who owns the benefit case and the realization plan?','What is the current cost per task for the priority workflow?'],
-    targetPrinciples:['Baseline before build — no exceptions','One benefit owner per use case and a value gate before scale','AI unit cost tracked per outcome, not per token'],
+    targetPrinciples:['Baseline before build. No exceptions.','One benefit owner per use case and a value gate before scale','AI unit cost tracked per outcome, not per token'],
     interventions:{noRegret:['Baseline measurement for priority processes','Benefit ownership model'],lighthouse:['Value gate design and KPI instrumentation'],industrialize:['Value office and FinOps practice'],scale:['Continuous benefit harvesting and cost optimization']},
     kpis:['Capacity captured','Cycle-time improvement','Quality and risk improvement','Cost per task/decision','Value per euro invested','Realized vs. theoretical value (%)']
   },
@@ -232,7 +232,7 @@ var ECONOMICS_DRIVERS=[
     {id:'data-volume',name:'Data volume ingested',desc:'Document and data volume drives storage and retrieval cost'}
   ]},
   {id:'model-routing',name:'Model & routing',weight:'high',levers:['Use rules or small models for simple tasks','Route by complexity tier','Avoid frontier models for deterministic work'],children:[
-    {id:'model-tier',name:'Model tier selection',desc:'Frontier vs. mid-tier vs. small model — 10x–100x cost difference'},
+    {id:'model-tier',name:'Model tier selection',desc:'Frontier vs. mid-tier vs. small model: 10x to 100x cost difference'},
     {id:'context-window',name:'Context window size',desc:'Larger context = higher token cost per call'},
     {id:'inference-latency',name:'Latency requirement',desc:'Real-time routing is more expensive than async batch'}
   ]},
@@ -251,7 +251,7 @@ var ECONOMICS_DRIVERS=[
     {id:'complexity-routing',name:'Complexity-based routing',desc:'Simple cases auto-approved; complex cases escalated'},
     {id:'exception-handling',name:'Exception handling effort',desc:'Time spent on edge cases and AI failures'}
   ]},
-  {id:'evaluation-ops',name:'Evaluation, observability & ops',weight:'low',levers:['Automate evaluation with golden datasets','Share observability platform across use cases','Build evidence while work happens — avoid retro logging'],children:[
+  {id:'evaluation-ops',name:'Evaluation, observability & ops',weight:'low',levers:['Automate evaluation with golden datasets','Share observability platform across use cases','Build evidence while work happens. Avoid retro logging.'],children:[
     {id:'monitoring-frequency',name:'Monitoring frequency',desc:'How often quality and performance metrics are computed'},
     {id:'logging-volume',name:'Logging and trace volume',desc:'Granularity of audit and observability traces'},
     {id:'incident-rate',name:'Incident and rework rate',desc:'Failure and exception volume drives remediation cost'}

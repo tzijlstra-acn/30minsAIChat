@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NFR AI — Executive Conversation</title>
+<title>NFR AI: Executive Conversation</title>
 <script>if(sessionStorage.getItem('pitch_auth')!=='1'){location.replace('index.html');}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -53,7 +55,7 @@
       </div>
       <div class="agenda-tab-panel" data-panel="method">
         <div style="padding:18px">
-          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Lean client entry — three gates</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Lean client entry: three gates</p>
           <div style="display:flex;flex-direction:column;gap:8px">
             <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 1 · Discover</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Select priority blocks and capabilities. No client cost. Output: scoped intent document.</div></div>
             <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 2 · Diagnose</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">AI-assisted evidence assembly and maturity scoring. 2–4 weeks. Output: maturity baseline and prioritised use case.</div></div>
@@ -128,7 +130,7 @@
       <div class="conv-arrow-col"><i class="ti ti-arrows-right"></i></div>
       <div class="conv-result reveal-right">
         <div class="conv-result-lbl">The strategic imperative</div>
-        <div class="conv-result-h">The risk operating model must be rebuilt for machine-speed operation — or it becomes the bottleneck for the entire enterprise.</div>
+        <div class="conv-result-h">The risk operating model must be rebuilt for machine-speed operation: or it becomes the bottleneck for the entire enterprise.</div>
         <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.08em;line-height:1.5">This conversation maps where to act, what must transform, and what the leanest proof of value looks like.</div>
       </div>
     </div>
@@ -141,12 +143,12 @@
     <div class="sec-tag reveal">AI Landscape · 02</div>
     <h2 class="slide-h reveal">Five technology bands. Different maturity, different risk profile.</h2>
     <p class="slide-sub reveal">Each band's maturity determines which use cases are provable now, which need foundation work first, and which remain speculative.</p>
-    <div id="aiLandscapeArea" style="margin-top:16px"></div>
+    <div id="aiLandscapeGrid" style="margin-top:16px"></div>
   </div>
 </section>
 
 <!-- 03 · THREE MAPS -->
-<section id="three-maps" data-slide data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="Three maps — orientation">
+<section id="three-maps" data-slide data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="Three maps: orientation">
   <div class="inner">
     <div class="sec-tag reveal">AI Landscape · 03</div>
     <h2 class="slide-h reveal">Three maps orient this conversation.</h2>
@@ -182,8 +184,8 @@
   <div class="inner">
     <div class="sec-tag reveal">Transformation System · 04</div>
     <h2 class="slide-h reveal">AI does not plug into the current model. The model must change.</h2>
-    <p class="slide-sub reveal">Eight blocks must advance together — from data infrastructure to governance design. Click any block to open its diagnostic and intervention toolkit.</p>
-    <div id="trSysGrid" style="margin-top:12px"></div>
+    <p class="slide-sub reveal">Eight blocks must advance together: from data infrastructure to governance design. Click any block to open its diagnostic and intervention toolkit.</p>
+    <div id="trSysGrid" class="trsys-grid" style="margin-top:12px"></div>
   </div>
 </section>
 
@@ -191,7 +193,7 @@
 <section id="how-blocks-built" data-slide data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="How blocks are designed">
   <div class="inner">
     <div class="sec-tag reveal">Transformation System · 05</div>
-    <h2 class="slide-h reveal">Each block is built on evidence — not assumption.</h2>
+    <h2 class="slide-h reveal">Each block is built on evidence, not assumption.</h2>
     <p class="slide-sub reveal">Accenture's block design follows a five-stage evidence-to-intervention pipeline. Maturity targets are context-dependent, not maximum by default.</p>
     <div class="arch-stack" style="margin-top:18px">
       <div class="arch-layer reveal"><div class="arch-layer-num">01</div><div class="arch-layer-name">Evidence assembly</div><div class="arch-layer-chips"><span class="arch-chip">Policies</span><span class="arch-chip">Process maps</span><span class="arch-chip">Control inventory</span><span class="arch-chip">AI-assisted ingestion</span></div></div>
@@ -211,9 +213,9 @@
 <section id="maturity-matrix" data-slide data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="Maturity matrix" data-render="maturityMatrix">
   <div class="inner">
     <div class="sec-tag reveal">Transformation System · 06</div>
-    <h2 class="slide-h reveal">Where are you today — and where do you need to be?</h2>
+    <h2 class="slide-h reveal">Where are you today, and where do you need to be?</h2>
     <p class="slide-sub reveal">Click each block row to set current and target maturity. These inform the transformation gap and the intervention sequencing.</p>
-    <div id="maturityGrid" style="margin-top:14px"></div>
+    <div id="maturityTable" style="margin-top:14px"></div>
     <div style="margin-top:10px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
       <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span class="mat-marker mat-c">C</span> Current state</span>
       <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span class="mat-marker mat-t">T</span> Target state (hypothesis)</span>
@@ -242,12 +244,12 @@
       <button class="arch-btn active" data-arch="A">Universal / Cantonal bank</button>
       <button class="arch-btn" data-arch="B">Private / Wealth manager</button>
     </div>
-    <div id="roleBarsArea" style="margin-top:10px"></div>
+    <div id="rolesTable" style="margin-top:10px"></div>
     <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
       <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-3)"><span style="width:10px;height:10px;border-radius:2px;background:#06B6D4;display:inline-block"></span>Capacity freed</span>
       <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-3)"><span style="width:10px;height:10px;border-radius:2px;background:#A100FF;display:inline-block"></span>Human + AI together</span>
       <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-3)"><span style="width:10px;height:10px;border-radius:2px;background:#FF50C8;display:inline-block"></span>Output raised</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em">Illustrative — validate with client data</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em">Illustrative. Validate with client data.</span>
     </div>
   </div>
 </section>
@@ -281,7 +283,7 @@
 <section id="use-case-flow" data-slide data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Use case library" data-render="useCases">
   <div class="inner">
     <div class="sec-tag reveal">Prove Safely · 11</div>
-    <h2 class="slide-h reveal">Sixteen use cases — four delivery statuses.</h2>
+    <h2 class="slide-h reveal">Sixteen use cases across four delivery statuses.</h2>
     <p class="slide-sub reveal">Live assets, team-built tools, NDA references, and illustrative patterns. Click any card to see the end-to-end flow and required transformation blocks.</p>
     <div id="ucGrid" style="margin-top:14px"></div>
   </div>
@@ -291,9 +293,10 @@
 <section id="proof-value-capture" data-slide data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Proof and value capture" data-render="proofValueCapture">
   <div class="inner">
     <div class="sec-tag reveal">Prove Safely · 12</div>
-    <h2 class="slide-h reveal">From theoretical potential to realised value — seven stages.</h2>
+    <h2 class="slide-h reveal">From theoretical potential to realised value: seven stages.</h2>
     <p class="slide-sub reveal">Each stage has a gate test. Value captured at each stage depends on your proof capability selection and control environment.</p>
-    <div id="valueWaterfall" style="margin-top:14px"></div>
+    <p class="slide-sub reveal" style="margin-top:12px;margin-bottom:4px">Modelling proof of value for: <strong id="proofCapName" style="color:var(--accent)">select a capability on screen 07</strong></p>
+    <div id="valueWaterfall" style="margin-top:10px"></div>
     <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">All value figures require client-provided data and Accenture-approved benchmarks before presentation. Do not use illustrative numbers as measured outcomes.</div>
   </div>
 </section>
@@ -344,7 +347,16 @@
     <div class="sec-tag reveal">Build to Scale · 15</div>
     <h2 class="slide-h reveal">Two engines. Neither one works without the other.</h2>
     <p class="slide-sub reveal">Accenture delivers risk AI transformation through a dual-engine model: transforming the client's risk function while accelerating delivery through proprietary assets and talent.</p>
-    <div id="edgeArea" style="margin-top:14px"></div>
+    <div class="edge-dual" style="margin-top:14px">
+      <div class="edge-engine">
+        <div class="edge-engine-h"><div class="edge-engine-lbl">Engine A</div>Transform the client function</div>
+        <div id="engineA"></div>
+      </div>
+      <div class="edge-engine">
+        <div class="edge-engine-h"><div class="edge-engine-lbl">Engine B</div>Accelerate delivery</div>
+        <div id="engineB"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -412,12 +424,20 @@
   <div class="inner">
     <div class="sec-tag reveal">Commit · 18</div>
     <h2 class="slide-h reveal">What did we agree? What happens next?</h2>
-    <p class="slide-sub reveal">Session summary — built from your in-conversation selections. Export to share with your team.</p>
-    <div id="takeawayArea" style="margin-top:14px"></div>
+    <p class="slide-sub reveal">Session summary built from your in-conversation selections. Export to share with your team.</p>
+    <div class="ta-grid" style="margin-top:12px">
+      <div class="ta-section"><div class="ta-label">Pressures identified</div><div class="ta-val" id="ta-pressures">Not yet set</div></div>
+      <div class="ta-section"><div class="ta-label">Organisation archetype</div><div class="ta-val" id="ta-arch">Not yet set</div></div>
+      <div class="ta-section wide"><div class="ta-label">Selected capabilities</div><div class="ta-val" id="ta-caps">Select capabilities on screen 07</div></div>
+      <div class="ta-section"><div class="ta-label">Proof candidate</div><div class="ta-val" id="ta-proof">Not yet selected</div></div>
+      <div class="ta-section"><div class="ta-label">Proof use case</div><div class="ta-val" id="ta-usecase">Not yet selected</div></div>
+      <div class="ta-section wide"><div class="ta-label">Maturity gaps identified</div><div class="ta-val" id="ta-gaps">Set current and target state on screen 06</div></div>
+      <div class="ta-section wide"><div class="ta-label">Open decisions</div><div class="ta-val" id="ta-decisions">None recorded</div></div>
+    </div>
     <div class="ta-actions reveal" style="margin-top:16px">
       <button class="sec-opt" onclick="copyTakeaway()"><i class="ti ti-copy"></i>Copy summary</button>
       <button class="sec-opt" onclick="exportSessionJSON()"><i class="ti ti-download"></i>Export session JSON</button>
-      <a class="sec-opt" href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI — next steps"><i class="ti ti-mail"></i>Email next steps</a>
+      <a class="sec-opt" href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI: next steps"><i class="ti ti-mail"></i>Email next steps</a>
       <button class="sec-opt" onclick="resetSession()"><i class="ti ti-refresh"></i>Reset session</button>
       <button class="sec-opt" onclick="goToId('app-caps')"><i class="ti ti-book"></i>Open reference</button>
     </div>
@@ -432,9 +452,9 @@
 <section id="app-caps" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="47 capability catalogue" data-render="appCaps">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A1</div>
-    <h2 class="slide-h reveal">47 risk capabilities — full catalogue.</h2>
+    <h2 class="slide-h reveal">47 risk capabilities: full catalogue.</h2>
     <p class="slide-sub reveal">All capabilities across six domains with outcome statements and mapped AI opportunities.</p>
-    <div id="appCapsGrid" style="margin-top:14px"></div>
+    <div id="appCapsBody" style="margin-top:14px"></div>
   </div>
 </section>
 
@@ -442,10 +462,10 @@
 <section id="app-blocks" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Transformation block detail">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A2</div>
-    <h2 class="slide-h reveal">Eight transformation blocks — design rationale.</h2>
+    <h2 class="slide-h reveal">Eight transformation blocks: design rationale.</h2>
     <p class="slide-sub reveal">Click any block on screen 04 to open the full 5-tab analysis. This page summarises the purpose of each block and how they relate to the risk function.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px" class="reveal">
-      <div class="arch-layer"><div class="arch-layer-num">B1</div><div class="arch-layer-name">Data foundation</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Risk data quality, lineage, and access — the prerequisite for any AI use case at production scale.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num">B1</div><div class="arch-layer-name">Data foundation</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Risk data quality, lineage, and access: the prerequisite for any AI use case at production scale.</div></div>
       <div class="arch-layer"><div class="arch-layer-num">B2</div><div class="arch-layer-name">AI &amp; model risk governance</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">The policy, validation, and monitoring infrastructure that governs AI models through their lifecycle.</div></div>
       <div class="arch-layer"><div class="arch-layer-num">B3</div><div class="arch-layer-name">Process &amp; workflow redesign</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Redesigning risk processes around AI insertion points, human-in-loop gates, and straight-through processing.</div></div>
       <div class="arch-layer"><div class="arch-layer-num">B4</div><div class="arch-layer-name">Talent &amp; capability</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Building the risk function's capacity to specify, use, validate, and govern AI tools without over-dependence on IT.</div></div>
@@ -461,7 +481,7 @@
 <section id="app-maturity" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Maturity level definitions">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A3</div>
-    <h2 class="slide-h reveal">Five maturity levels — what each requires.</h2>
+    <h2 class="slide-h reveal">Five maturity levels and what each requires.</h2>
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
       <div class="arch-layer reveal"><div class="arch-layer-num">L1</div><div class="arch-layer-name">Assist</div><div class="arch-layer-chips"><span class="arch-chip">AI surfaces insight, human acts</span><span class="arch-chip">Annotation and summarisation</span><span class="arch-chip">Copilot for analyst</span></div></div>
       <div class="arch-layer reveal"><div class="arch-layer-num">L2</div><div class="arch-layer-name">Augment</div><div class="arch-layer-chips"><span class="arch-chip">AI generates draft, human reviews and approves</span><span class="arch-chip">Workflow embedded</span></div></div>
@@ -492,7 +512,7 @@
 <section id="app-method" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Methodology detail">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A5</div>
-    <h2 class="slide-h reveal">Lean client entry — methodology principles.</h2>
+    <h2 class="slide-h reveal">Lean client entry: methodology principles.</h2>
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
       <div class="arch-layer reveal"><div class="arch-layer-num">P1</div><div class="arch-layer-name">Evidence before design</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">No target state is designed before the diagnostic evidence is assembled. Prevents designing for a context that doesn't match the client's actual operating model.</div></div>
       <div class="arch-layer reveal"><div class="arch-layer-num">P2</div><div class="arch-layer-name">Gate-first, not timeline-first</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">Each phase has a gate test. The next phase only begins when the gate test passes. Timelines are targets, not commitments.</div></div>
@@ -521,7 +541,7 @@
 <section id="app-kpis" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="KPI library">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A7</div>
-    <h2 class="slide-h reveal">Proof KPIs — what to measure and how.</h2>
+    <h2 class="slide-h reveal">Proof KPIs: what to measure and how.</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px" class="reveal">
       <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-clock" style="font-size:14px;color:var(--accent)"></i></div><div class="arch-layer-name">Speed and throughput</div><div class="arch-layer-chips"><span class="arch-chip">Time per task (before vs. after)</span><span class="arch-chip">Cases processed per FTE</span><span class="arch-chip">STP rate for standard cases</span></div></div>
       <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-chart-bar" style="font-size:14px;color:var(--green)"></i></div><div class="arch-layer-name">Quality and accuracy</div><div class="arch-layer-chips"><span class="arch-chip">False positive rate</span><span class="arch-chip">Model discrimination</span><span class="arch-chip">Human override rate</span></div></div>
@@ -536,7 +556,7 @@
 <section id="app-rai" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Responsible AI checklist">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A8</div>
-    <h2 class="slide-h reveal">Responsible AI — minimum checklist for risk use cases.</h2>
+    <h2 class="slide-h reveal">Responsible AI: minimum checklist for risk use cases.</h2>
     <div style="display:flex;flex-direction:column;gap:7px;margin-top:18px">
       <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Explainability</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Every AI decision that affects a person or portfolio must produce an explanation that satisfies the relevant regulator's standards. Confirm this before selecting a model architecture.</div></div>
       <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Bias and fairness</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Training data and model outputs must be audited for protected-class bias before deployment. Ongoing monitoring required at production.</div></div>
@@ -551,7 +571,7 @@
 <section id="app-arch" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Architecture reference">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A9</div>
-    <h2 class="slide-h reveal">Architecture reference — technology patterns by use case tier.</h2>
+    <h2 class="slide-h reveal">Architecture reference: technology patterns by use case tier.</h2>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:18px">
       <div class="arch-layer reveal"><div class="arch-layer-num">T1</div><div class="arch-layer-name">Summarisation &amp; extraction</div><div class="arch-layer-chips"><span class="arch-chip">RAG pipeline</span><span class="arch-chip">Document parser</span><span class="arch-chip">Fine-tuned LLM</span></div></div>
       <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">T2</div><div class="arch-layer-name">Classification &amp; scoring</div><div class="arch-layer-chips"><span class="arch-chip">Classifier model</span><span class="arch-chip">Threshold engine</span><span class="arch-chip">Explainability layer (SHAP)</span></div></div>
@@ -583,7 +603,7 @@
       <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-info-circle" style="color:var(--accent)"></i></div><div class="arch-layer-name">Maturity assessments are hypotheses</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Any maturity ratings set during this conversation are working hypotheses. They must be validated through the Diagnose phase evidence assembly before being presented as assessments.</div></div>
       <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-info-circle" style="color:var(--accent)"></i></div><div class="arch-layer-name">Technology references</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Product and vendor names referenced are illustrative of technology patterns. Architecture decisions require formal vendor evaluation aligned to client procurement and security policies.</div></div>
     </div>
-    <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">Confidential — prepared for client discussion purposes only. Not for distribution. © <span class="yr"></span> Accenture. All rights reserved.</div>
+    <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">Confidential. Prepared for client discussion purposes only. Not for distribution. © <span class="yr"></span> Accenture. All rights reserved.</div>
   </div>
 </section>
 
@@ -593,7 +613,7 @@
     <div class="sec-tag reveal">Reference · A12</div>
     <h2 class="slide-h reveal" style="text-align:center">The team</h2>
     <p class="slide-sub reveal" style="text-align:center;max-width:480px;margin:8px auto 0">Specialists across risk transformation, AI engineering, model risk, regulatory, and data. Contact any expert directly.</p>
-    <div id="teamGrid" style="margin-top:20px"></div>
+    <div id="teamRow" style="margin-top:20px"></div>
   </div>
 </section>
 

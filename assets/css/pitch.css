@@ -427,3 +427,22 @@ section{height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;
   .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1!important;transform:none!important;}
   #bgCanvas{display:none!important;}
 }
+
+/* ── AI LANDSCAPE READINESS BAR ── */
+.ail-ready-bar-wrap{width:100%;height:4px;background:var(--surface-3);border-radius:2px;margin:6px 0 4px;overflow:hidden;display:flex;align-items:center;gap:5px;}
+.ail-ready-bar{height:100%;border-radius:2px;transition:width .6s cubic-bezier(.22,1,.36,1);}
+.ail-ready-pct{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-3);flex-shrink:0;white-space:nowrap;}
+.ail-band-icon{margin-bottom:4px;}
+/* Fix: band header layout */
+.ail-band-header{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+
+/* ── TRANSFORMATION BLOCK ACCENT BAR ── */
+.trsys-block-bar{height:3px;border-radius:2px;margin-top:auto;opacity:.35;width:100%;}
+
+/* ── APP TABLE ── */
+.app-cat-section{margin-bottom:18px;}
+.app-cat-head{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--text-1);padding:8px 12px;border-radius:8px;background:var(--surface-2);border-left:3px solid;margin-bottom:7px;}
+.app-table{width:100%;border-collapse:collapse;font-size:12px;}
+.app-table th{text-align:left;padding:6px 10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.09em;color:var(--text-3);text-transform:uppercase;border-bottom:1px solid var(--border-1);}
+.app-table td{padding:7px 10px;border-bottom:1px solid var(--surface-2);vertical-align:top;color:var(--text-2);line-height:1.4;}
+.app-table tr:hover td{background:var(--surface-2);}
