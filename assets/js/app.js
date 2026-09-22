@@ -1,3 +1,32 @@
+// ── LAYOUT DEBUG MODE (?layoutDebug=1) ──
+(function(){
+  if(new URLSearchParams(location.search).get('layoutDebug')!=='1')return;
+  var style=document.createElement('style');
+  style.textContent=[
+    'section[data-slide]{outline:1px solid rgba(0,120,255,.25)!important;}',
+    'section[data-slide]::before{content:attr(id)" ["+attr(data-route)+"] h="+attr(data-density,"standard");position:absolute;top:60px;left:6px;font:9px/1 monospace;color:rgba(0,120,255,.7);z-index:500;white-space:nowrap;}',
+    '[data-slide] *{overflow:visible!important;}',
+    /* mark horizontally overflowing elements */
+    ''
+  ].join('');
+  document.head.appendChild(style);
+  // Overlay: viewport info
+  var dbg=document.createElement('div');
+  dbg.id='layout-dbg';
+  dbg.style.cssText='position:fixed;bottom:8px;left:8px;z-index:9999;background:rgba(0,0,0,.82);color:#0f0;font:10px/1.5 monospace;padding:6px 10px;border-radius:6px;pointer-events:none;';
+  document.body.appendChild(dbg);
+  function updateDbg(){
+    var s=document.querySelector('section[data-slide].active-slide')||document.querySelector('section[data-slide]');
+    dbg.innerHTML=
+      window.innerWidth+'x'+window.innerHeight+'px'
+      +(s?' | slide:'+s.id+' scrollH:'+s.scrollHeight+'/'+s.clientHeight:'')
+      +' | bp:'+(window.innerWidth<=520?'xs':window.innerWidth<=768?'sm':window.innerWidth<=1024?'md':'lg');
+  }
+  window.addEventListener('resize',updateDbg);
+  setInterval(updateDbg,600);
+  updateDbg();
+}());
+
 // ── APP INITIALIZATION ──
 window.addEventListener('DOMContentLoaded',function(){
   // Apply saved theme

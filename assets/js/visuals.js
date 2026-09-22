@@ -919,7 +919,7 @@ function openEdgeDrawer(edgeId){
   var tabs=[
     {id:'mechanism',label:'Mechanism',html:'<div class="drawer-section"><div class="dr-h">What Accenture does differently</div><div class="dr-body">'+edge.mechanism+'</div></div>'},
     {id:'effect',label:'Client effect',html:'<div class="drawer-section"><div class="dr-q">'+edge.clientEffect+'</div><div class="dr-h">Evidence metrics</div>'+(edge.evidenceMetrics||[]).map(function(m){return '<div class="dr-item"><i class="ti ti-chart-bar dr-icon"></i>'+m+'</div>';}).join('')+'</div>'},
-    {id:'deps',label:'Client dependency',html:'<div class="drawer-section"><div class="dr-h">What must be available or decided</div><div class="dr-body">'+edge.clientDependency+'</div><div class="dr-note">These are client-side prerequisites. Accenture can help assess and resolve them but cannot substitute for client authority and decisions.</div></div>'}
+    {id:'deps',label:'Client dependency',html:'<div class="drawer-section"><div class="dr-h">What should be available or decided</div><div class="dr-body">'+edge.clientDependency+'</div><div class="dr-note">These are client-side prerequisites. Accenture can help assess and resolve them but cannot substitute for client authority and decisions.</div></div>'}
   ];
   openDrawer(edge.name,tabs,'mechanism');
 }
@@ -987,7 +987,7 @@ function renderTeam(sec){
   var visibleTeam=(EXPERTS||[]).filter(function(e){return e.clientVisible!==false;});
   grid.innerHTML='<div class="team-cards">'+visibleTeam.map(function(e){
     var initials=e.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2);
-    return '<a class="expert team-card" href="'+(e.mail?'mailto:'+e.mail:'#')+'" aria-label="'+e.name+(e.mail?' — '+e.mail:'')+'">'+
+    return '<a class="expert team-card" href="'+(e.mail?'mailto:'+e.mail:'#')+'" aria-label="'+e.name+(e.mail?', '+e.mail:'')+'">'+
       '<img class="expert-photo" src="'+e.photo+'" alt="'+e.name+'" loading="lazy"'+
         ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'+
       '<div class="expert-ph-fallback" style="display:none">'+initials+'</div>'+
@@ -1100,7 +1100,7 @@ function renderProcessTwin(sec){
 
   // D3 SVG build
   if(typeof d3==='undefined'){
-    area.innerHTML='<div class="render-error">D3 not loaded — process twin cannot render.</div>';
+    area.innerHTML='<div class="render-error">D3 not loaded. Process twin cannot render.</div>';
     return;
   }
 

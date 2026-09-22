@@ -41,7 +41,7 @@ function buildAgendaDrawer(){
     var quickJumps=[
       {label:'Why act now?',id:'setting-scene'},
       {label:'What is the AI landscape?',id:'ai-landscape'},
-      {label:'What must change beyond use cases?',id:'transformation-system'},
+      {label:'What may need to change beyond use cases?',id:'transformation-system'},
       {label:'Where is value in our risk function?',id:'capability-hotspots'},
       {label:'How do we prove value safely?',id:'proof-value-capture'},
       {label:'What does it cost to build and run?',id:'run-economics'},
