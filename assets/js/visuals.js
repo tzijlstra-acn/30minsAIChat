@@ -597,10 +597,11 @@ function renderEvidenceFlow(sec){
 // ── CAPABILITY HOTSPOTS (Screen 7) ──
 function renderCapabilityHotspots(sec){
   var area=sec.querySelector('#capHotspotArea');if(!area)return;
-  area.innerHTML='<div class="cap-layout"><div class="cap-main"><div class="cap-categories" id="capCatList">'+RISK_CATEGORIES.map(function(cat){
+  area.innerHTML='<div id="cap-consequence-strip" class="cap-consequence-strip"></div><div class="cap-layout"><div class="cap-main"><div class="cap-categories" id="capCatList">'+RISK_CATEGORIES.map(function(cat){
     var selCount=CLIENT_STATE.selectedCapabilityIds.filter(function(id){return cat.caps.indexOf(id)>-1;}).length;
     return '<button class="cap-cat-btn" data-catid="'+cat.id+'" onclick="toggleCatPanel(\''+cat.id+'\')" style="border-color:'+(selCount?cat.color:'var(--border-1)')+'"><i class="ti ti-'+cat.icon+'" style="color:'+cat.color+'"></i><span class="cap-cat-btn-name">'+cat.name+'</span><span class="cap-cat-btn-count">'+cat.caps.length+(selCount?' · '+selCount+' selected':'')+'</span><i class="ti ti-chevron-right cap-cat-chev" id="catChev-'+cat.id+'"></i></button>';
   }).join('')+'</div><div class="cap-cat-panel" id="capCatPanel" style="display:none"></div></div><div class="cap-sidebar" id="capSidebar"><div class="cap-sel-tray"><div class="cap-sel-tray-h"><span>Selected capabilities</span><span class="cap-sel-badge" id="capSelCount">0 / 5</span></div><div class="cap-sel-chips" id="capSelChips"><div class="cap-empty-msg">Select up to 5 capabilities to build the shortlist.</div></div></div></div></div>';
+  updateCapConsequences();
   updateCapSidebar();
 }
 
@@ -625,7 +626,9 @@ function toggleCatPanel(catId){
 }
 
 function toggleSelectCap(capId){
-  toggleCapability(capId);
+  // Dispatch to store first (syncLegacyState updates CLIENT_STATE.selectedCapabilityIds)
+  if(typeof store!=='undefined'){store.dispatch({type:'TOGGLE_CAPABILITY',payload:capId});}
+  else{toggleCapability(capId);}
   // Re-render the current panel item
   var items=document.querySelectorAll('.cap-panel-item');
   items.forEach(function(el){
@@ -634,6 +637,7 @@ function toggleSelectCap(capId){
   // Re-render category button count
   updateCapCatCounts();
   updateCapSidebar();
+  updateCapConsequences();
 }
 
 function updateCapCatCounts(){
@@ -654,17 +658,55 @@ function updateCapSidebar(){
   if(count)count.textContent=sel.length+' / 5';
 }
 
+function updateCapConsequences(){
+  var strip=document.getElementById('cap-consequence-strip');if(!strip)return;
+  var sel=CLIENT_STATE.selectedCapabilityIds;
+  if(!sel||!sel.length){
+    strip.innerHTML='<div class="cap-empty-state"><i class="ti ti-hand-click" style="margin-right:6px;opacity:.6"></i>Select capabilities relevant to your context. Your selections will drive the candidate set below.</div>';
+    return;
+  }
+  var oppCount=0;
+  if(typeof AI_OPPORTUNITIES!=='undefined'){
+    oppCount=AI_OPPORTUNITIES.filter(function(o){return o.capIds&&o.capIds.some(function(c){return sel.indexOf(c)>-1;});}).length;
+  }
+  var roleCount=(typeof ROLE_DATA!=='undefined')?ROLE_DATA.length:0;
+  strip.innerHTML='<div class="cap-consequence">'
+    +'<span class="cap-con-item"><strong>'+sel.length+'</strong> '+(sel.length===1?'capability':'capabilities')+' selected</span>'
+    +'<span class="cap-con-sep">·</span>'
+    +'<span class="cap-con-item"><strong>'+oppCount+'</strong> '+(oppCount===1?'opportunity':'opportunities')+' may apply</span>'
+    +'<span class="cap-con-sep">·</span>'
+    +'<span class="cap-con-item"><strong>'+roleCount+'</strong> role '+(roleCount===1?'family':'families')+' potentially affected</span>'
+    +'<span class="status-badge status-illustrative" style="margin-left:8px">ILLUSTRATIVE</span>'
+  +'</div>';
+}
+
 // ── ROLE BARS (Screen 8) ──
 function renderRoleBars(sec){
   var tbl=sec.querySelector('#rolesTable');if(!tbl)return;
+  var state=(typeof store!=='undefined')?store.getState():null;
+  var scenario=(state&&typeof selectRoleImpactScenario==='function')?selectRoleImpactScenario(state):null;
+  var roles=scenario?scenario.roles:null;
   var arch=CLIENT_STATE.archetype;
-  tbl.innerHTML=ROLE_DATA.map(function(r,i){
+  var rows=roles||ROLE_DATA.map(function(r){
     var share=arch==='A'?r.shareA:r.shareB;
     var split=arch==='A'?r.splitA:r.splitB;
+    return {name:r.name,share:share,split:split,adoptedEffect:undefined,reviewRetained:undefined,netEffect:undefined,tasks:r.tasks,workbench:r.workbench};
+  });
+  tbl.innerHTML=rows.map(function(r){
+    var share=r.share;
+    var seg0,seg1,seg2;
+    if(r.adoptedEffect!==undefined&&share>0){
+      seg0=Math.round((r.netEffect/share)*100);
+      seg1=Math.round((r.reviewRetained/share)*100);
+      seg2=Math.max(0,100-seg0-seg1);
+    } else {
+      var split=r.split||[33,33,34];
+      seg0=split[0];seg1=split[1];seg2=split[2];
+    }
     var detailHtml='';
     if(r.tasks&&r.tasks.length){
       detailHtml='<div class="role-detail">'
-        +'<div class="role-detail-col"><div class="role-detail-hd">Work &amp; decisions</div>'
+        +'<div class="role-detail-col"><div class="role-detail-hd">Work and decisions</div>'
         +r.tasks.map(function(t){return '<div class="role-detail-item">'+t+'</div>';}).join('')
         +'</div>'
         +(r.workbench?'<div class="role-detail-col"><div class="role-detail-hd">Workbench</div><div class="role-detail-item">'+r.workbench+'</div></div>':'')
@@ -674,9 +716,9 @@ function renderRoleBars(sec){
       +'<span class="role-name">'+r.name+'</span>'
       +'<span class="role-share">'+share+'% of FTE</span>'
       +'<div class="role-splitbar">'
-        +'<div class="rsb-seg rsb-cyan" style="width:'+split[0]+'%"></div>'
-        +'<div class="rsb-seg rsb-purple" style="width:'+split[1]+'%"></div>'
-        +'<div class="rsb-seg rsb-pink" style="width:'+split[2]+'%"></div>'
+        +'<div class="rsb-seg rsb-cyan" style="width:'+seg0+'%"></div>'
+        +'<div class="rsb-seg rsb-purple" style="width:'+seg1+'%"></div>'
+        +'<div class="rsb-seg rsb-pink" style="width:'+seg2+'%"></div>'
       +'</div>'
       +'<span class="role-expand-icon"><i class="ti ti-chevron-down"></i></span>'
       +detailHtml
