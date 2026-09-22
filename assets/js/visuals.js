@@ -88,71 +88,220 @@ function renderTransformationSystem(sec){
   });
 }
 
-// ── AI LANDSCAPE: 5-band Provability Frontier ──
+// ── AI LANDSCAPE: D3 Provability Frontier ──
 function renderAILandscape(sec){
   var container=sec.querySelector('#aiLandscapeGrid');if(!container)return;
-  var techs=[
-    {id:'rules',  name:'Rules & workflow',  icon:'git-branch',   pct:85,color:'#0F8A62',
+  container.innerHTML='';
+
+  var BANDS=[
+    {id:'rules-workflow',  label:'Rules & workflow',  pct:85,color:'#0F8A62',
      desc:'Deterministic routing, thresholds, conditional logic. No inference cost.',
      human:'Design rules and handle exceptions',
      control:'Are rules complete, current, and tested?'},
-    {id:'rpa',    name:'RPA & orchestration',icon:'refresh',      pct:80,color:'#0E7490',
-     desc:'Repeatable cross-system execution and data movement. Compute only.',
+    {id:'rpa-orchestration',label:'RPA & orchestration',pct:80,color:'#0E7490',
+     desc:'Repeatable cross-system data movement. Compute only.',
      human:'Monitor failures and edge cases',
      control:'What happens when the process breaks?'},
-    {id:'ml',     name:'Analytics & ML',    icon:'chart-line',   pct:65,color:'#B46A00',
-     desc:'Prediction, scoring, and anomaly detection. Inference scales with volume.',
+    {id:'analytics-ml',    label:'Analytics & ML',    pct:65,color:'#B46A00',
+     desc:'Prediction, scoring, anomaly detection. Inference scales with volume.',
      human:'Review model output; approve consequential decisions',
      control:'Is the model validated and monitored for drift?'},
-    {id:'genai',  name:'GenAI copilots',    icon:'message-bolt', pct:55,color:'#A100FF',
-     desc:'Search, summarise, draft, and explain. Token cost per call.',
+    {id:'genai-copilots',  label:'GenAI copilots',    pct:55,color:'#A100FF',
+     desc:'Search, summarise, draft, explain. Token cost per call.',
      human:'Review every output before use or distribution',
      control:'Is output reviewed before leaving the team?'},
-    {id:'agents', name:'AI Agents',         icon:'robot',        pct:30,color:'#FF50C8',
-     desc:'Plan, coordinate, and act across tools and systems. Highest cost and risk.',
+    {id:'agents',          label:'AI Agents',         pct:30,color:'#FF50C8',
+     desc:'Plan, coordinate, act across tools. Highest cost and risk.',
      human:'Define scope; approve consequential actions; set guardrails',
      control:'What can the agent do without human approval?'}
   ];
-  var TECHMAP={
-    rules:['kri-monitoring'],
-    rpa:['control-test-automation','regulatory-report-ai','kyc-automation-ai'],
-    ml:['model-validation-ai','data-quality-ai','credit-portfolio-ai','aml-detection-ai','sanctions-screening-ai','fraud-detection-ai','third-party-risk-ai','oprisk-event-triage'],
-    genai:['rcsa-ai-workflow','regulatory-signal-extraction','reg-change-impact-ai','model-doc-automation','board-report-ai','credit-assessment-ai','stress-scenario-ai'],
-    agents:['horizon-scanning-ai']
-  };
-  var STATUS_COLOR={live:'#10B981',team:'#A100FF',illustrative:'#B46A00',nda:'#6366F1'};
-  var cols=techs.map(function(t){
-    var chips=(TECHMAP[t.id]||[]).map(function(id){
-      var o=AI_OPPORTUNITIES&&AI_OPPORTUNITIES.find(function(x){return x.id===id;});
-      if(!o)return '';
-      var sc=STATUS_COLOR[o.status]||'var(--text-2)';
-      return '<div class="ail-chip" style="border-color:'+sc+';color:'+sc+'">'+o.name+'</div>';
-    }).join('');
-    return '<div class="ail-col" style="--bc:'+t.color+'" data-band="'+t.id+'">'
-      +'<div class="ail-col-hdr">'
-        +'<i class="ti ti-'+t.icon+' ail-col-icon"></i>'
-        +'<span class="ail-col-name">'+t.name+'</span>'
-        +'<span class="ail-col-pct">'+t.pct+'%</span>'
-      +'</div>'
-      +'<div class="ail-col-bar"><div class="ail-col-bar-fill" style="width:'+t.pct+'%"></div></div>'
+
+  var CLUSTER_COLOR={};
+  (PORTFOLIO_CLUSTERS||[]).forEach(function(c){CLUSTER_COLOR[c.id]=c.color;});
+
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  // Build header info row (5 columns)
+  var infoRow=document.createElement('div');
+  infoRow.className='ail-landscape-grid';
+  BANDS.forEach(function(b){
+    var col=document.createElement('div');
+    col.className='ail-col';
+    col.style.setProperty('--bc',b.color);
+    col.setAttribute('data-band',b.id);
+    col.innerHTML=
+      '<div class="ail-col-hdr"><span class="ail-col-name">'+b.label+'</span><span class="ail-col-pct">'+b.pct+'%</span></div>'
+      +'<div class="ail-col-bar"><div class="ail-col-bar-fill" style="width:'+b.pct+'%"></div></div>'
       +'<div class="ail-col-body">'
-        +'<div class="ail-col-desc">'+t.desc+'</div>'
-        +'<div class="ail-col-lbl">Human role</div><div class="ail-col-val">'+t.human+'</div>'
-        +'<div class="ail-col-lbl">Control question</div><div class="ail-col-val ail-ctrl">'+t.control+'</div>'
-      +'</div>'
-      +(chips?'<div class="ail-col-opps">'+chips+'</div>':'')
+        +'<div class="ail-col-desc">'+b.desc+'</div>'
+        +'<div class="ail-col-lbl">Human role</div><div class="ail-col-val">'+b.human+'</div>'
+        +'<div class="ail-col-lbl">Control question</div><div class="ail-col-val">'+b.control+'</div>'
+      +'</div>';
+    infoRow.appendChild(col);
+  });
+  container.appendChild(infoRow);
+
+  // D3 Frontier SVG: solution nodes by band
+  if(typeof d3==='undefined'||(typeof SOLUTIONS==='undefined'||!SOLUTIONS.length)){
+    container.appendChild(function(){var f=document.createElement('div');f.className='ail-landscape-footer';f.innerHTML='<span class="ail-footer-principle">Use the least complex technology that can own the work safely and economically.</span>';return f;}());
+    return;
+  }
+
+  var svgWrap=document.createElement('div');
+  svgWrap.className='pf-svg-wrap';
+  svgWrap.style.cssText='margin-top:10px;position:relative;';
+  container.appendChild(svgWrap);
+
+  var W=svgWrap.clientWidth||860,BAND_H=56,PAD_L=0,PAD_R=0;
+  var H=BANDS.length*BAND_H;
+
+  var svg=d3.select(svgWrap).append('svg')
+    .attr('viewBox','0 0 '+W+' '+H)
+    .attr('width','100%')
+    .attr('height',H)
+    .attr('aria-label','Provability Frontier: solution nodes by technology pattern')
+    .attr('role','img');
+
+  // Band backgrounds
+  BANDS.forEach(function(b,i){
+    var y=i*BAND_H;
+    svg.append('rect').attr('x',0).attr('y',y).attr('width',W).attr('height',BAND_H)
+      .attr('fill',b.color).attr('fill-opacity',i%2===0?0.04:0.02).attr('rx',0);
+    svg.append('line').attr('x1',0).attr('y1',y+BAND_H-0.5).attr('x2',W).attr('y2',y+BAND_H-0.5)
+      .attr('stroke','rgba(255,255,255,0.07)').attr('stroke-width',0.5);
+    // Readiness bar on left
+    var barW=(W-PAD_L-PAD_R)*b.pct/100*0.92;
+    svg.append('rect').attr('x',PAD_L).attr('y',y+BAND_H-5).attr('width',barW).attr('height',2)
+      .attr('fill',b.color).attr('fill-opacity',0.35).attr('rx',1);
+  });
+
+  // Solution nodes
+  var bandIndex={};
+  BANDS.forEach(function(b,i){bandIndex[b.id]=i;});
+  var countPerBand={};
+  BANDS.forEach(function(b){countPerBand[b.id]=0;});
+
+  var EVIDENCE_MAX=4;
+  function evidenceCount(s){
+    var f=s.evidenceFlags||{};
+    return [f.concept,f.prototype,f.asset,f.demo].filter(function(v){return v===true;}).length;
+  }
+
+  var nodeData=SOLUTIONS.filter(function(s){return s.technologyPatternId&&bandIndex[s.technologyPatternId]!==undefined;});
+
+  // Spread nodes horizontally within band
+  var bandSols={};
+  BANDS.forEach(function(b){bandSols[b.id]=[];});
+  nodeData.forEach(function(s){if(bandSols[s.technologyPatternId])bandSols[s.technologyPatternId].push(s);});
+
+  var tooltip=d3.select(svgWrap).append('div').attr('class','pf-tooltip').style('display','none');
+
+  BANDS.forEach(function(b,bi){
+    var sols=bandSols[b.id]||[];
+    var N=sols.length;
+    if(!N)return;
+    var cy=bi*BAND_H+BAND_H/2;
+    var spacing=Math.min(36,(W-PAD_L-PAD_R-20)/(N||1));
+    var totalW=spacing*(N-1);
+    var startX=PAD_L+10+(W-PAD_L-PAD_R-10-totalW)/2;
+
+    sols.forEach(function(s,si){
+      var ev=evidenceCount(s);
+      var r=ev>0?6+ev*1.5:5;
+      var cx=startX+si*spacing;
+      var clColor=CLUSTER_COLOR[s.portfolioClusterId]||b.color;
+
+      var g=svg.append('g').style('cursor','pointer').attr('role','button').attr('tabindex','0').attr('aria-label',s.displayName);
+
+      g.append('circle')
+        .attr('cx',cx).attr('cy',cy).attr('r',r)
+        .attr('fill',clColor).attr('fill-opacity',0.22)
+        .attr('stroke',clColor).attr('stroke-width',1.5).attr('stroke-opacity',0.8);
+
+      if(ev>0){
+        g.append('circle')
+          .attr('cx',cx).attr('cy',cy).attr('r',2.5)
+          .attr('fill',clColor).attr('fill-opacity',0.9);
+      }
+
+      g.on('mouseenter',function(event){
+        d3.select(this).select('circle').attr('fill-opacity',0.55).attr('stroke-opacity',1);
+        var rect=svgWrap.getBoundingClientRect();
+        var evLabels=[];
+        if(s.evidenceFlags){['concept','prototype','asset','demo'].forEach(function(k){if(s.evidenceFlags[k]===true)evLabels.push(k);});}
+        tooltip.style('display','block')
+          .style('left',(cx/W*100)+'%')
+          .style('top',(bi*BAND_H+BAND_H+4)+'px')
+          .html('<div class="pf-tt-name">'+s.displayName+'</div>'
+            +'<div class="pf-tt-src">'+s.sourceName+'</div>'
+            +(evLabels.length?'<div class="pf-tt-ev">'+evLabels.join(' · ')+'</div>':'')
+            +'<div class="pf-tt-share">'+s.sharingStatus.replace(/-/g,' ')+'</div>');
+      })
+      .on('mouseleave',function(){
+        d3.select(this).select('circle').attr('fill-opacity',0.22).attr('stroke-opacity',0.8);
+        tooltip.style('display','none');
+      })
+      .on('click',function(){openSolutionDrawer(s.id);})
+      .on('keydown',function(event){if(event.key==='Enter'||event.key===' ')openSolutionDrawer(s.id);});
+    });
+  });
+
+  // Footer
+  var footer=document.createElement('div');
+  footer.className='ail-landscape-footer';
+  footer.innerHTML=
+    '<span class="ail-footer-principle">Use the least complex technology that can own the work safely and economically.</span>'
+    +'<div class="ail-foundations">'
+      +'<span>Trusted data</span><span>Identity and access</span>'
+      +'<span>Human accountability</span><span>Testing and monitoring</span>'
+      +'<span>Logging</span><span>Cost governance</span>'
     +'</div>';
+  container.appendChild(footer);
+}
+
+// ── SOLUTION DRAWER ──
+function openSolutionDrawer(solId){
+  var s=(SOLUTIONS||[]).find(function(x){return x.id===solId;});if(!s)return;
+  var cluster=(PORTFOLIO_CLUSTERS||[]).find(function(c){return c.id===s.portfolioClusterId;});
+  var ev=s.evidenceFlags||{};
+  var evItems=['concept','prototype','asset','demo'].map(function(k){
+    var val=ev[k];
+    return '<div class="dr-item"><span class="sol-ev-dot '+(val===true?'ev-confirmed':val===false?'ev-absent':'ev-unknown')+'"></span>'
+      +k.charAt(0).toUpperCase()+k.slice(1)+': '+(val===true?'confirmed':val===false?'not found':'not yet inspected')+'</div>';
   }).join('');
-  container.innerHTML=
-    '<div class="ail-landscape-grid">'+cols+'</div>'
-    +'<div class="ail-landscape-footer">'
-      +'<span class="ail-footer-principle">Use the least complex technology that can own the work safely and economically.</span>'
-      +'<div class="ail-foundations">'
-        +'<span>Trusted data</span><span>Identity and access</span>'
-        +'<span>Human accountability</span><span>Testing and monitoring</span>'
-        +'<span>Logging</span><span>Cost governance</span>'
-      +'</div>'
-    +'</div>';
+
+  var prov=s.mappingProvenance||{};
+  var tabs=[
+    {id:'overview',label:'Overview',html:
+      '<div class="drawer-section">'
+      +'<div class="dr-q">'+s.displayName+'</div>'
+      +'<div class="dr-h">Source reference</div>'
+      +'<div class="dr-body">Source '+s.sourceNumber+': '+s.sourceName+'</div>'
+      +(cluster?'<div class="dr-h">Portfolio cluster</div><div class="dr-body" style="color:'+(cluster.color||'inherit')+'">'+cluster.name+'</div>':'')
+      +'<div class="dr-h">Technology pattern</div>'
+      +'<div class="dr-body">'+(s.technologyPatternId||'Not yet mapped').replace(/-/g,' ')+'</div>'
+      +'</div>'},
+    {id:'evidence',label:'Evidence',html:
+      '<div class="drawer-section">'
+      +'<div class="dr-h">Evidence flags (from source inspection)</div>'
+      +evItems
+      +'<div class="dr-note">Flags are based on direct inspection of source slides. Null = not yet inspected.</div>'
+      +'</div>'},
+    {id:'sharing',label:'Sharing status',html:
+      '<div class="drawer-section">'
+      +'<div class="dr-h">Sharing status</div>'
+      +'<div class="dr-body">'+s.sharingStatus.replace(/-/g,' ')+'</div>'
+      +(s.legalReview!==null?'<div class="dr-h">Legal review</div><div class="dr-body">'+(s.legalReview?'Complete':'In progress or not started')+'</div>':'')
+      +'<div class="dr-note">Sharing status to be confirmed before client distribution.</div>'
+      +'</div>'},
+    {id:'provenance',label:'Provenance',html:
+      '<div class="drawer-section">'
+      +'<div class="dr-h">Mapping provenance</div>'
+      +Object.keys(prov).map(function(k){return '<div class="dr-item"><span class="dr-muted">'+k+':</span> '+prov[k].replace(/-/g,' ')+'</div>';}).join('')
+      +'<div class="dr-note">working-hypothesis = not yet validated with an SME or source. expert-validated = reviewed by a practice lead.</div>'
+      +'</div>'}
+  ];
+  openDrawer(s.displayName,tabs,'overview');
 }
 
 // ── CAPABILITY HOTSPOTS (Screen 7) ──
@@ -462,7 +611,7 @@ var VISUAL_CONTRACTS={
   aiLandscape:'aiLandscapeGrid',trSystem:'trSysGrid',maturityMatrix:'maturityTable',
   capHotspots:'capHotspotArea',roleBars:'rolesTable',oppPortfolio:'oppPortfolioArea',
   shortlist:'shortlistGrid',useCases:'ucGrid',proofValueCapture:'valueWaterfall',
-  accentureEdge:'engineA',takeaway:'ta-pressures',appCaps:'appCapsBody',team:'teamRow'
+  accentureEdge:'engineA',takeaway:'ta-pressures',appCaps:'appCapsBody',team:'teamGrid'
 };
 
 function safeRender(fn,sec){
