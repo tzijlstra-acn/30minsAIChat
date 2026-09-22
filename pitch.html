@@ -57,7 +57,7 @@
         <div style="padding:18px">
           <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Lean client entry: three gates</p>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 1 · Discover</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Select priority blocks and capabilities. No client cost. Output: scoped intent document.</div></div>
+            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 1 · Discover</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Select priority blocks and capabilities. Typically no direct client cost at this stage. Output: scoped intent document.</div></div>
             <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 2 · Diagnose</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">AI-assisted evidence assembly and maturity scoring. 2–4 weeks. Output: maturity baseline and prioritised use case.</div></div>
             <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 3 · Prove</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Lighthouse delivery in a controlled environment with a gate-ready evidence pack and board-ready metrics.</div></div>
           </div>
@@ -108,29 +108,29 @@
 <section id="setting-scene" data-slide data-route="core" data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="Why act now?" data-method-label="Listen · 15 min">
   <div class="inner">
     <div class="sec-tag reveal">AI Landscape · 01</div>
-    <h2 class="slide-h reveal">Three forces are converging<br>that the current model was not built for.</h2>
+    <h2 class="slide-h reveal">Three pressures are reshaping the risk agenda.</h2>
     <div class="conv-grid reveal" style="margin-top:20px">
       <div class="conv-forces">
         <div class="conv-force">
           <div class="conv-force-icon"><i class="ti ti-gavel"></i></div>
-          <div class="conv-force-label">Regulatory acceleration</div>
+          <div class="conv-force-label">More obligations and evidence</div>
           <div class="conv-force-sub">Volume, complexity, and cross-border reach of requirements are compounding faster than manual compliance cycles can absorb.</div>
         </div>
         <div class="conv-force">
           <div class="conv-force-icon"><i class="ti ti-cpu"></i></div>
-          <div class="conv-force-label">AI penetration in the business</div>
-          <div class="conv-force-sub">Client-facing, trading, and operations functions are deploying AI. The risk function needs to govern, audit, and approve at the same speed.</div>
+          <div class="conv-force-label">More capable AI, with new controls</div>
+          <div class="conv-force-sub">Client-facing, trading, and operations functions are deploying AI. The risk function may need to govern, audit, and approve at a comparable pace.</div>
         </div>
         <div class="conv-force">
           <div class="conv-force-icon"><i class="ti ti-coin"></i></div>
-          <div class="conv-force-label">Cost and capacity constraint</div>
-          <div class="conv-force-sub">Headcount-based scaling is no longer viable. The cost per risk decision should fall while quality and explainability requirements rise.</div>
+          <div class="conv-force-label">Pressure on capacity and speed</div>
+          <div class="conv-force-sub">Capacity-based scaling may become a constraint. The cost per risk decision may need to fall while quality and explainability requirements rise.</div>
         </div>
       </div>
       <div class="conv-arrow-col"><i class="ti ti-arrows-right"></i></div>
       <div class="conv-result reveal-right">
-        <div class="conv-result-lbl">The working hypothesis</div>
-        <div class="conv-result-h">The current operating model may constrain value where AI increases the speed and scale of risk work.</div>
+        <div class="conv-result-lbl">Working hypothesis</div>
+        <div class="conv-result-h">The question is where the operating model may become a constraint.</div>
         <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.08em;line-height:1.5">This conversation maps where the pressure may sit, which transformation blocks are typically involved, and what a lean, validated first step could look like. Subject to your context.</div>
       </div>
     </div>
@@ -274,21 +274,30 @@
 <section id="industrialization-arch" data-slide data-route="core" data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Industrialization architecture" data-method-label="Build to scale · 10 min">
   <div class="inner">
     <div class="sec-tag reveal">Build to Scale · 12</div>
-    <h2 class="slide-h reveal">Six layers. Proof runs on one. Scale demands all six.</h2>
-    <p class="slide-sub reveal">The industrialization architecture is layered. Each proof use case surfaces which layers need investment before scale.</p>
-    <div class="arch-stack" style="margin-top:18px">
-      <div class="arch-layer reveal"><div class="arch-layer-num">06</div><div class="arch-layer-name">Interaction layer</div><div class="arch-layer-chips"><span class="arch-chip">Chat / copilot</span><span class="arch-chip">API consumers</span><span class="arch-chip">Dashboards</span></div></div>
-      <div class="arch-conn-v">↓</div>
-      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">05</div><div class="arch-layer-name">Agent orchestration</div><div class="arch-layer-chips"><span class="arch-chip">Planner agents</span><span class="arch-chip">Specialist agents</span><span class="arch-chip">Human-in-loop gates</span></div></div>
-      <div class="arch-conn-v">↓</div>
-      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">04</div><div class="arch-layer-name">AI services</div><div class="arch-layer-chips"><span class="arch-chip">Foundation models</span><span class="arch-chip">Fine-tuned models</span><span class="arch-chip">Vision / speech</span></div></div>
-      <div class="arch-conn-v">↓</div>
-      <div class="arch-layer reveal"><div class="arch-layer-num">03</div><div class="arch-layer-name">Platform and MLOps</div><div class="arch-layer-chips"><span class="arch-chip">Model registry</span><span class="arch-chip">Feature store</span><span class="arch-chip">Drift monitoring</span></div></div>
-      <div class="arch-conn-v">↓</div>
-      <div class="arch-layer reveal"><div class="arch-layer-num">02</div><div class="arch-layer-name">Data and knowledge</div><div class="arch-layer-chips"><span class="arch-chip">Risk data mesh</span><span class="arch-chip">Knowledge graph</span><span class="arch-chip">Vector store</span></div></div>
-      <div class="arch-conn-v">↓</div>
-      <div class="arch-layer reveal"><div class="arch-layer-num">01</div><div class="arch-layer-name">Control and governance</div><div class="arch-layer-chips"><span class="arch-chip">Model risk policy</span><span class="arch-chip">AI risk framework</span><span class="arch-chip">Audit trail</span></div></div>
+    <h2 class="slide-h reveal">A proof can start narrow. Scale may need shared foundations.</h2>
+    <p class="slide-sub reveal">Five functional layers with cross-cutting controls. Each proof surfaces which layers need investment before scale.</p>
+    <div class="arch-frame reveal" style="margin-top:18px">
+      <div class="arch-rail arch-rail-left">
+        <div class="arch-rail-label">Identity &amp; access · Security &amp; privacy</div>
+        <div class="arch-rail-bar"></div>
+      </div>
+      <div class="arch-main-stack">
+        <div class="arch-layer"><div class="arch-layer-num">05</div><div class="arch-layer-name">Experience &amp; workflow</div><div class="arch-layer-chips"><span class="arch-chip">Chat / copilot</span><span class="arch-chip">API consumers</span><span class="arch-chip">Risk dashboards</span></div></div>
+        <div class="arch-conn-v">↓</div>
+        <div class="arch-layer ai-layer"><div class="arch-layer-num">04</div><div class="arch-layer-name">Orchestration &amp; integration</div><div class="arch-layer-chips"><span class="arch-chip">Planner agents</span><span class="arch-chip">Specialist agents</span><span class="arch-chip">Human-in-loop gates</span></div></div>
+        <div class="arch-conn-v">↓</div>
+        <div class="arch-layer ai-layer"><div class="arch-layer-num">03</div><div class="arch-layer-name">Models &amp; decision services</div><div class="arch-layer-chips"><span class="arch-chip">Foundation models</span><span class="arch-chip">Fine-tuned models</span><span class="arch-chip">Decision rules</span></div></div>
+        <div class="arch-conn-v">↓</div>
+        <div class="arch-layer"><div class="arch-layer-num">02</div><div class="arch-layer-name">Data, knowledge &amp; context</div><div class="arch-layer-chips"><span class="arch-chip">Risk data mesh</span><span class="arch-chip">Knowledge graph</span><span class="arch-chip">Vector store</span></div></div>
+        <div class="arch-conn-v">↓</div>
+        <div class="arch-layer"><div class="arch-layer-num">01</div><div class="arch-layer-name">Platform &amp; operations</div><div class="arch-layer-chips"><span class="arch-chip">Model registry</span><span class="arch-chip">Feature store</span><span class="arch-chip">Drift monitoring</span></div></div>
+      </div>
+      <div class="arch-rail arch-rail-right">
+        <div class="arch-rail-bar"></div>
+        <div class="arch-rail-label">Evaluation &amp; model risk · Observability &amp; audit · FinOps</div>
+      </div>
     </div>
+    <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">Governance and assurance wrap the full architecture as a cross-cutting control plane. Vendor and platform choices subject to client procurement and security policies.</div>
   </div>
 </section>
 
@@ -302,7 +311,7 @@
       <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-cpu" style="color:var(--accent)"></i><span class="eco-driver-name">Inference compute</span></div><div class="eco-driver-levers"><div class="eco-lever">Model selection: smaller, quantised, or distilled models reduce cost per token significantly</div><div class="eco-lever">Caching strategies: prompt caching for repeated context reduces redundant inference</div><div class="eco-lever">Batching: asynchronous workloads can be batched vs. real-time premium pricing</div></div></div>
       <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-database" style="color:var(--cyan)"></i><span class="eco-driver-name">Data retrieval and embedding</span></div><div class="eco-driver-levers"><div class="eco-lever">Embedding model size and refresh frequency drive storage and compute cost</div><div class="eco-lever">Vector database sizing and query patterns determine retrieval infrastructure cost</div></div></div>
       <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-users" style="color:var(--green)"></i><span class="eco-driver-name">Human review and oversight</span></div><div class="eco-driver-levers"><div class="eco-lever">Review rate determines staffing: what share of AI outputs require human sign-off?</div><div class="eco-lever">Escalation design: clear confidence thresholds reduce unnecessary escalation volume</div></div></div>
-      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-shield" style="color:var(--amber)"></i><span class="eco-driver-name">Model risk and compliance</span></div><div class="eco-driver-levers"><div class="eco-lever">Model validation cycles, documentation, and SR 11-7 equivalents drive ongoing cost</div><div class="eco-lever">Bias monitoring, fairness testing, and explainability tooling are ongoing, not one-off</div></div></div>
+      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-shield" style="color:var(--amber)"></i><span class="eco-driver-name">Model risk and compliance</span></div><div class="eco-driver-levers"><div class="eco-lever">Model validation cycles, documentation, and applicable model risk policy requirements drive ongoing cost</div><div class="eco-lever">Bias monitoring, fairness testing, and explainability tooling are ongoing, not one-off</div></div></div>
       <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-tools" style="color:var(--pink)"></i><span class="eco-driver-name">Platform and tooling</span></div><div class="eco-driver-levers"><div class="eco-lever">MLOps platform licensing or build cost amortised across use case volume</div><div class="eco-lever">Feature store, model registry, and experiment tracking infrastructure</div></div></div>
       <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-refresh" style="color:var(--text-2)"></i><span class="eco-driver-name">Retraining and drift management</span></div><div class="eco-driver-levers"><div class="eco-lever">Retraining frequency depends on regulatory change velocity and data drift rates</div><div class="eco-lever">Automated drift detection reduces manual monitoring overhead over time</div></div></div>
     </div>
@@ -315,7 +324,7 @@
   <div class="inner">
     <div class="sec-tag reveal">Build to Scale · 14</div>
     <h2 class="slide-h reveal">Two engines. Neither one works without the other.</h2>
-    <p class="slide-sub reveal">Accenture delivers risk AI transformation through a dual-engine model: transforming the client's risk function while accelerating delivery through proprietary assets and talent.</p>
+    <p class="slide-sub reveal">Two reinforcing engines: redesigning the client risk function while shortening delivery through reusable assets and specialist capabilities.</p>
     <div class="edge-dual" style="margin-top:14px">
       <div class="edge-engine">
         <div class="edge-engine-h"><div class="edge-engine-lbl">Engine A</div>Transform the client function</div>
@@ -333,40 +342,66 @@
 <section id="lean-transition" data-slide data-route="core" data-density="long" data-chapter-id="commit" data-chapter-title="Commit" data-nav-title="Roadmap and stage gates" data-method-label="Commit · 10 min">
   <div class="inner">
     <div class="sec-tag reveal">Commit · 15</div>
-    <h2 class="slide-h reveal">Five stage gates. Each unlocks the next.</h2>
-    <p class="slide-sub reveal">No stage proceeds without its gate test. Each phase has an explicit output that enables the next.</p>
-    <div class="sgt-wrap reveal" style="margin-top:20px">
-      <div class="sgt-inner">
-        <div class="sgt-track"><div class="sgt-track-fill"></div></div>
-        <div class="sgt-stages">
-          <div class="sgt-stage-wrap active">
-            <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-card"><div class="sgt-dur">Wk 1–6</div><div class="sgt-name">Discover &amp; Diagnose</div><div class="sgt-output">Scoped intent · Maturity baseline · Gap map</div></div>
-          </div>
-          <div class="sgt-gate-wrap"><div class="sgt-diamond"></div><div class="sgt-gate-lbl">Gate 1</div></div>
-          <div class="sgt-stage-wrap">
-            <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-card"><div class="sgt-dur">Wk 7–10</div><div class="sgt-name">Design</div><div class="sgt-output">Target state · Tech pattern · Proof plan</div></div>
-          </div>
-          <div class="sgt-gate-wrap"><div class="sgt-diamond"></div><div class="sgt-gate-lbl">Gate 2</div></div>
-          <div class="sgt-stage-wrap">
-            <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-card"><div class="sgt-dur">Wk 11–18</div><div class="sgt-name">Pilot</div><div class="sgt-output">Evidence pack · Board metrics · Approval readiness</div></div>
-          </div>
-          <div class="sgt-gate-wrap"><div class="sgt-diamond"></div><div class="sgt-gate-lbl">Gate 3</div></div>
-          <div class="sgt-stage-wrap">
-            <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-card"><div class="sgt-dur">Wk 19–34</div><div class="sgt-name">Industrialise</div><div class="sgt-output">Production · MLOps · Model risk sign-off</div></div>
-          </div>
-          <div class="sgt-gate-wrap"><div class="sgt-diamond"></div><div class="sgt-gate-lbl">Gate 4</div></div>
-          <div class="sgt-stage-wrap">
-            <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-card"><div class="sgt-dur">Ongoing</div><div class="sgt-name">Scale</div><div class="sgt-output">Platform · Additional use cases · Enterprise wave</div></div>
-          </div>
-        </div>
+    <h2 class="slide-h reveal">A staged transition can limit early commitment.</h2>
+    <p class="slide-sub reveal">Run value, lighthouse, foundation, and adoption work in parallel, with explicit gates.</p>
+    <div class="ptw-wrap reveal" style="margin-top:18px">
+      <!-- Column headers -->
+      <div class="ptw-header-row">
+        <div class="ptw-label-col"></div>
+        <div class="ptw-phase-col"><div class="ptw-phase-name">Discover &amp; diagnose</div><div class="ptw-phase-wk">Wk 1–6</div></div>
+        <div class="ptw-gate-col"><div class="ptw-gate-d"></div><div class="ptw-gate-lbl">G1</div></div>
+        <div class="ptw-phase-col"><div class="ptw-phase-name">Design</div><div class="ptw-phase-wk">Wk 7–10</div></div>
+        <div class="ptw-gate-col"><div class="ptw-gate-d"></div><div class="ptw-gate-lbl">G2</div></div>
+        <div class="ptw-phase-col ptw-phase-active"><div class="ptw-phase-name">Pilot</div><div class="ptw-phase-wk">Wk 11–18</div></div>
+        <div class="ptw-gate-col"><div class="ptw-gate-d"></div><div class="ptw-gate-lbl">G3</div></div>
+        <div class="ptw-phase-col"><div class="ptw-phase-name">Industrialise &amp; scale</div><div class="ptw-phase-wk">Wk 19+</div></div>
+      </div>
+      <!-- Lane: Value spine -->
+      <div class="ptw-lane">
+        <div class="ptw-label-col ptw-lane-lbl"><i class="ti ti-route" style="color:var(--cyan)"></i>Value spine</div>
+        <div class="ptw-cell">Capability selection · Scope agreement · Baseline metrics</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Target state · Value model · Proof plan</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Evidence assembly · Gate readiness check</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Benefit tracking · Reinvestment decisions</div>
+      </div>
+      <!-- Lane: Lighthouse pod -->
+      <div class="ptw-lane ptw-lane-highlight">
+        <div class="ptw-label-col ptw-lane-lbl" style="color:var(--accent)"><i class="ti ti-bulb" style="color:var(--accent)"></i>Lighthouse pod</div>
+        <div class="ptw-cell">Use-case selection · Team formed · Evidence sourced</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Architecture · Control spec · Prompt design</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell ptw-cell-active">Build · Human-gate validation · Evidence pack</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Production · Monitoring · Second use case</div>
+      </div>
+      <!-- Lane: Foundations -->
+      <div class="ptw-lane">
+        <div class="ptw-label-col ptw-lane-lbl"><i class="ti ti-database" style="color:var(--text-3)"></i>Foundations</div>
+        <div class="ptw-cell">Data inventory · Platform assessment · Control gaps</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Data remediation · MLOps · Security design</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Platform build · Model registry · Observability</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Shared infrastructure · Multi-use-case reuse</div>
+      </div>
+      <!-- Lane: Workforce & adoption -->
+      <div class="ptw-lane">
+        <div class="ptw-label-col ptw-lane-lbl"><i class="ti ti-users" style="color:var(--green)"></i>Workforce &amp; adoption</div>
+        <div class="ptw-cell">Role impact mapping · Skill gap assessment</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Training design · Change management plan</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Lighthouse training · Process integration</div>
+        <div class="ptw-gate-col"></div>
+        <div class="ptw-cell">Scale adoption · Communities of practice</div>
       </div>
     </div>
-    <div style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em" class="reveal">Timelines illustrative. Gate criteria confirmed during Diagnose phase and tailored to client regulatory and governance context.</div>
+    <div style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em" class="reveal">Timelines are illustrative. Gate criteria are confirmed during Diagnose and tailored to client governance and regulatory context. Workstreams can progress in parallel within each gate.</div>
   </div>
 </section>
 
@@ -438,9 +473,9 @@
       <div class="arch-layer reveal"><div class="arch-layer-num">L2</div><div class="arch-layer-name">Augment</div><div class="arch-layer-chips"><span class="arch-chip">AI generates draft, human reviews and approves</span><span class="arch-chip">Workflow embedded</span></div></div>
       <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">L3</div><div class="arch-layer-name">Automate</div><div class="arch-layer-chips"><span class="arch-chip">AI acts within defined parameters</span><span class="arch-chip">Human monitors and escalates</span><span class="arch-chip">STP for standard cases</span></div></div>
       <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">L4</div><div class="arch-layer-name">Orchestrate</div><div class="arch-layer-chips"><span class="arch-chip">Multi-agent execution</span><span class="arch-chip">Dynamic task delegation</span><span class="arch-chip">AI coordinates AI</span></div></div>
-      <div class="arch-layer reveal"><div class="arch-layer-num">L5</div><div class="arch-layer-name">Bounded autonomy</div><div class="arch-layer-chips"><span class="arch-chip">AI acts with defined authority limits</span><span class="arch-chip">Full audit trail</span><span class="arch-chip">Regulatory pre-approval required</span></div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">L5</div><div class="arch-layer-name">Bounded autonomy</div><div class="arch-layer-chips"><span class="arch-chip">AI acts with defined authority limits</span><span class="arch-chip">Full audit trail</span><span class="arch-chip">Subject to governance approval</span></div></div>
     </div>
-    <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">Target maturity is not maximum by default. Appropriate level depends on use-case risk tier, data quality, control environment, and regulatory context. Bounded autonomy requires explicit regulatory and governance approval.</div>
+    <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">Target maturity is not maximum by default. Appropriate level depends on use-case risk tier, data quality, control environment, and regulatory context. Bounded autonomy requires explicit governance approval and confirmation of applicable supervisory expectations.</div>
   </div>
 </section>
 
@@ -478,12 +513,12 @@
   <div class="inner">
     <div class="sec-tag reveal">Reference · A6</div>
     <h2 class="slide-h reveal">Full use case inventory.</h2>
-    <p class="slide-sub reveal">Navigate to screen 11 to interact with all 16 use cases. Status key: LIVE = deployed at a client, TEAM = built by the NFR AI team, NDA = reference only, ILLUSTRATIVE = design pattern for scoping.</p>
+    <p class="slide-sub reveal">Navigate to the process and data flow screen to see how a selected solution could work end to end. The status model below applies to the 28 source solution records in the solution portfolio.</p>
     <div class="reveal app-2col-grid">
-      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-live">LIVE</span></div><div class="arch-layer-name">Deployed at client</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Production use case with verifiable outcomes. Can be referenced by name in proposals. NDA may apply.</div></div>
-      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-team">TEAM</span></div><div class="arch-layer-name">Built by NFR AI team</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Developed and tested by the Accenture NFR AI team. Available for demonstration. Contact thomas.zijlstra@accenture.com for access.</div></div>
-      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-nda">NDA</span></div><div class="arch-layer-name">NDA reference</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Live or team-built but restricted from public reference. Do not name client or share artefacts without explicit permission.</div></div>
-      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-illustrative">ILLUSTRATIVE</span></div><div class="arch-layer-name">Design pattern</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Scoping-level illustration. Not deployed. Do not present outcomes as measured results. For discovery and design conversations only.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-live">ASSET</span></div><div class="arch-layer-name">Built and available</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Developed, tested, and available for demonstration. Contact thomas.zijlstra@accenture.com for access. NDA may apply.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-team">PROTO</span></div><div class="arch-layer-name">Prototype or demo</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Functional prototype built to demonstrate the approach. Not yet production-hardened. Suitable for proof-of-concept discussion.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-nda">CONCEPT</span></div><div class="arch-layer-name">Concept design</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Designed and specified but not yet built. Scoping-level artefacts available. Approach validated through related work.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-illustrative">CLIENT</span></div><div class="arch-layer-name">Client deployment</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Deployed at a client with verifiable outcomes. References subject to NDA. Do not name client without explicit permission.</div></div>
     </div>
   </div>
 </section>
@@ -513,7 +548,7 @@
       <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Bias and fairness</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Training data and model outputs must be audited for protected-class bias before deployment. Ongoing monitoring required at production.</div></div>
       <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Human oversight</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Decision authority limits must be defined before pilot begins. AI does not exceed its defined authority without explicit governance approval.</div></div>
       <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Data provenance</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">All training and inference data must have a documented lineage, consent basis (where applicable), and retention policy aligned to regulatory requirements.</div></div>
-      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Model risk governance</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">All production models must be registered, documented, validated, and approved per the client's MRM policy before deployment. SR 11-7 equivalents apply in applicable jurisdictions.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Model risk governance</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">All production models should be registered, documented, validated, and approved per the client's applicable model risk policy and supervisory expectations. Jurisdiction-specific requirements should be confirmed with Accenture's regulatory advisory practice.</div></div>
     </div>
   </div>
 </section>
