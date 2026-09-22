@@ -357,7 +357,7 @@ function renderEvidenceFlow(sec){
      nodes:['Design principles','Decision rights','Technology pattern','Human-AI interface','Control embedding','Evidence schema']},
     {id:'intervene',label:'Intervention pathway',color:'#B46A00',
      nodes:['No-regret moves','Lighthouse use case','Industrialise','Scale across function']},
-    {id:'gate',label:'Gate evidence',color:'#6366F1',
+    {id:'gate',label:'Gate evidence',color:'#0F8A62',
      nodes:['Business KPIs','Operational metrics','Control effectiveness','Adoption measures','Regulatory defensibility']}
   ];
 
@@ -608,7 +608,7 @@ function renderProofValueCapture(sec){
     {id:'run',label:'Run',sub:'Execute in controlled scope',color:'#A100FF',lane:'ai'},
     {id:'validate',label:'Validate',sub:'Human review of outputs',color:'#B46A00',lane:'human'},
     {id:'measure',label:'Measure',sub:'Compare to baseline',color:'#0F8A62',lane:'data'},
-    {id:'gate',label:'Gate',sub:'Go / expand / pause decision',color:'#6366F1',lane:'human'}
+    {id:'gate',label:'Gate',sub:'Go / expand / pause decision',color:'#0F8A62',lane:'human',isGate:true}
   ];
 
   var N=LOOP.length;
@@ -659,9 +659,9 @@ function renderProofValueCapture(sec){
     var nx=CX+R*Math.cos(angle),ny=CY+R*Math.sin(angle);
     var g=svg.append('g').style('cursor','default');
 
-    g.append('circle').attr('cx',nx).attr('cy',ny).attr('r',node.id==='gate'?22:18)
-      .attr('fill',node.color).attr('fill-opacity',node.id==='gate'?0.25:0.15)
-      .attr('stroke',node.color).attr('stroke-width',node.id==='gate'?2:1.5).attr('stroke-opacity',0.8);
+    g.append('circle').attr('cx',nx).attr('cy',ny).attr('r',node.isGate?22:18)
+      .attr('fill',node.isGate?'none':node.color).attr('fill-opacity',node.isGate?0:0.15)
+      .attr('stroke',node.color).attr('stroke-width',node.isGate?2.5:1.5).attr('stroke-opacity',node.isGate?0.95:0.8);
 
     g.append('text').attr('x',nx).attr('y',ny+1).attr('text-anchor','middle')
       .attr('dominant-baseline','middle').attr('font-size','10').attr('font-weight','700')
