@@ -572,17 +572,101 @@ function renderProofValueCapture(sec){
   var capId=CLIENT_STATE.proofCapabilityId||CLIENT_STATE.selectedCapabilityIds[0];
   var cap=capId?getCapabilityById(capId):null;
   var nameEl=sec.querySelector('#proofCapName');
-  if(nameEl)nameEl.textContent=cap?cap.name:'your chosen capability';
-  // Waterfall build (animated via class)
+  if(nameEl)nameEl.textContent=cap?cap.name:'select a capability on screen 07';
+
   var waterfall=sec.querySelector('#valueWaterfall');
-  if(waterfall){
-    var stages=['Theoretical potential','Technically feasible','Proven in workflow','Adopted by users','Capacity captured','Less run cost','Realised value'];
-    var widths=[100,82,70,58,48,38,30];
-    waterfall.innerHTML=stages.map(function(s,i){
-      var isPositive=i===6;
-      return '<div class="wf-row"><div class="wf-label">'+s+'</div><div class="wf-bar-wrap"><div class="wf-bar'+(isPositive?' wf-bar-positive':'')+'\" style="width:'+widths[i]+'%" data-wf-width="'+widths[i]+'"><span class="wf-bar-label">'+(i<6?'Leakage: '+(100-widths[i+1<6?i+1:i])+'%':'Target')+'</span></div></div></div>';
-    }).join('');
+  if(!waterfall)return;
+
+  if(typeof d3==='undefined'){
+    // Fallback: simple text list
+    var stages=['Baseline measurement','Configure and deploy','Run in controlled scope','Validate outputs','Measure outcomes','Gate review','Scale or pause'];
+    waterfall.innerHTML=stages.map(function(s,i){return '<div class="wf-row"><div class="wf-label">'+(i+1)+'. '+s+'</div></div>';}).join('');
+    return;
   }
+
+  waterfall.innerHTML='';
+  var W=waterfall.clientWidth||700,H=320;
+
+  var LOOP=[
+    {id:'baseline',label:'Baseline',sub:'Measure current state',color:'#0F8A62',lane:'data'},
+    {id:'configure',label:'Configure',sub:'Design & parameter proof',color:'#0E7490',lane:'ai'},
+    {id:'run',label:'Run',sub:'Execute in controlled scope',color:'#A100FF',lane:'ai'},
+    {id:'validate',label:'Validate',sub:'Human review of outputs',color:'#B46A00',lane:'human'},
+    {id:'measure',label:'Measure',sub:'Compare to baseline',color:'#0F8A62',lane:'data'},
+    {id:'gate',label:'Gate',sub:'Go / expand / pause decision',color:'#6366F1',lane:'human'}
+  ];
+
+  var N=LOOP.length;
+  var CX=W/2,CY=H/2,R=Math.min(CX,CY)-50;
+
+  var svg=d3.select(waterfall).append('svg')
+    .attr('viewBox','0 0 '+W+' '+H).attr('width','100%').attr('height',H)
+    .attr('role','img').attr('aria-label','Proof and evidence loop');
+
+  // Defs: arrowhead
+  var defs=svg.append('defs');
+  var mrk=defs.append('marker').attr('id','pf-arr').attr('markerWidth','7').attr('markerHeight','5')
+    .attr('refX','6').attr('refY','2.5').attr('orient','auto');
+  mrk.append('path').attr('d','M0,0 L7,2.5 L0,5 Z').attr('fill','rgba(255,255,255,0.3)');
+
+  // Outer ring (guide track)
+  svg.append('circle').attr('cx',CX).attr('cy',CY).attr('r',R)
+    .attr('fill','none').attr('stroke','rgba(255,255,255,0.06)').attr('stroke-width',1.5)
+    .attr('stroke-dasharray','4,4');
+
+  // Arc connector arrows between nodes
+  LOOP.forEach(function(_,i){
+    var angle1=2*Math.PI*i/N-Math.PI/2;
+    var angle2=2*Math.PI*((i+1)%N)/N-Math.PI/2;
+    var r1=R-22;
+    var x1=CX+r1*Math.cos(angle1),y1=CY+r1*Math.sin(angle1);
+    var x2=CX+r1*Math.cos(angle2),y2=CY+r1*Math.sin(angle2);
+    var midAngle=(angle1+angle2)/2;
+    var cr=R+6;
+    var mx=CX+cr*Math.cos(midAngle),my=CY+cr*Math.sin(midAngle);
+    svg.append('path')
+      .attr('d','M'+x1+','+y1+' Q'+mx+','+my+' '+x2+','+y2)
+      .attr('fill','none').attr('stroke','rgba(255,255,255,0.22)').attr('stroke-width',1.5)
+      .attr('marker-end','url(#pf-arr)');
+  });
+
+  // Centre label
+  svg.append('text').attr('x',CX).attr('y',CY-8).attr('text-anchor','middle')
+    .attr('font-size','9').attr('font-family','JetBrains Mono, monospace').attr('fill','rgba(255,255,255,0.35)')
+    .attr('letter-spacing','0.08em').text('EVIDENCE');
+  svg.append('text').attr('x',CX).attr('y',CY+6).attr('text-anchor','middle')
+    .attr('font-size','9').attr('font-family','JetBrains Mono, monospace').attr('fill','rgba(255,255,255,0.35)')
+    .attr('letter-spacing','0.08em').text('LOOP');
+
+  // Nodes
+  LOOP.forEach(function(node,i){
+    var angle=2*Math.PI*i/N-Math.PI/2;
+    var nx=CX+R*Math.cos(angle),ny=CY+R*Math.sin(angle);
+    var g=svg.append('g').style('cursor','default');
+
+    g.append('circle').attr('cx',nx).attr('cy',ny).attr('r',node.id==='gate'?22:18)
+      .attr('fill',node.color).attr('fill-opacity',node.id==='gate'?0.25:0.15)
+      .attr('stroke',node.color).attr('stroke-width',node.id==='gate'?2:1.5).attr('stroke-opacity',0.8);
+
+    g.append('text').attr('x',nx).attr('y',ny+1).attr('text-anchor','middle')
+      .attr('dominant-baseline','middle').attr('font-size','10').attr('font-weight','700')
+      .attr('font-family','Space Grotesk, sans-serif').attr('fill',node.color)
+      .text(node.label);
+
+    // Sub-label outside ring
+    var subR=R+38;
+    var sx=CX+subR*Math.cos(angle),sy=CY+subR*Math.sin(angle);
+    var words=node.sub.split(' ');
+    var half=Math.ceil(words.length/2);
+    g.append('text').attr('x',sx).attr('y',sy-5).attr('text-anchor','middle')
+      .attr('font-size','8').attr('font-family','Inter, sans-serif').attr('fill','rgba(255,255,255,0.55)')
+      .text(words.slice(0,half).join(' '));
+    if(half<words.length){
+      g.append('text').attr('x',sx).attr('y',sy+6).attr('text-anchor','middle')
+        .attr('font-size','8').attr('font-family','Inter, sans-serif').attr('fill','rgba(255,255,255,0.55)')
+        .text(words.slice(half).join(' '));
+    }
+  });
 }
 
 // ── USE CASES (Screen 11) ──
@@ -595,7 +679,15 @@ function renderUseCases(sec){
   grid.innerHTML=filtered.map(function(u){
     var sel=CLIENT_STATE.proofUseCaseId===u.id;
     var flowHtml=u.flow.map(function(s,i){return (i?'<span class="uc-mf-arr">→</span>':'')+'<span class="uc-mf-step'+(s.indexOf('approves')>-1||s.indexOf('review')>-1?' human':'')+'">'+s+'</span>';}).join('');
-    return '<div class="uc-card'+(sel?' selected':'')+'\" onclick="selectUseCase(\''+u.id+'\')" role="button" tabindex="0"><span class="status-badge status-'+u.status+'">'+typeLabel[u.status]+'</span><div class="uc-name">'+u.name+'</div><div class="uc-tool">'+u.tool+'</div><div class="uc-mini-flow">'+flowHtml+'</div></div>';
+    return '<div class="uc-card'+(sel?' selected':'')+'\" role="button" tabindex="0"'
+      +' onclick="selectUseCase(\''+u.id+'\');openUseCaseDrawer(\''+u.id+'\')"'
+      +' onkeydown="if(event.key===\'Enter\'){selectUseCase(\''+u.id+'\');openUseCaseDrawer(\''+u.id+'\');}">'
+      +'<span class="status-badge status-'+u.status+'">'+typeLabel[u.status]+'</span>'
+      +'<div class="uc-name">'+u.name+'</div>'
+      +'<div class="uc-tool">'+u.tool+'</div>'
+      +'<div class="uc-mini-flow">'+flowHtml+'</div>'
+      +'<div class="uc-detail-hint"><i class="ti ti-arrow-right"></i> View process flow</div>'
+    +'</div>';
   }).join('');
 }
 
@@ -603,6 +695,94 @@ function selectUseCase(id){
   CLIENT_STATE.proofUseCaseId=CLIENT_STATE.proofUseCaseId===id?null:id;
   var sec=document.getElementById('use-case-flow');
   if(sec)renderUseCases(sec);
+}
+
+// ── USE CASE PROCESS EXPLORER (D3 swim-lane, opens in drawer) ──
+function buildUseCaseSwimlane(uc){
+  if(typeof d3==='undefined'||!uc||!uc.flow)return '<div class="dr-body">'+uc.flow.join(' → ')+'</div>';
+
+  var LANES=[
+    {id:'source',label:'Data sources',color:'#0F8A62'},
+    {id:'ai',label:'AI processing',color:'#A100FF'},
+    {id:'human',label:'Human checkpoint',color:'#B46A00'},
+    {id:'evidence',label:'Evidence generated',color:'#0E7490'},
+    {id:'action',label:'Action / outcome',color:'#6366F1'}
+  ];
+
+  var steps=uc.flow;
+  var laneMap={};
+  steps.forEach(function(s,i){
+    var lane='ai';
+    if(/source|feed|ingest|load|collect|pull|input|data/i.test(s))lane='source';
+    else if(/review|approve|check|decides|validates|officer|analyst|human|sign/i.test(s))lane='human';
+    else if(/log|evidence|record|document|report|output|dashboard/i.test(s))lane='evidence';
+    else if(/action|send|notify|file|clear|escalate|submit/i.test(s))lane='action';
+    if(!laneMap[lane])laneMap[lane]=[];
+    laneMap[lane].push({step:s,idx:i});
+  });
+
+  var wrap=document.createElement('div');
+  wrap.className='uc-swimlane-wrap';
+  var W=480,LANE_H=48,PAD=10;
+  var H=LANES.length*LANE_H+PAD*2;
+
+  var svg=d3.select(wrap).append('svg').attr('viewBox','0 0 '+W+' '+H)
+    .attr('width','100%').attr('height',H).attr('role','img').attr('aria-label','Use case process flow');
+
+  LANES.forEach(function(ln,li){
+    var y=PAD+li*LANE_H;
+    var items=laneMap[ln.id]||[];
+    // Lane background
+    svg.append('rect').attr('x',80).attr('y',y+2).attr('width',W-86).attr('height',LANE_H-4).attr('rx',5)
+      .attr('fill',ln.color).attr('fill-opacity',0.06).attr('stroke',ln.color).attr('stroke-opacity',0.12).attr('stroke-width',1);
+    // Lane label
+    svg.append('text').attr('x',72).attr('y',y+LANE_H/2+1).attr('text-anchor','end')
+      .attr('dominant-baseline','middle').attr('font-size','8').attr('font-family','JetBrains Mono, monospace')
+      .attr('fill',ln.color).attr('fill-opacity',0.8).text(ln.label.toUpperCase().slice(0,10));
+    // Items
+    var slotW=(W-90)/(steps.length||1);
+    items.forEach(function(item){
+      var cx=90+item.idx*slotW+slotW/2;
+      var cy=y+LANE_H/2;
+      svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',5).attr('fill',ln.color).attr('fill-opacity',0.35).attr('stroke',ln.color).attr('stroke-opacity',0.7).attr('stroke-width',1.5);
+      var words=item.step.split(' ');
+      var l1=words.slice(0,Math.ceil(words.length/2)).join(' ');
+      var l2=words.slice(Math.ceil(words.length/2)).join(' ');
+      svg.append('text').attr('x',cx).attr('y',cy+10).attr('text-anchor','middle').attr('font-size','7').attr('font-family','Inter, sans-serif').attr('fill',ln.color).attr('fill-opacity',0.85).text(l1);
+      if(l2)svg.append('text').attr('x',cx).attr('y',cy+18).attr('text-anchor','middle').attr('font-size','7').attr('font-family','Inter, sans-serif').attr('fill',ln.color).attr('fill-opacity',0.85).text(l2);
+    });
+    // Connector arrows
+    items.forEach(function(item,ii){
+      if(ii===0&&steps.length>1){
+        var nextStep=items[ii+1];
+        if(nextStep){
+          var x1=90+item.idx*slotW+slotW/2+5;
+          var x2=90+nextStep.idx*slotW+slotW/2-5;
+          var cy=y+LANE_H/2;
+          svg.append('line').attr('x1',x1).attr('y1',cy).attr('x2',x2).attr('y2',cy)
+            .attr('stroke',ln.color).attr('stroke-opacity',0.25).attr('stroke-width',1);
+        }
+      }
+    });
+  });
+
+  return wrap.outerHTML;
+}
+
+function openUseCaseDrawer(ucId){
+  var uc=(USE_CASES||[]).find(function(u){return u.id===ucId;});if(!uc)return;
+  var TLABEL={live:'Live asset',team:'Team-built',illustrative:'Illustrative',nda:'NDA reference'};
+  var flowHtml=buildUseCaseSwimlane(uc);
+  var blockLinks=(uc.blockIds||[]).map(function(bid){
+    var b=TRANSFORMATION_BLOCKS&&TRANSFORMATION_BLOCKS.find(function(x){return x.id===bid;});
+    return b?'<div class="dr-item"><i class="ti ti-arrow-right dr-icon"></i>'+b.name+'</div>':'';
+  }).join('');
+  var tabs=[
+    {id:'process',label:'Process flow',html:'<div class="drawer-section"><div class="dr-h">End-to-end flow</div>'+flowHtml+'<div class="dr-note">Swim-lane shows data, AI, human, evidence, and action steps. Mapping is illustrative until validated with client process documentation.</div></div>'},
+    {id:'status',label:'Status',html:'<div class="drawer-section"><div class="dr-h">Delivery status</div><div class="dr-body"><span class="status-badge status-'+uc.status+'">'+TLABEL[uc.status]+'</span></div><div class="dr-h">Tool or approach</div><div class="dr-body">'+uc.tool+'</div></div>'},
+    {id:'blocks',label:'Transformation blocks',html:'<div class="drawer-section"><div class="dr-h">Blocks required for this use case</div>'+(blockLinks||'<div class="dr-body dr-muted">Not yet mapped.</div>')+'</div>'}
+  ];
+  openDrawer(uc.name,tabs,'process');
 }
 
 // ── ACCENTURE EDGE (Screen 15) ──

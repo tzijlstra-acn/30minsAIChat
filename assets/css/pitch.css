@@ -490,6 +490,11 @@ section{height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;
 .prov-expert-validated{background:rgba(15,138,98,.15);color:#0F8A62;}
 .prov-source-backed{background:rgba(14,116,144,.15);color:#0E7490;}
 
+/* ── USE CASE SWIM-LANE ── */
+.uc-swimlane-wrap{width:100%;overflow:visible;}
+.uc-detail-hint{margin-top:6px;font:9px/1 Inter,sans-serif;color:var(--text-3);display:flex;align-items:center;gap:3px;}
+.uc-card:hover .uc-detail-hint{color:var(--accent);}
+
 /* ── TRANSFORMATION SYSTEM PATH MODE ── */
 .trsys-path-banner{display:flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(161,0,255,.09);border:1px solid rgba(161,0,255,.25);border-radius:8px;margin-bottom:8px;font:12px/1.4 'Space Grotesk',sans-serif;color:var(--accent);}
 .trsys-path-banner i{flex-shrink:0;}
