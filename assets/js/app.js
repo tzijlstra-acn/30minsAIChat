@@ -56,20 +56,23 @@ window.addEventListener('DOMContentLoaded',function(){
       goToIndex(1); // Go to first content screen
     });
   });
-  // Arch toggle
+  // Arch toggle (dispatch through store)
   document.querySelectorAll('[data-arch]').forEach(function(btn){
     btn.addEventListener('click',function(){
-      setArchetype(btn.dataset.arch);
+      var archVal=btn.dataset.arch==='A'?'universal-cantonal':'private-wealth';
+      setArchetype(btn.dataset.arch); // keep legacy compat
+      if(typeof store!=='undefined')store.dispatch({type:'SET_ARCHETYPE',payload:archVal});
       document.querySelectorAll('[data-arch]').forEach(function(b){b.classList.toggle('active',b.dataset.arch===btn.dataset.arch);});
       var roleSec=document.getElementById('work-workforce-workbench');
       if(roleSec&&rendered.has(getSlideIndex('work-workforce-workbench')))renderRoleBars(roleSec);
     });
   });
-  // Lens buttons (delegated)
+  // Lens buttons (dispatch through store)
   document.addEventListener('click',function(e){
     var lensBtn=e.target.closest('[data-lens]');
     if(lensBtn){
-      setLens(lensBtn.dataset.lens);
+      setLens(lensBtn.dataset.lens); // keep legacy compat
+      if(typeof store!=='undefined')store.dispatch({type:'SET_LENS',payload:lensBtn.dataset.lens});
       document.querySelectorAll('[data-lens]').forEach(function(b){b.classList.toggle('active',b.dataset.lens===lensBtn.dataset.lens);});
       // Re-render shortlist if visible
       var sl=document.getElementById('exec-shortlist');

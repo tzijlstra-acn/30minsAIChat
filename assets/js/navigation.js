@@ -102,6 +102,8 @@ function updateNav(idx){
   document.querySelectorAll('.agenda-slide-link').forEach(function(a){a.classList.toggle('active',parseInt(a.dataset.sidx)===idx);});
   // Hash update
   if(sec&&sec.id)history.replaceState(null,null,'#'+sec.id);
+  // Left-edge rail highlight
+  if(typeof window.edgeRailHighlight==='function'&&sec&&sec.id)window.edgeRailHighlight(sec.id);
   // Render
   if(!rendered.has(idx)){rendered.add(idx);renderSection(sec);}
 }
