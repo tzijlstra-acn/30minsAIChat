@@ -1,10 +1,50 @@
 ﻿// ── SCREEN RENDERERS ──
 // Each renderer takes the section element and populates it
 
-// ── TRANSFORMATION SYSTEM (Screen 4): deterministic SVG layout ──
+// TRANSFORMATION SYSTEM (Screen 4): deterministic SVG layout with tab strip
 function renderTransformationSystem(sec){
   var container=sec.querySelector('#trSysGrid');if(!container)return;
-  container.innerHTML='';
+
+  // Preserve tab state across re-renders using a DOM property
+  if(!container._trTab)container._trTab='dependencies';
+  var activeTab=container._trTab;
+
+  // Build tab strip (once only, persists on re-render)
+  var tabStrip=container.querySelector('.trsys-tabs');
+  if(!tabStrip){
+    tabStrip=document.createElement('div');
+    tabStrip.className='trsys-tabs';
+    var tabDefs=[
+      {id:'dependencies',label:'Dependencies'},
+      {id:'selected-use-case',label:'Selected use case'},
+      {id:'what-may-constrain',label:'What may constrain'}
+    ];
+    tabDefs.forEach(function(td){
+      var btn=document.createElement('button');
+      btn.className='trsys-tab-btn';
+      btn.setAttribute('data-tabid',td.id);
+      btn.textContent=td.label;
+      btn.addEventListener('click',function(){
+        container._trTab=td.id;
+        renderTransformationSystem(sec);
+      });
+      tabStrip.appendChild(btn);
+    });
+    container.appendChild(tabStrip);
+  }
+  tabStrip.querySelectorAll('.trsys-tab-btn').forEach(function(b){
+    b.classList.toggle('active',b.getAttribute('data-tabid')===activeTab);
+  });
+
+  // Get or create SVG render area (below the tab strip)
+  var svgArea=container.querySelector('.trsys-svg-area');
+  if(!svgArea){
+    svgArea=document.createElement('div');
+    svgArea.className='trsys-svg-area';
+    container.appendChild(svgArea);
+  }
+  svgArea.innerHTML='';
+
   var NS='http://www.w3.org/2000/svg';
   var W=860,H=540;
   var isDark=document.documentElement.getAttribute('data-theme')==='dark';
@@ -36,8 +76,60 @@ function renderTransformationSystem(sec){
     for(var k in attrs)e.setAttribute(k,attrs[k]);
     return e;
   }
+
+  // Compute highlighted blocks based on active tab
+  var pathBlocks={};
+  var gapBlocks={};
+  var proofId=(typeof store!=='undefined')?store.getState().proofCandidateId:null;
+  proofId=proofId||(CLIENT_STATE&&CLIENT_STATE.proofCapabilityId);
+
+  if(activeTab==='selected-use-case'&&proofId){
+    var probCap=(typeof getCapabilityById==='function')?getCapabilityById(proofId):null;
+    if(probCap){
+      (probCap.opps||[]).forEach(function(oid){
+        var opp=typeof AI_OPPORTUNITIES!=='undefined'&&AI_OPPORTUNITIES.find(function(x){return x.id===oid;});
+        if(opp)(opp.blockIds||[]).forEach(function(bid){pathBlocks[bid]=true;});
+      });
+    }
+    var proofUC=(typeof USE_CASES!=='undefined')?USE_CASES.find(function(u){return u.id===proofId;}):null;
+    if(proofUC)(proofUC.blockIds||[]).forEach(function(bid){pathBlocks[bid]=true;});
+  }
+
+  if(activeTab==='what-may-constrain'&&typeof selectTransformationGaps!=='undefined'&&typeof store!=='undefined'){
+    var gaps=selectTransformationGaps(store.getState());
+    gaps.forEach(function(g){gapBlocks[g.blockId]=true;});
+  }
+
+  var hasPath=Object.keys(pathBlocks).length>0;
+  var hasGaps=Object.keys(gapBlocks).length>0;
+
+  // Contextual banner for active tab
+  if(activeTab==='selected-use-case'&&proofId){
+    var capName=proofId;
+    var probCapObj=(typeof getCapabilityById==='function')?getCapabilityById(proofId):null;
+    if(probCapObj){capName=probCapObj.name;}
+    else{
+      var ucObjBnr=(typeof USE_CASES!=='undefined')?USE_CASES.find(function(u){return u.id===proofId;}):null;
+      if(ucObjBnr)capName=ucObjBnr.name;
+    }
+    var banner=document.createElement('div');
+    banner.className='trsys-path-banner';
+    banner.innerHTML='<i class="ti ti-route"></i> Showing required blocks for: <strong>'+capName+'</strong>'
+      +'<button class="trsys-path-clear" onclick="if(typeof store!==\'undefined\')store.dispatch({type:\'SET_PROOF_CANDIDATE\',payload:null});var s=document.getElementById(\'transformation-system\');if(s){rendered.delete(getSlideIndex(\'transformation-system\'));renderSection(s);}"><i class="ti ti-x"></i> Clear</button>';
+    svgArea.appendChild(banner);
+  }
+
+  if(activeTab==='what-may-constrain'){
+    var gapBanner=document.createElement('div');
+    gapBanner.className='trsys-gap-banner';
+    gapBanner.innerHTML=hasGaps
+      ?'<i class="ti ti-alert-triangle"></i> Blocks with potential gaps highlighted. Based on Quick Pulse answers. <span class="status-badge status-illustrative" style="margin-left:6px">SUBJECT TO VALIDATION</span>'
+      :'<i class="ti ti-info-circle"></i> Complete the Quick Pulse on the maturity screen (M1) to see gap analysis.';
+    svgArea.appendChild(gapBanner);
+  }
+
   var svg=mk('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',height:'100%',xmlns:NS,role:'img','aria-label':'AI Risk Transformation System map'});
-  container.appendChild(svg);
+  svgArea.appendChild(svg);
   var defs=mk('defs',{});
   var mrk=mk('marker',{id:'tss-arr',markerWidth:'7',markerHeight:'5',refX:'6',refY:'2.5',orient:'auto'});
   mrk.appendChild(mk('path',{d:'M0,0 L7,2.5 L0,5 Z',fill:edgeC}));
@@ -50,37 +142,38 @@ function renderTransformationSystem(sec){
       ('M'+e.x1+' '+e.y1+' C'+e.x1+' '+my+' '+e.x2+' '+my+' '+e.x2+' '+e.y2);
     svg.appendChild(mk('path',{d:d,stroke:edgeC,'stroke-width':'1.5',fill:'none','stroke-dasharray':'5,3','marker-end':'url(#tss-arr)'}));
   });
-  // Build path-mode block set (blocks relevant to selected capability)
-  var pathBlocks={};
-  var pathCapId=CLIENT_STATE&&CLIENT_STATE.proofCapabilityId;
-  if(pathCapId){
-    var pathCap=getCapabilityById(pathCapId);
-    if(pathCap)(pathCap.opps||[]).forEach(function(oid){
-      var opp=AI_OPPORTUNITIES&&AI_OPPORTUNITIES.find(function(x){return x.id===oid;});
-      if(opp)(opp.blockIds||[]).forEach(function(bid){pathBlocks[bid]=true;});
-    });
-  }
-  var hasPath=Object.keys(pathBlocks).length>0;
-
-  // Path banner (above SVG)
-  if(hasPath){
-    var pathCapName=getCapabilityById(pathCapId);
-    var banner=document.createElement('div');
-    banner.className='trsys-path-banner';
-    banner.innerHTML='<i class="ti ti-route"></i> Showing required blocks for: <strong>'+(pathCapName?pathCapName.name:pathCapId)+'</strong>'
-      +'<button class="trsys-path-clear" onclick="CLIENT_STATE.proofCapabilityId=null;rendered.delete(getSlideIndex(\'transformation-system\'));renderSection(document.getElementById(\'transformation-system\'))"><i class="ti ti-x"></i> Clear path</button>';
-    container.insertBefore(banner,container.firstChild);
-  }
 
   TRANSFORMATION_BLOCKS.forEach(function(b){
     var L=lay[b.id];if(!L)return;
     var g=mk('g',{cursor:'pointer','aria-label':b.name,'data-blockid':b.id});
-    // Path mode: dim blocks not in path
-    if(hasPath&&!pathBlocks[b.id]&&!L.rail){g.setAttribute('opacity','0.28');}
+
+    // Tab-aware dimming
+    if(activeTab==='selected-use-case'&&hasPath&&!pathBlocks[b.id]&&!L.rail){
+      g.setAttribute('opacity','0.28');
+    }
+
     g.addEventListener('click',function(){openBlockDrawer(b.id);});
-    g.addEventListener('mouseenter',function(){g.querySelector('rect').setAttribute('stroke-opacity','0.85');});
-    g.addEventListener('mouseleave',function(){g.querySelector('rect').setAttribute('stroke-opacity','0.5');});
-    var rect=mk('rect',{x:L.x,y:L.y,width:L.w,height:L.h,rx:'8',fill:blockBg,stroke:b.color,'stroke-width':L.rail?'1':'1.5','stroke-opacity':'0.5'});
+    g.addEventListener('mouseenter',function(){
+      var r=g.querySelector('rect');
+      if(r)r.setAttribute('stroke-opacity','0.85');
+    });
+    g.addEventListener('mouseleave',function(){
+      var r=g.querySelector('rect');
+      if(r)r.setAttribute('stroke-opacity',activeTab==='what-may-constrain'&&gapBlocks[b.id]?'0.9':'0.5');
+    });
+
+    var strokeColor=b.color;
+    var strokeWidth=L.rail?'1':'1.5';
+    var strokeOpacity='0.5';
+
+    // Amber highlight for constraint blocks
+    if(activeTab==='what-may-constrain'&&gapBlocks[b.id]&&!L.rail){
+      strokeColor='#B46A00';
+      strokeWidth='2.5';
+      strokeOpacity='0.9';
+    }
+
+    var rect=mk('rect',{x:L.x,y:L.y,width:L.w,height:L.h,rx:'8',fill:blockBg,stroke:strokeColor,'stroke-width':strokeWidth,'stroke-opacity':strokeOpacity});
     g.appendChild(rect);
     if(L.rail){
       rect.setAttribute('fill',b.color);rect.setAttribute('fill-opacity','0.13');
@@ -111,7 +204,6 @@ function renderTransformationSystem(sec){
     svg.appendChild(g);
   });
 }
-
 // AI TASK ROUTER (Screen 02)
 function renderAITaskRouter(sec){
   var container=sec.querySelector('#aiLandscapeGrid');if(!container)return;
@@ -966,22 +1058,165 @@ function openEdgeDrawer(edgeId){
 // ── MATURITY MATRIX (Screen 6) ──
 function renderMaturityMatrix(sec){
   var table=sec.querySelector('#maturityTable');if(!table)return;
-  var levels=MATURITY_LEVELS;
-  var blocks=TRANSFORMATION_BLOCKS.filter(function(b){return b.position!=='bridge';});
-  var header='<div class="mat-header"><div class="mat-row-label"></div>'+levels.map(function(l){return '<div class="mat-col-hdr"><div class="mat-level-num">'+l.number+'</div><div class="mat-level-name">'+l.label+'</div></div>';}).join('')+'</div>';
-  var rows=blocks.map(function(b){
-    var current=CLIENT_STATE.maturity[b.id];
-    var target=CLIENT_STATE.targetMaturity[b.id];
-    var cells=levels.map(function(l){
-      var isCurrent=current===l.id;
-      var isTarget=target===l.id;
-      return '<div class="mat-cell'+(isCurrent?' mat-current':'')+(isTarget?' mat-target':'')+'\" onclick="cycleMaturity(\''+b.id+'\',\''+l.id+'\')" title="Set '+b.name+': '+l.label+'">'+(isCurrent?'<span class="mat-marker mat-c">Now</span>':'')+(isTarget?'<span class="mat-marker mat-t">Target</span>':'')+'</div>';
-    }).join('');
-    return '<div class="mat-row"><div class="mat-row-label" style="border-left:3px solid '+b.color+'" onclick="openBlockDrawer(\''+b.id+'\')"><span class="mat-block-name">'+b.name+'</span><i class="ti ti-info-circle mat-info-icon"></i></div>'+cells+'</div>';
-  }).join('');
-  table.innerHTML=header+rows;
-}
 
+  // Persist mode across re-renders via DOM property
+  if(!table._matMode)table._matMode='quick-pulse';
+  var mode=table._matMode;
+
+  // Mode toggle (created once, persists)
+  var toggleWrap=table.querySelector('.mat-mode-toggle');
+  if(!toggleWrap){
+    toggleWrap=document.createElement('div');
+    toggleWrap.className='mat-mode-toggle';
+    [{id:'quick-pulse',label:'Quick Pulse'},{id:'evidence-view',label:'Evidence View'}].forEach(function(m){
+      var btn=document.createElement('button');
+      btn.className='mat-mode-btn';
+      btn.setAttribute('data-modeid',m.id);
+      btn.textContent=m.label;
+      btn.addEventListener('click',function(){
+        table._matMode=m.id;
+        renderMaturityMatrix(sec);
+      });
+      toggleWrap.appendChild(btn);
+    });
+    table.appendChild(toggleWrap);
+  }
+  toggleWrap.querySelectorAll('.mat-mode-btn').forEach(function(b){
+    b.classList.toggle('active',b.getAttribute('data-modeid')===mode);
+  });
+
+  // Content area (cleared on each re-render)
+  var contentArea=table.querySelector('.mat-content-area');
+  if(!contentArea){
+    contentArea=document.createElement('div');
+    contentArea.className='mat-content-area';
+    table.appendChild(contentArea);
+  }
+  contentArea.innerHTML='';
+
+  var blocks=TRANSFORMATION_BLOCKS.filter(function(b){return b.position!=='bridge';});
+
+  if(mode==='quick-pulse'){
+    var QP_OPTIONS=[
+      {value:'not-evident',label:'Not evident'},
+      {value:'partly-evident',label:'Partly evident'},
+      {value:'consistently-evident',label:'Consistently evident'},
+      {value:null,label:'Not sure'}
+    ];
+    var state=(typeof store!=='undefined')?store.getState():{maturity:{answers:{}}};
+    var answers=(state.maturity&&state.maturity.answers)||{};
+
+    var qpGrid=document.createElement('div');
+    qpGrid.className='qp-grid';
+
+    blocks.forEach(function(b){
+      var criterionId=b.id+':overall';
+      var currentAnswer=answers[criterionId];
+
+      var row=document.createElement('div');
+      row.className='qp-row';
+
+      var nameDiv=document.createElement('div');
+      nameDiv.className='qp-block-name';
+      nameDiv.style.borderLeft='3px solid '+b.color;
+      nameDiv.innerHTML='<span class="qp-block-label">'+b.name+'</span>'
+        +'<button class="qp-info-btn" onclick="openBlockDrawer(\''+b.id+'\')" aria-label="Info for '+b.name+'" title="Open block details"><i class="ti ti-info-circle"></i></button>';
+      row.appendChild(nameDiv);
+
+      var optsDiv=document.createElement('div');
+      optsDiv.className='qp-options';
+
+      QP_OPTIONS.forEach(function(opt){
+        var btn=document.createElement('button');
+        btn.className='qp-btn'+(currentAnswer===opt.value?' active':'');
+        if(opt.value===null)btn.classList.add('qp-not-sure');
+        btn.textContent=opt.label;
+        btn.addEventListener('click',function(){
+          if(typeof store!=='undefined'){
+            store.dispatch({type:'SET_MATURITY_ANSWER',payload:{criterionId:criterionId,answer:opt.value}});
+          }
+          optsDiv.querySelectorAll('.qp-btn').forEach(function(qb){qb.classList.toggle('active',qb===btn);});
+          updateQPImpact(impactPanel);
+        });
+        optsDiv.appendChild(btn);
+      });
+
+      row.appendChild(optsDiv);
+      qpGrid.appendChild(row);
+    });
+
+    contentArea.appendChild(qpGrid);
+
+    // Impact panel
+    var impactPanel=document.createElement('div');
+    impactPanel.className='qp-impact';
+    contentArea.appendChild(impactPanel);
+
+    function updateQPImpact(panel){
+      if(!panel)return;
+      var st=(typeof store!=='undefined')?store.getState():{maturity:{answers:{}},selectedCapabilities:[]};
+      var gaps=(typeof selectTransformationGaps!=='undefined')?selectTransformationGaps(st):[];
+      var scores=(typeof selectCandidateScores!=='undefined')?selectCandidateScores(st):[];
+      var topCandidates=scores.filter(function(s){return s.score>0.5;}).slice(0,2);
+      var hasAnswers=Object.keys((st.maturity&&st.maturity.answers)||{}).length>0;
+
+      panel.innerHTML=
+        '<div class="qp-impact-section">'
+          +'<div class="qp-impact-h">Candidates that may be testable now</div>'
+          +'<div class="qp-impact-items">'
+            +(topCandidates.length
+              ?topCandidates.map(function(c){
+                return '<a class="qp-impact-link" role="button" tabindex="0"'
+                  +' onclick="if(typeof goToId===\'function\')goToId(\'exec-shortlist\')">'
+                  +'<i class="ti ti-arrow-right"></i>'+c.title+'</a>';
+              }).join('')
+              :'<span class="qp-impact-empty">Select capabilities and complete the shortlist to see candidates.</span>')
+          +'</div>'
+        +'</div>'
+        +'<div class="qp-impact-section">'
+          +'<div class="qp-impact-h">Blocks with potential gaps</div>'
+          +'<div class="qp-impact-items">'
+            +(gaps.length
+              ?gaps.map(function(g){
+                return '<a class="qp-impact-link" role="button" tabindex="0"'
+                  +' onclick="if(typeof goToId===\'function\')goToId(\'transformation-system\')">'
+                  +'<i class="ti ti-alert-triangle" style="color:var(--amber)"></i>'+g.blockName+'</a>';
+              }).join('')
+              :(hasAnswers
+                ?'<span class="qp-impact-empty">No significant gaps identified from current answers.</span>'
+                :'<span class="qp-impact-empty">Answer the Quick Pulse above to see gap analysis.</span>'))
+          +'</div>'
+        +'</div>';
+    }
+    updateQPImpact(impactPanel);
+
+  } else {
+    // Evidence View: existing maturity table behaviour
+    var levels=MATURITY_LEVELS;
+    var header='<div class="mat-header"><div class="mat-row-label"></div>'
+      +levels.map(function(l){
+        return '<div class="mat-col-hdr"><div class="mat-level-num">'+l.number+'</div><div class="mat-level-name">'+l.label+'</div></div>';
+      }).join('')
+      +'</div>';
+    var rows=blocks.map(function(b){
+      var current=CLIENT_STATE.maturity[b.id];
+      var target=CLIENT_STATE.targetMaturity[b.id];
+      var cells=levels.map(function(l){
+        var isCurrent=current===l.id;
+        var isTarget=target===l.id;
+        return '<div class="mat-cell'+(isCurrent?' mat-current':'')+(isTarget?' mat-target':'')
+          +'\" onclick="cycleMaturity(\''+b.id+'\',\''+l.id+'\')" title="Set '+b.name+': '+l.label+'">'
+          +(isCurrent?'<span class="mat-marker mat-c">Now</span>':'')
+          +(isTarget?'<span class="mat-marker mat-t">Target</span>':'')
+          +'</div>';
+      }).join('');
+      return '<div class="mat-row"><div class="mat-row-label" style="border-left:3px solid '+b.color
+        +'" onclick="openBlockDrawer(\''+b.id+'\')"><span class="mat-block-name">'+b.name+'</span>'
+        +'<i class="ti ti-info-circle mat-info-icon"></i></div>'+cells+'</div>';
+    }).join('');
+    contentArea.innerHTML=header+rows;
+  }
+}
 function cycleMaturity(blockId,levelId){
   var current=CLIENT_STATE.maturity[blockId];
   var target=CLIENT_STATE.targetMaturity[blockId];

@@ -760,10 +760,44 @@ body[data-mode="explain"] .explain-only{display:block;}
 .ptp-connector{display:flex;align-items:center;justify-content:center;padding:0 10px;color:var(--accent);font-size:20px;flex-shrink:0;}
 .ptp-prompt{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.04em;padding:8px 14px;border:1px solid var(--border-1);border-radius:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 
+/* ── TRANSFORMATION SYSTEM TABS ── */
+.trsys-tabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap;}
+.trsys-tab-btn{padding:6px 14px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .14s,color .14s,border-color .14s;}
+.trsys-tab-btn:hover{background:var(--accent-soft);color:var(--accent);}
+.trsys-tab-btn.active{background:var(--accent-soft);border-color:rgba(161,0,255,.35);color:var(--accent);font-weight:700;}
+.trsys-svg-area{position:relative;}
+.trsys-gap-banner{display:flex;align-items:center;gap:8px;padding:7px 12px;margin-bottom:8px;background:rgba(180,106,0,.07);border:1px solid rgba(180,106,0,.25);border-radius:7px;font-size:13px;color:var(--amber);flex-wrap:wrap;}
+/* ── MATURITY QUICK PULSE ── */
+.mat-mode-toggle{display:flex;gap:4px;margin-bottom:14px;}
+.mat-mode-btn{padding:6px 16px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .14s,color .14s,border-color .14s;}
+.mat-mode-btn:hover{background:var(--accent-soft);color:var(--accent);}
+.mat-mode-btn.active{background:var(--accent-soft);border-color:rgba(161,0,255,.35);color:var(--accent);font-weight:700;}
+.mat-content-area{width:100%;}
+.qp-grid{display:flex;flex-direction:column;gap:8px;}
+.qp-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border-1);}
+.qp-row:last-child{border-bottom:none;}
+.qp-block-name{display:flex;align-items:center;gap:6px;padding-left:10px;min-width:180px;flex-shrink:0;}
+.qp-block-label{font-size:14px;font-weight:500;color:var(--text-1);}
+.qp-info-btn{background:transparent;border:none;color:var(--text-3);cursor:pointer;padding:2px;font-size:13px;transition:color .14s;flex-shrink:0;}
+.qp-info-btn:hover{color:var(--accent);}
+.qp-options{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.qp-btn{padding:5px 12px;border-radius:6px;font-size:12px;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .14s,color .14s,border-color .14s;white-space:nowrap;}
+.qp-btn:hover{background:var(--accent-soft);color:var(--accent);border-color:rgba(161,0,255,.25);}
+.qp-btn.active{background:var(--accent-soft);border-color:rgba(161,0,255,.4);color:var(--accent);font-weight:600;}
+.qp-btn.qp-not-sure.active{background:var(--surface-3);border-color:var(--border-2);color:var(--text-2);font-weight:400;}
+.qp-impact{margin-top:16px;padding:14px;border:1px solid var(--border-1);border-radius:10px;background:var(--surface-2);}
+.qp-impact-section{margin-bottom:12px;}
+.qp-impact-section:last-child{margin-bottom:0;}
+.qp-impact-h{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:6px;}
+.qp-impact-items{display:flex;flex-wrap:wrap;gap:6px;}
+.qp-impact-link{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:14px;color:var(--accent);background:var(--accent-soft);border:1px solid rgba(161,0,255,.2);cursor:pointer;transition:background .14s;}
+.qp-impact-link:hover{background:rgba(161,0,255,.15);}
+.qp-impact-empty{font-size:13px;color:var(--text-3);font-style:italic;}
+
 /* ── FONT SIZE CORRECTIONS (V11) ── */
 /* All core screen labels minimum 14px */
 .sec-tag{font-size:11px;letter-spacing:.1em;} /* tag stays smaller by design as meta info */
-/* Primary visual labels that were 8–11px — override to 14px minimum */
+/* Primary visual labels that were 8-11px, override to 14px minimum */
 .ptw-phase-name{font-size:14px !important;}
 .ptw-phase-wk{font-size:12px !important;}
 .eco-input-lbl{font-size:12px !important;}
