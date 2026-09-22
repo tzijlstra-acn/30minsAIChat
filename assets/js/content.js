@@ -267,6 +267,110 @@ var ROLE_DATA=[
   {name:'Model validation',shareA:6,shareB:4,splitA:[25,20,55],splitB:[25,20,55]}
 ];
 
+// ── PROCESS TWIN TEMPLATES ──
+// Source: All AI & Agent Solutions CFO&EV deck. Topology source-backed; metrics not provided.
+// dataState: 'source-backed' | 'illustrative' | 'client-evidence'
+var PROCESS_TWIN_TEMPLATES=[
+  {
+    id:'regulation-coverage',
+    solutionId:'regulation-coverage',
+    name:'Regulation Coverage',
+    subtitle:'From regulatory text to governed obligation, control, and evidence',
+    sourceDocument:'All AI & Agent Solutions CFO&EV',
+    sourceSection:'Regulation Coverage | Diagram',
+    dataState:'source-backed',
+    // Lanes: work | ai | human | data
+    lanes:[
+      {id:'work',label:'Work & decisions',color:'#0891B2'},
+      {id:'ai',label:'AI & automation',color:'#A100FF'},
+      {id:'human',label:'Human gate',color:'#0F8A62'},
+      {id:'data',label:'Data & evidence',color:'#0E7490'}
+    ],
+    // Nodes: x = column 0-7, lane = lane id
+    nodes:[
+      {id:'ingest',label:'Ingest documents',lane:'work',col:0,type:'activity',
+       system:'Document repository',executor:'automation',
+       desc:'Ingest regulatory texts and internal policy documents from the document repository.',
+       dataIn:['Regulation documents','Internal policy documents'],
+       dataOut:['Raw document corpus']},
+      {id:'vectorise',label:'Vectorise & index',lane:'ai',col:1,type:'ai-genai',
+       system:'Vector database',executor:'agent',
+       desc:'Chunk, embed, and index all documents in the vector knowledge base.',
+       dataIn:['Raw document corpus'],
+       dataOut:['Indexed embeddings']},
+      {id:'split',label:'Split into obligations',lane:'ai',col:2,type:'ai-genai',
+       system:'Orchestration layer',executor:'agent',
+       desc:'Extract discrete obligations: actor, action, condition, frequency, domain.',
+       dataIn:['Indexed embeddings'],
+       dataOut:['Obligation register']},
+      {id:'match-policy',label:'Match to policies',lane:'ai',col:3,type:'ai-analytics',
+       system:'Orchestration layer',executor:'agent',
+       desc:'Match regulatory obligations to internal policy obligations; score alignment.',
+       dataIn:['Obligation register','Policy obligations'],
+       dataOut:['Policy coverage map']},
+      {id:'match-controls',label:'Match to controls',lane:'ai',col:4,type:'ai-analytics',
+       system:'Control repository',executor:'agent',
+       desc:'Map obligations to controls; detect gaps and redundancies.',
+       dataIn:['Policy coverage map','Control library'],
+       dataOut:['Control coverage map','Gap register']},
+      {id:'suggest',label:'Suggest changes',lane:'ai',col:5,type:'ai-genai',
+       system:'Review workbench',executor:'agent',
+       desc:'Generate proposed policy enhancements or new controls for each gap.',
+       dataIn:['Gap register'],
+       dataOut:['Recommendations']},
+      {id:'gate-sme',label:'SME review',lane:'human',col:6,type:'gate',
+       system:'Review workbench',executor:'human',
+       desc:'Compliance SME validates obligation extraction, coverage map, and recommendations.',
+       dataIn:['Recommendations'],
+       dataOut:['Reviewed recommendations']},
+      {id:'gate-owner',label:'Owner approval',lane:'human',col:7,type:'gate',
+       system:'GRC platform',executor:'human',
+       desc:'Policy or control owner approves the proposed change before repository update.',
+       dataIn:['Reviewed recommendations'],
+       dataOut:['Approved changes']},
+      {id:'update',label:'Update repositories',lane:'work',col:8,type:'activity',
+       system:'GRC platform',executor:'automation',
+       desc:'Write approved policy or control changes back to the GRC platform.',
+       dataIn:['Approved changes'],
+       dataOut:['Updated control library','Updated policy repository']},
+      {id:'evidence',label:'Evidence pack',lane:'data',col:9,type:'evidence',
+       system:'Document repository',executor:'automation',
+       desc:'Create traceable evidence pack: obligation register, coverage map, gap register, review history, approved changes.',
+       dataIn:['Updated control library','Review history'],
+       dataOut:['Audit-ready evidence pack']}
+    ],
+    // Data objects shown in the data lane
+    dataObjects:[
+      {id:'reg-doc',label:'Regulation',col:0,color:'#0E7490'},
+      {id:'policy-doc',label:'Policy',col:1,color:'#0E7490'},
+      {id:'vector-db',label:'Vector DB',col:2,color:'#0E7490'},
+      {id:'obligations',label:'Obligations',col:3,color:'#0E7490'},
+      {id:'coverage-map',label:'Coverage map',col:5,color:'#0E7490'},
+      {id:'gap-register',label:'Gap register',col:6,color:'#B46A00'}
+    ],
+    // Edges: from node id to node id
+    edges:[
+      {from:'ingest',to:'vectorise'},{from:'vectorise',to:'split'},
+      {from:'split',to:'match-policy'},{from:'match-policy',to:'match-controls'},
+      {from:'match-controls',to:'suggest'},{from:'suggest',to:'gate-sme'},
+      {from:'gate-sme',to:'gate-owner'},{from:'gate-owner',to:'update'},
+      {from:'update',to:'evidence'}
+    ],
+    kpis:[
+      {label:'Obligation types',value:'4',unit:'actor / action / condition / domain',dataState:'source-backed'},
+      {label:'Human gates',value:'2',unit:'SME review + owner approval',dataState:'source-backed'},
+      {label:'AI components',value:'3',unit:'extraction, matching, drafting',dataState:'source-backed'},
+      {label:'Evidence outputs',value:'5',unit:'obligation register, maps, gap register, history, pack',dataState:'source-backed'}
+    ]
+  }
+];
+
+// Map solution IDs to process templates
+var SOLUTION_PROCESS_TEMPLATE_MAP={
+  'regalytics':'regulation-coverage',
+  'regulation-coverage':'regulation-coverage'
+};
+
 // ── TEAM ──
 // approvedTitle and approvedFocus are null until reviewed and approved.
 var EXPERTS=[

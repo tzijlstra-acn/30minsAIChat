@@ -466,11 +466,10 @@ function renderEvidenceFlow(sec){
 // ── CAPABILITY HOTSPOTS (Screen 7) ──
 function renderCapabilityHotspots(sec){
   var area=sec.querySelector('#capHotspotArea');if(!area)return;
-  // Render category list
-  area.innerHTML='<div class="cap-categories" id="capCatList">'+RISK_CATEGORIES.map(function(cat){
+  area.innerHTML='<div class="cap-layout"><div class="cap-main"><div class="cap-categories" id="capCatList">'+RISK_CATEGORIES.map(function(cat){
     var selCount=CLIENT_STATE.selectedCapabilityIds.filter(function(id){return cat.caps.indexOf(id)>-1;}).length;
     return '<button class="cap-cat-btn" data-catid="'+cat.id+'" onclick="toggleCatPanel(\''+cat.id+'\')" style="border-color:'+(selCount?cat.color:'var(--border-1)')+'"><i class="ti ti-'+cat.icon+'" style="color:'+cat.color+'"></i><span class="cap-cat-btn-name">'+cat.name+'</span><span class="cap-cat-btn-count">'+cat.caps.length+(selCount?' · '+selCount+' selected':'')+'</span><i class="ti ti-chevron-right cap-cat-chev" id="catChev-'+cat.id+'"></i></button>';
-  }).join('')+'</div><div class="cap-cat-panel" id="capCatPanel" style="display:none"></div><div class="cap-sidebar" id="capSidebar"><div class="cap-sel-tray"><div class="cap-sel-tray-h"><span>Selected capabilities</span><span class="cap-sel-badge" id="capSelCount">0 / 5</span></div><div class="cap-sel-chips" id="capSelChips"><div class="cap-empty-msg">Select up to 5 capabilities.</div></div></div></div>';
+  }).join('')+'</div><div class="cap-cat-panel" id="capCatPanel" style="display:none"></div></div><div class="cap-sidebar" id="capSidebar"><div class="cap-sel-tray"><div class="cap-sel-tray-h"><span>Selected capabilities</span><span class="cap-sel-badge" id="capSelCount">0 / 5</span></div><div class="cap-sel-chips" id="capSelChips"><div class="cap-empty-msg">Select up to 5 capabilities to build the shortlist.</div></div></div></div></div>';
   updateCapSidebar();
 }
 
@@ -541,10 +540,10 @@ function renderOpportunityPortfolio(sec){
   var selCaps=CLIENT_STATE.selectedCapabilityIds;
   var opps=selCaps.length?AI_OPPORTUNITIES.filter(function(o){return o.capIds&&o.capIds.some(function(c){return selCaps.indexOf(c)>-1;});}):AI_OPPORTUNITIES.slice(0,8);
   if(!opps.length){area.innerHTML='<div class="opp-empty">Select capabilities on the previous screen to populate the opportunity portfolio.</div>';return;}
-  area.innerHTML=opps.map(function(o){
+  area.innerHTML='<div class="opp-cards">'+opps.map(function(o){
     var statusCls='status-'+o.status;
-    return '<div class="opp-card"><div class="opp-card-top"><span class="status-badge '+statusCls+'">'+statusLabel(o.status)+'</span></div><div class="opp-card-name">'+o.name+'</div><div class="opp-card-caps">'+(o.capIds||[]).map(function(cid){var c=getCapabilityById(cid);return c?'<span class="opp-cap-pill">'+c.name+'</span>':'';}).join('')+'</div><button class="opp-card-detail" onclick="openOppDrawer(\''+o.id+'\')" aria-label="Details"><i class="ti ti-info-circle"></i></button></div>';
-  }).join('');
+    return '<div class="opp-card"><div class="opp-card-top"><span class="status-badge '+statusCls+'">'+statusLabel(o.status)+'</span></div><div class="opp-card-name">'+o.name+'</div><div class="opp-card-caps">'+(o.capIds||[]).map(function(cid){var c=getCapabilityById(cid);return c?'<span class="opp-cap-pill">'+c.name+'</span>':'';}).join('')+'</div><button class="opp-card-detail" onclick="openOppDrawer(\''+o.id+'\')" aria-label="Details for '+o.name+'"><i class="ti ti-info-circle"></i></button></div>';
+  }).join('')+'</div>';
 }
 
 function openOppDrawer(oppId){
@@ -560,6 +559,7 @@ function openOppDrawer(oppId){
 // ── SHORTLIST (Screen 10) ──
 function renderShortlist(sec){
   var grid=sec.querySelector('#shortlistGrid');if(!grid)return;
+  grid.className='shortlist-grid';
   var sel=CLIENT_STATE.selectedCapabilityIds.slice(0,3);
   if(!sel.length){grid.innerHTML='<div class="shortlist-empty">Select capabilities on screen 7 to populate the shortlist.</div>';return;}
   var lens=CLIENT_STATE.lens;
@@ -963,47 +963,19 @@ function renderAppCaps(sec){
 }
 
 // ── TEAM ──
-var COUNTERPART_ROLES=[
-  'CRO or Risk Director',
-  'Head of NFR / Operational Risk',
-  'Regulatory Affairs lead',
-  'Chief Data Officer or Data Governance lead',
-  'Head of Internal Controls or GRC',
-  'Head of Financial Crime',
-  'CTO / Chief Architect (Risk Technology)'
-];
-
 function renderTeam(sec){
   var grid=sec.querySelector('#teamGrid');if(!grid)return;
   var visibleTeam=(EXPERTS||[]).filter(function(e){return e.clientVisible!==false;});
-  grid.innerHTML=visibleTeam.map(function(e,i){
+  grid.innerHTML='<div class="team-cards">'+visibleTeam.map(function(e){
     var initials=e.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2);
-    var focusHtml=(e.approvedFocus&&e.approvedFocus.length)?
-      '<div class="team-focus">'+e.approvedFocus.map(function(f){return '<span class="etag">'+f+'</span>';}).join('')+'</div>':'';
-    var titleHtml=e.approvedTitle?'<div class="expert-title">'+e.approvedTitle+'</div>':'';
-    var counterpart=COUNTERPART_ROLES[i]||'Client counterpart (to be confirmed)';
-    return '<div class="delivery-cell-pair">'
-      +'<div class="delivery-cell-acn">'
-        +'<a class="expert" href="'+(e.mail?'mailto:'+e.mail:'#')+'" aria-label="'+e.name+(e.mail?' ('+e.mail+')':'')+'">'+
-          '<img class="expert-photo" src="'+e.photo+'" alt="'+e.name+'" loading="lazy"'+
-            ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'+
-          '<div class="expert-ph-fallback" style="display:none">'+initials+'</div>'+
-          '<div class="expert-name">'+e.name+'</div>'+
-          titleHtml+
-          focusHtml+
-          (e.mail?'<div class="expert-mail">'+e.mail+'</div>':'')
-        +'</a>'
-      +'</div>'
-      +'<div class="delivery-cell-connector"><div class="dcc-line"></div></div>'
-      +'<div class="delivery-cell-client">'
-        +'<div class="client-role-card">'
-          +'<div class="crc-label">Client counterpart</div>'
-          +'<div class="crc-role">'+counterpart+'</div>'
-          +'<div class="crc-note">To be confirmed</div>'
-        +'</div>'
-      +'</div>'
-    +'</div>';
-  }).join('');
+    return '<a class="expert team-card" href="'+(e.mail?'mailto:'+e.mail:'#')+'" aria-label="'+e.name+(e.mail?' — '+e.mail:'')+'">'+
+      '<img class="expert-photo" src="'+e.photo+'" alt="'+e.name+'" loading="lazy"'+
+        ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'+
+      '<div class="expert-ph-fallback" style="display:none">'+initials+'</div>'+
+      '<div class="expert-name">'+e.name+'</div>'+
+      (e.mail?'<div class="expert-mail" style="opacity:1">'+e.mail+'</div>':'')
+    +'</a>';
+  }).join('')+'</div>';
 }
 
 // ── SOLUTION PORTFOLIO (Screen 09b) ──
@@ -1055,12 +1027,220 @@ function prefersReducedMotion(){
   return window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 }
 
+// ── PROCESS TWIN (Screen 11) ──
+function getProcessTemplate(){
+  var tpl=null;
+  // Try selected proof capability first
+  var pid=CLIENT_STATE.proofCapabilityId||CLIENT_STATE.selectedCapabilityIds[0];
+  if(pid){
+    var cap=getCapabilityById(pid);
+    if(cap){
+      // Look for a template matching via solution map
+      var solIds=Object.keys(SOLUTION_PROCESS_TEMPLATE_MAP||{});
+      for(var i=0;i<solIds.length;i++){
+        if(SOLUTION_PROCESS_TEMPLATE_MAP[solIds[i]]==='regulation-coverage'&&(cap.id===solIds[i]||cap.cat==='compliance'))break;
+      }
+    }
+  }
+  // Default: Regulation Coverage
+  return (PROCESS_TWIN_TEMPLATES||[])[0]||null;
+}
+
+function renderProcessTwin(sec){
+  var area=sec.querySelector('#processTwinArea');if(!area)return;
+  var tpl=getProcessTemplate();
+  if(!tpl){
+    area.innerHTML='<div class="opp-empty">Select a capability on screen 07 to populate the process flow. Regulation Coverage is available as the default template.</div>';
+    return;
+  }
+  // Build the executive view
+  area.innerHTML='';
+  var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+
+  // KPI strip
+  var kpiHtml='<div class="pt-kpi-strip">'+
+    '<div class="pt-state-badge">SOURCE-BACKED TOPOLOGY</div>'+
+    (tpl.kpis||[]).map(function(k){
+      return '<div class="pt-kpi"><div class="pt-kpi-val">'+k.value+'</div><div class="pt-kpi-lbl">'+k.label+'</div></div>';
+    }).join('')+
+  '</div>';
+
+  // SVG dimensions
+  var COLS=10;
+  var COL_W=90;
+  var LANE_H=68;
+  var LEFT_PAD=110;
+  var TOP_PAD=16;
+  var BOTTOM_PAD=20;
+  var W=LEFT_PAD+COLS*COL_W;
+  var H=TOP_PAD+tpl.lanes.length*LANE_H+BOTTOM_PAD;
+
+  function nodeX(col){return LEFT_PAD+col*COL_W+COL_W/2;}
+  function nodeY(laneIdx){return TOP_PAD+laneIdx*LANE_H+LANE_H/2;}
+  function laneIdx(laneId){return tpl.lanes.findIndex(function(l){return l.id===laneId;});}
+
+  // D3 SVG build
+  if(typeof d3==='undefined'){
+    area.innerHTML='<div class="render-error">D3 not loaded — process twin cannot render.</div>';
+    return;
+  }
+
+  var wrap=document.createElement('div');
+  wrap.className='pt-svg-wrap';
+
+  // KPI strip before SVG
+  var kpiEl=document.createElement('div');
+  kpiEl.innerHTML=kpiHtml;
+  area.appendChild(kpiEl.firstChild);
+
+  var svgSel=d3.select(wrap).append('svg')
+    .attr('viewBox','0 0 '+W+' '+H)
+    .attr('width','100%')
+    .attr('height',H)
+    .attr('role','img')
+    .attr('aria-label','Process flow: '+tpl.name);
+
+  // Lane backgrounds and labels
+  tpl.lanes.forEach(function(lane,li){
+    var y=TOP_PAD+li*LANE_H;
+    svgSel.append('rect')
+      .attr('x',LEFT_PAD-4).attr('y',y+4).attr('width',COLS*COL_W).attr('height',LANE_H-8).attr('rx',6)
+      .attr('fill',lane.color).attr('fill-opacity',isDark?0.06:0.04)
+      .attr('stroke',lane.color).attr('stroke-opacity',0.1).attr('stroke-width',1);
+    svgSel.append('text')
+      .attr('x',LEFT_PAD-10).attr('y',y+LANE_H/2).attr('text-anchor','end').attr('dominant-baseline','middle')
+      .attr('font-size','8').attr('font-family','JetBrains Mono,monospace')
+      .attr('fill',lane.color).attr('fill-opacity',0.75)
+      .text(lane.label.toUpperCase().slice(0,12));
+  });
+
+  // Edges (draw before nodes so nodes appear on top)
+  tpl.edges.forEach(function(edge){
+    var fromNode=tpl.nodes.find(function(n){return n.id===edge.from;});
+    var toNode=tpl.nodes.find(function(n){return n.id===edge.to;});
+    if(!fromNode||!toNode)return;
+    var x1=nodeX(fromNode.col);
+    var y1=nodeY(laneIdx(fromNode.lane));
+    var x2=nodeX(toNode.col);
+    var y2=nodeY(laneIdx(toNode.lane));
+    // Curved path
+    var mx=(x1+x2)/2;
+    svgSel.append('path')
+      .attr('d','M'+x1+','+y1+' C'+mx+','+y1+' '+mx+','+y2+' '+x2+','+y2)
+      .attr('fill','none')
+      .attr('stroke',isDark?'rgba(161,0,255,0.22)':'rgba(161,0,255,0.18)')
+      .attr('stroke-width',1.5)
+      .attr('marker-end','url(#pt-arrow)');
+  });
+
+  // Arrow marker
+  var defs=svgSel.append('defs');
+  defs.append('marker').attr('id','pt-arrow').attr('viewBox','0 0 8 8')
+    .attr('refX',6).attr('refY',4).attr('markerWidth',6).attr('markerHeight',6)
+    .attr('orient','auto')
+    .append('path').attr('d','M0,0 L8,4 L0,8 Z').attr('fill','rgba(161,0,255,0.45)');
+
+  // Nodes
+  tpl.nodes.forEach(function(node){
+    var li=laneIdx(node.lane);
+    var cx=nodeX(node.col);
+    var cy=nodeY(li);
+    var lane=tpl.lanes[li];
+    var color=lane?lane.color:'#A100FF';
+
+    var g=svgSel.append('g')
+      .style('cursor','pointer')
+      .attr('role','button')
+      .attr('tabindex','0')
+      .attr('aria-label',node.label);
+
+    g.on('click',function(){openProcessNodeDrawer(tpl,node);})
+     .on('keydown',function(evt){if(evt.key==='Enter')openProcessNodeDrawer(tpl,node);});
+
+    if(node.type==='gate'){
+      // Diamond
+      var s=20;
+      g.append('polygon')
+        .attr('points',cx+','+(cy-s)+' '+(cx+s)+','+cy+' '+cx+','+(cy+s)+' '+(cx-s)+','+cy)
+        .attr('fill','none')
+        .attr('stroke',color)
+        .attr('stroke-width',2)
+        .attr('stroke-opacity',0.9);
+      g.append('polygon')
+        .attr('points',cx+','+(cy-s)+' '+(cx+s)+','+cy+' '+cx+','+(cy+s)+' '+(cx-s)+','+cy)
+        .attr('fill',color).attr('fill-opacity',0.08);
+    } else if(node.type==='evidence'){
+      // Document shape (rect with folded corner)
+      var rw=56,rh=34;
+      g.append('rect')
+        .attr('x',cx-rw/2).attr('y',cy-rh/2).attr('width',rw).attr('height',rh).attr('rx',4)
+        .attr('fill',color).attr('fill-opacity',0.1)
+        .attr('stroke',color).attr('stroke-width',1.5).attr('stroke-opacity',0.7);
+      g.append('line').attr('x1',cx+rw/2-10).attr('y1',cy-rh/2).attr('x2',cx+rw/2).attr('y2',cy-rh/2+10)
+        .attr('stroke',color).attr('stroke-opacity',0.5).attr('stroke-width',1);
+    } else if(node.type==='ai-genai'||node.type==='ai-analytics'){
+      // Hexagon
+      var hr=20;
+      var pts=[];
+      for(var a=0;a<6;a++){var ang=(a*60-90)*Math.PI/180;pts.push((cx+hr*Math.cos(ang)).toFixed(1)+','+(cy+hr*Math.sin(ang)).toFixed(1));}
+      g.append('polygon')
+        .attr('points',pts.join(' '))
+        .attr('fill',color).attr('fill-opacity',0.12)
+        .attr('stroke',color).attr('stroke-width',1.5).attr('stroke-opacity',0.8);
+      // Spark mark for genai
+      if(node.type==='ai-genai'){
+        g.append('text').attr('x',cx).attr('y',cy).attr('text-anchor','middle').attr('dominant-baseline','central')
+          .attr('font-size','10').attr('fill',color).attr('fill-opacity',0.9).text('✦');
+      }
+    } else {
+      // Rounded rectangle (activity)
+      var rw2=64,rh2=30;
+      g.append('rect')
+        .attr('x',cx-rw2/2).attr('y',cy-rh2/2).attr('width',rw2).attr('height',rh2).attr('rx',6)
+        .attr('fill',color).attr('fill-opacity',0.1)
+        .attr('stroke',color).attr('stroke-width',1.5).attr('stroke-opacity',0.7);
+    }
+
+    // Label below node
+    var words=node.label.split(' ');
+    var mid=Math.ceil(words.length/2);
+    var l1=words.slice(0,mid).join(' ');
+    var l2=words.slice(mid).join(' ');
+    var labelY=node.type==='gate'?(cy+28):(cy+22);
+    g.append('text').attr('x',cx).attr('y',labelY).attr('text-anchor','middle')
+      .attr('font-size','8').attr('font-family','Inter,sans-serif')
+      .attr('fill',isDark?'rgba(237,232,247,0.72)':'rgba(21,24,28,0.65)').text(l1);
+    if(l2)g.append('text').attr('x',cx).attr('y',labelY+10).attr('text-anchor','middle')
+      .attr('font-size','8').attr('font-family','Inter,sans-serif')
+      .attr('fill',isDark?'rgba(237,232,247,0.72)':'rgba(21,24,28,0.65)').text(l2);
+  });
+
+  area.appendChild(wrap);
+
+  // Source note
+  var note=document.createElement('div');
+  note.className='pt-source-note';
+  note.innerHTML='<i class="ti ti-info-circle"></i> Topology source-backed from <em>'+tpl.sourceDocument+', '+tpl.sourceSection+'</em>. Measured metrics not provided. Click any node to inspect inputs, controls, and source.';
+  area.appendChild(note);
+}
+
+function openProcessNodeDrawer(tpl,node){
+  if(!tpl||!node)return;
+  var tabs=[
+    {id:'step',label:'Step',html:'<div class="drawer-section"><div class="dr-q">'+node.label+'</div><div class="dr-h">Description</div><div class="dr-body">'+node.desc+'</div><div class="dr-h" style="margin-top:12px">Executor</div><div class="dr-body">'+node.executor.charAt(0).toUpperCase()+node.executor.slice(1)+'</div><div class="dr-h" style="margin-top:12px">System</div><div class="dr-body">'+node.system+'</div></div>'},
+    {id:'data',label:'Data',html:'<div class="drawer-section"><div class="dr-h">Data in</div>'+(node.dataIn||[]).map(function(d){return '<div class="dr-item"><i class="ti ti-arrow-right dr-icon"></i>'+d+'</div>';}).join('')+'<div class="dr-h" style="margin-top:12px">Data out</div>'+(node.dataOut||[]).map(function(d){return '<div class="dr-item"><i class="ti ti-arrow-right dr-icon" style="color:var(--green)"></i>'+d+'</div>';}).join('')+'</div>'},
+    {id:'source',label:'Source',html:'<div class="drawer-section"><div class="dr-h">Data state</div><div class="dr-body"><span class="pt-state-badge">'+tpl.dataState.toUpperCase().replace(/-/g,' ')+'</span></div><div class="dr-h" style="margin-top:12px">Source document</div><div class="dr-body">'+tpl.sourceDocument+'</div><div class="dr-h" style="margin-top:12px">Source section</div><div class="dr-body">'+tpl.sourceSection+'</div><div class="dr-note" style="margin-top:12px">Topology derived from solution diagram. Quantitative metrics require client data or validated reference data.</div></div>'}
+  ];
+  openDrawer(tpl.name+': '+node.label,tabs,'step');
+}
+
 // ── RENDER CONTRACTS ──
 var VISUAL_CONTRACTS={
   solutionPortfolio:'solutionPortfolioArea',
   aiLandscape:'aiLandscapeGrid',trSystem:'trSysGrid',evidenceFlow:'evidenceFlowDiagram',
   maturityMatrix:'maturityTable',capHotspots:'capHotspotArea',roleBars:'rolesTable',
   oppPortfolio:'oppPortfolioArea',shortlist:'shortlistGrid',useCases:'ucGrid',
+  processTwin:'processTwinArea',
   proofValueCapture:'valueWaterfall',accentureEdge:'engineA',takeaway:'ta-pressures',
   appCaps:'appCapsBody',team:'teamGrid'
 };
@@ -1085,6 +1265,7 @@ var renderers={
   'oppPortfolio':renderOpportunityPortfolio,
   'shortlist':renderShortlist,
   'useCases':renderUseCases,
+  'processTwin':renderProcessTwin,
   'proofValueCapture':renderProofValueCapture,
   'accentureEdge':renderAccentureEdge,
   'takeaway':renderTakeaway,
