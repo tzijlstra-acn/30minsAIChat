@@ -82,7 +82,7 @@
 ══════════════════════════════════════════════════════ -->
 
 <!-- 00 · COVER -->
-<section id="cover" data-slide data-chapter-id="cover" data-chapter-title="Cover" data-nav-title="Risk at machine speed" data-method-label="60-minute executive conversation" class="branded-dark">
+<section id="cover" data-slide data-route="core" data-chapter-id="cover" data-chapter-title="Cover" data-nav-title="Risk at machine speed" data-method-label="60-minute executive conversation" class="branded-dark">
   <div class="inner hero-inner reveal">
     <div class="sec-tag">NFR AI · Accenture · <span class="yr"></span></div>
     <h1 class="hero-h1">AI is changing the pace and unit<br>of work in risk.<br><span class="grad">The operating model may need to evolve with it.</span></h1>
@@ -105,7 +105,7 @@
 </section>
 
 <!-- 01 · SETTING THE SCENE -->
-<section id="setting-scene" data-slide data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="Why act now?" data-method-label="Listen · 15 min">
+<section id="setting-scene" data-slide data-route="core" data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="Why act now?" data-method-label="Listen · 15 min">
   <div class="inner">
     <div class="sec-tag reveal">AI Landscape · 01</div>
     <h2 class="slide-h reveal">Three forces are converging<br>that the current model was not built for.</h2>
@@ -138,7 +138,7 @@
 </section>
 
 <!-- 02 · AI LANDSCAPE -->
-<section id="ai-landscape" data-slide data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="AI landscape today" data-render="aiLandscape">
+<section id="ai-landscape" data-slide data-route="core" data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="AI landscape today" data-render="aiLandscape">
   <div class="inner">
     <div class="sec-tag reveal">AI Landscape · 02</div>
     <h2 class="slide-h reveal">Five technology patterns, each with a distinct evidence, control, and cost profile.</h2>
@@ -147,42 +147,11 @@
   </div>
 </section>
 
-<!-- 03 · THREE MAPS -->
-<section id="three-maps" data-slide data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="Three maps: orientation">
-  <div class="inner">
-    <div class="sec-tag reveal">AI Landscape · 03</div>
-    <h2 class="slide-h reveal">Three maps orient this conversation.</h2>
-    <p class="slide-sub reveal">Each map answers a different question. Navigate between them at any point using the buttons below.</p>
-    <div class="three-maps reveal">
-      <div class="map-panel" onclick="goToId('transformation-system')" tabindex="0">
-        <div class="map-panel-q">WHERE · WHAT</div>
-        <div class="map-panel-icon"><i class="ti ti-layout-grid"></i></div>
-        <div class="map-panel-h">Transformation System</div>
-        <div class="map-panel-desc">Eight interdependent blocks that must advance for AI to work in the risk function. Click any block for a full diagnostic and intervention toolkit.</div>
-        <div class="map-panel-jump">→ Transformation System</div>
-      </div>
-      <div class="map-panel" onclick="goToId('capability-hotspots')" tabindex="0">
-        <div class="map-panel-q">WHERE</div>
-        <div class="map-panel-icon"><i class="ti ti-map-pin"></i></div>
-        <div class="map-panel-h">Risk Capability Map</div>
-        <div class="map-panel-desc">47 risk capabilities across 6 domains. Select the ones relevant to your pressures to generate a prioritised shortlist with evidence plan.</div>
-        <div class="map-panel-jump">→ Capability Map</div>
-      </div>
-      <div class="map-panel" onclick="goToId('exec-shortlist')" tabindex="0">
-        <div class="map-panel-q">HOW</div>
-        <div class="map-panel-icon"><i class="ti ti-checklist"></i></div>
-        <div class="map-panel-h">Executive Shortlist</div>
-        <div class="map-panel-desc">Three proof candidates with decision logic. Select your first-move capability and proceed to value-capture modelling and use-case mapping.</div>
-        <div class="map-panel-jump">→ Executive Shortlist</div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- 04 · TRANSFORMATION SYSTEM -->
-<section id="transformation-system" data-slide data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="Transformation system" data-method-label="What must change · 10 min" data-render="trSystem">
+<section id="transformation-system" data-slide data-route="core" data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="Transformation system" data-method-label="What must change · 10 min" data-render="trSystem">
   <div class="inner">
-    <div class="sec-tag reveal">Transformation System · 04</div>
+    <div class="sec-tag reveal">Transformation System · 03</div>
     <h2 class="slide-h reveal">AI can expose constraints in the current model. The required change depends on the use case and starting point.</h2>
     <p class="slide-sub reveal">Eight blocks are typically interdependent. Their sequence and depth can vary by context, risk appetite, and ambition. Click any block to open its diagnostic and intervention toolkit.</p>
     <div id="trSysGrid" class="trsys-grid" style="margin-top:12px"></div>
@@ -190,9 +159,9 @@
 </section>
 
 <!-- 05 · EVIDENCE-TO-DESIGN FLOW -->
-<section id="how-blocks-built" data-slide data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="How blocks are designed" data-render="evidenceFlow">
+<section id="how-blocks-built" data-slide data-route="core" data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="How blocks are designed" data-render="evidenceFlow">
   <div class="inner">
-    <div class="sec-tag reveal">Transformation System · 05</div>
+    <div class="sec-tag reveal">Transformation System · 04</div>
     <h2 class="slide-h reveal">Each block is developed through a five-stage evidence pipeline.</h2>
     <p class="slide-sub reveal">Evidence assembly feeds diagnostic questions, which inform target-state design, which drives an intervention pathway gated by measurable outcomes. Maturity targets are context-dependent, not maximum by default.</p>
     <div id="evidenceFlowDiagram" style="margin-top:14px"></div>
@@ -200,9 +169,9 @@
 </section>
 
 <!-- 06 · MATURITY MATRIX -->
-<section id="maturity-matrix" data-slide data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="Maturity matrix" data-render="maturityMatrix">
+<section id="maturity-matrix" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Maturity matrix" data-render="maturityMatrix">
   <div class="inner">
-    <div class="sec-tag reveal">Transformation System · 06</div>
+    <div class="sec-tag reveal">Reference · M1</div>
     <h2 class="slide-h reveal">Where are you today, and where do you need to be?</h2>
     <p class="slide-sub reveal">Click each block row to set current and target maturity. These inform the transformation gap and the intervention sequencing.</p>
     <div id="maturityTable" style="margin-top:14px"></div>
@@ -215,9 +184,9 @@
 </section>
 
 <!-- 07 · CAPABILITY HOTSPOTS -->
-<section id="capability-hotspots" data-slide data-chapter-id="locate" data-chapter-title="Locate the Value" data-nav-title="Risk capability map" data-method-label="Locate the value · 15 min" data-render="capHotspots">
+<section id="capability-hotspots" data-slide data-route="core" data-density="long" data-chapter-id="locate" data-chapter-title="Locate the Value" data-nav-title="Risk capability map" data-method-label="Locate the value · 15 min" data-render="capHotspots">
   <div class="inner">
-    <div class="sec-tag reveal">Locate the Value · 07</div>
+    <div class="sec-tag reveal">Locate the Value · 05</div>
     <h2 class="slide-h reveal">47 risk capabilities. Which create most value for you?</h2>
     <p class="slide-sub reveal">Select capabilities relevant to your context. Your selections drive the shortlist, use-case mapping, and value-capture model.</p>
     <div id="capHotspotArea" style="margin-top:14px"></div>
@@ -225,9 +194,9 @@
 </section>
 
 <!-- 08 · WORK / WORKFORCE / WORKBENCH -->
-<section id="work-workforce-workbench" data-slide data-chapter-id="locate" data-chapter-title="Locate the Value" data-nav-title="AI impact on roles" data-render="roleBars">
+<section id="work-workforce-workbench" data-slide data-route="core" data-chapter-id="locate" data-chapter-title="Locate the Value" data-nav-title="AI impact on roles" data-render="roleBars">
   <div class="inner">
-    <div class="sec-tag reveal">Locate the Value · 08</div>
+    <div class="sec-tag reveal">Locate the Value · 06</div>
     <h2 class="slide-h reveal">AI changes the work, the workforce, and the workbench.</h2>
     <p class="slide-sub reveal">Illustrative impact across risk function roles. Toggle archetype to compare universal bank vs. private / wealth context.</p>
     <div class="arch-toggle reveal" style="margin-top:14px">
@@ -245,9 +214,9 @@
 </section>
 
 <!-- 09 · OPPORTUNITY PORTFOLIO -->
-<section id="opportunity-portfolio" data-slide data-chapter-id="locate" data-chapter-title="Locate the Value" data-nav-title="AI opportunity patterns" data-render="oppPortfolio">
+<section id="opportunity-portfolio" data-slide data-route="core" data-chapter-id="locate" data-chapter-title="Locate the Value" data-nav-title="AI opportunity patterns" data-render="oppPortfolio">
   <div class="inner">
-    <div class="sec-tag reveal">Locate the Value · 09</div>
+    <div class="sec-tag reveal">Locate the Value · 07</div>
     <h2 class="slide-h reveal">Twenty AI opportunity patterns across the risk function.</h2>
     <p class="slide-sub reveal">These patterns combine multiple capabilities and transformation blocks. Filtered to your selected capabilities.</p>
     <div id="oppPortfolioArea" style="margin-top:14px"></div>
@@ -255,9 +224,9 @@
 </section>
 
 <!-- 09b · SOLUTION PORTFOLIO -->
-<section id="solution-portfolio" data-slide data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Source-backed solutions" data-render="solutionPortfolio">
+<section id="solution-portfolio" data-slide data-route="core" data-density="long" data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Source-backed solutions" data-render="solutionPortfolio">
   <div class="inner">
-    <div class="sec-tag reveal">Prove Safely · 09b</div>
+    <div class="sec-tag reveal">Prove Safely · 08</div>
     <h2 class="slide-h reveal">A broad portfolio of source-backed solutions. Relevance and readiness are subject to your context.</h2>
     <p class="slide-sub reveal">28 solutions across seven practice clusters. Status and sharing confirmations are in progress. Click a cluster to explore solutions.</p>
     <div id="solutionPortfolioArea" style="margin-top:14px"></div>
@@ -265,9 +234,9 @@
 </section>
 
 <!-- 10 · WORKING CANDIDATE SET -->
-<section id="exec-shortlist" data-slide data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Working candidate set" data-method-label="Prove safely · 15 min" data-render="shortlist">
+<section id="exec-shortlist" data-slide data-route="core" data-density="long" data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Working candidate set" data-method-label="Prove safely · 15 min" data-render="shortlist">
   <div class="inner">
-    <div class="sec-tag reveal">Prove Safely · 10</div>
+    <div class="sec-tag reveal">Prove Safely · 09</div>
     <h2 class="slide-h reveal">A working candidate set based on the information available so far.</h2>
     <p class="slide-sub reveal">Derived from your selected capabilities. Use lens buttons to examine from CRO, CFO, or joint perspective. Weightings are indicative and can be adjusted.</p>
     <div class="arch-toggle reveal" style="margin-top:12px">
@@ -280,9 +249,9 @@
 </section>
 
 <!-- 11 · USE CASE FLOW -->
-<section id="use-case-flow" data-slide data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Use case library" data-render="useCases">
+<section id="use-case-flow" data-slide data-route="core" data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Use case library" data-render="useCases">
   <div class="inner">
-    <div class="sec-tag reveal">Prove Safely · 11</div>
+    <div class="sec-tag reveal">Prove Safely · 10</div>
     <h2 class="slide-h reveal">Sixteen use cases across four delivery statuses.</h2>
     <p class="slide-sub reveal">Live assets, team-built tools, NDA references, and illustrative patterns. Click any card to see the end-to-end flow and required transformation blocks.</p>
     <div id="ucGrid" style="margin-top:14px"></div>
@@ -290,9 +259,9 @@
 </section>
 
 <!-- 12 · PROOF & VALUE CAPTURE -->
-<section id="proof-value-capture" data-slide data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Proof and value capture" data-render="proofValueCapture">
+<section id="proof-value-capture" data-slide data-route="core" data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Proof and value capture" data-render="proofValueCapture">
   <div class="inner">
-    <div class="sec-tag reveal">Prove Safely · 12</div>
+    <div class="sec-tag reveal">Prove Safely · 11</div>
     <h2 class="slide-h reveal">From theoretical potential to realised value: seven stages.</h2>
     <p class="slide-sub reveal">Each stage has a gate test. Value captured at each stage depends on your proof capability selection and control environment.</p>
     <p class="slide-sub reveal" style="margin-top:12px;margin-bottom:4px">Modelling proof of value for: <strong id="proofCapName" style="color:var(--accent)">select a capability on screen 07</strong></p>
@@ -302,9 +271,9 @@
 </section>
 
 <!-- 13 · INDUSTRIALIZATION ARCHITECTURE -->
-<section id="industrialization-arch" data-slide data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Industrialization architecture" data-method-label="Build to scale · 10 min">
+<section id="industrialization-arch" data-slide data-route="core" data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Industrialization architecture" data-method-label="Build to scale · 10 min">
   <div class="inner">
-    <div class="sec-tag reveal">Build to Scale · 13</div>
+    <div class="sec-tag reveal">Build to Scale · 12</div>
     <h2 class="slide-h reveal">Six layers. Proof runs on one. Scale demands all six.</h2>
     <p class="slide-sub reveal">The industrialization architecture is layered. Each proof use case surfaces which layers need investment before scale.</p>
     <div class="arch-stack" style="margin-top:18px">
@@ -324,9 +293,9 @@
 </section>
 
 <!-- 14 · RUN ECONOMICS -->
-<section id="run-economics" data-slide data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Run economics and tokenomics">
+<section id="run-economics" data-slide data-route="core" data-density="long" data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Run economics and tokenomics">
   <div class="inner">
-    <div class="sec-tag reveal">Build to Scale · 14</div>
+    <div class="sec-tag reveal">Build to Scale · 13</div>
     <h2 class="slide-h reveal">Six cost drivers determine what it costs to run AI at scale.</h2>
     <p class="slide-sub reveal">Understanding the cost driver tree enables accurate FinOps modelling and prevents surprises in the business case. Click each driver to expand its levers.</p>
     <div class="eco-tree reveal" style="margin-top:16px">
@@ -342,9 +311,9 @@
 </section>
 
 <!-- 15 · ACCENTURE EDGE -->
-<section id="accenture-edge" data-slide data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Accenture dual-engine USP" data-render="accentureEdge">
+<section id="accenture-edge" data-slide data-route="core" data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Accenture dual-engine USP" data-render="accentureEdge">
   <div class="inner">
-    <div class="sec-tag reveal">Build to Scale · 15</div>
+    <div class="sec-tag reveal">Build to Scale · 14</div>
     <h2 class="slide-h reveal">Two engines. Neither one works without the other.</h2>
     <p class="slide-sub reveal">Accenture delivers risk AI transformation through a dual-engine model: transforming the client's risk function while accelerating delivery through proprietary assets and talent.</p>
     <div class="edge-dual" style="margin-top:14px">
@@ -361,29 +330,11 @@
 </section>
 
 <!-- 16 · LEAN TRANSITION -->
-<section id="lean-transition" data-slide data-chapter-id="commit" data-chapter-title="Commit" data-nav-title="Lean transition method" data-method-label="Commit · 10 min">
+<section id="lean-transition" data-slide data-route="core" data-density="long" data-chapter-id="commit" data-chapter-title="Commit" data-nav-title="Roadmap and stage gates" data-method-label="Commit · 10 min">
   <div class="inner">
-    <div class="sec-tag reveal">Commit · 16</div>
-    <h2 class="slide-h reveal">The leanest path from conversation to proved value.</h2>
-    <p class="slide-sub reveal">Six phases with explicit gate outputs. No phase starts without the previous gate test passing. Client can expand or pause at each gate.</p>
-    <div class="lean-phases reveal" style="margin-top:20px">
-      <div class="lean-phase"><div class="lean-phase-dur">Wk 1–2</div><div class="lean-phase-name">Discover</div><div class="lean-phase-out">Scoped intent. Priority blocks confirmed. No client cost.</div></div>
-      <div class="lean-phase"><div class="lean-phase-dur">Wk 3–6</div><div class="lean-phase-name">Diagnose</div><div class="lean-phase-out">Maturity baseline. Evidence assembled with AI assist. Gap map.</div></div>
-      <div class="lean-phase"><div class="lean-phase-dur">Wk 7–10</div><div class="lean-phase-name">Design</div><div class="lean-phase-out">Target-state design for selected block and use case. Tech pattern confirmed.</div></div>
-      <div class="lean-phase active"><div class="lean-phase-dur">Wk 11–18</div><div class="lean-phase-name">Pilot</div><div class="lean-phase-out">Lighthouse in controlled environment. Gate-ready evidence pack.</div></div>
-      <div class="lean-phase"><div class="lean-phase-dur">Wk 19–34</div><div class="lean-phase-name">Industrialise</div><div class="lean-phase-out">Production hardening. MLOps. Model risk sign-off. Control integration.</div></div>
-      <div class="lean-phase"><div class="lean-phase-dur">Ongoing</div><div class="lean-phase-name">Scale</div><div class="lean-phase-out">Platform extension. Additional use cases. Enterprise deployment wave.</div></div>
-    </div>
-    <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.08em;line-height:1.5" class="reveal">Timelines are illustrative. Actual durations depend on client data readiness, regulatory review cycles, and available resource. Validated during Diagnose phase.</div>
-  </div>
-</section>
-
-<!-- 17 · ROADMAP -->
-<section id="roadmap" data-slide data-chapter-id="commit" data-chapter-title="Commit" data-nav-title="Stage-gate roadmap">
-  <div class="inner">
-    <div class="sec-tag reveal">Commit · 17</div>
+    <div class="sec-tag reveal">Commit · 15</div>
     <h2 class="slide-h reveal">Five stage gates. Each unlocks the next.</h2>
-    <p class="slide-sub reveal">No stage proceeds without its gate test. This prevents premature scaling and ensures each phase is grounded in evidence before investment expands.</p>
+    <p class="slide-sub reveal">No stage proceeds without its gate test. Each phase has an explicit output that enables the next. Client can pause or expand at each gate.</p>
     <div class="sgt-wrap reveal" style="margin-top:20px">
       <div class="sgt-inner">
         <div class="sgt-track"><div class="sgt-track-fill"></div></div>
@@ -420,9 +371,9 @@
 </section>
 
 <!-- 18 · DECISION & NEXT STEP -->
-<section id="decision-next-step" data-slide data-chapter-id="commit" data-chapter-title="Commit" data-nav-title="Decision and next step" data-render="takeaway">
+<section id="decision-next-step" data-slide data-route="core" data-density="long" data-chapter-id="commit" data-chapter-title="Commit" data-nav-title="Decision and next step" data-render="takeaway">
   <div class="inner">
-    <div class="sec-tag reveal">Commit · 18</div>
+    <div class="sec-tag reveal">Commit · 16</div>
     <h2 class="slide-h reveal">What did we agree? What happens next?</h2>
     <p class="slide-sub reveal">Session summary built from your in-conversation selections. Export to share with your team.</p>
     <div class="ta-grid" style="margin-top:12px">
@@ -449,7 +400,7 @@
 ══════════════════════════════════════════════════════ -->
 
 <!-- APP-CAPS · FULL CAPABILITY CATALOGUE -->
-<section id="app-caps" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="47 capability catalogue" data-render="appCaps">
+<section id="app-caps" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="47 capability catalogue" data-render="appCaps">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A1</div>
     <h2 class="slide-h reveal">47 risk capabilities: full catalogue.</h2>
@@ -459,12 +410,12 @@
 </section>
 
 <!-- APP-BLOCKS · TRANSFORMATION BLOCK DETAIL -->
-<section id="app-blocks" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Transformation block detail">
+<section id="app-blocks" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Transformation block detail">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A2</div>
     <h2 class="slide-h reveal">Eight transformation blocks: design rationale.</h2>
     <p class="slide-sub reveal">Click any block on screen 04 to open the full 5-tab analysis. This page summarises the purpose of each block and how they relate to the risk function.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px" class="reveal">
+    <div class="reveal app-2col-grid">
       <div class="arch-layer"><div class="arch-layer-num">B1</div><div class="arch-layer-name">Data foundation</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Risk data quality, lineage, and access: the prerequisite for any AI use case at production scale.</div></div>
       <div class="arch-layer"><div class="arch-layer-num">B2</div><div class="arch-layer-name">AI &amp; model risk governance</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">The policy, validation, and monitoring infrastructure that governs AI models through their lifecycle.</div></div>
       <div class="arch-layer"><div class="arch-layer-num">B3</div><div class="arch-layer-name">Process &amp; workflow redesign</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Redesigning risk processes around AI insertion points, human-in-loop gates, and straight-through processing.</div></div>
@@ -478,7 +429,7 @@
 </section>
 
 <!-- APP-MATURITY · MATURITY LEVEL DEFINITIONS -->
-<section id="app-maturity" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Maturity level definitions">
+<section id="app-maturity" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Maturity level definitions">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A3</div>
     <h2 class="slide-h reveal">Five maturity levels and what each requires.</h2>
@@ -494,12 +445,12 @@
 </section>
 
 <!-- APP-EVIDENCE · EVIDENCE REQUIREMENTS -->
-<section id="app-evidence" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Evidence requirements">
+<section id="app-evidence" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Evidence requirements">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A4</div>
     <h2 class="slide-h reveal">What evidence is needed before AI can be proved?</h2>
     <p class="slide-sub reveal">Accenture's AI-assisted evidence assembly accelerates the diagnostic phase. This page lists minimum evidence requirements per block category.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px" class="reveal">
+    <div class="reveal app-2col-grid">
       <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-file-text" style="font-size:14px"></i></div><div class="arch-layer-name">Policy &amp; framework documents</div><div class="arch-layer-chips"><span class="arch-chip">Risk appetite statement</span><span class="arch-chip">AI risk policy</span><span class="arch-chip">Control framework</span></div></div>
       <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-sitemap" style="font-size:14px"></i></div><div class="arch-layer-name">Process maps</div><div class="arch-layer-chips"><span class="arch-chip">RCSA workflow</span><span class="arch-chip">Approval chains</span><span class="arch-chip">Escalation logic</span></div></div>
       <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-database" style="font-size:14px"></i></div><div class="arch-layer-name">Data inventory</div><div class="arch-layer-chips"><span class="arch-chip">Data lineage</span><span class="arch-chip">Quality metrics</span><span class="arch-chip">Access controls</span></div></div>
@@ -509,7 +460,7 @@
 </section>
 
 <!-- APP-METHOD · METHODOLOGY DETAIL -->
-<section id="app-method" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Methodology detail">
+<section id="app-method" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Methodology detail">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A5</div>
     <h2 class="slide-h reveal">Lean client entry: methodology principles.</h2>
@@ -523,12 +474,12 @@
 </section>
 
 <!-- APP-USECASES · USE CASE INVENTORY -->
-<section id="app-usecases" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Use case inventory">
+<section id="app-usecases" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Use case inventory">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A6</div>
     <h2 class="slide-h reveal">Full use case inventory.</h2>
     <p class="slide-sub reveal">Navigate to screen 11 to interact with all 16 use cases. Status key: LIVE = deployed at a client, TEAM = built by the NFR AI team, NDA = reference only, ILLUSTRATIVE = design pattern for scoping.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px" class="reveal">
+    <div class="reveal app-2col-grid">
       <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-live">LIVE</span></div><div class="arch-layer-name">Deployed at client</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Production use case with verifiable outcomes. Can be referenced by name in proposals. NDA may apply.</div></div>
       <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-team">TEAM</span></div><div class="arch-layer-name">Built by NFR AI team</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Developed and tested by the Accenture NFR AI team. Available for demonstration. Contact thomas.zijlstra@accenture.com for access.</div></div>
       <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-nda">NDA</span></div><div class="arch-layer-name">NDA reference</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Live or team-built but restricted from public reference. Do not name client or share artefacts without explicit permission.</div></div>
@@ -538,11 +489,11 @@
 </section>
 
 <!-- APP-KPIS · KPI LIBRARY -->
-<section id="app-kpis" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="KPI library">
+<section id="app-kpis" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="KPI library">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A7</div>
     <h2 class="slide-h reveal">Proof KPIs: what to measure and how.</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px" class="reveal">
+    <div class="reveal app-2col-grid">
       <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-clock" style="font-size:14px;color:var(--accent)"></i></div><div class="arch-layer-name">Speed and throughput</div><div class="arch-layer-chips"><span class="arch-chip">Time per task (before vs. after)</span><span class="arch-chip">Cases processed per FTE</span><span class="arch-chip">STP rate for standard cases</span></div></div>
       <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-chart-bar" style="font-size:14px;color:var(--green)"></i></div><div class="arch-layer-name">Quality and accuracy</div><div class="arch-layer-chips"><span class="arch-chip">False positive rate</span><span class="arch-chip">Model discrimination</span><span class="arch-chip">Human override rate</span></div></div>
       <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-shield-check" style="font-size:14px;color:var(--amber)"></i></div><div class="arch-layer-name">Control effectiveness</div><div class="arch-layer-chips"><span class="arch-chip">Control failure incidents</span><span class="arch-chip">Audit findings trend</span><span class="arch-chip">Regulatory breach rate</span></div></div>
@@ -553,7 +504,7 @@
 </section>
 
 <!-- APP-RAI · RESPONSIBLE AI -->
-<section id="app-rai" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Responsible AI checklist">
+<section id="app-rai" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Responsible AI checklist">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A8</div>
     <h2 class="slide-h reveal">Responsible AI: minimum checklist for risk use cases.</h2>
@@ -568,7 +519,7 @@
 </section>
 
 <!-- APP-ARCH · ARCHITECTURE DETAIL -->
-<section id="app-arch" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Architecture reference">
+<section id="app-arch" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Architecture reference">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A9</div>
     <h2 class="slide-h reveal">Architecture reference: technology patterns by use case tier.</h2>
@@ -582,7 +533,7 @@
 </section>
 
 <!-- APP-ASSETS · NFR AI ASSETS PORTAL -->
-<section id="app-assets" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="NFR AI Assets portal">
+<section id="app-assets" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="NFR AI Assets portal">
   <div class="inner" style="text-align:center">
     <div class="sec-tag reveal">Reference · A10</div>
     <h2 class="slide-h reveal">NFR AI Assets Portal</h2>
@@ -593,7 +544,7 @@
 </section>
 
 <!-- APP-ASSUMPTIONS · ASSUMPTIONS & DISCLAIMERS -->
-<section id="app-assumptions" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Assumptions and disclaimers">
+<section id="app-assumptions" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Assumptions and disclaimers">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A11</div>
     <h2 class="slide-h reveal">Assumptions, sources, and disclaimers.</h2>
@@ -608,7 +559,7 @@
 </section>
 
 <!-- APP-TEAM · TEAM & CREDENTIALS -->
-<section id="app-team" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Team and credentials" data-render="team">
+<section id="app-team" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Team and credentials" data-render="team">
   <div class="inner">
     <div class="sec-tag reveal">Reference · A12</div>
     <h2 class="slide-h reveal" style="text-align:center">A small integrated team can connect risk, process, data, engineering, and adoption.</h2>

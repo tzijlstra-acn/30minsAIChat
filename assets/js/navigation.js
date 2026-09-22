@@ -82,14 +82,19 @@ function getSlideIndex(id){
 
 function updateNav(idx){
   current=idx;
-  var total=sections.length;
   var sec=sections[idx];
+  var isRef=sec&&(sec.dataset.chapterId==='reference'||sec.dataset.route==='reference');
+  var coreSections=sections.filter(function(s){return s.dataset.route==='core';});
+  var coreIdx=coreSections.indexOf(sec);
+  var coreTotal=coreSections.length;
   // Counter
-  var ctr=document.getElementById('counter');if(ctr)ctr.textContent=(idx+1)+' / '+total;
+  var ctr=document.getElementById('counter');
+  if(ctr){if(isRef){ctr.textContent='Ref';}else{ctr.textContent=(coreIdx+1)+' / '+coreTotal;}}
   // Chapter label
   var chl=document.getElementById('chapterLabel');if(chl&&sec)chl.textContent=sec.dataset.chapterTitle||'';
-  // Progress
-  var pf=document.getElementById('progressFill');if(pf)pf.style.width=((idx/(total-1))*100)+'%';
+  // Progress (core only)
+  var pf=document.getElementById('progressFill');
+  if(pf){if(isRef){pf.style.width='100%';}else if(coreTotal>1){pf.style.width=((coreIdx/(coreTotal-1))*100)+'%';}else{pf.style.width='0%';}}
   // Chapter tab active
   var curCid=sec&&sec.dataset.chapterId;
   document.querySelectorAll('.nav-ch-btn').forEach(function(b){b.classList.toggle('active',b.dataset.chid===curCid);});
