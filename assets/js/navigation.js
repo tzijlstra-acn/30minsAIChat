@@ -16,6 +16,8 @@ function buildNav(){
   buildChapterTabs();
   buildAgendaDrawer();
   setupRouteMode();
+  // V12 continuity
+  setTimeout(function(){buildHandoffCues();updateCandidateToken();},0);
 }
 
 function buildChapterTabs(){
@@ -39,14 +41,15 @@ function buildAgendaDrawer(){
   var qs=document.getElementById('agendaQuestions');
   if(qs){
     var quickJumps=[
-      {label:'Why act now?',id:'setting-scene'},
-      {label:'What is the AI landscape?',id:'ai-landscape'},
-      {label:'What may need to change beyond use cases?',id:'transformation-system'},
-      {label:'Where is value in our risk function?',id:'capability-hotspots'},
-      {label:'How do we prove value safely?',id:'proof-value-capture'},
-      {label:'What does it cost to build and run?',id:'run-economics'},
-      {label:'How does Accenture accelerate delivery?',id:'accenture-edge'},
-      {label:'What is the leanest next step?',id:'decision-next-step'}
+      {label:'WHY NOW? Three pressures are converging.',id:'setting-scene'},
+      {label:'WHY NOW? Match technology to the task.',id:'ai-landscape'},
+      {label:'WHERE TO START? Find the decisions under pressure.',id:'capability-hotspots'},
+      {label:'WHERE TO START? Choose one proof.',id:'exec-shortlist'},
+      {label:'WHAT CHANGES? See the work move.',id:'process-twin'},
+      {label:'WHAT CHANGES? The use case depends on the system.',id:'transformation-system'},
+      {label:'HOW TO PROVE? Define the proof.',id:'proof-value-capture'},
+      {label:'HOW TO SCALE? Control cost per successful case.',id:'run-economics'},
+      {label:'WHAT NEXT? Agree the next move.',id:'decision-next-step'}
     ];
     qs.innerHTML=quickJumps.map(function(q){
       return '<a class="agenda-qjump" href="#'+q.id+'" onclick="goToId(\''+q.id+'\');closeAgenda();return false;"><i class="ti ti-arrow-right" style="font-size:11px"></i>'+q.label+'</a>';
@@ -145,6 +148,7 @@ function toggleTheme(){
   localStorage.setItem('nfr-pitch-theme',next);
   var icon=document.querySelector('#themeBtn i');
   if(icon)icon.className='ti ti-'+(next==='dark'?'moon':'sun');
+  document.dispatchEvent(new CustomEvent('nfr:themechange',{detail:{theme:next}}));
 }
 
 // ── KEYBOARD + SWIPE ──
@@ -171,3 +175,68 @@ function copyTakeaway(){
 
 // ── RESET ──
 function resetSession(){if(confirm('Reset all session selections?')){resetState();location.reload();}}
+
+// ── V12 CANDIDATE TOKEN ──
+// Screens that should carry the proof-candidate identity badge
+var CANDIDATE_SCREENS=['process-twin','transformation-system','work-workforce-workbench',
+  'proof-value-capture','industrialization-arch','run-economics','accenture-edge',
+  'lean-transition','decision-next-step'];
+
+function updateCandidateToken(){
+  var candidateId=typeof store!=='undefined'?store.getState().proofCandidateId:null;
+  var candidateName=null;
+  if(candidateId&&typeof USE_CASES!=='undefined'){
+    var uc=USE_CASES.find(function(u){return u.id===candidateId;});
+    if(uc)candidateName=uc.name;
+  }
+  CANDIDATE_SCREENS.forEach(function(secId){
+    var sec=document.getElementById(secId);if(!sec)return;
+    var tok=sec.querySelector('.v12-candidate-token');
+    if(!tok){
+      tok=document.createElement('div');tok.className='v12-candidate-token';
+      var inner=sec.querySelector('.inner');if(inner)inner.insertBefore(tok,inner.firstChild);
+    }
+    if(candidateName){
+      tok.innerHTML='<span class="v12-ct-label">Proof candidate</span><span class="v12-ct-name">'+candidateName+'</span>';
+      tok.classList.add('v12-ct-active');
+    } else {
+      tok.innerHTML='<span class="v12-ct-label">Proof candidate</span><span class="v12-ct-pending">Select one on screen 04</span>';
+      tok.classList.remove('v12-ct-active');
+    }
+  });
+}
+
+// ── V12 HANDOFF CUES ──
+var HANDOFF_MAP={
+  'setting-scene':'WHERE TO START?','ai-landscape':'WHERE TO START?',
+  'capability-hotspots':'WHERE TO START?','exec-shortlist':'WHAT CHANGES?',
+  'process-twin':'WHAT CHANGES?','transformation-system':'WHAT CHANGES?',
+  'work-workforce-workbench':'HOW TO PROVE?','proof-value-capture':'HOW TO SCALE?',
+  'industrialization-arch':'HOW TO SCALE?','run-economics':'HOW TO SCALE?',
+  'accenture-edge':'WHAT NEXT?','lean-transition':'WHAT NEXT?'
+};
+
+function buildHandoffCues(){
+  Object.keys(HANDOFF_MAP).forEach(function(secId){
+    var sec=document.getElementById(secId);if(!sec)return;
+    if(sec.querySelector('.v12-handoff'))return;
+    var cue=document.createElement('div');
+    cue.className='v12-handoff';
+    cue.innerHTML='<span class="v12-hf-label">Next question</span><button class="v12-hf-btn" onclick="goToId(\''+nextSectionId(secId)+'\')">'
+      +HANDOFF_MAP[secId]+'<i class="ti ti-arrow-down" style="margin-left:5px;font-size:11px"></i></button>';
+    sec.appendChild(cue);
+  });
+}
+
+function nextSectionId(fromId){
+  var coreSecs=sections.filter(function(s){return s.dataset.route==='core';});
+  for(var i=0;i<coreSecs.length-1;i++){if(coreSecs[i].id===fromId)return coreSecs[i+1].id;}
+  return fromId;
+}
+
+// Listen for candidate changes
+document.addEventListener('nfr:statechange',function(e){
+  if(e.detail&&e.detail.action&&e.detail.action.type==='SET_PROOF_CANDIDATE'){
+    updateCandidateToken();
+  }
+});

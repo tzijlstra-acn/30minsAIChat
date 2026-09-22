@@ -11,6 +11,12 @@
   --tp:var(--text-1);--ts:var(--text-2);--tm:var(--text-3);
   --brand:var(--accent);--brandMid:var(--accent-strong);--border:var(--border-1);
   --radius:10px;--radiusL:16px;
+  /* V12 semantic aliases */
+  --page-bg:var(--bg);--surface:var(--surface-1);--surface-raised:var(--surface-2);
+  --text-primary:var(--text-1);--text-secondary:var(--text-2);--text-muted:var(--text-3);
+  --accent-ink:var(--accent);--accent-fill:var(--accent-soft);
+  --ai-ink:var(--accent);--human-ink:var(--green);--control-ink:var(--cyan);
+  --border-default:var(--border-1);--border-strong:var(--border-2);
 }
 :root[data-theme="dark"]{
   --bg:#08081A;--surface-1:#131325;--surface-2:#1A1A30;--surface-3:#23233A;
@@ -24,6 +30,12 @@
   --tp:var(--text-1);--ts:var(--text-2);--tm:var(--text-3);
   --brand:var(--accent);--brandMid:var(--accent-strong);--border:var(--border-1);
   --radius:10px;--radiusL:16px;
+  /* V12 semantic aliases (dark mode inherits same structure) */
+  --page-bg:var(--bg);--surface:var(--surface-1);--surface-raised:var(--surface-2);
+  --text-primary:var(--text-1);--text-secondary:var(--text-2);--text-muted:var(--text-3);
+  --accent-ink:var(--accent);--accent-fill:var(--accent-soft);
+  --ai-ink:var(--accent);--human-ink:var(--green);--control-ink:var(--cyan);
+  --border-default:var(--border-1);--border-strong:var(--border-2);
 }
 /* ── BASE ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -908,3 +920,16 @@ body[data-mode="explain"] .explain-only{display:block;}
 /* Role legend */
 .role-legend-item{font-size:14px;}
 
+
+/* ── V12 CANDIDATE TOKEN ── */
+.v12-candidate-token{display:flex;align-items:center;gap:8px;padding:5px 10px;background:var(--accent-fill);border:1px solid rgba(161,0,255,.18);border-radius:7px;margin-bottom:12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;transition:background .2s;}
+.v12-ct-label{color:var(--text-3);text-transform:uppercase;flex-shrink:0;}
+.v12-ct-name{color:var(--accent-ink);font-weight:700;}
+.v12-ct-pending{color:var(--text-3);font-style:italic;}
+.v12-candidate-token.v12-ct-active{background:var(--accent-fill);border-color:rgba(161,0,255,.28);}
+
+/* ── V12 HANDOFF CUE ── */
+.v12-handoff{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:10px 0 4px;margin-top:16px;border-top:1px solid var(--border-default);}
+.v12-hf-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-muted);text-transform:uppercase;}
+.v12-hf-btn{background:none;border:1px solid var(--border-default);border-radius:6px;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--accent-ink);cursor:pointer;transition:background .15s,border-color .15s;display:flex;align-items:center;}
+.v12-hf-btn:hover{background:var(--accent-fill);border-color:rgba(161,0,255,.3);}

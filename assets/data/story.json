@@ -1,0 +1,225 @@
+{
+  "version": "12",
+  "chapters": [
+    { "id": "cover",          "question": null,              "label": "Cover" },
+    { "id": "why-now",        "question": "WHY NOW?",        "label": "WHY NOW?" },
+    { "id": "where-to-start", "question": "WHERE TO START?", "label": "WHERE TO START?" },
+    { "id": "what-changes",   "question": "WHAT CHANGES?",   "label": "WHAT CHANGES?" },
+    { "id": "how-to-prove",   "question": "HOW TO PROVE?",   "label": "HOW TO PROVE?" },
+    { "id": "how-to-scale",   "question": "HOW TO SCALE?",   "label": "HOW TO SCALE?" },
+    { "id": "what-next",      "question": "WHAT NEXT?",      "label": "WHAT NEXT?" }
+  ],
+  "screens": [
+    {
+      "id": "cover",
+      "order": 0,
+      "chapterId": "cover",
+      "chapterLabel": "Cover",
+      "title": "AI is changing the pace and unit of work in risk.",
+      "subtitle": "Working conversation: where AI may change the risk function, which blocks to advance, and what a lean first step looks like for your context.",
+      "whyShown": "Entry point and route selector.",
+      "decisionEnabled": false,
+      "nextQuestion": "WHY NOW?",
+      "primaryVisual": "decision-path",
+      "primaryAction": "start-conversation"
+    },
+    {
+      "id": "setting-scene",
+      "order": 1,
+      "chapterId": "why-now",
+      "chapterLabel": "WHY NOW?",
+      "title": "Three pressures are converging.",
+      "subtitle": "Each pressure alone is manageable. Together they may require a different operating model.",
+      "whyShown": "Establishes the client context and why action may be needed now.",
+      "decisionEnabled": false,
+      "nextQuestion": "WHERE TO START?",
+      "primaryVisual": "pressure-grid",
+      "primaryAction": "select-pressure"
+    },
+    {
+      "id": "ai-landscape",
+      "order": 2,
+      "chapterId": "why-now",
+      "chapterLabel": "WHY NOW?",
+      "title": "Match technology to the task.",
+      "subtitle": "Five patterns. Each has a distinct evidence, control, and cost profile. Not every pattern is applicable to every problem.",
+      "whyShown": "Calibrates expectations: not all AI is equal or ready for every context.",
+      "decisionEnabled": false,
+      "nextQuestion": "WHERE TO START?",
+      "primaryVisual": "task-router",
+      "primaryAction": "filter-by-task"
+    },
+    {
+      "id": "capability-hotspots",
+      "order": 3,
+      "chapterId": "where-to-start",
+      "chapterLabel": "WHERE TO START?",
+      "title": "Find the decisions under pressure.",
+      "subtitle": "Select capabilities that reflect where your function feels the constraint. Your selection carries forward.",
+      "whyShown": "Grounds the conversation in the client's specific capability landscape.",
+      "decisionEnabled": true,
+      "nextQuestion": "WHERE TO START?",
+      "primaryVisual": "capability-landscape",
+      "primaryAction": "select-capabilities"
+    },
+    {
+      "id": "exec-shortlist",
+      "order": 4,
+      "chapterId": "where-to-start",
+      "chapterLabel": "WHERE TO START?",
+      "title": "Choose one proof.",
+      "subtitle": "A working candidate set based on selected capabilities. Choose one to carry through the story.",
+      "whyShown": "Forces a specific, owned decision rather than abstract discussion.",
+      "decisionEnabled": true,
+      "nextQuestion": "WHAT CHANGES?",
+      "primaryVisual": "candidate-canvas",
+      "primaryAction": "set-proof-candidate"
+    },
+    {
+      "id": "process-twin",
+      "order": 5,
+      "chapterId": "what-changes",
+      "chapterLabel": "WHAT CHANGES?",
+      "title": "See the work move.",
+      "subtitle": "How the selected use case works end to end: data, automation, AI, and human gates.",
+      "whyShown": "Makes the abstract concrete -- shows exactly what changes in the process before the system discussion.",
+      "decisionEnabled": false,
+      "nextQuestion": "WHAT CHANGES?",
+      "primaryVisual": "process-flow",
+      "primaryAction": "step-through-flow"
+    },
+    {
+      "id": "transformation-system",
+      "order": 6,
+      "chapterId": "what-changes",
+      "chapterLabel": "WHAT CHANGES?",
+      "title": "The use case depends on the system.",
+      "subtitle": "Eight interdependent blocks. The selected use case highlights which need attention before scale.",
+      "whyShown": "Shows system-level dependencies -- what else needs to change beyond the use case itself.",
+      "decisionEnabled": false,
+      "nextQuestion": "WHAT CHANGES?",
+      "primaryVisual": "transformation-blocks",
+      "primaryAction": "explore-dependencies"
+    },
+    {
+      "id": "work-workforce-workbench",
+      "order": 7,
+      "chapterId": "what-changes",
+      "chapterLabel": "WHAT CHANGES?",
+      "title": "Start with tasks, then roles.",
+      "subtitle": "Illustrative impact across risk function roles. Adjust scope and adoption to reflect your context.",
+      "whyShown": "Addresses the workforce question before it becomes a blocker.",
+      "decisionEnabled": true,
+      "nextQuestion": "HOW TO PROVE?",
+      "primaryVisual": "role-bars",
+      "primaryAction": "adjust-scenario"
+    },
+    {
+      "id": "proof-value-capture",
+      "order": 8,
+      "chapterId": "how-to-prove",
+      "chapterLabel": "HOW TO PROVE?",
+      "title": "Define the proof.",
+      "subtitle": "Seven stages from capability selection to realised value. Set the gate criteria before you start.",
+      "whyShown": "Shifts from conceptual to operational -- what specifically will we measure?",
+      "decisionEnabled": true,
+      "nextQuestion": "HOW TO SCALE?",
+      "primaryVisual": "proof-gates",
+      "primaryAction": "configure-proof"
+    },
+    {
+      "id": "industrialization-arch",
+      "order": 9,
+      "chapterId": "how-to-scale",
+      "chapterLabel": "HOW TO SCALE?",
+      "title": "Scale without multiplying complexity.",
+      "subtitle": "Five functional layers with cross-cutting controls. Each proof surfaces which layers need investment.",
+      "whyShown": "Connects the proof to the broader architecture needed for production scale.",
+      "decisionEnabled": true,
+      "nextQuestion": "HOW TO SCALE?",
+      "primaryVisual": "architecture-layers",
+      "primaryAction": "toggle-scale-mode"
+    },
+    {
+      "id": "run-economics",
+      "order": 10,
+      "chapterId": "how-to-scale",
+      "chapterLabel": "HOW TO SCALE?",
+      "title": "Control cost per successful case.",
+      "subtitle": "Model run cost with your volumes and operating assumptions. All defaults are illustrative.",
+      "whyShown": "Addresses the CFO question: what does this cost to run at scale?",
+      "decisionEnabled": true,
+      "nextQuestion": "HOW TO SCALE?",
+      "primaryVisual": "cost-stations",
+      "primaryAction": "adjust-economics"
+    },
+    {
+      "id": "accenture-edge",
+      "order": 11,
+      "chapterId": "how-to-scale",
+      "chapterLabel": "HOW TO SCALE?",
+      "title": "Use AI twice.",
+      "subtitle": "Two reinforcing engines: redesigning the client risk function while shortening delivery through reusable assets.",
+      "whyShown": "Differentiates Accenture: we apply AI to our own delivery, not just the client.",
+      "decisionEnabled": false,
+      "nextQuestion": "WHAT NEXT?",
+      "primaryVisual": "dual-engine",
+      "primaryAction": "explore-mechanisms"
+    },
+    {
+      "id": "lean-transition",
+      "order": 12,
+      "chapterId": "what-next",
+      "chapterLabel": "WHAT NEXT?",
+      "title": "Move in gates, not leaps.",
+      "subtitle": "A staged transition limits early commitment. Each gate tests readiness before the next investment.",
+      "whyShown": "De-risks the commitment decision: you do not need to commit to the full journey upfront.",
+      "decisionEnabled": true,
+      "nextQuestion": "WHAT NEXT?",
+      "primaryVisual": "transition-roadmap",
+      "primaryAction": "set-ambition"
+    },
+    {
+      "id": "decision-next-step",
+      "order": 13,
+      "chapterId": "what-next",
+      "chapterLabel": "WHAT NEXT?",
+      "title": "Agree the next move.",
+      "subtitle": "Session summary built from your selections. What have we agreed? What happens next?",
+      "whyShown": "Closes the conversation with a concrete, owned output.",
+      "decisionEnabled": false,
+      "nextQuestion": null,
+      "primaryVisual": "synthesis-canvas",
+      "primaryAction": "export-summary"
+    }
+  ],
+  "referenceRoom": {
+    "screens": [
+      "pressure-to-proof",
+      "how-blocks-built",
+      "opportunity-portfolio",
+      "solution-portfolio",
+      "maturity-matrix",
+      "app-caps",
+      "app-blocks",
+      "app-maturity"
+    ],
+    "groups": [
+      {
+        "id": "risk-function-model",
+        "label": "Risk function model",
+        "screens": ["pressure-to-proof", "how-blocks-built", "maturity-matrix"]
+      },
+      {
+        "id": "opportunity-catalogue",
+        "label": "Opportunity catalogue",
+        "screens": ["opportunity-portfolio", "solution-portfolio"]
+      },
+      {
+        "id": "reference-detail",
+        "label": "Reference detail",
+        "screens": ["app-caps", "app-blocks", "app-maturity"]
+      }
+    ]
+  }
+}

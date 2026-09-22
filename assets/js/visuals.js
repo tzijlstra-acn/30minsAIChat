@@ -1,6 +1,36 @@
 ﻿// ── SCREEN RENDERERS ──
 // Each renderer takes the section element and populates it
 
+// Theme-aware colour helper for canvas/SVG rendering.
+// Reads the resolved value of a CSS custom property at call time
+// so renderers automatically adapt when the theme changes.
+function cssColor(varName){
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim()||varName;
+}
+// Semantic colour map used by chart renderers
+var THEME_COLORS={
+  accent:function(){return cssColor('--accent');},
+  accentStrong:function(){return cssColor('--accent-strong');},
+  green:function(){return cssColor('--green');},
+  cyan:function(){return cssColor('--cyan');},
+  amber:function(){return cssColor('--amber');},
+  pink:function(){return cssColor('--pink');},
+  text1:function(){return cssColor('--text-1');},
+  text2:function(){return cssColor('--text-2');},
+  text3:function(){return cssColor('--text-3');},
+  surface1:function(){return cssColor('--surface-1');},
+  surface2:function(){return cssColor('--surface-2');},
+  border1:function(){return cssColor('--border-1');}
+};
+// Re-render theme-sensitive charts on theme change
+document.addEventListener('nfr:themechange',function(){
+  var reRenderIds=['trSysGrid','aiLandscapeGrid','ecoStationArea','rolesTable'];
+  reRenderIds.forEach(function(id){
+    var el=document.getElementById(id);
+    if(el&&el._rerenderFn)el._rerenderFn();
+  });
+});
+
 // TRANSFORMATION SYSTEM (Screen 4): deterministic SVG layout with tab strip
 function renderTransformationSystem(sec){
   var container=sec.querySelector('#trSysGrid');if(!container)return;
