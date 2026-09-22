@@ -393,16 +393,72 @@ function renderAppCaps(sec){
 
 // ── TEAM ──
 function renderTeam(sec){
-  var row=sec.querySelector('#teamRow');if(!row)return;
-  row.innerHTML=EXPERTS.map(function(e){
+  var grid=sec.querySelector('#teamGrid');if(!grid)return;
+  var visibleTeam=(EXPERTS||[]).filter(function(e){return e.clientVisible!==false;});
+  grid.innerHTML=visibleTeam.map(function(e){
     var initials=e.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2);
-    var tags=e.tags.map(function(t){return '<span class="etag">'+t+'</span>';}).join('');
-    return '<a class="expert" href="'+(e.mail?'mailto:'+e.mail:'#')+'"><img class="expert-photo" src="'+PHOTO_BASE+e.photo+'.jpg" alt="'+e.name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="expert-ph-fallback" style="display:none">'+initials+'</div><div class="expert-name">'+e.name+'</div><div class="expert-title">'+e.title+'</div><div class="expert-tags">'+tags+'</div>'+(e.mail?'<div class="expert-mail">'+e.mail+'</div>':'')+'</a>';
+    var focusHtml=(e.approvedFocus&&e.approvedFocus.length)?
+      '<div class="team-focus">'+e.approvedFocus.map(function(f){return '<span class="etag">'+f+'</span>';}).join('')+'</div>':'';
+    var titleHtml=e.approvedTitle?'<div class="expert-title">'+e.approvedTitle+'</div>':'';
+    return '<a class="expert" href="'+(e.mail?'mailto:'+e.mail:'#')+'" aria-label="'+e.name+(e.mail?' ('+e.mail+')':'')+'">'+
+      '<img class="expert-photo" src="'+e.photo+'" alt="'+e.name+'" loading="lazy"'+
+        ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'+
+      '<div class="expert-ph-fallback" style="display:none">'+initials+'</div>'+
+      '<div class="expert-name">'+e.name+'</div>'+
+      titleHtml+
+      focusHtml+
+      (e.mail?'<div class="expert-mail">'+e.mail+'</div>':'')
+    +'</a>';
   }).join('');
+}
+
+// ── SOLUTION PORTFOLIO (Screen 09b) ──
+function renderSolutionPortfolio(sec){
+  var area=sec.querySelector('#solutionPortfolioArea');if(!area)return;
+  var clusters=PORTFOLIO_CLUSTERS||[];
+  var solutions=SOLUTIONS||[];
+  var SHARING_LABEL={live:'Live asset',team:'Team-built','to-confirm':'Status to confirm',illustrative:'Illustrative',nda:'NDA ref'};
+  var TECH_LABEL={'rules-workflow':'Rules','rpa-orchestration':'RPA','analytics-ml':'ML/Analytics','genai-copilots':'GenAI','agents':'Agents'};
+  var openCluster=null;
+  function render(){
+    area.innerHTML='<div class="sol-clusters">'+clusters.map(function(cl){
+      var clSols=solutions.filter(function(s){return s.portfolioClusterId===cl.id;});
+      var isOpen=openCluster===cl.id;
+      var solHtml=isOpen?('<div class="sol-cards">'+clSols.map(function(s){
+        var tech=TECH_LABEL[s.technologyPatternId]||'';
+        var sharing=SHARING_LABEL[s.sharingStatus]||s.sharingStatus;
+        var prov=s.mappingProvenance&&s.mappingProvenance.cluster||'working-hypothesis';
+        var provClass='prov-'+prov.replace(/[^a-z-]/g,'');
+        return '<div class="sol-card">'
+          +'<div class="sol-card-num">'+s.sourceNumber+'</div>'
+          +'<div class="sol-card-name">'+s.displayName+'</div>'
+          +'<div class="sol-card-src">'+s.sourceName+'</div>'
+          +(tech?'<span class="sol-chip sol-chip-tech">'+tech+'</span>':'')
+          +'<span class="sol-chip sol-chip-share">'+sharing+'</span>'
+          +'<span class="sol-chip '+provClass+'">'+prov.replace(/-/g,' ')+'</span>'
+        +'</div>';
+      }).join('')+'</div>'):'';
+      return '<div class="sol-cluster'+(isOpen?' open':'')+'\" style="--cc:'+cl.color+'">'
+        +'<button class="sol-cluster-hdr" onclick="toggleSolCluster(\''+cl.id+'\')" aria-expanded="'+(isOpen?'true':'false')+'">'
+          +'<i class="ti ti-'+cl.icon+' sol-cluster-icon"></i>'
+          +'<span class="sol-cluster-name">'+cl.name+'</span>'
+          +'<span class="sol-cluster-count">'+clSols.length+' solution'+(clSols.length!==1?'s':'')+'</span>'
+          +'<i class="ti ti-chevron-'+(isOpen?'up':'down')+' sol-cluster-chev"></i>'
+        +'</button>'
+        +solHtml
+      +'</div>';
+    }).join('')+'</div>';
+  }
+  window.toggleSolCluster=function(id){
+    openCluster=openCluster===id?null:id;
+    render();
+  };
+  render();
 }
 
 // ── RENDER CONTRACTS ──
 var VISUAL_CONTRACTS={
+  solutionPortfolio:'solutionPortfolioArea',
   aiLandscape:'aiLandscapeGrid',trSystem:'trSysGrid',maturityMatrix:'maturityTable',
   capHotspots:'capHotspotArea',roleBars:'rolesTable',oppPortfolio:'oppPortfolioArea',
   shortlist:'shortlistGrid',useCases:'ucGrid',proofValueCapture:'valueWaterfall',
@@ -419,6 +475,7 @@ function safeRender(fn,sec){
 
 // ── RENDER REGISTRY ──
 var renderers={
+  'solutionPortfolio':renderSolutionPortfolio,
   'aiLandscape':renderAILandscape,
   'trSystem':renderTransformationSystem,
   'maturityMatrix':renderMaturityMatrix,

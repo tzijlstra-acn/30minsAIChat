@@ -2,7 +2,7 @@
 """Guard: fail if any tracked file contains a U+2014 em-dash."""
 import sys, os, glob
 
-PATTERNS = ['**/*.html', '**/*.css', '**/*.js']
+PATTERNS = ['**/*.html', '**/*.css', '**/*.js', '**/*.json', '**/*.md', '**/*.txt']
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXCLUDE = ['.git', 'node_modules', 'assets/vendor']
 

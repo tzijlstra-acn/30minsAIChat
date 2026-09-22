@@ -267,14 +267,21 @@ var ROLE_DATA=[
   {name:'Model validation',shareA:6,shareB:4,splitA:[25,20,55],splitB:[25,20,55]}
 ];
 
-// ── EXPERTS ──
+// ── TEAM ──
+// approvedTitle and approvedFocus are null until reviewed and approved.
 var EXPERTS=[
-  {name:'Thomas Zijlstra',title:'NFR AI Lead',tags:['Strategy','GenAI','Risk'],mail:'thomas.zijlstra@accenture.com',photo:'thomas'},
-  {name:'Nils Smedegaard',title:'Risk Technology',tags:['Architecture','Data','GRC'],mail:'',photo:'nils'},
-  {name:'Elisa Martín',title:'Regulatory AI',tags:['Compliance','LLM','EU AI Act'],mail:'',photo:'elisa'},
-  {name:'James Whitfield',title:'Model Risk',tags:['MRM','Validation','ML'],mail:'',photo:'james'},
-  {name:'Sara Hoffmann',title:'Financial Crime',tags:['AML','Sanctions','FinCrime'],mail:'',photo:'sara'},
-  {name:'Lukas De Vries',title:'Controls & GRC',tags:['Audit','Controls','SOX'],mail:'',photo:'lukas'},
-  {name:'Amélie Fontaine',title:'Climate & ESG Risk',tags:['ESG','CSRD','Reporting'],mail:'',photo:'amelie'}
+  {id:'thomas-zijlstra',name:'Thomas Zijlstra',mail:'thomas.zijlstra@accenture.com',
+   photo:'assets/team/thomas-zijlstra.jpg',approvedTitle:null,approvedFocus:[],clientVisible:true},
+  {id:'marcel-frater',name:'Marcel Frater',mail:'marcel.frater@accenture.com',
+   photo:'assets/team/marcel-frater.jpg',approvedTitle:null,approvedFocus:[],clientVisible:true},
+  {id:'tobias-drouin',name:'Tobias Drouin',mail:'tobias.drouin@accenture.com',
+   photo:'assets/team/tobias-drouin.jpg',approvedTitle:null,approvedFocus:[],clientVisible:true},
+  {id:'oliver-moine',name:'Oliver Moine',mail:'oliver.moine@accenture.com',
+   photo:'assets/team/oliver-moine.jpg',approvedTitle:null,approvedFocus:[],clientVisible:true},
+  {id:'janik-jugl',name:'Janik Jugl',mail:'janik.jugl@accenture.com',
+   photo:'assets/team/janik-jugl.jpg',approvedTitle:null,approvedFocus:[],clientVisible:true},
+  {id:'nicola-jenni',name:'Nicola Jenni',mail:'nicola.jenni@accenture.com',
+   photo:'assets/team/nicola-jenni.jpg',approvedTitle:null,approvedFocus:[],clientVisible:true},
+  {id:'marek-polak',name:'Marek Polak',mail:'marek.polak@accenture.com',
+   photo:'assets/team/marek-polak.jpg',approvedTitle:null,approvedFocus:[],clientVisible:true}
 ];
-var PHOTO_BASE='https://tzijlstra-acn.github.io/NFRAIAssets/assets/';
