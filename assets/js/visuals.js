@@ -748,28 +748,99 @@ function openOppDrawer(oppId){
   openDrawer(opp.name,tabs,'what');
 }
 
-// ── SHORTLIST (Screen 10) ──
+// ── SHORTLIST (Screen 10) -- Phase 5: lens weights + live candidate canvas ──
 function renderShortlist(sec){
   var grid=sec.querySelector('#shortlistGrid');if(!grid)return;
   grid.className='shortlist-grid';
-  var sel=CLIENT_STATE.selectedCapabilityIds.slice(0,3);
-  if(!sel.length){grid.innerHTML='<div class="shortlist-empty">Select capabilities on screen 7 to populate the shortlist.</div>';return;}
-  var lens=CLIENT_STATE.lens;
+  var state=(typeof store!=='undefined')?store.getState():null;
+  var lens=state?state.audienceLens:(CLIENT_STATE.lens||'joint');
+  var selCaps=state?(state.selectedCapabilities||[]):CLIENT_STATE.selectedCapabilityIds;
+
+  // Weight panel (persistent sibling above grid)
+  var weightsWrap=sec.querySelector('#slWeights');
+  if(!weightsWrap){
+    weightsWrap=document.createElement('div');
+    weightsWrap.id='slWeights';
+    grid.parentNode.insertBefore(weightsWrap,grid);
+  }
+  var CRIT=[
+    {k:'riskRelevance',label:'Risk relevance'},
+    {k:'valueMechanism',label:'Value mechanism'},
+    {k:'evidenceSpeed',label:'Evidence speed'},
+    {k:'controlFit',label:'Control fit'},
+    {k:'dataReadiness',label:'Data readiness'},
+    {k:'reusePotential',label:'Reuse potential'}
+  ];
+  var wts=(state&&state.candidateWeights&&state.candidateWeights[lens])||
+    {riskRelevance:20,valueMechanism:20,evidenceSpeed:15,controlFit:15,dataReadiness:15,reusePotential:15};
+  var lensLbl={joint:'Joint lens',cro:'CRO lens',cfo:'CFO lens'};
+  weightsWrap.innerHTML='<div class="sl-weights"><div class="sl-weights-hd"><span>Weights: '+(lensLbl[lens]||lens)+'</span>'
+    +'<span class="status-badge status-illustrative">ILLUSTRATIVE</span></div>'
+    +'<div class="sl-weight-rows">'
+    +CRIT.map(function(c){
+      var w=wts[c.k]||0;
+      return '<div class="sl-weight-row"><label class="sl-weight-lbl">'+c.label+'</label>'
+        +'<input type="range" class="ras-range" min="0" max="40" step="5" value="'+w+'"'
+        +' oninput="if(typeof store!==\'undefined\')store.dispatch({type:\'UPDATE_CANDIDATE_WEIGHT\','
+        +'payload:{lens:\''+lens+'\',criterion:\''+c.k+'\',value:parseInt(this.value)}});'
+        +'this.nextElementSibling.textContent=this.value;">'
+        +'<span class="sl-weight-val">'+w+'</span></div>';
+    }).join('')+'</div></div>';
+
+  // Empty state
+  if(!selCaps.length){
+    grid.innerHTML='<div class="shortlist-empty">Select capabilities on screen 07 to populate the shortlist.</div>';
+    return;
+  }
+
+  // Candidate scoring via selector
+  var scores=(state&&typeof selectCandidateScores!=='undefined')?selectCandidateScores(state):[];
+  var filtered=scores.filter(function(s){
+    var uc=(typeof USE_CASES!=='undefined'?USE_CASES:[]).find(function(u){return u.id===s.id;});
+    if(!uc)return false;
+    if(!uc.capIds||!uc.capIds.length)return true;
+    return uc.capIds.some(function(c){return selCaps.indexOf(c)>-1;});
+  });
+  if(!filtered.length)filtered=scores.slice(0,4);
+  var top=filtered.slice(0,4);
+  var proofId=state?state.proofCandidateId:CLIENT_STATE.proofCapabilityId;
+  var types=['Lighthouse proof','Enabling foundation','Next scale wave','Explore further'];
   var lensLabels={cro:'CRO lens: risk and control quality',cfo:'CFO lens: cost and reporting efficiency',joint:'Joint view'};
-  grid.innerHTML=sel.map(function(capId,i){
-    var cap=getCapabilityById(capId);if(!cap)return '';
-    var cat=getCategoryById(cap.cat);
-    var isProof=CLIENT_STATE.proofCapabilityId===capId;
-    var types=['Lighthouse proof','Enabling foundation','Next scale wave'];
-    return '<div class="shortlist-card'+(isProof?' proof-selected':'')+'\" data-capid="'+capId+'"><div class="sl-type-label">'+types[i]||'Option '+(i+1)+'</div><div class="sl-cap-name">'+cap.name+'</div><div class="sl-cat-name">'+(cat?cat.name:'')+'</div><div class="sl-row"><div class="sl-lbl">Outcome</div><div class="sl-val">'+cap.outcome+'</div></div><div class="sl-row"><div class="sl-lbl">Evidence needed</div><div class="sl-val dr-muted">Validate with client data. Do not assume baseline.</div></div><div class="sl-row"><div class="sl-lbl">'+lensLabels[lens]+'</div><div class="sl-val dr-muted">Confirm with client before leading with this framing.</div></div><div class="sl-actions"><button class="sl-proof-btn'+(isProof?' active':'')+'\" onclick="setProofSelection(\''+capId+'\')">'+(isProof?'<i class="ti ti-check"></i> Proof candidate':'Set as proof candidate')+'</button><button class="sl-detail-btn" onclick="openCapabilityDrawer(\''+capId+'\')"><i class="ti ti-info-circle"></i></button></div></div>';
+
+  if(!top.length){
+    grid.innerHTML='<div class="shortlist-empty">No scored candidates. Select capabilities on screen 07 to populate this canvas.</div>';
+    return;
+  }
+
+  grid.innerHTML=top.map(function(s,i){
+    var uc=(typeof USE_CASES!=='undefined'?USE_CASES:[]).find(function(u){return u.id===s.id;});
+    if(!uc)return '';
+    var isProof=s.id===proofId;
+    var pct=Math.round(s.score*100);
+    var confPct=Math.round(s.confidence*100);
+    return '<div class="shortlist-card'+(isProof?' proof-selected':'')+'\" data-ucid="'+s.id+'">'
+      +'<div class="sl-type-label">'+(types[i]||'Option '+(i+1))+'</div>'
+      +'<div class="sl-cap-name">'+s.title+'</div>'
+      +'<div class="sl-score-bar-wrap" title="Weighted score: '+pct+'"><div class="sl-score-bar" style="width:'+pct+'%"></div>'
+      +'<span class="sl-score-val">'+pct+'</span></div>'
+      +'<div class="sl-row"><div class="sl-lbl">Data completeness</div><div class="sl-val">'+confPct+'% criteria populated</div></div>'
+      +'<div class="sl-row"><div class="sl-lbl">'+(lensLabels[lens]||'Lens')+'</div><div class="sl-val dr-muted">Validate with client data before presenting.</div></div>'
+      +'<div class="sl-actions">'
+      +'<button class="sl-proof-btn'+(isProof?' active':'')+'\" onclick="(function(){'
+      +'if(typeof store!==\'undefined\')store.dispatch({type:\'SET_PROOF_CANDIDATE\',payload:\''+s.id+'\'});'
+      +'CLIENT_STATE.proofCapabilityId=\''+s.id+'\';'
+      +'var sl=document.getElementById(\'exec-shortlist\');if(sl)renderShortlist(sl);'
+      +'})()">'+(isProof?'<i class="ti ti-check"></i> Proof candidate':'Set as proof candidate')+'</button>'
+      +'<button class="sl-detail-btn" onclick="openUseCaseDrawer(\''+s.id+'\')"><i class="ti ti-info-circle"></i></button>'
+      +'</div></div>';
   }).join('');
 }
 
 function setProofSelection(capId){
   CLIENT_STATE.proofCapabilityId=capId;
+  if(typeof store!=='undefined')store.dispatch({type:'SET_PROOF_CANDIDATE',payload:capId});
   var sec=document.getElementById('exec-shortlist');
   if(sec)renderShortlist(sec);
-  // Also update proof canvas if visible
   var pfSec=document.getElementById('proof-value-capture');
   if(pfSec&&rendered.has(getSlideIndex('proof-value-capture')))renderProofValueCapture(pfSec);
 }
@@ -1636,6 +1707,22 @@ document.addEventListener('nfr:statechange',function(e){
     if(ptpSec&&typeof rendered!=='undefined'&&rendered.has(getSlideIndex('pressure-to-proof'))){
       rendered.delete(getSlideIndex('pressure-to-proof'));
       renderSection(ptpSec);
+    }
+  }
+  // Shortlist: re-render on weight changes, lens changes, capability or proof candidate changes
+  if(action.type==='UPDATE_CANDIDATE_WEIGHT'||action.type==='SET_LENS'||action.type==='TOGGLE_CAPABILITY'||action.type==='SET_PROOF_CANDIDATE'){
+    var slSec=document.getElementById('exec-shortlist');
+    if(slSec&&typeof rendered!=='undefined'&&rendered.has(getSlideIndex('exec-shortlist'))){
+      rendered.delete(getSlideIndex('exec-shortlist'));
+      renderSection(slSec);
+    }
+  }
+  // Process twin: re-render on proof candidate change
+  if(action.type==='SET_PROOF_CANDIDATE'){
+    var ptSec2=document.getElementById('process-twin');
+    if(ptSec2&&typeof rendered!=='undefined'&&rendered.has(getSlideIndex('process-twin'))){
+      rendered.delete(getSlideIndex('process-twin'));
+      renderSection(ptSec2);
     }
   }
 });

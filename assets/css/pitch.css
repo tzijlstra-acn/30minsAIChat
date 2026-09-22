@@ -810,6 +810,18 @@ body[data-mode="explain"] .explain-only{display:block;}
 .ras-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;}
 .ras-val{font-size:14px;font-weight:600;color:var(--accent);min-width:32px;}
 
+/* ── PHASE 5: SHORTLIST WEIGHTS + SCORE BAR ── */
+.sl-weights{background:var(--surface-2);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px;margin-bottom:10px;}
+.sl-weights-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;}
+.sl-weight-rows{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 14px;}
+@media(max-width:768px){.sl-weight-rows{grid-template-columns:repeat(2,1fr);}}
+.sl-weight-row{display:flex;align-items:center;gap:5px;}
+.sl-weight-lbl{font-size:14px;color:var(--text-2);white-space:nowrap;flex-shrink:0;min-width:92px;}
+.sl-weight-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--accent);min-width:22px;text-align:right;}
+.sl-score-bar-wrap{height:5px;background:var(--border-1);border-radius:3px;margin:7px 0 3px;position:relative;}
+.sl-score-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent) 0%,#06B6D4 100%);transition:width .3s ease;}
+.sl-score-val{position:absolute;right:0;top:-17px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:700;}
+
 /* ── FONT SIZE CORRECTIONS (V11) ── */
 /* All core screen labels minimum 14px */
 .sec-tag{font-size:11px;letter-spacing:.1em;} /* tag stays smaller by design as meta info */
