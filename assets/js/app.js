@@ -93,3 +93,54 @@ window.addEventListener('DOMContentLoaded',function(){
   window.addEventListener('resize',resize);
   resize();requestAnimationFrame(draw);
 }());
+
+// ── RUN ECONOMICS SCENARIO CALCULATOR ──
+// All assumptions are illustrative. Replace defaults with client data.
+function calcEco(){
+  var vol=parseFloat(document.getElementById('eco-vol')&&document.getElementById('eco-vol').value)||5000;
+  var review=parseFloat(document.getElementById('eco-review')&&document.getElementById('eco-review').value)||30;
+  var ctx=parseFloat(document.getElementById('eco-ctx')&&document.getElementById('eco-ctx').value)||20;
+  var reuse=parseFloat(document.getElementById('eco-reuse')&&document.getElementById('eco-reuse').value)||3;
+
+  // Simplified unit economics model (all figures illustrative)
+  // Token cost: ~$0.002 per 1k tokens (mid-tier model assumption)
+  var tokenCostPer1k=0.002;
+  var inferCostPerCase=ctx*tokenCostPer1k;
+  // Retrieval: ~$0.0004 per case (illustrative)
+  var retrievalCostPerCase=0.0004*ctx;
+  // Human review: 15 min at $0.50/min illustrative cost rate
+  var reviewMinutes=15;
+  var reviewCostRate=0.50;
+  var humanCostPerCase=(review/100)*reviewMinutes*reviewCostRate;
+  // Platform/infra: amortised over volume, divided by reuse factor
+  var platformMonthly=4000;
+  var infraCostPerCase=platformMonthly/(vol*reuse);
+  // Total per case
+  var totalPerCase=inferCostPerCase+retrievalCostPerCase+humanCostPerCase+infraCostPerCase;
+  // Cost per governed decision (10% escalation to senior review)
+  var escalation=0.10;
+  var seniorReviewCost=30*reviewCostRate;
+  var costPerDecision=totalPerCase+escalation*seniorReviewCost;
+  // Human effort %
+  var humanEffortPct=Math.min(Math.round((humanCostPerCase/Math.max(totalPerCase,0.001))*100),99);
+
+  var out=document.getElementById('eco-outputs');
+  if(!out)return;
+  out.innerHTML=
+    '<div class="eco-output"><div class="eco-out-val">'+formatEco(totalPerCase)+'</div><div class="eco-out-lbl">Cost per case</div></div>'
+    +'<div class="eco-output"><div class="eco-out-val">'+formatEco(costPerDecision)+'</div><div class="eco-out-lbl">Cost per governed decision</div></div>'
+    +'<div class="eco-output"><div class="eco-out-val">'+humanEffortPct+'%</div><div class="eco-out-lbl">Human effort share</div></div>'
+    +'<div class="eco-output"><div class="eco-out-val">'+formatEco(totalPerCase*vol)+'</div><div class="eco-out-lbl">Est. monthly total</div></div>';
+}
+
+function formatEco(n){
+  if(n<0.01)return '<$0.01';
+  if(n<1)return '$'+n.toFixed(3);
+  if(n<1000)return '$'+n.toFixed(2);
+  return '$'+Math.round(n).toLocaleString();
+}
+
+// Run initial calculation when run-economics screen is first visible
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(calcEco,200);
+});

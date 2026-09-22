@@ -305,9 +305,34 @@
 <section id="run-economics" data-slide data-route="core" data-density="long" data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Run economics and tokenomics">
   <div class="inner">
     <div class="sec-tag reveal">Build to Scale · 13</div>
-    <h2 class="slide-h reveal">Six cost drivers determine what it costs to run AI at scale.</h2>
-    <p class="slide-sub reveal">Understanding the cost driver tree enables accurate FinOps modelling and prevents surprises in the business case. Click each driver to expand its levers.</p>
-    <div class="eco-tree reveal" style="margin-top:16px">
+    <h2 class="slide-h reveal">Run cost should be modelled per governed outcome.</h2>
+    <p class="slide-sub reveal">Test cost drivers with client volumes, review rates, and operating assumptions. All defaults are illustrative.</p>
+    <!-- Scenario model -->
+    <div class="eco-scenario reveal" style="margin-top:14px">
+      <div class="eco-scenario-inputs">
+        <div class="eco-input-group">
+          <label class="eco-input-lbl" for="eco-vol">Cases per month</label>
+          <input class="eco-input" id="eco-vol" type="number" min="100" max="1000000" step="500" value="5000" oninput="calcEco()">
+        </div>
+        <div class="eco-input-group">
+          <label class="eco-input-lbl" for="eco-review">Human review rate %</label>
+          <input class="eco-input" id="eco-review" type="number" min="0" max="100" step="5" value="30" oninput="calcEco()">
+        </div>
+        <div class="eco-input-group">
+          <label class="eco-input-lbl" for="eco-ctx">Avg. context (k tokens)</label>
+          <input class="eco-input" id="eco-ctx" type="number" min="1" max="200" step="5" value="20" oninput="calcEco()">
+        </div>
+        <div class="eco-input-group">
+          <label class="eco-input-lbl" for="eco-reuse">Shared infra reuse factor</label>
+          <input class="eco-input" id="eco-reuse" type="number" min="1" max="10" step="0.5" value="3" oninput="calcEco()">
+        </div>
+      </div>
+      <div class="eco-scenario-outputs" id="eco-outputs">
+        <!-- populated by calcEco() -->
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-3);letter-spacing:.06em;margin-top:6px">All outputs are illustrative and based on simplified assumptions. Replace with client architecture and volume data before use in any business case.</div>
+    </div>
+    <div class="eco-tree reveal" style="margin-top:14px">
       <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-cpu" style="color:var(--accent)"></i><span class="eco-driver-name">Inference compute</span></div><div class="eco-driver-levers"><div class="eco-lever">Model selection: smaller, quantised, or distilled models reduce cost per token significantly</div><div class="eco-lever">Caching strategies: prompt caching for repeated context reduces redundant inference</div><div class="eco-lever">Batching: asynchronous workloads can be batched vs. real-time premium pricing</div></div></div>
       <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-database" style="color:var(--cyan)"></i><span class="eco-driver-name">Data retrieval and embedding</span></div><div class="eco-driver-levers"><div class="eco-lever">Embedding model size and refresh frequency drive storage and compute cost</div><div class="eco-lever">Vector database sizing and query patterns determine retrieval infrastructure cost</div></div></div>
       <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-users" style="color:var(--green)"></i><span class="eco-driver-name">Human review and oversight</span></div><div class="eco-driver-levers"><div class="eco-lever">Review rate determines staffing: what share of AI outputs require human sign-off?</div><div class="eco-lever">Escalation design: clear confidence thresholds reduce unnecessary escalation volume</div></div></div>

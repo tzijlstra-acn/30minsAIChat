@@ -413,6 +413,18 @@ section[data-density="long"]{justify-content:flex-start;padding-top:84px;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 20px;font-size:13px;color:var(--text-1);box-shadow:var(--shadow-1);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:600;}
 .toast.visible{opacity:1;transform:translateX(-50%) translateY(0);}
 /* ── ECONOMIC DRIVERS ── */
+/* ── RUN ECONOMICS SCENARIO ── */
+.eco-scenario{background:var(--surface-1);border:1px solid var(--border-1);border-radius:12px;padding:14px 16px;}
+.eco-scenario-inputs{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.eco-input-group{display:flex;flex-direction:column;gap:4px;min-width:140px;flex:1;}
+.eco-input-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.07em;color:var(--text-3);text-transform:uppercase;}
+.eco-input{background:var(--surface-2);border:1px solid var(--border-2);border-radius:7px;padding:7px 10px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);width:100%;outline:none;transition:border-color .15s;}
+.eco-input:focus{border-color:var(--accent);}
+.eco-scenario-outputs{display:flex;gap:10px;flex-wrap:wrap;}
+.eco-output{flex:1;min-width:120px;background:var(--accent-soft);border:1px solid rgba(161,0,255,.18);border-radius:9px;padding:10px 12px;}
+.eco-out-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text-1);line-height:1;}
+.eco-out-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.07em;color:var(--text-3);text-transform:uppercase;margin-top:4px;}
+@media(max-width:768px){.eco-scenario-inputs{gap:8px;}.eco-input-group{min-width:calc(50% - 8px);}.eco-out-val{font-size:16px;}}
 .eco-tree{display:flex;flex-direction:column;gap:10px;margin-top:18px;}
 .eco-driver{background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-2);}
 .eco-driver-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:background .15s;}
