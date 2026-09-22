@@ -810,6 +810,26 @@ body[data-mode="explain"] .explain-only{display:block;}
 .ras-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;}
 .ras-val{font-size:14px;font-weight:600;color:var(--accent);min-width:32px;}
 
+/* ── PHASE 6: PROCESS TWIN TABS ── */
+.pt-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.pt-tab-btn{padding:5px 14px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .14s,color .14s,border-color .14s;}
+.pt-tab-btn.active{background:var(--accent-soft);border-color:rgba(161,0,255,.4);color:var(--accent);font-weight:700;}
+.pt-content-area{width:100%;}
+.pt-data-map{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.pt-data-map{grid-template-columns:1fr;}}
+.pt-dm-col{background:var(--surface-2);border:1px solid var(--border-1);border-radius:8px;padding:10px 12px;}
+.pt-dm-hd{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--text-3);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.pt-dm-item{font-size:14px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--border-1);display:flex;align-items:center;gap:6px;}
+.pt-dm-empty{font-size:13px;color:var(--text-3);font-style:italic;}
+.pt-controls-wrap{display:flex;flex-direction:column;gap:0;}
+.pt-ctrl-section{background:var(--surface-2);border:1px solid var(--border-1);border-radius:8px;padding:10px 12px;}
+.pt-ctrl-hd{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--text-3);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.pt-ctrl-item{padding:6px 0;border-bottom:1px solid var(--border-1);}
+.pt-ctrl-item:last-child{border-bottom:none;}
+.pt-ctrl-label{font-size:14px;font-weight:600;color:var(--text-1);}
+.pt-ctrl-desc{font-size:13px;color:var(--text-2);margin-top:2px;line-height:1.4;}
+.pt-ctrl-meta{margin-top:4px;}
+
 /* ── PHASE 5: SHORTLIST WEIGHTS + SCORE BAR ── */
 .sl-weights{background:var(--surface-2);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px;margin-bottom:10px;}
 .sl-weights-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;}

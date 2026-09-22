@@ -1433,23 +1433,31 @@ function prefersReducedMotion(){
   return window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 }
 
-// ── PROCESS TWIN (Screen 11) ──
+// ── PROCESS TWIN (Screen 11) -- Phase 6: candidate-driven template loading ──
 function getProcessTemplate(){
-  var tpl=null;
-  // Try selected proof capability first
-  var pid=CLIENT_STATE.proofCapabilityId||CLIENT_STATE.selectedCapabilityIds[0];
-  if(pid){
-    var cap=getCapabilityById(pid);
-    if(cap){
-      // Look for a template matching via solution map
-      var solIds=Object.keys(SOLUTION_PROCESS_TEMPLATE_MAP||{});
-      for(var i=0;i<solIds.length;i++){
-        if(SOLUTION_PROCESS_TEMPLATE_MAP[solIds[i]]==='regulation-coverage'&&(cap.id===solIds[i]||cap.cat==='compliance'))break;
+  var state=(typeof store!=='undefined')?store.getState():null;
+  var pid=(state&&state.proofCandidateId)||CLIENT_STATE.proofCapabilityId||CLIENT_STATE.selectedCapabilityIds[0];
+  var templates=PROCESS_TWIN_TEMPLATES||[];
+  if(pid&&templates.length){
+    // Try exact id match, then capabilityId/useCaseId match
+    var match=null;
+    for(var i=0;i<templates.length;i++){
+      var t=templates[i];
+      if(t.id===pid||t.capabilityId===pid||t.useCaseId===pid){match=t;break;}
+    }
+    if(match)return match;
+    // Try capability category match
+    if(pid){
+      var cap=getCapabilityById(pid);
+      if(cap){
+        for(var j=0;j<templates.length;j++){
+          if(templates[j].capabilityCategory===cap.cat){return templates[j];}
+        }
       }
     }
   }
-  // Default: Regulation Coverage
-  return (PROCESS_TWIN_TEMPLATES||[])[0]||null;
+  // Default: first template (Regulation Coverage)
+  return templates[0]||null;
 }
 
 function renderProcessTwin(sec){
@@ -1459,8 +1467,47 @@ function renderProcessTwin(sec){
     area.innerHTML='<div class="opp-empty">Select a capability on screen 07 to populate the process flow. Regulation Coverage is available as the default template.</div>';
     return;
   }
-  // Build the executive view
-  area.innerHTML='';
+
+  // Tab state persists on DOM element
+  if(!area._ptTab)area._ptTab='flow';
+  var activeTab=area._ptTab;
+
+  // Tab strip (persistent, only build once)
+  var tabsEl=area.querySelector('.pt-tabs');
+  if(!tabsEl){
+    tabsEl=document.createElement('div');
+    tabsEl.className='pt-tabs';
+    area.innerHTML='';
+    area.appendChild(tabsEl);
+  }
+  var PT_TABS=[{id:'flow',label:'Flow'},{id:'data',label:'Data map'},{id:'controls',label:'Controls'}];
+  tabsEl.innerHTML=PT_TABS.map(function(t){
+    return '<button class="pt-tab-btn'+(t.id===activeTab?' active':'')+'" onclick="'
+      +'var a=document.getElementById(\'processTwinArea\');if(!a)return;'
+      +'a._ptTab=\''+t.id+'\';'
+      +'var s=document.getElementById(\'process-twin\');if(s)renderProcessTwin(s);">'
+      +t.label+'</button>';
+  }).join('');
+
+  // Content area (cleared on each tab switch)
+  var contentEl=area.querySelector('.pt-content-area');
+  if(!contentEl){
+    contentEl=document.createElement('div');
+    contentEl.className='pt-content-area';
+    area.appendChild(contentEl);
+  }
+  contentEl.innerHTML='';
+
+  // Route to tab renderer
+  if(activeTab==='data'){
+    renderProcessTwinData(tpl,contentEl);return;
+  }
+  if(activeTab==='controls'){
+    renderProcessTwinControls(tpl,contentEl);return;
+  }
+
+  // ── FLOW TAB (existing SVG rendering, now targeting contentEl) ──
+  var area=contentEl; // shadow local var so existing code targets contentEl
   var isDark=document.documentElement.getAttribute('data-theme')==='dark';
 
   // KPI strip
@@ -1628,6 +1675,48 @@ function renderProcessTwin(sec){
   note.className='pt-source-note';
   note.innerHTML='<i class="ti ti-info-circle"></i> Topology source-backed from <em>'+tpl.sourceDocument+', '+tpl.sourceSection+'</em>. Measured metrics not provided. Click any node to inspect inputs, controls, and source.';
   area.appendChild(note);
+}
+
+// ── PROCESS TWIN DATA MAP TAB ──
+function renderProcessTwinData(tpl,container){
+  if(!tpl||!tpl.nodes){container.innerHTML='<div class="opp-empty">No data map available for this template.</div>';return;}
+  var allIn={},allOut={};
+  tpl.nodes.forEach(function(n){
+    (n.dataIn||[]).forEach(function(d){allIn[d]=(allIn[d]||0)+1;});
+    (n.dataOut||[]).forEach(function(d){allOut[d]=(allOut[d]||0)+1;});
+  });
+  var inList=Object.keys(allIn).sort();
+  var outList=Object.keys(allOut).sort();
+  container.innerHTML='<div class="pt-data-map">'
+    +'<div class="pt-dm-col"><div class="pt-dm-hd"><i class="ti ti-arrow-right" style="color:var(--cyan)"></i> Data inputs ('+inList.length+')</div>'
+    +(inList.map(function(d){return '<div class="pt-dm-item"><i class="ti ti-database" style="color:var(--cyan);font-size:11px"></i>'+d+'</div>';}).join('')||'<div class="pt-dm-empty">None mapped.</div>')
+    +'</div>'
+    +'<div class="pt-dm-col"><div class="pt-dm-hd"><i class="ti ti-arrow-right" style="color:var(--green)"></i> Data outputs ('+outList.length+')</div>'
+    +(outList.map(function(d){return '<div class="pt-dm-item"><i class="ti ti-file-check" style="color:var(--green);font-size:11px"></i>'+d+'</div>';}).join('')||'<div class="pt-dm-empty">None mapped.</div>')
+    +'</div></div>'
+    +'<div class="pt-source-note" style="margin-top:8px"><i class="ti ti-info-circle"></i> Data mapping derived from template topology. Validate against client data dictionary and system architecture.</div>';
+}
+
+// ── PROCESS TWIN CONTROLS TAB ──
+function renderProcessTwinControls(tpl,container){
+  if(!tpl||!tpl.nodes){container.innerHTML='<div class="opp-empty">No control map available for this template.</div>';return;}
+  var gates=tpl.nodes.filter(function(n){return n.type==='gate'||n.executor==='human'||(n.desc&&n.desc.toLowerCase().indexOf('approv')>-1);});
+  var aiNodes=tpl.nodes.filter(function(n){return n.executor==='ai'||n.executor==='model';});
+  container.innerHTML='<div class="pt-controls-wrap">'
+    +'<div class="pt-ctrl-section"><div class="pt-ctrl-hd"><i class="ti ti-shield-check" style="color:var(--amber)"></i> Human control points ('+gates.length+')</div>'
+    +(gates.length?gates.map(function(n){
+      return '<div class="pt-ctrl-item"><div class="pt-ctrl-label">'+n.label+'</div>'
+        +'<div class="pt-ctrl-desc">'+n.desc+'</div>'
+        +'<div class="pt-ctrl-meta"><span class="status-badge status-live">'+n.system+'</span></div></div>';
+    }).join(''):'<div class="pt-dm-empty">No explicit human control points in this template.</div>')
+    +'</div>'
+    +'<div class="pt-ctrl-section" style="margin-top:12px"><div class="pt-ctrl-hd"><i class="ti ti-cpu" style="color:var(--accent)"></i> AI execution steps ('+aiNodes.length+')</div>'
+    +(aiNodes.length?aiNodes.map(function(n){
+      return '<div class="pt-ctrl-item"><div class="pt-ctrl-label">'+n.label+'</div>'
+        +'<div class="pt-ctrl-desc">'+n.desc+'</div></div>';
+    }).join(''):'<div class="pt-dm-empty">No AI execution steps in this template.</div>')
+    +'</div></div>'
+    +'<div class="pt-source-note" style="margin-top:8px"><i class="ti ti-info-circle"></i> Control point mapping is topology-derived. Confirm against client process documentation and model risk policy.</div>';
 }
 
 function openProcessNodeDrawer(tpl,node){
