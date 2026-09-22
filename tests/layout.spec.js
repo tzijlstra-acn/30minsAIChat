@@ -15,11 +15,10 @@ const VIEWPORTS = [
 ];
 
 const CORE_SLIDES = [
-  'cover','setting-scene','pressure-to-proof','ai-landscape','transformation-system',
-  'how-blocks-built','capability-hotspots','work-workforce-workbench',
-  'opportunity-portfolio','solution-portfolio','exec-shortlist',
-  'process-twin','proof-value-capture','industrialization-arch',
-  'run-economics','accenture-edge','lean-transition','decision-next-step'
+  'cover','setting-scene','ai-landscape','capability-hotspots','exec-shortlist',
+  'process-twin','transformation-system','work-workforce-workbench',
+  'proof-value-capture','industrialization-arch','run-economics',
+  'accenture-edge','lean-transition','decision-next-step'
 ];
 
 async function gotoPage(page, path) {
