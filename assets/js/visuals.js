@@ -135,7 +135,7 @@ function renderAILandscape(sec){
      human:'Review every output before use or distribution',
      control:'Is output reviewed before leaving the team?'},
     {id:'agents',          label:'AI Agents',         pct:30,color:'#FF50C8',
-     desc:'Plan, coordinate, act across tools. Highest cost and risk.',
+     desc:'Plan, coordinate, act across tools. Elevated cost and uncertainty.',
      human:'Define scope; approve consequential actions; set guardrails',
      control:'What can the agent do without human approval?'}
   ];

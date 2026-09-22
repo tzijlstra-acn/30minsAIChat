@@ -88,7 +88,7 @@ function renderBlockDiagnose(b){
   return '<div class="drawer-section"><div class="dr-h">Diagnostic questions</div>'+(b.diagnosticQuestions||[]).map(function(q){return '<div class="dr-item"><i class="ti ti-question-mark dr-icon"></i>'+q+'</div>';}).join('')+'<div class="dr-h" style="margin-top:14px">Minimum evidence needed</div><div class="dr-body dr-muted">AI-assisted analysis available: Accenture can ingest and map existing policies, processes, controls, and inventory data to accelerate this evidence assembly.</div></div>';
 }
 function renderBlockTarget(b){
-  return '<div class="drawer-section"><div class="dr-h">Target-state principles</div>'+(b.targetPrinciples||[]).map(function(p){return '<div class="dr-item"><i class="ti ti-check dr-icon-good"></i>'+p+'</div>';}).join('')+'<div class="dr-h" style="margin-top:14px">Maturity to aim for</div><div class="dr-body dr-muted">Appropriate target maturity depends on use-case risk tier, data quality, and control environment. Not the highest level by default.</div></div>';
+  return '<div class="drawer-section"><div class="dr-h">Target-state principles</div>'+(b.targetPrinciples||[]).map(function(p){return '<div class="dr-item"><i class="ti ti-check dr-icon-good"></i>'+p+'</div>';}).join('')+'<div class="dr-h" style="margin-top:14px">Maturity to aim for</div><div class="dr-body dr-muted">Appropriate target maturity depends on use-case risk tier, data quality, and control environment. Not the highest level by default.</div></div>'; // lint-ok
 }
 function renderBlockChange(b){
   if(!b.interventions)return '<div class="drawer-section"><div class="dr-body dr-muted">Interventions to be scoped with client team.</div></div>';
@@ -97,7 +97,7 @@ function renderBlockChange(b){
   return '<div class="drawer-section">'+section('No-regret moves',i.noRegret)+section('Lighthouse activities',i.lighthouse)+section('Industrialise',i.industrialize)+section('Scale',i.scale)+'</div>';
 }
 function renderBlockMetrics(b){
-  return '<div class="drawer-section"><div class="dr-h">Business and operational KPIs</div>'+(b.kpis||[]).map(function(k){return '<div class="dr-item"><i class="ti ti-chart-bar dr-icon"></i>'+k+'</div>';}).join('')+'<div class="dr-note">Baselines must be validated with client data. Do not present hypothesis figures as measured outcomes.</div></div>';
+  return '<div class="drawer-section"><div class="dr-h">Business and operational KPIs</div>'+(b.kpis||[]).map(function(k){return '<div class="dr-item"><i class="ti ti-chart-bar dr-icon"></i>'+k+'</div>';}).join('')+'<div class="dr-note">Baselines must be validated with client data. Do not present hypothesis figures as measured outcomes.</div></div>'; // lint-ok: compliance instruction
 }
 
 // ── CAPABILITY DRAWER ──

@@ -44,7 +44,7 @@ function buildAgendaDrawer(){
       {label:'What must change beyond use cases?',id:'transformation-system'},
       {label:'Where is value in our risk function?',id:'capability-hotspots'},
       {label:'How do we prove value safely?',id:'proof-value-capture'},
-      {label:'What will it cost to build and run?',id:'run-economics'},
+      {label:'What does it cost to build and run?',id:'run-economics'},
       {label:'How does Accenture accelerate delivery?',id:'accenture-edge'},
       {label:'What is the leanest next step?',id:'decision-next-step'}
     ];
