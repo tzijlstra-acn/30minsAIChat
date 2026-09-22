@@ -210,6 +210,8 @@ function renderAILandscape(sec){
     var f=s.evidenceFlags||{};
     return [f.concept,f.prototype,f.asset,f.demo].filter(function(v){return v===true;}).length;
   }
+  // V9 grammar: source-backed = any confirmed flag; working hypothesis = none confirmed
+  function isSourceBacked(s){return evidenceCount(s)>0;}
 
   var nodeData=SOLUTIONS.filter(function(s){return s.technologyPatternId&&bandIndex[s.technologyPatternId]!==undefined;});
 
@@ -231,26 +233,30 @@ function renderAILandscape(sec){
 
     sols.forEach(function(s,si){
       var ev=evidenceCount(s);
-      var r=ev>0?6+ev*1.5:5;
+      var backed=isSourceBacked(s);
+      var r=backed?6+ev*1.5:5;
       var cx=startX+si*spacing;
-      var clColor=CLUSTER_COLOR[s.portfolioClusterId]||b.color;
+      var clColor=backed?(CLUSTER_COLOR[s.portfolioClusterId]||b.color):'#B46A00';
+      var dashArr=backed?'none':'4,3';
+      var fillOp=backed?0.22:0.07;
+      var strokeOp=backed?0.85:0.5;
 
-      var g=svg.append('g').style('cursor','pointer').attr('role','button').attr('tabindex','0').attr('aria-label',s.displayName);
+      var g=svg.append('g').style('cursor','pointer').attr('role','button').attr('tabindex','0').attr('aria-label',s.displayName+(backed?'':', working hypothesis'));
 
       g.append('circle')
         .attr('cx',cx).attr('cy',cy).attr('r',r)
-        .attr('fill',clColor).attr('fill-opacity',0.22)
-        .attr('stroke',clColor).attr('stroke-width',1.5).attr('stroke-opacity',0.8);
+        .attr('fill',clColor).attr('fill-opacity',fillOp)
+        .attr('stroke',clColor).attr('stroke-width',backed?1.5:1).attr('stroke-opacity',strokeOp)
+        .attr('stroke-dasharray',dashArr);
 
-      if(ev>0){
+      if(backed){
         g.append('circle')
           .attr('cx',cx).attr('cy',cy).attr('r',2.5)
           .attr('fill',clColor).attr('fill-opacity',0.9);
       }
 
       g.on('mouseenter',function(event){
-        d3.select(this).select('circle').attr('fill-opacity',0.55).attr('stroke-opacity',1);
-        var rect=svgWrap.getBoundingClientRect();
+        d3.select(this).select('circle').attr('fill-opacity',backed?0.55:0.2).attr('stroke-opacity',1);
         var evLabels=[];
         if(s.evidenceFlags){['concept','prototype','asset','demo'].forEach(function(k){if(s.evidenceFlags[k]===true)evLabels.push(k);});}
         tooltip.style('display','block')
@@ -258,17 +264,26 @@ function renderAILandscape(sec){
           .style('top',(bi*BAND_H+BAND_H+4)+'px')
           .html('<div class="pf-tt-name">'+s.displayName+'</div>'
             +'<div class="pf-tt-src">'+s.sourceName+'</div>'
-            +(evLabels.length?'<div class="pf-tt-ev">'+evLabels.join(' · ')+'</div>':'')
+            +(evLabels.length?'<div class="pf-tt-ev">'+evLabels.join(' · ')+'</div>':'<div class="pf-tt-ev" style="color:var(--amber);font-size:10px">Working hypothesis</div>')
             +'<div class="pf-tt-share">'+s.sharingStatus.replace(/-/g,' ')+'</div>');
       })
       .on('mouseleave',function(){
-        d3.select(this).select('circle').attr('fill-opacity',0.22).attr('stroke-opacity',0.8);
+        d3.select(this).select('circle').attr('fill-opacity',fillOp).attr('stroke-opacity',strokeOp);
         tooltip.style('display','none');
       })
       .on('click',function(){openSolutionDrawer(s.id);})
       .on('keydown',function(event){if(event.key==='Enter'||event.key===' ')openSolutionDrawer(s.id);});
     });
   });
+
+  // Grammar legend
+  var legend=document.createElement('div');
+  legend.style.cssText='display:flex;gap:16px;align-items:center;margin-top:6px;flex-wrap:wrap;';
+  legend.innerHTML=
+    '<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="rgba(14,116,144,0.22)" stroke="#0E7490" stroke-width="1.5"/></svg><span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--text-3)">Source-backed</span>'
+    +'<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="rgba(180,106,0,0.07)" stroke="#B46A00" stroke-width="1" stroke-dasharray="4,3"/></svg><span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--text-3)">Working hypothesis</span>'
+    +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--text-3)">Circle size = evidence flags confirmed. Colour = portfolio cluster.</span>';
+  container.appendChild(legend);
 
   // Footer
   var footer=document.createElement('div');
