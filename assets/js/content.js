@@ -67,30 +67,27 @@ var RISK_CAPABILITIES=[
 
 // ── AI OPPORTUNITIES ──
 var AI_OPPORTUNITIES=[
-  {id:'rcsa-ai-workflow',name:'AI-assisted RCSA workflow',caps:['rcsa','operational-risk'],blocks:['work-decisions-controls','data-knowledge-evidence'],status:'team'},
-  {id:'regulatory-signal-extraction',name:'Regulatory signal extraction and obligation mapping',caps:['regulatory-compliance','regulatory-change-mgmt'],blocks:['data-knowledge-evidence','work-decisions-controls'],status:'live'},
-  {id:'reg-change-impact-ai',name:'Regulatory change impact analysis',caps:['regulatory-change-mgmt'],blocks:['work-decisions-controls','data-knowledge-evidence'],status:'team'},
-  {id:'model-doc-automation',name:'Model documentation and gap analysis',caps:['model-risk'],blocks:['work-decisions-controls'],status:'team'},
-  {id:'model-validation-ai',name:'Model validation support and backtesting review',caps:['model-risk'],blocks:['work-decisions-controls'],status:'illustrative'},
-  {id:'control-test-automation',name:'Automated control testing and evidence',caps:['control-monitoring','sox-compliance'],blocks:['work-decisions-controls','data-knowledge-evidence'],status:'team'},
-  {id:'data-quality-ai',name:'Data quality profiling and remediation',caps:['data-quality','data-governance'],blocks:['data-knowledge-evidence'],status:'live'},
-  {id:'regulatory-report-ai',name:'Regulatory reporting automation and validation',caps:['regulatory-reporting'],blocks:['work-decisions-controls','data-knowledge-evidence'],status:'team'},
-  {id:'board-report-ai',name:'Board and management report drafting',caps:['board-reporting','risk-metrics'],blocks:['work-decisions-controls'],status:'illustrative'},
-  {id:'credit-assessment-ai',name:'Credit assessment copilot and memo drafting',caps:['consumer-credit','wholesale-credit'],blocks:['work-decisions-controls'],status:'illustrative'},
-  {id:'credit-portfolio-ai',name:'Credit portfolio monitoring and early warning',caps:['consumer-credit','wholesale-credit'],blocks:['data-knowledge-evidence'],status:'illustrative'},
-  {id:'aml-detection-ai',name:'AML transaction pattern detection',caps:['aml'],blocks:['work-decisions-controls','ai-automation-platforms'],status:'nda'},
-  {id:'sanctions-screening-ai',name:'Sanctions screening false-positive reduction',caps:['sanctions-compliance'],blocks:['ai-automation-platforms'],status:'nda'},
-  {id:'kyc-automation-ai',name:'KYC document extraction and risk scoring',caps:['kyc-clm','onboarding'],blocks:['work-decisions-controls','data-knowledge-evidence'],status:'nda'},
-  {id:'fraud-detection-ai',name:'Real-time fraud scoring and case management',caps:['fraud'],blocks:['ai-automation-platforms','work-decisions-controls'],status:'illustrative'},
-  {id:'third-party-risk-ai',name:'Third-party risk profile aggregation',caps:['third-party-risk'],blocks:['data-knowledge-evidence'],status:'nda'},
-  {id:'stress-scenario-ai',name:'Stress scenario generation and narrative drafting',caps:['stress-testing','enterprise-risk'],blocks:['work-decisions-controls'],status:'illustrative'},
-  {id:'horizon-scanning-ai',name:'Emerging risk horizon scanning',caps:['emerging-risk','regulatory-change-mgmt'],blocks:['data-knowledge-evidence'],status:'team'},
-  {id:'kri-monitoring',name:'KRI monitoring and automated escalation',caps:['operational-risk','enterprise-risk'],blocks:['data-knowledge-evidence','work-decisions-controls'],status:'illustrative'},
-  {id:'oprisk-event-triage',name:'Operational risk event triage and classification',caps:['operational-risk'],blocks:['work-decisions-controls'],status:'illustrative'},
-  {id:'rcsa-ai-workflow':undefined} // guard – removed duplicate
+  {id:'rcsa-ai-workflow',name:'AI-assisted RCSA workflow',capIds:['rcsa','operational-risk'],blockIds:['work-decisions-controls','data-knowledge-evidence'],status:'team'},
+  {id:'regulatory-signal-extraction',name:'Regulatory signal extraction and obligation mapping',capIds:['regulatory-compliance','regulatory-change-mgmt'],blockIds:['data-knowledge-evidence','work-decisions-controls'],status:'live'},
+  {id:'reg-change-impact-ai',name:'Regulatory change impact analysis',capIds:['regulatory-change-mgmt'],blockIds:['work-decisions-controls','data-knowledge-evidence'],status:'team'},
+  {id:'model-doc-automation',name:'Model documentation and gap analysis',capIds:['model-risk'],blockIds:['work-decisions-controls'],status:'team'},
+  {id:'model-validation-ai',name:'Model validation support and backtesting review',capIds:['model-risk'],blockIds:['work-decisions-controls'],status:'illustrative'},
+  {id:'control-test-automation',name:'Automated control testing and evidence',capIds:['control-monitoring','sox-compliance'],blockIds:['work-decisions-controls','data-knowledge-evidence'],status:'team'},
+  {id:'data-quality-ai',name:'Data quality profiling and remediation',capIds:['data-quality','data-governance'],blockIds:['data-knowledge-evidence'],status:'live'},
+  {id:'regulatory-report-ai',name:'Regulatory reporting automation and validation',capIds:['regulatory-reporting'],blockIds:['work-decisions-controls','data-knowledge-evidence'],status:'team'},
+  {id:'board-report-ai',name:'Board and management report drafting',capIds:['board-reporting','risk-metrics'],blockIds:['work-decisions-controls'],status:'illustrative'},
+  {id:'credit-assessment-ai',name:'Credit assessment copilot and memo drafting',capIds:['consumer-credit','wholesale-credit'],blockIds:['work-decisions-controls'],status:'illustrative'},
+  {id:'credit-portfolio-ai',name:'Credit portfolio monitoring and early warning',capIds:['consumer-credit','wholesale-credit'],blockIds:['data-knowledge-evidence'],status:'illustrative'},
+  {id:'aml-detection-ai',name:'AML transaction pattern detection',capIds:['aml'],blockIds:['work-decisions-controls','ai-automation-platforms'],status:'nda'},
+  {id:'sanctions-screening-ai',name:'Sanctions screening false-positive reduction',capIds:['sanctions-compliance'],blockIds:['ai-automation-platforms'],status:'nda'},
+  {id:'kyc-automation-ai',name:'KYC document extraction and risk scoring',capIds:['kyc-clm','onboarding'],blockIds:['work-decisions-controls','data-knowledge-evidence'],status:'nda'},
+  {id:'fraud-detection-ai',name:'Real-time fraud scoring and case management',capIds:['fraud'],blockIds:['ai-automation-platforms','work-decisions-controls'],status:'illustrative'},
+  {id:'third-party-risk-ai',name:'Third-party risk profile aggregation',capIds:['third-party-risk'],blockIds:['data-knowledge-evidence'],status:'nda'},
+  {id:'stress-scenario-ai',name:'Stress scenario generation and narrative drafting',capIds:['stress-testing','enterprise-risk'],blockIds:['work-decisions-controls'],status:'illustrative'},
+  {id:'horizon-scanning-ai',name:'Emerging risk horizon scanning',capIds:['emerging-risk','regulatory-change-mgmt'],blockIds:['data-knowledge-evidence'],status:'team'},
+  {id:'kri-monitoring',name:'KRI monitoring and automated escalation',capIds:['operational-risk','enterprise-risk'],blockIds:['data-knowledge-evidence','work-decisions-controls'],status:'illustrative'},
+  {id:'oprisk-event-triage',name:'Operational risk event triage and classification',capIds:['operational-risk'],blockIds:['work-decisions-controls'],status:'illustrative'}
 ];
-// Remove malformed entry
-AI_OPPORTUNITIES=AI_OPPORTUNITIES.filter(function(o){return o&&o.id&&o.name;});
 
 // ── USE CASES ──
 var USE_CASES=[

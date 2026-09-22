@@ -1,130 +1,158 @@
 // ── SCREEN RENDERERS ──
 // Each renderer takes the section element and populates it
 
-// ── TRANSFORMATION SYSTEM (Screen 4) ──
+// ── TRANSFORMATION SYSTEM (Screen 4): deterministic SVG layout ──
 function renderTransformationSystem(sec){
-  var grid=sec.querySelector('#trSysGrid');if(!grid)return;
-  var blocks=TRANSFORMATION_BLOCKS;
-  var posMap={top:'trsys-top','middle-left':'trsys-ml','middle-right':'trsys-mr','foundation-left':'trsys-fl','foundation-right':'trsys-fr','rail-left':'trsys-rl','rail-right':'trsys-rr',bridge:'trsys-bridge'};
-  grid.innerHTML=blocks.map(function(b,i){
-    var cls='trsys-block '+(posMap[b.position]||'');
-    var isBridge=b.position==='bridge';
-    return '<button class="'+cls+'" data-block-id="'+b.id+'" onclick="openBlockDrawer(\''+b.id+'\')" style="--block-color:'+b.color+'" aria-label="'+b.name+'">'+(isBridge
-      ?'<span class="trsys-bridge-label">'+b.name+'</span>'
-      :'<div class="trsys-block-icon" style="color:'+b.color+'"><i class="ti ti-'+b.icon+'"></i></div>'+
-        '<div class="trsys-block-name">'+b.name+'</div>'+
-        '<div class="trsys-block-q">'+b.executiveQuestion+'</div>'+
-        '<div class="trsys-block-bar" style="background:'+b.color+'"></div>'
-    )+'</button>';
-  }).join('');
-  // Stagger entrance
-  var btns=grid.querySelectorAll('.trsys-block');
-  btns.forEach(function(btn,i){
-    btn.style.opacity='0';
-    btn.style.transform='scale(.92) translateY(8px)';
-    setTimeout(function(){
-      btn.style.transition='opacity .35s ease, transform .35s ease, border-color .2s';
-      btn.style.opacity='1';
-      btn.style.transform='';
-    },40+i*60);
+  var container=sec.querySelector('#trSysGrid');if(!container)return;
+  container.innerHTML='';
+  var NS='http://www.w3.org/2000/svg';
+  var W=860,H=540;
+  var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  var blockBg=isDark?'rgba(18,14,38,0.9)':'rgba(255,255,255,0.96)';
+  var edgeC='rgba(161,0,255,0.22)';
+  var textM=isDark?'rgba(237,232,247,0.48)':'rgba(21,24,28,0.44)';
+  var lay={
+    'risk-portfolio':          {x:278,y:10, w:304,h:74},
+    'work-decisions-controls': {x:36, y:154,w:258,h:86},
+    'org-roles-adoption':      {x:566,y:154,w:258,h:86},
+    'data-knowledge-evidence': {x:36, y:308,w:258,h:86},
+    'ai-automation-platforms': {x:566,y:308,w:258,h:86},
+    'business-risk-tech':      {x:118,y:460,w:624,h:54},
+    'governance-security':     {x:8,  y:144,w:22, h:276,rail:true},
+    'value-cost-performance':  {x:830,y:144,w:22, h:276,rail:true}
+  };
+  var edges=[
+    {x1:430,y1:84, x2:165,y2:154},
+    {x1:430,y1:84, x2:695,y2:154},
+    {x1:165,y1:240,x2:165,y2:308},
+    {x1:695,y1:240,x2:695,y2:308},
+    {x1:294,y1:197,x2:566,y2:197},
+    {x1:294,y1:351,x2:566,y2:351},
+    {x1:165,y1:394,x2:240,y2:460},
+    {x1:695,y1:394,x2:620,y2:460}
+  ];
+  function mk(tag,attrs){
+    var e=document.createElementNS(NS,tag);
+    for(var k in attrs)e.setAttribute(k,attrs[k]);
+    return e;
+  }
+  var svg=mk('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',height:'100%',xmlns:NS,role:'img','aria-label':'AI Risk Transformation System map'});
+  container.appendChild(svg);
+  var defs=mk('defs',{});
+  var mrk=mk('marker',{id:'tss-arr',markerWidth:'7',markerHeight:'5',refX:'6',refY:'2.5',orient:'auto'});
+  mrk.appendChild(mk('path',{d:'M0,0 L7,2.5 L0,5 Z',fill:edgeC}));
+  defs.appendChild(mrk);
+  svg.appendChild(defs);
+  edges.forEach(function(e){
+    var horiz=Math.abs(e.y1-e.y2)<8;
+    var my=(e.y1+e.y2)/2;
+    var d=horiz?('M'+e.x1+' '+e.y1+' L'+e.x2+' '+e.y2):
+      ('M'+e.x1+' '+e.y1+' C'+e.x1+' '+my+' '+e.x2+' '+my+' '+e.x2+' '+e.y2);
+    svg.appendChild(mk('path',{d:d,stroke:edgeC,'stroke-width':'1.5',fill:'none','stroke-dasharray':'5,3','marker-end':'url(#tss-arr)'}));
+  });
+  TRANSFORMATION_BLOCKS.forEach(function(b){
+    var L=lay[b.id];if(!L)return;
+    var g=mk('g',{cursor:'pointer','aria-label':b.name});
+    g.addEventListener('click',function(){openBlockDrawer(b.id);});
+    g.addEventListener('mouseenter',function(){g.querySelector('rect').setAttribute('stroke-opacity','0.85');});
+    g.addEventListener('mouseleave',function(){g.querySelector('rect').setAttribute('stroke-opacity','0.5');});
+    var rect=mk('rect',{x:L.x,y:L.y,width:L.w,height:L.h,rx:'8',fill:blockBg,stroke:b.color,'stroke-width':L.rail?'1':'1.5','stroke-opacity':'0.5'});
+    g.appendChild(rect);
+    if(L.rail){
+      rect.setAttribute('fill',b.color);rect.setAttribute('fill-opacity','0.13');
+      var cx=L.x+L.w/2,cy=L.y+L.h/2;
+      var rt=mk('text',{x:cx,y:cy,transform:'rotate(-90,'+cx+','+cy+')','text-anchor':'middle','font-size':'9','font-family':'Inter,sans-serif','font-weight':'700','fill':b.color,'letter-spacing':'0.8'});
+      rt.textContent=b.name.toUpperCase().split(/[,\s]+/).slice(0,2).join(' ');
+      g.appendChild(rt);
+    } else if(b.position==='bridge'){
+      var bt=mk('text',{x:L.x+L.w/2,y:L.y+19,'text-anchor':'middle','font-size':'11','font-family':'Inter,sans-serif','font-weight':'600','fill':b.color});
+      bt.textContent=b.name;g.appendChild(bt);
+      var bq=mk('text',{x:L.x+L.w/2,y:L.y+35,'text-anchor':'middle','font-size':'9.5','font-family':'Inter,sans-serif',fill:textM});
+      bq.textContent=(b.executiveQuestion||'').slice(0,90);g.appendChild(bq);
+    } else {
+      var words=b.name.split(' '),half=Math.ceil(words.length/2);
+      var nt=mk('text',{x:L.x+L.w/2,y:L.y+17,'text-anchor':'middle','font-size':'10.5','font-family':'Inter,sans-serif','font-weight':'600','fill':b.color});
+      var ts1=mk('tspan',{x:L.x+L.w/2,dy:'0'});ts1.textContent=words.slice(0,half).join(' ');nt.appendChild(ts1);
+      if(half<words.length){var ts2=mk('tspan',{x:L.x+L.w/2,dy:'13'});ts2.textContent=words.slice(half).join(' ');nt.appendChild(ts2);}
+      g.appendChild(nt);
+      var q=b.executiveQuestion||'',qy=(half<words.length)?L.y+44:L.y+32,maxCh=Math.floor((L.w-16)/5.5),qlines=[];
+      var qr=q;
+      while(qr.length>0&&qlines.length<2){var cut=qr.length<=maxCh?qr.length:qr.lastIndexOf(' ',maxCh);if(cut<=0)cut=maxCh;qlines.push(qr.slice(0,cut));qr=qr.slice(cut).trim();}
+      qlines.forEach(function(line,li){
+        var qt=mk('text',{x:L.x+L.w/2,y:qy+li*12,'text-anchor':'middle','font-size':'9','font-family':'Inter,sans-serif',fill:textM});
+        qt.textContent=(li===1&&qr.length>0)?line.slice(0,-3)+'...':line;g.appendChild(qt);
+      });
+      g.appendChild(mk('rect',{x:L.x+10,y:L.y+L.h-5,width:L.w-20,height:'3',rx:'1.5',fill:b.color,'fill-opacity':'0.42'}));
+    }
+    svg.appendChild(g);
   });
 }
 
-// ── AI LANDSCAPE GRID (Screen 2) ──
+// ── AI LANDSCAPE: 5-band Provability Frontier ──
 function renderAILandscape(sec){
   var container=sec.querySelector('#aiLandscapeGrid');if(!container)return;
   var techs=[
-    {id:'rules',name:'Rules',full:'Rules & workflow',icon:'git-branch',pct:85,color:'#0F8A62',
-     desc:'Deterministic routing, thresholds, conditional logic',
-     human:'Design rules; handle exceptions',
-     control:'Are rules complete, current, and tested?',
-     cost:'Lowest unit cost. No model calls.'},
-    {id:'rpa',name:'RPA',full:'RPA & orchestration',icon:'refresh',pct:80,color:'#0E7490',
-     desc:'Repeatable cross-system execution, data movement',
+    {id:'rules',  name:'Rules & workflow',  icon:'git-branch',   pct:85,color:'#0F8A62',
+     desc:'Deterministic routing, thresholds, conditional logic. No inference cost.',
+     human:'Design rules and handle exceptions',
+     control:'Are rules complete, current, and tested?'},
+    {id:'rpa',    name:'RPA & orchestration',icon:'refresh',      pct:80,color:'#0E7490',
+     desc:'Repeatable cross-system execution and data movement. Compute only.',
      human:'Monitor failures and edge cases',
-     control:'What happens when the process breaks?',
-     cost:'Low. Compute only, no inference.'},
-    {id:'ml',name:'Analytics & ML',full:'Analytics & ML',icon:'chart-line',pct:65,color:'#B46A00',
-     desc:'Prediction, scoring, anomaly detection',
-     human:'Review model output; approve consequential actions',
-     control:'Is the model validated and monitored for drift?',
-     cost:'Medium. Inference scales with volume.'},
-    {id:'genai',name:'GenAI',full:'GenAI copilots',icon:'message-bolt',pct:55,color:'#A100FF',
-     desc:'Search, summarise, draft, explain',
+     control:'What happens when the process breaks?'},
+    {id:'ml',     name:'Analytics & ML',    icon:'chart-line',   pct:65,color:'#B46A00',
+     desc:'Prediction, scoring, and anomaly detection. Inference scales with volume.',
+     human:'Review model output; approve consequential decisions',
+     control:'Is the model validated and monitored for drift?'},
+    {id:'genai',  name:'GenAI copilots',    icon:'message-bolt', pct:55,color:'#A100FF',
+     desc:'Search, summarise, draft, and explain. Token cost per call.',
      human:'Review every output before use or distribution',
-     control:'Is output reviewed before leaving the team?',
-     cost:'Medium-high. Input/output tokens per call.'},
-    {id:'agents',name:'Agents',full:'Agents',icon:'robot',pct:30,color:'#FF50C8',
-     desc:'Plan, coordinate, and act across tools and systems',
-     human:'Define scope; approve consequential actions',
-     control:'What can the agent do without approval?',
-     cost:'Highest. Orchestration overhead plus model calls.'}
+     control:'Is output reviewed before leaving the team?'},
+    {id:'agents', name:'AI Agents',         icon:'robot',        pct:30,color:'#FF50C8',
+     desc:'Plan, coordinate, and act across tools and systems. Highest cost and risk.',
+     human:'Define scope; approve consequential actions; set guardrails',
+     control:'What can the agent do without human approval?'}
   ];
-  var cats=RISK_CATEGORIES;
-  // heatmap data: [catIdx, techIdx, value]
-  var heatData=[
-    [0,0,4],[0,1,2],[0,2,5],[0,3,6],[0,4,3],
-    [1,0,7],[1,1,4],[1,2,3],[1,3,5],[1,4,1],
-    [2,0,3],[2,1,2],[2,2,8],[2,3,4],[2,4,2],
-    [3,0,5],[3,1,3],[3,2,4],[3,3,3],[3,4,1],
-    [4,0,6],[4,1,5],[4,2,4],[4,3,6],[4,4,2],
-    [5,0,4],[5,1,3],[5,2,3],[5,3,4],[5,4,2]
-  ];
-  var isDark=document.documentElement.getAttribute('data-theme')==='dark';
-  var bg=isDark?'#08081A':'#FCFBF9';
-  var textCol=isDark?'#EDE8F7':'#15181C';
-  var gridCol=isDark?'rgba(161,0,255,.14)':'rgba(0,0,0,.07)';
-
-  // Build HTML
+  var TECHMAP={
+    rules:['kri-monitoring'],
+    rpa:['control-test-automation','regulatory-report-ai','kyc-automation-ai'],
+    ml:['model-validation-ai','data-quality-ai','credit-portfolio-ai','aml-detection-ai','sanctions-screening-ai','fraud-detection-ai','third-party-risk-ai','oprisk-event-triage'],
+    genai:['rcsa-ai-workflow','regulatory-signal-extraction','reg-change-impact-ai','model-doc-automation','board-report-ai','credit-assessment-ai','stress-scenario-ai'],
+    agents:['horizon-scanning-ai']
+  };
+  var STATUS_COLOR={live:'#10B981',team:'#A100FF',illustrative:'#B46A00',nda:'#6366F1'};
+  var cols=techs.map(function(t){
+    var chips=(TECHMAP[t.id]||[]).map(function(id){
+      var o=AI_OPPORTUNITIES&&AI_OPPORTUNITIES.find(function(x){return x.id===id;});
+      if(!o)return '';
+      var sc=STATUS_COLOR[o.status]||'var(--text-2)';
+      return '<div class="ail-chip" style="border-color:'+sc+';color:'+sc+'">'+o.name+'</div>';
+    }).join('');
+    return '<div class="ail-col" style="--bc:'+t.color+'" data-band="'+t.id+'">'
+      +'<div class="ail-col-hdr">'
+        +'<i class="ti ti-'+t.icon+' ail-col-icon"></i>'
+        +'<span class="ail-col-name">'+t.name+'</span>'
+        +'<span class="ail-col-pct">'+t.pct+'%</span>'
+      +'</div>'
+      +'<div class="ail-col-bar"><div class="ail-col-bar-fill" style="width:'+t.pct+'%"></div></div>'
+      +'<div class="ail-col-body">'
+        +'<div class="ail-col-desc">'+t.desc+'</div>'
+        +'<div class="ail-col-lbl">Human role</div><div class="ail-col-val">'+t.human+'</div>'
+        +'<div class="ail-col-lbl">Control question</div><div class="ail-col-val ail-ctrl">'+t.control+'</div>'
+      +'</div>'
+      +(chips?'<div class="ail-col-opps">'+chips+'</div>':'')
+    +'</div>';
+  }).join('');
   container.innerHTML=
-    '<div id="ailHeatmap" style="width:100%;height:210px;margin-bottom:14px"></div>'+
-    '<div class="ail-tech-bands">'+
-    techs.map(function(t,i){
-      return '<button class="ail-band'+(i===0?' active':'')+'\" data-tech="'+t.id+'" onclick="focusAIBand(this,\''+t.id+'\')">'+
-        '<div class="ail-band-icon"><i class="ti ti-'+t.icon+'" style="color:'+t.color+'"></i></div>'+
-        '<div class="ail-band-name">'+t.full+'</div>'+
-        '<div class="ail-ready-bar-wrap"><div class="ail-ready-bar" style="width:'+t.pct+'%;background:'+t.color+'"></div><span class="ail-ready-pct" style="color:'+t.color+'">'+t.pct+'%</span></div>'+
-        '<div class="ail-band-detail">'+
-          '<div class="ail-label">What it does</div><div class="ail-val">'+t.desc+'</div>'+
-          '<div class="ail-label">Human role</div><div class="ail-val">'+t.human+'</div>'+
-          '<div class="ail-label">Control question</div><div class="ail-val">'+t.control+'</div>'+
-          '<div class="ail-label">Run cost profile</div><div class="ail-val">'+t.cost+'</div>'+
-        '</div>'+
-      '</button>';
-    }).join('')+
-    '</div>'+
-    '<div class="ail-foundation" style="margin-top:8px">'+
-      '<span class="ail-foundation-label">Shared foundations</span>'+
-      '<span class="ail-foundation-item">Trusted data</span>'+
-      '<span class="ail-foundation-item">Identity & access</span>'+
-      '<span class="ail-foundation-item">Human accountability</span>'+
-      '<span class="ail-foundation-item">Testing & monitoring</span>'+
-      '<span class="ail-foundation-item">Logging</span>'+
-      '<span class="ail-foundation-item">Cost governance</span>'+
-    '</div>'+
-    '<div class="ail-principle">Use the least complex technology that can own the work safely and economically.</div>';
-
-  // Render ECharts heatmap
-  if(typeof echarts!=='undefined'){
-    var chartDom=container.querySelector('#ailHeatmap');
-    var chart=echarts.init(chartDom,null,{renderer:'svg'});
-    chart.setOption({
-      backgroundColor:'transparent',
-      grid:{left:'140px',right:'20px',top:'10px',bottom:'24px'},
-      xAxis:{type:'category',data:techs.map(function(t){return t.full;}),axisLabel:{color:textCol,fontSize:10,fontFamily:'JetBrains Mono, monospace'},axisLine:{lineStyle:{color:gridCol}},splitLine:{lineStyle:{color:'transparent'}}},
-      yAxis:{type:'category',data:cats.map(function(c){return c.name;}),axisLabel:{color:textCol,fontSize:10,width:120,overflow:'truncate',fontFamily:'Inter, sans-serif'},axisLine:{lineStyle:{color:gridCol}},splitLine:{lineStyle:{color:'transparent'}}},
-      visualMap:{show:false,min:0,max:10,inRange:{color:isDark?['rgba(161,0,255,.06)','rgba(161,0,255,.65)']:['rgba(161,0,255,.04)','rgba(161,0,255,.55)']}},
-      series:[{type:'heatmap',data:heatData,label:{show:false},emphasis:{itemStyle:{shadowBlur:8,shadowColor:'rgba(161,0,255,.4)'}},itemStyle:{borderRadius:4,borderColor:'transparent',borderWidth:2}}],
-      tooltip:{trigger:'item',formatter:function(p){var cat=cats[p.data[0]];var tech=techs[p.data[1]];return tech.full+' in '+cat.name+'<br>Relevance: '+(p.data[2]>6?'High':p.data[2]>3?'Medium':'Low');}},
-      animation:true,animationDuration:800,animationEasing:'cubicOut'
-    });
-    // Resize on window resize
-    window.addEventListener('resize',function(){chart.resize();});
-  }
-}
-
-function focusAIBand(btn,id){
-  document.querySelectorAll('.ail-band').forEach(function(b){b.classList.toggle('active',b.dataset.tech===id);});
+    '<div class="ail-landscape-grid">'+cols+'</div>'
+    +'<div class="ail-landscape-footer">'
+      +'<span class="ail-footer-principle">Use the least complex technology that can own the work safely and economically.</span>'
+      +'<div class="ail-foundations">'
+        +'<span>Trusted data</span><span>Identity and access</span>'
+        +'<span>Human accountability</span><span>Testing and monitoring</span>'
+        +'<span>Logging</span><span>Cost governance</span>'
+      +'</div>'
+    +'</div>';
 }
 
 // ── CAPABILITY HOTSPOTS (Screen 7) ──
@@ -373,6 +401,22 @@ function renderTeam(sec){
   }).join('');
 }
 
+// ── RENDER CONTRACTS ──
+var VISUAL_CONTRACTS={
+  aiLandscape:'aiLandscapeGrid',trSystem:'trSysGrid',maturityMatrix:'maturityTable',
+  capHotspots:'capHotspotArea',roleBars:'rolesTable',oppPortfolio:'oppPortfolioArea',
+  shortlist:'shortlistGrid',useCases:'ucGrid',proofValueCapture:'valueWaterfall',
+  accentureEdge:'engineA',takeaway:'ta-pressures',appCaps:'appCapsBody',team:'teamRow'
+};
+
+function safeRender(fn,sec){
+  try{fn(sec);}
+  catch(e){
+    console.error('[render]',sec&&sec.id,e);
+    if(sec){var w=document.createElement('div');w.className='render-error';w.textContent='Render error in '+sec.id+': '+e.message;sec.appendChild(w);}
+  }
+}
+
 // ── RENDER REGISTRY ──
 var renderers={
   'aiLandscape':renderAILandscape,
@@ -392,5 +436,5 @@ var renderers={
 
 function renderSection(sec){
   var key=sec&&sec.dataset.render;
-  if(key&&renderers[key])renderers[key](sec);
+  if(key&&renderers[key])safeRender(renderers[key],sec);
 }
