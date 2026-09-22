@@ -810,6 +810,27 @@ body[data-mode="explain"] .explain-only{display:block;}
 .ras-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;}
 .ras-val{font-size:14px;font-weight:600;color:var(--accent);min-width:32px;}
 
+/* ── PHASE 7: ARCH SCALE MODES + PROOF EVIDENCE CONSOLE ── */
+.arch-scale-toggle{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;}
+.arch-scale-btn{padding:6px 14px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .14s,color .14s,border-color .14s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.arch-scale-btn.active{background:var(--accent-soft);border-color:rgba(161,0,255,.4);color:var(--accent);font-weight:700;}
+.arch-scale-desc{font-size:10px;font-weight:400;opacity:.7;letter-spacing:.04em;}
+.arch-layer-active{border-color:rgba(161,0,255,.5)!important;background:rgba(161,0,255,.08)!important;}
+.arch-layer-dim{opacity:0.35;}
+.proof-gate-bar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border-1);border-radius:8px;}
+.pgb-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.06em;text-transform:uppercase;}
+.pgb-btn{padding:4px 10px;border-radius:6px;font-size:14px;background:var(--surface-3);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:all .14s;}
+.pgb-btn.active{font-weight:600;}
+.proof-evidence-console{background:var(--surface-2);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px;}
+.pec-hd{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--text-3);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.pec-items{display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;}
+@media(max-width:600px){.pec-items{grid-template-columns:1fr;}}
+.pec-item{display:flex;align-items:center;gap:8px;padding:5px 0;}
+.pec-chk{width:22px;height:22px;border-radius:4px;border:1.5px solid var(--border-2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:var(--green);transition:background .12s,border-color .12s;}
+.pec-done .pec-chk{background:rgba(15,138,98,.12);border-color:var(--green);}
+.pec-label{font-size:14px;color:var(--text-2);}
+.pec-done .pec-label{color:var(--text-3);text-decoration:line-through;}
+
 /* ── PHASE 6: PROCESS TWIN TABS ── */
 .pt-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
 .pt-tab-btn{padding:5px 14px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .14s,color .14s,border-color .14s;}

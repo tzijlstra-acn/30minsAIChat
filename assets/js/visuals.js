@@ -845,12 +845,66 @@ function setProofSelection(capId){
   if(pfSec&&rendered.has(getSlideIndex('proof-value-capture')))renderProofValueCapture(pfSec);
 }
 
-// ── PROOF & VALUE CAPTURE (Screen 12) ──
+// ── PROOF & VALUE CAPTURE (Screen 12) -- Phase 7: gate status + evidence console ──
 function renderProofValueCapture(sec){
-  var capId=CLIENT_STATE.proofCapabilityId||CLIENT_STATE.selectedCapabilityIds[0];
-  var cap=capId?getCapabilityById(capId):null;
+  var state=(typeof store!=='undefined')?store.getState():null;
+  var capId=(state&&state.proofCandidateId)||CLIENT_STATE.proofCapabilityId||CLIENT_STATE.selectedCapabilityIds[0];
+  // Try to find use case first (proofCandidateId may be a use-case id in Phase 5+)
+  var ucMatch=(typeof USE_CASES!=='undefined')?USE_CASES.find(function(u){return u.id===capId;}):null;
+  var cap=ucMatch?null:getCapabilityById(capId);
+  var displayName=ucMatch?ucMatch.name:(cap?cap.name:'select a candidate on screen 09');
   var nameEl=sec.querySelector('#proofCapName');
-  if(nameEl)nameEl.textContent=cap?cap.name:'select a capability on screen 07';
+  if(nameEl)nameEl.textContent=displayName;
+
+  // Gate status bar
+  var gateBar=sec.querySelector('#proofGateBar');
+  if(gateBar){
+    var GATE_STATUS=[
+      {id:'not-configured',label:'Not configured',color:'var(--text-3)'},
+      {id:'in-evidence-assembly',label:'In evidence assembly',color:'var(--amber)'},
+      {id:'gate-ready',label:'Gate-ready',color:'var(--green)'},
+      {id:'approved-to-pilot',label:'Approved to pilot',color:'#06B6D4'}
+    ];
+    var currentGate=(state&&state.proof&&state.proof.gateStatus)||'not-configured';
+    gateBar.innerHTML='<div class="proof-gate-bar">'
+      +'<span class="pgb-label">Gate status:</span>'
+      +GATE_STATUS.map(function(g){
+        var isActive=g.id===currentGate;
+        return '<button class="pgb-btn'+(isActive?' active':'')+'" style="'+(isActive?'border-color:'+g.color+';color:'+g.color+';':'')+'"'
+          +' onclick="if(typeof store!==\'undefined\')store.dispatch({type:\'SET_PROOF_GATE\',payload:\''+g.id+'\'});'
+          +'var s=document.getElementById(\'proof-value-capture\');if(s){rendered.delete(getSlideIndex(\'proof-value-capture\'));renderSection(s);}">'
+          +g.label+'</button>';
+      }).join('')
+      +'<span class="status-badge status-illustrative" style="margin-left:8px">ILLUSTRATIVE</span>'
+    +'</div>';
+  }
+
+  // Evidence console (below waterfall)
+  var eCons=sec.querySelector('#proofEvidenceConsole');
+  if(eCons){
+    var EVIDENCE_DIMS=[
+      {id:'baseline-data',label:'Baseline data gathered'},
+      {id:'process-mapped',label:'Process mapped and agreed'},
+      {id:'control-spec',label:'Control specification drafted'},
+      {id:'success-metrics',label:'Success metrics defined'},
+      {id:'stakeholder-sign',label:'Stakeholder sign-off obtained'},
+      {id:'pilot-scope',label:'Pilot scope confirmed'}
+    ];
+    var evidenceState=(state&&state.proof&&state.proof.evidence)||{};
+    eCons.innerHTML='<div class="proof-evidence-console">'
+      +'<div class="pec-hd">Evidence checklist <span class="status-badge status-illustrative">ILLUSTRATIVE</span></div>'
+      +'<div class="pec-items">'
+      +EVIDENCE_DIMS.map(function(d){
+        var checked=!!evidenceState[d.id];
+        return '<div class="pec-item'+(checked?' pec-done':'')+'\">'
+          +'<button class="pec-chk" onclick="if(typeof store!==\'undefined\')store.dispatch({type:\'SET_PROOF_EVIDENCE\',payload:{dim:\''+d.id+'\',value:'+(checked?'false':'true')+'}});'
+          +'var s=document.getElementById(\'proof-value-capture\');if(s){rendered.delete(getSlideIndex(\'proof-value-capture\'));renderSection(s);}}" aria-label="'+(checked?'Mark incomplete':'Mark complete')+': '+d.label+'">'
+          +(checked?'<i class="ti ti-check"></i>':'')+'</button>'
+          +'<span class="pec-label">'+d.label+'</span>'
+        +'</div>';
+      }).join('')
+      +'</div></div>';
+  }
 
   var waterfall=sec.querySelector('#valueWaterfall');
   if(!waterfall)return;
@@ -1729,6 +1783,38 @@ function openProcessNodeDrawer(tpl,node){
   openDrawer(tpl.name+': '+node.label,tabs,'step');
 }
 
+// ── ARCHITECTURE SCALE MODES (Screen 13) -- Phase 7 ──
+function renderArchScale(sec){
+  var toggleEl=sec.querySelector('#archScaleModeToggle');if(!toggleEl)return;
+  var state=(typeof store!=='undefined')?store.getState():null;
+  var mode=(state&&state.architecture&&state.architecture.scaleMode)||'proof';
+  var MODES=[
+    {id:'proof',label:'Proof mode',desc:'Layers 03-04 active',layers:['03','04']},
+    {id:'pilot',label:'Pilot mode',desc:'Layers 02-04 active',layers:['02','03','04']},
+    {id:'scale',label:'Full scale',desc:'All layers active',layers:['01','02','03','04','05']}
+  ];
+  toggleEl.innerHTML='<div class="arch-scale-toggle">'
+    +MODES.map(function(m){
+      return '<button class="arch-scale-btn'+(m.id===mode?' active':'')+'"'
+        +' onclick="if(typeof store!==\'undefined\')store.dispatch({type:\'SET_ARCHITECTURE_SCALE\',payload:\''+m.id+'\'});'
+        +'var s=document.getElementById(\'industrialization-arch\');if(s){rendered.delete(getSlideIndex(\'industrialization-arch\'));renderSection(s);}">'
+        +m.label+'<span class="arch-scale-desc">'+m.desc+'</span></button>';
+    }).join('')
+  +'</div>';
+  // Highlight active layers in the arch frame
+  var activeMode=MODES.find(function(m){return m.id===mode;})||MODES[0];
+  var archFrame=sec.querySelector('#archFrame');
+  if(archFrame){
+    archFrame.querySelectorAll('.arch-layer').forEach(function(el){
+      var numEl=el.querySelector('.arch-layer-num');
+      var num=numEl?numEl.textContent.trim():'';
+      var isActive=activeMode.layers.indexOf(num)>-1;
+      el.classList.toggle('arch-layer-active',isActive);
+      el.classList.toggle('arch-layer-dim',!isActive);
+    });
+  }
+}
+
 // ── RENDER CONTRACTS ──
 var VISUAL_CONTRACTS={
   solutionPortfolio:'solutionPortfolioArea',
@@ -1739,7 +1825,8 @@ var VISUAL_CONTRACTS={
   oppPortfolio:'oppPortfolioArea',shortlist:'shortlistGrid',useCases:'ucGrid',
   processTwin:'processTwinArea',
   proofValueCapture:'valueWaterfall',accentureEdge:'engineA',takeaway:'ta-pressures',
-  appCaps:'appCapsBody',team:'teamGrid'
+  appCaps:'appCapsBody',team:'teamGrid',
+  archScale:'archScaleModeToggle'
 };
 
 function safeRender(fn,sec){
@@ -1767,6 +1854,7 @@ var renderers={
   'processTwin':renderProcessTwin,
   'proofValueCapture':renderProofValueCapture,
   'accentureEdge':renderAccentureEdge,
+  'archScale':renderArchScale,
   'takeaway':renderTakeaway,
   'appCaps':renderAppCaps,
   'team':renderTeam
