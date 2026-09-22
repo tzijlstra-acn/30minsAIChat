@@ -41,15 +41,17 @@ function buildAgendaDrawer(){
   var qs=document.getElementById('agendaQuestions');
   if(qs){
     var quickJumps=[
-      {label:'WHY NOW? Three pressures are converging.',id:'setting-scene'},
-      {label:'WHY NOW? Match technology to the task.',id:'ai-landscape'},
-      {label:'WHERE TO START? Find the decisions under pressure.',id:'capability-hotspots'},
-      {label:'WHERE TO START? Choose one proof.',id:'exec-shortlist'},
-      {label:'WHAT CHANGES? See the work move.',id:'process-twin'},
-      {label:'WHAT CHANGES? The use case depends on the system.',id:'transformation-system'},
-      {label:'HOW TO PROVE? Define the proof.',id:'proof-value-capture'},
-      {label:'HOW TO SCALE? Control cost per successful case.',id:'run-economics'},
-      {label:'WHAT NEXT? Agree the next move.',id:'decision-next-step'}
+      {label:'WHY NOW? Pressure is rising on both sides.',id:'pressure-rising'},
+      {label:'WHAT AI IS? AI is a stack, not one tool.',id:'ai-stack'},
+      {label:'WHAT AI IS? Start with the task, not the model.',id:'task-route'},
+      {label:'WHERE IT APPLIES? See one obligation move.',id:'regulation-process'},
+      {label:'WHERE IT APPLIES? The use case changes the system.',id:'transformation-implications'},
+      {label:'WHERE IT APPLIES? Humans move toward judgement.',id:'work-role-shift'},
+      {label:'HOW TO PROVE? Prove one outcome on real work.',id:'proof-loop'},
+      {label:'HOW TO SCALE? Scale the pattern, not the pilot.',id:'scale-architecture'},
+      {label:'HOW TO SCALE? Manage cost per successful case.',id:'unit-economics'},
+      {label:'HOW TO SCALE? Use AI twice.',id:'dual-engine'},
+      {label:'WHAT NEXT? Begin with one evidence-led move.',id:'next-move'}
     ];
     qs.innerHTML=quickJumps.map(function(q){
       return '<a class="agenda-qjump" href="#'+q.id+'" onclick="goToId(\''+q.id+'\');closeAgenda();return false;"><i class="ti ti-arrow-right" style="font-size:11px"></i>'+q.label+'</a>';
@@ -109,6 +111,16 @@ function updateNav(idx){
   if(typeof window.edgeRailHighlight==='function'&&sec&&sec.id)window.edgeRailHighlight(sec.id);
   // Render
   if(!rendered.has(idx)){rendered.add(idx);renderSection(sec);}
+  // V13: fire scene director for the incoming screen
+  if(typeof SceneDirector!=='undefined'&&sec&&sec.dataset.scene){
+    var manifestEntry=getManifestEntry(sec.id);
+    SceneDirector.enter(sec,manifestEntry||{scene:sec.dataset.scene,id:sec.id});
+  } else if(typeof SceneDirector!=='undefined'){
+    SceneDirector.cancel();
+  }
+  // Reset pause button icon
+  var pb=document.getElementById('scenePauseBtn');
+  if(pb){var pi=pb.querySelector('i');if(pi)pi.className='ti ti-player-pause';}
 }
 
 function setupObservers(){
@@ -151,6 +163,25 @@ function toggleTheme(){
   document.dispatchEvent(new CustomEvent('nfr:themechange',{detail:{theme:next}}));
 }
 
+// ── MANIFEST LOOKUP ──
+var _storyManifest=null;
+function getManifestEntry(screenId){
+  if(!_storyManifest){
+    // Inline V13 manifest for quick lookup (matches story-manifest.json)
+    _storyManifest={};
+    var screens=[
+      {id:'cover',scene:'cover-flow'},{id:'pressure-rising',scene:'pressure-convergence'},
+      {id:'ai-stack',scene:'ai-stack-build'},{id:'task-route',scene:'task-route'},
+      {id:'regulation-process',scene:'regulation-process'},{id:'transformation-implications',scene:'transformation-system'},
+      {id:'work-role-shift',scene:'work-role-shift'},{id:'proof-loop',scene:'proof-loop'},
+      {id:'scale-architecture',scene:'scale-architecture'},{id:'unit-economics',scene:'unit-economics'},
+      {id:'dual-engine',scene:'dual-engine'},{id:'next-move',scene:'next-move'}
+    ];
+    screens.forEach(function(s){_storyManifest[s.id]=s;});
+  }
+  return _storyManifest[screenId]||null;
+}
+
 // ── KEYBOARD + SWIPE ──
 document.addEventListener('keydown',function(e){
   if(['INPUT','TEXTAREA'].indexOf(e.target.tagName)>-1)return;
@@ -158,6 +189,19 @@ document.addEventListener('keydown',function(e){
   else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();goToIndex(current-1);}
   else if((e.key==='g'||e.key==='G')&&!e.metaKey&&!e.ctrlKey){e.preventDefault();openAgenda();}
   else if(e.key==='Escape'){closeAgenda();closeDrawer();}
+  else if((e.key==='r'||e.key==='R')&&!e.metaKey&&!e.ctrlKey){
+    e.preventDefault();
+    if(typeof SceneDirector!=='undefined')SceneDirector.replay();
+  }
+  else if(e.key===' '&&!e.metaKey&&!e.ctrlKey){
+    // Space pauses/resumes current scene, but not if a scroll would happen
+    if(typeof SceneDirector!=='undefined'){
+      e.preventDefault();
+      var paused=SceneDirector.togglePause();
+      var pb=document.getElementById('scenePauseBtn');
+      if(pb){var pi=pb.querySelector('i');if(pi)pi.className=paused?'ti ti-player-play':'ti ti-player-pause';}
+    }
+  }
 });
 (function(){var sx=0;
   document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;},{passive:true});

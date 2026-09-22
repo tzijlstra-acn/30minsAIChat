@@ -1,0 +1,121 @@
+/* ── PRINT.CSS ── Warm editorial paper style for static printout ── */
+/* Link with media="print" in pitch.html */
+
+@media print {
+  * { box-sizing: border-box; }
+
+  html, body {
+    background: #FDFAF7 !important;
+    color: #1A1612 !important;
+    font-family: 'Space Grotesk', 'Inter', Arial, sans-serif;
+    font-size: 10pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Hide navigation chrome */
+  .nav,
+  .progress-bar,
+  #edgeRail,
+  #edgePanel,
+  #edgeBackdrop,
+  #edgeMobileBtn,
+  .agenda-overlay,
+  .drawer-overlay,
+  .toast,
+  canvas,
+  #bgCanvas,
+  .screen-actions,
+  .sec-opt,
+  button:not([class*="print"]) {
+    display: none !important;
+  }
+
+  /* Show all sections for print */
+  section[data-slide] {
+    display: block !important;
+    page-break-before: always;
+    break-before: page;
+    padding: 24pt 36pt;
+    min-height: auto;
+    height: auto;
+  }
+
+  section[data-slide]:first-of-type {
+    page-break-before: avoid;
+    break-before: avoid;
+  }
+
+  /* Reference sections condensed */
+  section[data-route="reference"] {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* Typography */
+  .sec-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7pt;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #6B5B4E;
+    margin-bottom: 4pt;
+  }
+
+  .slide-h, h2.slide-h {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18pt;
+    font-weight: 700;
+    color: #1A1612;
+    line-height: 1.25;
+    margin: 0 0 6pt;
+  }
+
+  .slide-sub {
+    font-size: 10pt;
+    color: #3D3530;
+    line-height: 1.5;
+    margin: 0 0 10pt;
+  }
+
+  .screen-closing {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8pt;
+    color: #6B5B4E;
+    border-top: 0.5pt solid #C4B8AE;
+    padding-top: 6pt;
+    margin-top: 10pt;
+  }
+
+  .evidence-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7pt;
+    color: #8B6914;
+    background: #FFF8E8;
+    border: 0.5pt solid #C8A84B;
+    padding: 2pt 5pt;
+    border-radius: 2pt;
+  }
+
+  /* Scene stages: hidden in print (static fallback shown instead) */
+  .scene-stage {
+    display: none !important;
+  }
+
+  /* Cover page */
+  #cover {
+    text-align: center;
+    padding-top: 80pt;
+  }
+
+  /* Print footer */
+  @page {
+    margin: 16mm 20mm;
+    @bottom-right {
+      content: "Confidential -- NFR AI -- Accenture -- " counter(page);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+      color: #9B8B80;
+    }
+  }
+}

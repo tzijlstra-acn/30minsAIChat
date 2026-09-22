@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NFR AI: Executive Conversation</title>
+<title>NFR AI: Introduction</title>
 <script>if(sessionStorage.getItem('pitch_auth')!=='1'){location.replace('index.html');}</script>
 <script src="./assets/vendor/d3/d3.min.js"></script>
 <script src="./assets/vendor/d3-sankey/d3-sankey.min.js"></script>
+<script src="./assets/vendor/motion/motion.js"></script>
+<script src="./assets/vendor/elkjs/elk.bundled.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="./assets/css/pitch.css">
+<link rel="stylesheet" href="./assets/css/scenes.css">
+<link rel="stylesheet" media="print" href="./assets/css/print.css">
 </head>
 <body>
 <canvas id="bgCanvas"></canvas>
@@ -31,11 +35,12 @@
   <div class="nav-chapters" id="navChapters"></div>
   <div class="nav-right">
     <div class="counter-wrap">
-      <div class="chapter-label" id="chapterLabel">Cover</div>
-      <div class="counter" id="counter">1 / 14</div>
+      <div class="chapter-label" id="chapterLabel">Introduction</div>
+      <div class="counter" id="counter">1 / 12</div>
     </div>
     <button class="nav-icon-btn" onclick="openAgenda()" title="Agenda (G)"><i class="ti ti-list"></i></button>
-    <button class="nav-icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme"><i class="ti ti-sun"></i></button>
+    <button class="nav-icon-btn" id="sceneReplayBtn" onclick="if(typeof SceneDirector!=='undefined')SceneDirector.replay();" title="Replay scene (R)"><i class="ti ti-player-skip-back"></i></button>
+    <button class="nav-icon-btn" id="scenePauseBtn" title="Pause / resume scene (Space)"><i class="ti ti-player-pause"></i></button>
   </div>
 </nav>
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
@@ -84,367 +89,169 @@
 <div class="toast" id="toast"></div>
 
 <!-- ══════════════════════════════════════════════════════
-     CORE SCREENS
+     CORE SCREENS — V13 (12 screens, presenter-led)
 ══════════════════════════════════════════════════════ -->
 
 <!-- 00 · COVER -->
-<section id="cover" data-slide data-route="core" data-chapter-id="cover" data-chapter-title="Cover" data-nav-title="Risk at machine speed" data-method-label="60-minute executive conversation" class="branded-dark">
-  <div class="inner hero-inner reveal">
-    <div class="sec-tag">NFR AI · Accenture · <span class="yr"></span></div>
-    <h1 class="hero-h1">AI is changing the pace and unit<br>of work in risk.<br><span class="grad">The operating model may need to evolve with it.</span></h1>
-    <p class="hero-sub">Working conversation: where AI may change the risk function, which blocks to advance, and what a lean first step looks like for your context.</p>
-    <div class="decision-path" style="margin-top:36px">
-      <div class="dp-node">Pressures &amp; landscape<span class="dp-gate-label">Where we start</span></div>
-      <div class="dp-arr">&#x2192;</div>
-      <div class="dp-node">Transformation system<span class="dp-gate-label">What may need to change</span></div>
-      <div class="dp-arr">&#x2192;</div>
-      <div class="dp-node">Locate the value<span class="dp-gate-label">47 capabilities</span></div>
-      <div class="dp-arr">&#x2192;</div>
-      <div class="dp-node gate">Commit<span class="dp-gate-label">First move</span></div>
+<section id="cover" data-slide data-route="core" data-scene="cover-flow" data-chapter-id="introduction" data-chapter-title="INTRODUCTION" data-nav-title="AI changes how risk work gets done">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">INTRODUCTION</div>
+      <h2 class="slide-h">AI changes how risk work gets done.</h2>
+      <p class="slide-sub">The question is where it can improve the outcome, and what should remain under human control.</p>
     </div>
-    <div class="hero-start">
-      <button class="btn-primary" data-start-route="executive"><i class="ti ti-presentation"></i>Executive conversation</button>
-      <button class="btn-secondary" data-start-route="working-session"><i class="ti ti-users"></i>Working session</button>
-    </div>
-    <div class="scroll-hint">&#x2193; scroll or arrow keys</div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="screen-closing">Start with the work. Then choose the technology.</div>
   </div>
 </section>
 
-<!-- 01 · SETTING THE SCENE -->
-<section id="setting-scene" data-slide data-route="core" data-chapter-id="why-now" data-chapter-title="WHY NOW?" data-nav-title="Three pressures are converging" data-method-label="Listen · 15 min">
-  <div class="inner">
-    <div class="sec-tag reveal">WHY NOW · 01</div>
-    <h2 class="slide-h reveal">Three pressures are converging.</h2>
-    <p class="slide-sub reveal">Each pressure alone is manageable. Together they may require a different operating model.</p>
-    <div class="conv-grid reveal" style="margin-top:20px">
-      <div class="conv-forces">
-        <div class="conv-force">
-          <div class="conv-force-icon"><i class="ti ti-gavel"></i></div>
-          <div class="conv-force-label">More obligations and evidence</div>
-          <div class="conv-force-sub">Volume, complexity, and cross-border reach of requirements are compounding faster than manual compliance cycles can absorb.</div>
-        </div>
-        <div class="conv-force">
-          <div class="conv-force-icon"><i class="ti ti-cpu"></i></div>
-          <div class="conv-force-label">More capable AI, with new controls</div>
-          <div class="conv-force-sub">Client-facing, trading, and operations functions are deploying AI. The risk function may need to govern, audit, and approve at a comparable pace.</div>
-        </div>
-        <div class="conv-force">
-          <div class="conv-force-icon"><i class="ti ti-coin"></i></div>
-          <div class="conv-force-label">Pressure on capacity and speed</div>
-          <div class="conv-force-sub">Capacity-based scaling may become a constraint. The cost per risk decision may need to fall while quality and explainability requirements rise.</div>
-        </div>
-      </div>
-      <div class="conv-arrow-col"><i class="ti ti-arrows-right"></i></div>
-      <div class="conv-result reveal-right">
-        <div class="conv-result-lbl">Working hypothesis</div>
-        <div class="conv-result-h">The question is where the operating model may become a constraint.</div>
-        <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.08em;line-height:1.5">This conversation maps where the pressure may sit, which transformation blocks are typically involved, and what a lean, validated first step could look like. Subject to your context.</div>
-      </div>
+<!-- 01 · PRESSURE RISING -->
+<section id="pressure-rising" data-slide data-route="core" data-scene="pressure-convergence" data-chapter-id="why-now" data-chapter-title="WHY NOW" data-nav-title="Pressure is rising on both sides">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">WHY NOW &middot; 01</div>
+      <h2 class="slide-h">Pressure is rising on both sides.</h2>
+      <p class="slide-sub">Risk functions are being asked to respond faster, with stronger evidence and tighter economics.</p>
     </div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="screen-closing">The opportunity is not only faster work. It is a more evidence-led operating model.</div>
   </div>
 </section>
 
-<!-- 02 · AI LANDSCAPE -->
-<section id="ai-landscape" data-slide data-route="core" data-chapter-id="why-now" data-chapter-title="WHY NOW?" data-nav-title="Match technology to the task" data-render="aiLandscape">
-  <div class="inner">
-    <div class="sec-tag reveal">WHY NOW · 02</div>
-    <h2 class="slide-h reveal">Match technology to the task.</h2>
-    <p class="slide-sub reveal">Five patterns. Each has a distinct evidence, control, and cost profile. Not every pattern is applicable to every problem.</p>
-    <div id="aiLandscapeGrid" style="margin-top:16px"></div>
+<!-- 02 · AI STACK -->
+<section id="ai-stack" data-slide data-route="core" data-scene="ai-stack-build" data-chapter-id="what-ai-is" data-chapter-title="WHAT AI IS" data-nav-title="AI is a stack, not one tool">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">WHAT AI IS &middot; 02</div>
+      <h2 class="slide-h">AI is a stack, not one tool.</h2>
+      <p class="slide-sub">Data and controls form the base. Autonomy increases only where the work allows it.</p>
+    </div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="screen-closing">Higher in the stack does not mean better. It means a different trade-off.</div>
   </div>
 </section>
 
-<!-- 03 · CAPABILITY HOTSPOTS -->
-<section id="capability-hotspots" data-slide data-route="core" data-density="long" data-chapter-id="where-to-start" data-chapter-title="WHERE TO START?" data-nav-title="Find the decisions under pressure" data-method-label="Locate the value · 15 min" data-render="capHotspots">
-  <div class="inner">
-    <div class="sec-tag reveal">WHERE TO START · 03</div>
-    <h2 class="slide-h reveal">Find the decisions under pressure.</h2>
-    <p class="slide-sub reveal">Select capabilities that reflect where your function feels the constraint. Your selection carries forward.</p>
-    <div id="capHotspotArea" style="margin-top:14px"></div>
+<!-- 03 · TASK ROUTE -->
+<section id="task-route" data-slide data-route="core" data-scene="task-route" data-chapter-id="what-ai-is" data-chapter-title="WHAT AI IS" data-nav-title="Start with the task, not the model">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">WHAT AI IS &middot; 03</div>
+      <h2 class="slide-h">Start with the task, not the model.</h2>
+      <p class="slide-sub">Use the least complex pattern that can deliver the required outcome.</p>
+    </div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="screen-closing">The task, evidence and decision right determine the technology.</div>
   </div>
 </section>
 
-<!-- 04 · WORKING CANDIDATE SET -->
-<section id="exec-shortlist" data-slide data-route="core" data-density="long" data-chapter-id="where-to-start" data-chapter-title="WHERE TO START?" data-nav-title="Choose one proof" data-method-label="Prove safely · 15 min" data-render="shortlist">
-  <div class="inner">
-    <div class="sec-tag reveal">WHERE TO START · 04</div>
-    <h2 class="slide-h reveal">Choose one proof.</h2>
-    <p class="slide-sub reveal">A working candidate set based on selected capabilities. Choose one to carry through the story.</p>
-    <div class="arch-toggle reveal" style="margin-top:12px">
-      <button class="arch-btn active" data-lens="joint">Joint lens</button>
-      <button class="arch-btn" data-lens="cro">CRO lens</button>
-      <button class="arch-btn" data-lens="cfo">CFO lens</button>
+<!-- 04 · REGULATION PROCESS -->
+<section id="regulation-process" data-slide data-route="core" data-scene="regulation-process" data-chapter-id="where-it-applies" data-chapter-title="WHERE IT APPLIES" data-nav-title="See one obligation move">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">WHERE IT APPLIES &middot; 04</div>
+      <h2 class="slide-h">See one obligation move.</h2>
+      <p class="slide-sub">A source-backed example makes the flow of data, AI and human judgement tangible.</p>
     </div>
-    <div id="shortlistGrid" style="margin-top:10px"></div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="evidence-badge">SOURCE-BACKED FLOW -- ILLUSTRATIVE TIMING -- NOT CLIENT DATA</div>
+    <div class="screen-closing">AI performs repeatable analysis. People retain judgement, challenge and approval.</div>
   </div>
 </section>
 
-<!-- 05 · PROCESS TWIN -->
-<section id="process-twin" data-slide data-route="core" data-density="long" data-chapter-id="what-changes" data-chapter-title="WHAT CHANGES?" data-nav-title="See the work move" data-render="processTwin">
-  <div class="inner">
-    <div class="sec-tag reveal">WHAT CHANGES · 05</div>
-    <h2 class="slide-h reveal">See the work move.</h2>
-    <p class="slide-sub reveal">How the selected use case works end to end: data, automation, AI, and human gates.</p>
-    <div id="processTwinArea" style="margin-top:14px"></div>
+<!-- 05 · TRANSFORMATION IMPLICATIONS -->
+<section id="transformation-implications" data-slide data-route="core" data-scene="transformation-system" data-chapter-id="where-it-applies" data-chapter-title="WHERE IT APPLIES" data-nav-title="The use case changes the system">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">WHERE IT APPLIES &middot; 05</div>
+      <h2 class="slide-h">The use case changes the system.</h2>
+      <p class="slide-sub">Work, data, technology, governance and value typically move together.</p>
+    </div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="screen-closing">A useful proof tests the process and the surrounding system, not only the model.</div>
   </div>
 </section>
 
-<!-- 06 · TRANSFORMATION SYSTEM -->
-<section id="transformation-system" data-slide data-route="core" data-chapter-id="what-changes" data-chapter-title="WHAT CHANGES?" data-nav-title="The use case depends on the system" data-method-label="What may change · 10 min" data-render="trSystem">
-  <div class="inner">
-    <div class="sec-tag reveal">WHAT CHANGES · 06</div>
-    <h2 class="slide-h reveal">The use case depends on the system.</h2>
-    <p class="slide-sub reveal">Eight interdependent blocks. The selected use case highlights which need attention before scale.</p>
-    <div id="trSysGrid" class="trsys-grid" style="margin-top:12px"></div>
+<!-- 06 · WORK ROLE SHIFT -->
+<section id="work-role-shift" data-slide data-route="core" data-scene="work-role-shift" data-chapter-id="where-it-applies" data-chapter-title="WHERE IT APPLIES" data-nav-title="Humans move toward judgement">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">WHERE IT APPLIES &middot; 06</div>
+      <h2 class="slide-h">Humans move toward judgement.</h2>
+      <p class="slide-sub">Repeatable execution may shift to automation, while accountability remains named and visible.</p>
+    </div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="evidence-badge">ILLUSTRATIVE TASK MODEL -- NOT A HEADCOUNT FORECAST</div>
+    <div class="screen-closing">The key design question is what people should decide, challenge and own.</div>
   </div>
 </section>
 
-<!-- 07 · WORK / WORKFORCE / WORKBENCH -->
-<section id="work-workforce-workbench" data-slide data-route="core" data-chapter-id="what-changes" data-chapter-title="WHAT CHANGES?" data-nav-title="Start with tasks, then roles" data-render="roleBars">
-  <div class="inner">
-    <div class="sec-tag reveal">WHAT CHANGES · 07</div>
-    <h2 class="slide-h reveal">Start with tasks, then roles.</h2>
-    <p class="slide-sub reveal">Illustrative impact across risk function roles. Adjust scope and adoption to reflect your context.</p>
-    <div class="arch-toggle reveal" style="margin-top:14px">
-      <button class="arch-btn active" data-arch="A">Universal / Cantonal bank</button>
-      <button class="arch-btn" data-arch="B">Private / Wealth manager</button>
+<!-- 07 · PROOF LOOP -->
+<section id="proof-loop" data-slide data-route="core" data-scene="proof-loop" data-chapter-id="how-to-prove" data-chapter-title="HOW TO PROVE" data-nav-title="Prove one outcome on real work">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">HOW TO PROVE &middot; 07</div>
+      <h2 class="slide-h">Prove one outcome on real work.</h2>
+      <p class="slide-sub">A proof should test quality, control, adoption, speed and economics together.</p>
     </div>
-    <div class="role-assumption-strip reveal" style="margin-top:10px">
-      <span class="ras-item">
-        <label class="ras-label">Scope</label>
-        <select id="roleScope" class="ras-select" oninput="if(typeof store!=='undefined')store.dispatch({type:'SET_ROLE_SCENARIO',payload:{scope:this.value}});var _rs=document.getElementById('work-workforce-workbench');if(_rs)renderRoleBars(_rs);">
-          <option value="selected-use-cases">Selected use cases</option>
-          <option value="selected-capabilities">Selected capabilities</option>
-          <option value="full">Full function</option>
-        </select>
-      </span>
-      <span class="ras-item">
-        <label class="ras-label">Adoption</label>
-        <input type="range" id="roleAdoption" class="ras-range" min="0" max="1" step="0.1" value="0.5" oninput="if(typeof store!=='undefined')store.dispatch({type:'SET_ROLE_SCENARIO',payload:{adoption:parseFloat(this.value)}});this.nextElementSibling.textContent=Math.round(this.value*100)+'%';var _rs=document.getElementById('work-workforce-workbench');if(_rs)renderRoleBars(_rs);">
-        <span class="ras-val">50%</span>
-      </span>
-      <span class="ras-item">
-        <label class="ras-label">Human review</label>
-        <input type="range" id="roleReview" class="ras-range" min="0" max="1" step="0.1" value="0.3" oninput="if(typeof store!=='undefined')store.dispatch({type:'SET_ROLE_SCENARIO',payload:{humanReview:parseFloat(this.value)}});this.nextElementSibling.textContent=Math.round(this.value*100)+'%';var _rs=document.getElementById('work-workforce-workbench');if(_rs)renderRoleBars(_rs);">
-        <span class="ras-val">30%</span>
-      </span>
-    </div>
-    <div id="rolesTable" style="margin-top:10px"></div>
-    <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
-      <span style="display:flex;align-items:center;gap:5px;font-size:14px;color:var(--text-3)"><span style="width:10px;height:10px;border-radius:2px;background:var(--cyan);display:inline-block"></span>Capacity potentially released</span>
-      <span style="display:flex;align-items:center;gap:5px;font-size:14px;color:var(--text-3)"><span style="width:10px;height:10px;border-radius:2px;background:var(--accent);display:inline-block"></span>Human + AI combined</span>
-      <span style="display:flex;align-items:center;gap:5px;font-size:14px;color:var(--text-3)"><span style="width:10px;height:10px;border-radius:2px;background:var(--pink);display:inline-block"></span>Output or control depth raised</span>
-    </div>
-    <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.04em">This is an illustrative effort model, not a headcount forecast. Bar height shows illustrative function share. <span class="status-badge status-illustrative">ILLUSTRATIVE</span></div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="screen-closing">A working demo is not enough. The evidence should support a decision.</div>
   </div>
 </section>
 
-<!-- 08 · PROOF & VALUE CAPTURE -->
-<section id="proof-value-capture" data-slide data-route="core" data-chapter-id="how-to-prove" data-chapter-title="HOW TO PROVE?" data-nav-title="Define the proof" data-render="proofValueCapture">
-  <div class="inner">
-    <div class="sec-tag reveal">HOW TO PROVE · 08</div>
-    <h2 class="slide-h reveal">Define the proof.</h2>
-    <p class="slide-sub reveal">Seven stages from capability selection to realised value. Set the gate criteria before you start.</p>
-    <p class="slide-sub reveal" style="margin-top:12px;margin-bottom:4px">Modelling proof of value for: <strong id="proofCapName" style="color:var(--accent)">select a capability on screen 07</strong></p>
-    <div id="proofGateBar" style="margin-top:8px"></div>
-    <div id="valueWaterfall" style="margin-top:10px"></div>
-    <div id="proofEvidenceConsole" style="margin-top:10px"></div>
-    <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">All value figures require client-provided data and Accenture-approved benchmarks before presentation. Do not use illustrative numbers as measured outcomes.</div>
+<!-- 08 · SCALE ARCHITECTURE -->
+<section id="scale-architecture" data-slide data-route="core" data-scene="scale-architecture" data-chapter-id="how-to-scale" data-chapter-title="HOW TO SCALE" data-nav-title="Scale the pattern, not the pilot">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">HOW TO SCALE &middot; 08</div>
+      <h2 class="slide-h">Scale the pattern, not the pilot.</h2>
+      <p class="slide-sub">Shared data, orchestration, identity, evaluation and monitoring reduce repeated build effort.</p>
+    </div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="screen-closing">The aim is reuse with control, not a new stack for every use case.</div>
   </div>
 </section>
 
-<!-- 09 · INDUSTRIALIZATION ARCHITECTURE -->
-<section id="industrialization-arch" data-slide data-route="core" data-chapter-id="how-to-scale" data-chapter-title="HOW TO SCALE?" data-nav-title="Scale without multiplying complexity" data-method-label="Build to scale · 10 min" data-render="archScale">
-  <div class="inner">
-    <div class="sec-tag reveal">HOW TO SCALE · 09</div>
-    <h2 class="slide-h reveal">Scale without multiplying complexity.</h2>
-    <p class="slide-sub reveal">Five functional layers with cross-cutting controls. Each proof surfaces which layers need investment.</p>
-    <div id="archScaleModeToggle" style="margin-top:12px"></div>
-    <div class="arch-frame reveal" style="margin-top:14px" id="archFrame">
-      <div class="arch-rail arch-rail-left">
-        <div class="arch-rail-label">Identity &amp; access · Security &amp; privacy</div>
-        <div class="arch-rail-bar"></div>
-      </div>
-      <div class="arch-main-stack">
-        <div class="arch-layer"><div class="arch-layer-num">05</div><div class="arch-layer-name">Experience &amp; workflow</div><div class="arch-layer-chips"><span class="arch-chip">Chat / copilot</span><span class="arch-chip">API consumers</span><span class="arch-chip">Risk dashboards</span></div></div>
-        <div class="arch-conn-v">&#x2193;</div>
-        <div class="arch-layer ai-layer"><div class="arch-layer-num">04</div><div class="arch-layer-name">Orchestration &amp; integration</div><div class="arch-layer-chips"><span class="arch-chip">Planner agents</span><span class="arch-chip">Specialist agents</span><span class="arch-chip">Human-in-loop gates</span></div></div>
-        <div class="arch-conn-v">&#x2193;</div>
-        <div class="arch-layer ai-layer"><div class="arch-layer-num">03</div><div class="arch-layer-name">Models &amp; decision services</div><div class="arch-layer-chips"><span class="arch-chip">Foundation models</span><span class="arch-chip">Fine-tuned models</span><span class="arch-chip">Decision rules</span></div></div>
-        <div class="arch-conn-v">&#x2193;</div>
-        <div class="arch-layer"><div class="arch-layer-num">02</div><div class="arch-layer-name">Data, knowledge &amp; context</div><div class="arch-layer-chips"><span class="arch-chip">Risk data mesh</span><span class="arch-chip">Knowledge graph</span><span class="arch-chip">Vector store</span></div></div>
-        <div class="arch-conn-v">&#x2193;</div>
-        <div class="arch-layer"><div class="arch-layer-num">01</div><div class="arch-layer-name">Platform &amp; operations</div><div class="arch-layer-chips"><span class="arch-chip">Model registry</span><span class="arch-chip">Feature store</span><span class="arch-chip">Drift monitoring</span></div></div>
-      </div>
-      <div class="arch-rail arch-rail-right">
-        <div class="arch-rail-bar"></div>
-        <div class="arch-rail-label">Evaluation &amp; model risk · Observability &amp; audit · FinOps</div>
-      </div>
+<!-- 09 · UNIT ECONOMICS -->
+<section id="unit-economics" data-slide data-route="core" data-scene="unit-economics" data-chapter-id="how-to-scale" data-chapter-title="HOW TO SCALE" data-nav-title="Manage cost per successful case">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">HOW TO SCALE &middot; 09</div>
+      <h2 class="slide-h">Manage cost per successful case.</h2>
+      <p class="slide-sub">Run cost depends on the full path, not on model price alone.</p>
     </div>
-    <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">Governance and assurance wrap the full architecture as a cross-cutting control plane. Vendor and platform choices subject to client procurement and security policies.</div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="evidence-badge">ILLUSTRATIVE COST PATH -- GENERIC UNITS -- NOT CLIENT DATA</div>
+    <div class="screen-closing">Cost becomes manageable when it is measured at the outcome level.</div>
   </div>
 </section>
 
-<!-- 10 · RUN ECONOMICS -->
-<section id="run-economics" data-slide data-route="core" data-density="long" data-chapter-id="how-to-scale" data-chapter-title="HOW TO SCALE?" data-nav-title="Control cost per successful case">
-  <div class="inner">
-    <div class="sec-tag reveal">HOW TO SCALE · 10</div>
-    <h2 class="slide-h reveal">Control cost per successful case.</h2>
-    <p class="slide-sub reveal">Model run cost with your volumes and operating assumptions. All defaults are illustrative.</p>
-    <!-- Cost station breakdown (Phase 8) -->
-    <div id="ecoStationArea" style="margin-top:14px"></div>
-    <!-- Scenario model -->
-    <div class="eco-scenario reveal" style="margin-top:14px">
-      <div class="eco-scenario-inputs">
-        <div class="eco-input-group">
-          <label class="eco-input-lbl" for="eco-vol">Cases per month</label>
-          <input class="eco-input" id="eco-vol" type="number" min="100" max="1000000" step="500" value="5000" oninput="calcEco()">
-        </div>
-        <div class="eco-input-group">
-          <label class="eco-input-lbl" for="eco-review">Human review rate %</label>
-          <input class="eco-input" id="eco-review" type="number" min="0" max="100" step="5" value="30" oninput="calcEco()">
-        </div>
-        <div class="eco-input-group">
-          <label class="eco-input-lbl" for="eco-ctx">Avg. context (k tokens)</label>
-          <input class="eco-input" id="eco-ctx" type="number" min="1" max="200" step="5" value="20" oninput="calcEco()">
-        </div>
-        <div class="eco-input-group">
-          <label class="eco-input-lbl" for="eco-reuse">Shared infra reuse factor</label>
-          <input class="eco-input" id="eco-reuse" type="number" min="1" max="10" step="0.5" value="3" oninput="calcEco()">
-        </div>
-      </div>
-      <div class="eco-scenario-outputs" id="eco-outputs">
-        <!-- populated by calcEco() -->
-      </div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-3);letter-spacing:.06em;margin-top:6px">All outputs are illustrative and based on simplified assumptions. Replace with client architecture and volume data before use in any business case.</div>
+<!-- 10 · DUAL ENGINE -->
+<section id="dual-engine" data-slide data-route="core" data-scene="dual-engine" data-chapter-id="how-to-scale" data-chapter-title="HOW TO SCALE" data-nav-title="Use AI twice">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">HOW TO SCALE &middot; 10</div>
+      <h2 class="slide-h">Use AI twice.</h2>
+      <p class="slide-sub">AI can reshape the client function and accelerate selected delivery activities.</p>
     </div>
-    <div class="eco-tree reveal" style="margin-top:14px">
-      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-cpu" style="color:var(--accent)"></i><span class="eco-driver-name">Inference compute</span></div><div class="eco-driver-levers"><div class="eco-lever">Model selection: smaller, quantised, or distilled models reduce cost per token significantly</div><div class="eco-lever">Caching strategies: prompt caching for repeated context reduces redundant inference</div><div class="eco-lever">Batching: asynchronous workloads can be batched vs. real-time premium pricing</div></div></div>
-      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-database" style="color:var(--cyan)"></i><span class="eco-driver-name">Data retrieval and embedding</span></div><div class="eco-driver-levers"><div class="eco-lever">Embedding model size and refresh frequency drive storage and compute cost</div><div class="eco-lever">Vector database sizing and query patterns determine retrieval infrastructure cost</div></div></div>
-      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-users" style="color:var(--green)"></i><span class="eco-driver-name">Human review and oversight</span></div><div class="eco-driver-levers"><div class="eco-lever">Review rate determines staffing: what share of AI outputs require human sign-off?</div><div class="eco-lever">Escalation design: clear confidence thresholds reduce unnecessary escalation volume</div></div></div>
-      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-shield" style="color:var(--amber)"></i><span class="eco-driver-name">Model risk and compliance</span></div><div class="eco-driver-levers"><div class="eco-lever">Model validation cycles, documentation, and applicable model risk policy requirements drive ongoing cost</div><div class="eco-lever">Bias monitoring, fairness testing, and explainability tooling are ongoing, not one-off</div></div></div>
-      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-tools" style="color:var(--pink)"></i><span class="eco-driver-name">Platform and tooling</span></div><div class="eco-driver-levers"><div class="eco-lever">MLOps platform licensing or build cost amortised across use case volume</div><div class="eco-lever">Feature store, model registry, and experiment tracking infrastructure</div></div></div>
-      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-refresh" style="color:var(--text-2)"></i><span class="eco-driver-name">Retraining and drift management</span></div><div class="eco-driver-levers"><div class="eco-lever">Retraining frequency depends on regulatory change velocity and data drift rates</div><div class="eco-lever">Automated drift detection reduces manual monitoring overhead over time</div></div></div>
-    </div>
-    <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em" class="reveal">Cost driver taxonomy is indicative. Size each driver during Diagnose phase using client architecture, cloud provider, and transaction volumes.</div>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="screen-closing">Reusable assets, infrastructure knowledge and AI-assisted delivery can shorten the route to evidence.</div>
   </div>
 </section>
 
-<!-- 11 · ACCENTURE EDGE -->
-<section id="accenture-edge" data-slide data-route="core" data-chapter-id="how-to-scale" data-chapter-title="HOW TO SCALE?" data-nav-title="Use AI twice" data-render="accentureEdge">
-  <div class="inner">
-    <div class="sec-tag reveal">HOW TO SCALE · 11</div>
-    <h2 class="slide-h reveal">Use AI twice.</h2>
-    <p class="slide-sub reveal">Two reinforcing engines: redesigning the client risk function while shortening delivery through reusable assets.</p>
-    <div class="edge-dual" style="margin-top:14px">
-      <div class="edge-engine">
-        <div class="edge-engine-h"><div class="edge-engine-lbl">Engine A</div>Transform the client function</div>
-        <div id="engineA"></div>
-      </div>
-      <div class="edge-engine">
-        <div class="edge-engine-h"><div class="edge-engine-lbl">Engine B</div>Accelerate delivery</div>
-        <div id="engineB"></div>
-      </div>
+<!-- 11 · NEXT MOVE -->
+<section id="next-move" data-slide data-route="core" data-scene="next-move" data-chapter-id="what-next" data-chapter-title="WHAT NEXT" data-nav-title="Begin with one evidence-led move">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="sec-tag">WHAT NEXT &middot; 11</div>
+      <h2 class="slide-h">Begin with one evidence-led move.</h2>
+      <p class="slide-sub">Confirm the outcome, map one real process, and test one bounded path.</p>
     </div>
-  </div>
-</section>
-
-<!-- 12 · LEAN TRANSITION -->
-<section id="lean-transition" data-slide data-route="core" data-density="long" data-chapter-id="what-next" data-chapter-title="WHAT NEXT?" data-nav-title="Move in gates, not leaps" data-method-label="Commit · 10 min">
-  <div class="inner">
-    <div class="sec-tag reveal">WHAT NEXT · 12</div>
-    <h2 class="slide-h reveal">Move in gates, not leaps.</h2>
-    <p class="slide-sub reveal">A staged transition limits early commitment. Each gate tests readiness before the next investment.</p>
-    <div class="ambition-selector reveal" style="margin-top:14px">
-      <span class="ambition-lbl">Ambition level:</span>
-      <button class="ambition-btn active" data-amb="prove-one-use-case" onclick="document.querySelectorAll('.ambition-btn').forEach(function(b){b.classList.toggle('active',b.dataset.amb===this.dataset.amb);},this);if(typeof store!=='undefined')store.dispatch({type:'SET_MATURITY_AMBITION',payload:'prove-one-use-case'});">Prove one use case</button>
-      <button class="ambition-btn" data-amb="scale-across-function" onclick="document.querySelectorAll('.ambition-btn').forEach(function(b){b.classList.toggle('active',b.dataset.amb===this.dataset.amb);},this);if(typeof store!=='undefined')store.dispatch({type:'SET_MATURITY_AMBITION',payload:'scale-across-function'});">Scale across function</button>
-      <button class="ambition-btn" data-amb="transform-operating-model" onclick="document.querySelectorAll('.ambition-btn').forEach(function(b){b.classList.toggle('active',b.dataset.amb===this.dataset.amb);},this);if(typeof store!=='undefined')store.dispatch({type:'SET_MATURITY_AMBITION',payload:'transform-operating-model'});">Transform operating model</button>
-    </div>
-    <div class="ptw-wrap reveal" style="margin-top:18px">
-      <!-- Column headers -->
-      <div class="ptw-header-row">
-        <div class="ptw-label-col"></div>
-        <div class="ptw-phase-col"><div class="ptw-phase-name">Discover &amp; diagnose</div><div class="ptw-phase-wk">Wk 1&#x2013;6</div></div>
-        <div class="ptw-gate-col"><div class="ptw-gate-d"></div><div class="ptw-gate-lbl">G1</div></div>
-        <div class="ptw-phase-col"><div class="ptw-phase-name">Design</div><div class="ptw-phase-wk">Wk 7&#x2013;10</div></div>
-        <div class="ptw-gate-col"><div class="ptw-gate-d"></div><div class="ptw-gate-lbl">G2</div></div>
-        <div class="ptw-phase-col ptw-phase-active"><div class="ptw-phase-name">Pilot</div><div class="ptw-phase-wk">Wk 11&#x2013;18</div></div>
-        <div class="ptw-gate-col"><div class="ptw-gate-d"></div><div class="ptw-gate-lbl">G3</div></div>
-        <div class="ptw-phase-col"><div class="ptw-phase-name">Industrialise &amp; scale</div><div class="ptw-phase-wk">Wk 19+</div></div>
-      </div>
-      <!-- Lane: Value spine -->
-      <div class="ptw-lane">
-        <div class="ptw-label-col ptw-lane-lbl"><i class="ti ti-route" style="color:var(--cyan)"></i>Value spine</div>
-        <div class="ptw-cell">Capability selection · Scope agreement · Baseline metrics</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Target state · Value model · Proof plan</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Evidence assembly · Gate readiness check</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Benefit tracking · Reinvestment decisions</div>
-      </div>
-      <!-- Lane: Lighthouse pod -->
-      <div class="ptw-lane ptw-lane-highlight">
-        <div class="ptw-label-col ptw-lane-lbl" style="color:var(--accent)"><i class="ti ti-bulb" style="color:var(--accent)"></i>Lighthouse pod</div>
-        <div class="ptw-cell">Use-case selection · Team formed · Evidence sourced</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Architecture · Control spec · Prompt design</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell ptw-cell-active">Build · Human-gate validation · Evidence pack</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Production · Monitoring · Second use case</div>
-      </div>
-      <!-- Lane: Foundations -->
-      <div class="ptw-lane">
-        <div class="ptw-label-col ptw-lane-lbl"><i class="ti ti-database" style="color:var(--text-3)"></i>Foundations</div>
-        <div class="ptw-cell">Data inventory · Platform assessment · Control gaps</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Data remediation · MLOps · Security design</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Platform build · Model registry · Observability</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Shared infrastructure · Multi-use-case reuse</div>
-      </div>
-      <!-- Lane: Workforce & adoption -->
-      <div class="ptw-lane">
-        <div class="ptw-label-col ptw-lane-lbl"><i class="ti ti-users" style="color:var(--green)"></i>Workforce &amp; adoption</div>
-        <div class="ptw-cell">Role impact mapping · Skill gap assessment</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Training design · Change management plan</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Lighthouse training · Process integration</div>
-        <div class="ptw-gate-col"></div>
-        <div class="ptw-cell">Scale adoption · Communities of practice</div>
-      </div>
-    </div>
-    <div style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em" class="reveal">Timelines are illustrative. Gate criteria are confirmed during Diagnose and tailored to client governance and regulatory context. Workstreams can progress in parallel within each gate.</div>
-  </div>
-</section>
-
-<!-- 13 · DECISION & NEXT STEP -->
-<section id="decision-next-step" data-slide data-route="core" data-density="long" data-chapter-id="what-next" data-chapter-title="WHAT NEXT?" data-nav-title="Agree the next move" data-render="takeaway">
-  <div class="inner">
-    <div class="sec-tag reveal">WHAT NEXT · 13</div>
-    <h2 class="slide-h reveal">Agree the next move.</h2>
-    <p class="slide-sub reveal">Session summary built from your selections. What have we agreed? What happens next?</p>
-    <div class="ta-grid" style="margin-top:12px">
-      <div class="ta-section"><div class="ta-label">Pressures identified</div><div class="ta-val" id="ta-pressures">Not yet set</div></div>
-      <div class="ta-section"><div class="ta-label">Organisation archetype</div><div class="ta-val" id="ta-arch">Not yet set</div></div>
-      <div class="ta-section wide"><div class="ta-label">Selected capabilities</div><div class="ta-val" id="ta-caps">Select capabilities on screen 07</div></div>
-      <div class="ta-section"><div class="ta-label">Proof candidate</div><div class="ta-val" id="ta-proof">Not yet selected</div></div>
-      <div class="ta-section"><div class="ta-label">Proof use case</div><div class="ta-val" id="ta-usecase">Not yet selected</div></div>
-      <div class="ta-section wide"><div class="ta-label">Maturity gaps identified</div><div class="ta-val" id="ta-gaps">Set current and target state on screen 06</div></div>
-      <div class="ta-section wide"><div class="ta-label">Open decisions</div><div class="ta-val" id="ta-decisions">None recorded</div></div>
-    </div>
-    <div id="synthCanvas" style="margin-top:14px"></div>
-    <div class="ta-actions reveal" style="margin-top:16px">
-      <button class="sec-opt" onclick="copyTakeaway()"><i class="ti ti-copy"></i>Copy summary</button>
-      <button class="sec-opt" onclick="exportSessionJSON()"><i class="ti ti-download"></i>Export session JSON</button>
+    <div class="scene-stage" data-scene-container></div>
+    <div class="screen-actions">
       <a class="sec-opt" href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI: next steps"><i class="ti ti-mail"></i>Email next steps</a>
-      <button class="sec-opt" onclick="resetSession()"><i class="ti ti-refresh"></i>Reset session</button>
-      <button class="sec-opt" onclick="goToId('ref-room')"><i class="ti ti-book"></i>Open reference room</button>
+      <button class="sec-opt" onclick="goToId('ref-room')"><i class="ti ti-book"></i>Reference room</button>
     </div>
+    <div class="screen-closing">The first objective is not a platform. It is a decision supported by evidence.</div>
   </div>
 </section>
 
@@ -701,6 +508,19 @@
 <script src="./assets/js/visuals.js"></script>
 <script src="./assets/js/navigation.js"></script>
 <script src="./assets/js/edge-rail.js"></script>
+<script src="./assets/js/story/scene-director.js"></script>
+<script src="./assets/js/story/scenes/cover-flow.js"></script>
+<script src="./assets/js/story/scenes/pressure-convergence.js"></script>
+<script src="./assets/js/story/scenes/ai-stack-build.js"></script>
+<script src="./assets/js/story/scenes/task-route.js"></script>
+<script src="./assets/js/story/scenes/regulation-process.js"></script>
+<script src="./assets/js/story/scenes/transformation-system.js"></script>
+<script src="./assets/js/story/scenes/work-role-shift.js"></script>
+<script src="./assets/js/story/scenes/proof-loop.js"></script>
+<script src="./assets/js/story/scenes/scale-architecture.js"></script>
+<script src="./assets/js/story/scenes/unit-economics.js"></script>
+<script src="./assets/js/story/scenes/dual-engine.js"></script>
+<script src="./assets/js/story/scenes/next-move.js"></script>
 <script src="./assets/js/app.js"></script>
 </body>
 </html>

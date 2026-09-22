@@ -15,10 +15,9 @@ const VIEWPORTS = [
 ];
 
 const CORE_SLIDES = [
-  'cover','setting-scene','ai-landscape','capability-hotspots','exec-shortlist',
-  'process-twin','transformation-system','work-workforce-workbench',
-  'proof-value-capture','industrialization-arch','run-economics',
-  'accenture-edge','lean-transition','decision-next-step'
+  'cover','pressure-rising','ai-stack','task-route','regulation-process',
+  'transformation-implications','work-role-shift','proof-loop',
+  'scale-architecture','unit-economics','dual-engine','next-move'
 ];
 
 async function gotoPage(page, path) {
@@ -115,136 +114,111 @@ test('store is initialised with correct defaults', async ({ page }) => {
   await page.waitForTimeout(400);
   const state = await page.evaluate(() => typeof store !== 'undefined' ? store.getState() : null);
   expect(state).not.toBeNull();
-  expect(state.audienceLens).toBe('joint');
-  expect(state.selectedCapabilities).toHaveLength(0);
+  // V13: workshop selections removed from core; store still initialises
   expect(state.proofCandidateId).toBeNull();
 });
 
-test('lens button dispatches to store', async ({ page }) => {
+// ── AI STACK SCENE ──
+test('ai-stack screen has scene container', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
-  // Navigate to shortlist screen where lens buttons exist
-  await page.evaluate(() => { const el = document.getElementById('exec-shortlist'); if (el) el.scrollIntoView(); });
-  await page.waitForTimeout(600);
-  const croBtn = page.locator('[data-lens="cro"]').first();
-  if (await croBtn.isVisible()) {
-    await croBtn.click();
-    await page.waitForTimeout(200);
-    const lens = await page.evaluate(() => store.getState().audienceLens);
-    expect(lens).toBe('cro');
-  }
-});
-
-// ── AI TASK ROUTER ──
-test('AI task router renders on ai-landscape screen', async ({ page }) => {
-  await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => { const el = document.getElementById('ai-landscape'); if (el) el.scrollIntoView(); });
+  await page.evaluate(() => { const el = document.getElementById('ai-stack'); if (el) el.scrollIntoView(); });
   await page.waitForTimeout(800);
-  const stationsOrGrid = page.locator('#aiLandscapeGrid .atr-station, #aiLandscapeGrid .ai-station');
-  const count = await stationsOrGrid.count();
-  // At least some content rendered
-  const gridEl = page.locator('#aiLandscapeGrid');
-  const text = await gridEl.textContent();
-  expect(text && text.length > 10).toBeTruthy();
+  const container = page.locator('#ai-stack [data-scene-container]');
+  await expect(container).toBeAttached();
 });
 
-// ── TRANSFORMATION SYSTEM ──
-test('transformation system renders block SVG', async ({ page }) => {
+// ── TRANSFORMATION SCENE ──
+test('transformation-implications screen has scene container', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => { const el = document.getElementById('transformation-system'); if (el) el.scrollIntoView(); });
+  await page.evaluate(() => { const el = document.getElementById('transformation-implications'); if (el) el.scrollIntoView(); });
   await page.waitForTimeout(800);
-  const svgOrGrid = page.locator('#trSysGrid svg, #trSysGrid .trsys-block');
-  const count = await svgOrGrid.count();
-  expect(count).toBeGreaterThan(0);
+  const container = page.locator('#transformation-implications [data-scene-container]');
+  await expect(container).toBeAttached();
 });
 
-// ── CANDIDATE CANVAS ──
-test('proof candidate selection updates store', async ({ page }) => {
+// ── REGULATION PROCESS SCENE ──
+test('regulation-process scene container populated after entry', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => { const el = document.getElementById('exec-shortlist'); if (el) el.scrollIntoView(); });
-  await page.waitForTimeout(800);
-  const setBtn = page.locator('.shortlist-card .set-proof-btn, [data-action="set-proof-candidate"]').first();
-  if (await setBtn.count() > 0 && await setBtn.isVisible()) {
-    await setBtn.click();
-    await page.waitForTimeout(200);
-    const candidateId = await page.evaluate(() => store.getState().proofCandidateId);
-    expect(candidateId).not.toBeNull();
-  }
+  await page.evaluate(() => { const el = document.getElementById('regulation-process'); if (el) el.scrollIntoView(); });
+  await page.waitForTimeout(1200);
+  const container = page.locator('#regulation-process [data-scene-container]');
+  await expect(container).toBeAttached();
 });
 
-// ── DECISION SCREEN ──
-test('decision screen renders synthesis fields', async ({ page }) => {
+// ── NEXT MOVE SCREEN ──
+test('next-move screen renders and is last core screen', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => { const el = document.getElementById('decision-next-step'); if (el) el.scrollIntoView(); });
+  await page.evaluate(() => { const el = document.getElementById('next-move'); if (el) el.scrollIntoView(); });
   await page.waitForTimeout(600);
-  await expect(page.locator('#ta-pressures')).toBeAttached();
-  await expect(page.locator('#ta-caps')).toBeAttached();
+  await expect(page.locator('#next-move')).toBeAttached();
+  // Confirm it is the last core screen
+  const isLast = await page.evaluate(() => {
+    const coreSecs = Array.from(document.querySelectorAll('section[data-route="core"]'));
+    return coreSecs.length > 0 && coreSecs[coreSecs.length - 1].id === 'next-move';
+  });
+  expect(isLast).toBe(true);
 });
 
-// ── ROLE ASSUMPTION STRIP ──
-test('role assumption strip renders on role screen', async ({ page }) => {
+// ── PROOF LOOP ──
+test('proof-loop screen renders', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => { const el = document.getElementById('work-workforce-workbench'); if (el) el.scrollIntoView(); });
+  await page.evaluate(() => { const el = document.getElementById('proof-loop'); if (el) el.scrollIntoView(); });
   await page.waitForTimeout(600);
-  const strip = page.locator('.role-assumption-strip');
-  const isAttached = await strip.count();
-  expect(isAttached).toBeGreaterThan(0);
+  await expect(page.locator('#proof-loop')).toBeAttached();
 });
 
-// ── PROOF CONSOLE ──
-test('proof value capture screen renders', async ({ page }) => {
+// ── SCALE ARCHITECTURE ──
+test('scale-architecture screen renders', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => { const el = document.getElementById('proof-value-capture'); if (el) el.scrollIntoView(); });
+  await page.evaluate(() => { const el = document.getElementById('scale-architecture'); if (el) el.scrollIntoView(); });
   await page.waitForTimeout(600);
-  const pvcEl = page.locator('#proof-value-capture');
-  await expect(pvcEl).toBeAttached();
+  await expect(page.locator('#scale-architecture')).toBeAttached();
 });
 
-// ── ARCHITECTURE ──
-test('architecture screen renders', async ({ page }) => {
+// ── UNIT ECONOMICS ──
+test('unit-economics screen renders', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => { const el = document.getElementById('industrialization-arch'); if (el) el.scrollIntoView(); });
+  await page.evaluate(() => { const el = document.getElementById('unit-economics'); if (el) el.scrollIntoView(); });
   await page.waitForTimeout(600);
-  await expect(page.locator('#industrialization-arch')).toBeAttached();
+  await expect(page.locator('#unit-economics')).toBeAttached();
 });
 
-// ── ECONOMICS ──
-test('run-economics screen renders', async ({ page }) => {
-  await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => { const el = document.getElementById('run-economics'); if (el) el.scrollIntoView(); });
-  await page.waitForTimeout(600);
-  await expect(page.locator('#run-economics')).toBeAttached();
-});
-
-// ── V12: ROUTE STRUCTURE ──
-test('V12: exactly 14 core screens', async ({ page }) => {
+// ── V13: ROUTE STRUCTURE ──
+test('V13: exactly 12 core screens', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
   await page.waitForTimeout(500);
   const coreCount = await page.evaluate(() =>
     document.querySelectorAll('section[data-slide][data-route="core"]').length
   );
-  expect(coreCount).toBe(14);
+  expect(coreCount).toBe(12);
 });
 
-test('V12: process-twin appears before transformation-system in DOM', async ({ page }) => {
+test('V13: html element has data-theme=dark', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
-  await page.waitForTimeout(400);
-  const order = await page.evaluate(() => {
-    const ids = Array.from(document.querySelectorAll('section[data-slide]')).map(s => s.id);
-    return { pt: ids.indexOf('process-twin'), ts: ids.indexOf('transformation-system') };
-  });
-  expect(order.pt).toBeLessThan(order.ts);
+  await page.waitForTimeout(300);
+  const theme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+  expect(theme).toBe('dark');
 });
 
-test('V12: story.json manifest is accessible', async ({ page }) => {
+test('V13: story-manifest.json is accessible', async ({ page }) => {
   await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
-  const res = await page.goto('/assets/data/story.json');
+  const res = await page.goto('/assets/data/story-manifest.json');
   expect(res && res.status()).toBe(200);
   const json = await res.json();
-  expect(json.version).toBe('12');
-  expect(json.screens).toHaveLength(14);
+  expect(json.version).toBe('13');
+  expect(json.screens).toHaveLength(12);
 });
 
-test('V12: reference room section is in DOM and excluded from core', async ({ page }) => {
+test('V13: regulation-process section exists with evidence badge', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const regSec = page.locator('#regulation-process');
+  await expect(regSec).toBeAttached();
+  const badge = page.locator('#regulation-process .evidence-badge');
+  await expect(badge).toBeAttached();
+});
+
+test('V13: reference room section is in DOM and excluded from core', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
   await page.waitForTimeout(400);
   const refRoom = page.locator('#ref-room');
@@ -253,28 +227,23 @@ test('V12: reference room section is in DOM and excluded from core', async ({ pa
   expect(route).toBe('reference');
 });
 
-test('V12: candidate token container injected on process-twin screen', async ({ page }) => {
+test('V13: SceneDirector is defined after load', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => { const el = document.getElementById('process-twin'); if (el) el.scrollIntoView(); });
   await page.waitForTimeout(600);
-  const token = page.locator('#process-twin .v12-candidate-token');
-  await expect(token).toBeAttached();
+  const defined = await page.evaluate(() => typeof SceneDirector !== 'undefined');
+  expect(defined).toBe(true);
 });
 
-test('V12: nfr:themechange event fires on theme toggle', async ({ page }) => {
+test('V13: core screens have data-scene attributes', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
   await page.waitForTimeout(400);
-  const fired = await page.evaluate(() => {
-    return new Promise(resolve => {
-      document.addEventListener('nfr:themechange', function(e) { resolve(e.detail.theme); }, { once: true });
-      if (typeof toggleTheme !== 'undefined') toggleTheme();
-      else resolve(null);
-    });
-  });
-  expect(fired).toMatch(/^(light|dark)$/);
+  const sceneAttrCount = await page.evaluate(() =>
+    document.querySelectorAll('section[data-route="core"][data-scene]').length
+  );
+  expect(sceneAttrCount).toBe(12);
 });
 
-test('V12: no hard-coded hex colors in core section inner HTML', async ({ page }) => {
+test('V13: no hard-coded hex colors in core section inner HTML', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
   await page.waitForTimeout(400);
   const hexInCore = await page.evaluate(() => {

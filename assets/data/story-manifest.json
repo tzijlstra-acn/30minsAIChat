@@ -1,0 +1,161 @@
+{
+  "version": "13",
+  "chapters": [
+    { "id": "introduction",    "label": "INTRODUCTION"      },
+    { "id": "why-now",         "label": "WHY NOW"           },
+    { "id": "what-ai-is",      "label": "WHAT AI IS"        },
+    { "id": "where-it-applies","label": "WHERE IT APPLIES"  },
+    { "id": "how-to-prove",    "label": "HOW TO PROVE"      },
+    { "id": "how-to-scale",    "label": "HOW TO SCALE"      },
+    { "id": "what-next",       "label": "WHAT NEXT"         }
+  ],
+  "screens": [
+    {
+      "id": "cover",
+      "order": 0,
+      "chapterId": "introduction",
+      "title": "AI changes how risk work gets done.",
+      "subtitle": "The question is where it can improve the outcome, and what should remain under human control.",
+      "closingLine": "Start with the work. Then choose the technology.",
+      "scene": "cover-flow",
+      "durationMs": 6500,
+      "autoplay": true,
+      "handoffToken": "signal-to-decision-line"
+    },
+    {
+      "id": "pressure-rising",
+      "order": 1,
+      "chapterId": "why-now",
+      "title": "Pressure is rising on both sides.",
+      "subtitle": "Risk functions are being asked to respond faster, with stronger evidence and tighter economics.",
+      "closingLine": "The opportunity is not only faster work. It is a more evidence-led operating model.",
+      "scene": "pressure-convergence",
+      "durationMs": 7000,
+      "autoplay": true,
+      "handoffToken": "pressure-signal"
+    },
+    {
+      "id": "ai-stack",
+      "order": 2,
+      "chapterId": "what-ai-is",
+      "title": "AI is a stack, not one tool.",
+      "subtitle": "Data and controls form the base. Autonomy increases only where the work allows it.",
+      "closingLine": "Higher in the stack does not mean better. It means a different trade-off.",
+      "scene": "ai-stack-build",
+      "durationMs": 8000,
+      "autoplay": true,
+      "handoffToken": "ai-stack-token"
+    },
+    {
+      "id": "task-route",
+      "order": 3,
+      "chapterId": "what-ai-is",
+      "title": "Start with the task, not the model.",
+      "subtitle": "Use the least complex pattern that can deliver the required outcome.",
+      "closingLine": "The task, evidence and decision right determine the technology.",
+      "scene": "task-route",
+      "durationMs": 10000,
+      "autoplay": true,
+      "handoffToken": "task-route-token"
+    },
+    {
+      "id": "regulation-process",
+      "order": 4,
+      "chapterId": "where-it-applies",
+      "title": "See one obligation move.",
+      "subtitle": "A source-backed example makes the flow of data, AI and human judgement tangible.",
+      "closingLine": "AI performs repeatable analysis. People retain judgement, challenge and approval.",
+      "evidenceLabel": "SOURCE-BACKED FLOW -- ILLUSTRATIVE TIMING -- NOT CLIENT DATA",
+      "scene": "regulation-process",
+      "durationMs": 11000,
+      "autoplay": true,
+      "handoffToken": "regulation-coverage-token"
+    },
+    {
+      "id": "transformation-implications",
+      "order": 5,
+      "chapterId": "where-it-applies",
+      "title": "The use case changes the system.",
+      "subtitle": "Work, data, technology, governance and value typically move together.",
+      "closingLine": "A useful proof tests the process and the surrounding system, not only the model.",
+      "scene": "transformation-system",
+      "durationMs": 9000,
+      "autoplay": true,
+      "handoffToken": "transformation-path"
+    },
+    {
+      "id": "work-role-shift",
+      "order": 6,
+      "chapterId": "where-it-applies",
+      "title": "Humans move toward judgement.",
+      "subtitle": "Repeatable execution may shift to automation, while accountability remains named and visible.",
+      "closingLine": "The key design question is what people should decide, challenge and own.",
+      "evidenceLabel": "ILLUSTRATIVE TASK MODEL -- NOT A HEADCOUNT FORECAST",
+      "scene": "work-role-shift",
+      "durationMs": 8000,
+      "autoplay": true,
+      "handoffToken": "human-decision-gate"
+    },
+    {
+      "id": "proof-loop",
+      "order": 7,
+      "chapterId": "how-to-prove",
+      "title": "Prove one outcome on real work.",
+      "subtitle": "A proof should test quality, control, adoption, speed and economics together.",
+      "closingLine": "A working demo is not enough. The evidence should support a decision.",
+      "scene": "proof-loop",
+      "durationMs": 8000,
+      "autoplay": true,
+      "handoffToken": "proof-evidence-token"
+    },
+    {
+      "id": "scale-architecture",
+      "order": 8,
+      "chapterId": "how-to-scale",
+      "title": "Scale the pattern, not the pilot.",
+      "subtitle": "Shared data, orchestration, identity, evaluation and monitoring reduce repeated build effort.",
+      "closingLine": "The aim is reuse with control, not a new stack for every use case.",
+      "scene": "scale-architecture",
+      "durationMs": 9000,
+      "autoplay": true,
+      "handoffToken": "shared-platform-spine"
+    },
+    {
+      "id": "unit-economics",
+      "order": 9,
+      "chapterId": "how-to-scale",
+      "title": "Manage cost per successful case.",
+      "subtitle": "Run cost depends on the full path, not on model price alone.",
+      "closingLine": "Cost becomes manageable when it is measured at the outcome level.",
+      "evidenceLabel": "ILLUSTRATIVE COST PATH -- GENERIC UNITS -- NOT CLIENT DATA",
+      "scene": "unit-economics",
+      "durationMs": 9000,
+      "autoplay": true,
+      "handoffToken": "cost-per-case-meter"
+    },
+    {
+      "id": "dual-engine",
+      "order": 10,
+      "chapterId": "how-to-scale",
+      "title": "Use AI twice.",
+      "subtitle": "AI can reshape the client function and accelerate selected delivery activities.",
+      "closingLine": "Reusable assets, infrastructure knowledge and AI-assisted delivery can shorten the route to evidence.",
+      "scene": "dual-engine",
+      "durationMs": 8000,
+      "autoplay": true,
+      "handoffToken": "dual-delivery-engine"
+    },
+    {
+      "id": "next-move",
+      "order": 11,
+      "chapterId": "what-next",
+      "title": "Begin with one evidence-led move.",
+      "subtitle": "Confirm the outcome, map one real process, and test one bounded path.",
+      "closingLine": "The first objective is not a platform. It is a decision supported by evidence.",
+      "scene": "next-move",
+      "durationMs": 7000,
+      "autoplay": true,
+      "handoffToken": null
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "id": "regulation-coverage",
+  "name": "Regulation Coverage",
+  "sourceStatus": "source-backed",
+  "timingStatus": "illustrative",
+  "clientData": false,
+  "evidenceLabel": "SOURCE-BACKED FLOW -- ILLUSTRATIVE TIMING -- NOT CLIENT DATA",
+  "lanes": [
+    { "id": "work",       "label": "WORK AND DECISIONS" },
+    { "id": "data",       "label": "DATA AND OBJECTS"    },
+    { "id": "automation", "label": "AI AND AUTOMATION"   },
+    { "id": "human",      "label": "HUMAN AND CONTROL"   }
+  ],
+  "stages": [
+    {
+      "id": "s1", "order": 1, "label": "Receive source",
+      "work": "Receive regulation or policy document",
+      "data": "Regulation document",
+      "automation": "Document ingestion and classification",
+      "human": "Source validation"
+    },
+    {
+      "id": "s2", "order": 2, "label": "Structure obligations",
+      "work": "Extract and structure obligation elements",
+      "data": "Obligation record: actor, action, condition, frequency, domain",
+      "automation": "Extraction agent: structured output from unstructured source",
+      "human": null
+    },
+    {
+      "id": "s3", "order": 3, "label": "Match policies",
+      "work": "Map obligations to current policy coverage",
+      "data": "Policy coverage map",
+      "automation": "Matching agent: semantic similarity and rule-based alignment",
+      "human": null
+    },
+    {
+      "id": "s4", "order": 4, "label": "Match controls",
+      "work": "Map obligations to control library",
+      "data": "Control coverage map",
+      "automation": "Gap analysis: identify uncovered obligations and redundant controls",
+      "human": null
+    },
+    {
+      "id": "s5", "order": 5, "label": "Assess gaps",
+      "work": "Identify gaps and redundancies",
+      "data": "Gap record, redundancy flag",
+      "automation": "Draft recommendation: action, rationale, priority",
+      "human": "Challenge: analyst reviews AI-generated assessment"
+    },
+    {
+      "id": "s6", "order": 6, "label": "Review and approve",
+      "work": "Challenge AI assessment, approve or refine",
+      "data": "Approved recommendation",
+      "automation": null,
+      "human": "Approval gate: named accountable person confirms or rejects"
+    },
+    {
+      "id": "s7", "order": 7, "label": "Record evidence",
+      "work": "Create evidence trail",
+      "data": "Evidence record with full audit trail: source, obligation, assessment, decision, owner, timestamp",
+      "automation": "Automated evidence packaging",
+      "human": "Ownership: record linked to named control owner"
+    }
+  ],
+  "humanGates": [
+    { "atStage": "s1", "type": "validation", "description": "Source validation: confirm document provenance and version" },
+    { "atStage": "s5", "type": "challenge",  "description": "Analyst challenge: review AI assessment before recommendation is confirmed" },
+    { "atStage": "s6", "type": "approval",   "description": "Named approval: accountable person confirms action or rejects with reason" }
+  ],
+  "aiPatterns": [
+    { "pattern": "document-processing",  "stages": ["s1", "s2"] },
+    { "pattern": "semantic-matching",    "stages": ["s3", "s4"] },
+    { "pattern": "gap-analysis",         "stages": ["s4", "s5"] },
+    { "pattern": "draft-generation",     "stages": ["s5"]       }
+  ]
+}
