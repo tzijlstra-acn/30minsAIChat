@@ -1,47 +1,106 @@
 // Scene: ai-stack-build (Screen 02 - WHAT AI IS)
-// Tapered pyramid built layer by layer bottom-up, token descends on entry
+// Four-layer pyramid builds bottom-up. Each layer shows its AI pattern and a brief use-case example.
+// A "regulation obligation" token descends through the stack as layers reveal.
 SceneDirector.register('ai-stack-build', function(container, manifest, reduced) {
   var layers = [
-    { label: 'Data and controls',             color: 'var(--surface-2)',  tag: 'FOUNDATION',   tagColor: 'var(--text-3)' },
-    { label: 'Rules and classification',      color: 'var(--surface-2)',  tag: 'DETERMINISTIC', tagColor: 'var(--cyan)'   },
-    { label: 'Language models and RAG',       color: 'rgba(161,0,255,.12)', tag: 'GENERATIVE',  tagColor: 'var(--accent)' },
-    { label: 'Agentic and orchestrated work', color: 'rgba(161,0,255,.22)', tag: 'AGENTIC',     tagColor: 'var(--pink)'   }
+    {
+      label:   'Data and controls',
+      tag:     'FOUNDATION',
+      tagColor:'var(--text-3)',
+      bg:      'var(--surface-2)',
+      example: 'Source documents, policy library, control register, audit log'
+    },
+    {
+      label:   'Rules and classification',
+      tag:     'DETERMINISTIC',
+      tagColor:'var(--cyan)',
+      bg:      'var(--surface-1)',
+      example: 'Obligation classifier, threshold rules, coverage scoring'
+    },
+    {
+      label:   'Language models and retrieval',
+      tag:     'GENERATIVE',
+      tagColor:'var(--accent)',
+      bg:      'rgba(161,0,255,.08)',
+      example: 'Gap extraction, policy drafting, rationale generation'
+    },
+    {
+      label:   'Agentic and orchestrated work',
+      tag:     'AGENTIC',
+      tagColor:'var(--pink)',
+      bg:      'rgba(161,0,255,.16)',
+      example: 'Multi-step coverage analysis, cross-regulation reconciliation'
+    }
   ];
 
   function build() {
     container.innerHTML = '';
     var wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;flex-direction:column-reverse;align-items:center;justify-content:flex-end;gap:4px;height:100%;padding:16px;';
+    wrap.style.cssText = 'display:flex;flex-direction:column;gap:12px;height:100%;padding:16px 20px;justify-content:center;';
+
+    // Pyramid: bottom layer is widest. Layers are in DOM order top-to-bottom (agentic first, foundation last)
+    // but we flex-direction: column so we stack them and width is reversed.
+    var pyramid = document.createElement('div');
+    pyramid.style.cssText = 'display:flex;flex-direction:column-reverse;align-items:center;gap:4px;';
 
     layers.forEach(function(layer, i) {
-      var w = (40 + i * 15) + '%';
+      // Width increases as we go down (i=0 is foundation = widest at 100%, i=3 is agentic = narrowest at 52%)
+      var widthPct = 100 - (layers.length - 1 - i) * 14;
       var el = document.createElement('div');
       el.className = 'ai-stack-layer';
-      el.style.cssText = 'width:' + w + ';background:' + layer.color + ';border:1px solid var(--border-1);border-radius:6px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;';
-      el.innerHTML = '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:600;color:var(--text-1)">' + layer.label + '</span>' +
-        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.08em;color:' + layer.tagColor + '">' + layer.tag + '</span>';
-      wrap.appendChild(el);
+      el.dataset.layerIdx = i;
+      el.style.cssText = 'width:' + widthPct + '%;background:' + layer.bg
+        + ';border:1px solid var(--border-1);border-radius:7px;padding:11px 16px;'
+        + 'display:flex;align-items:center;justify-content:space-between;gap:12px;'
+        + 'transition-delay:' + (i * 100) + 'ms;';
+      el.innerHTML =
+        '<div style="flex:1;min-width:0">'
+        + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:3px">' + layer.label + '</div>'
+        + '<div style="font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-3);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + layer.example + '</div>'
+        + '</div>'
+        + '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.08em;color:' + layer.tagColor + ';white-space:nowrap;flex-shrink:0;font-weight:600">' + layer.tag + '</span>';
+      pyramid.appendChild(el);
     });
+
+    wrap.appendChild(pyramid);
+
+    // Control rail note
+    var rail = document.createElement('div');
+    rail.className = 'scene-node';
+    rail.dataset.beat = 'rail';
+    rail.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--surface-1);border:1px solid var(--green);border-radius:6px;margin-top:4px;';
+    rail.innerHTML = '<i class="ti ti-shield-check" style="color:var(--green);font-size:16px;flex-shrink:0"></i>'
+      + '<span style="font-family:\'Inter\',sans-serif;font-size:14px;color:var(--text-2);line-height:1.4">'
+      + 'Human control gates and compliance obligations run across all layers -- not only at the top.'
+      + '</span>';
+    wrap.appendChild(rail);
+
     container.appendChild(wrap);
   }
 
   var steps = layers.map(function(_, i) {
-    return { delay: 400 + i * 700, run: function() {
+    return { delay: 300 + i * 600, run: function() {
       var nodes = container.querySelectorAll('.ai-stack-layer');
       if (nodes[i]) nodes[i].classList.add('visible');
     }};
-  });
+  }).concat([
+    { delay: 300 + layers.length * 600 + 200, run: function() {
+      var rail = container.querySelector('[data-beat="rail"]');
+      if (rail) rail.classList.add('visible');
+    }}
+  ]);
 
   var tl = createTimeline(steps);
 
   return {
-    play: function() { build(); tl.play(); },
-    pause: tl.pause,
-    resume: tl.resume,
-    reset: function() { build(); tl.reset(); },
-    finish: function() {
+    play:    function() { build(); tl.play(); },
+    pause:   tl.pause,
+    resume:  tl.resume,
+    reset:   function() { build(); tl.reset(); },
+    finish:  function() {
       build();
       container.querySelectorAll('.ai-stack-layer').forEach(function(n) { n.classList.add('visible'); });
+      container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
     },
     destroy: function() { container.innerHTML = ''; tl.destroy(); }
   };

@@ -1,123 +1,123 @@
 // Scene: proof-loop (Screen 07 - HOW TO PROVE)
-// Circular evidence loop with 5 nodes entering sequentially
+// Five evidence dimensions laid out as cards in a ring arrangement.
+// Each card reveals with its label, icon, and one concrete proof question.
+// Final beat: a central "PROOF OBJECTIVE" label and connecting lines appear.
 SceneDirector.register('proof-loop', function(container, manifest, reduced) {
-  var nodes = [
-    { label: 'Quality',    icon: 'ti-star',          color: 'var(--accent)'  },
-    { label: 'Control',    icon: 'ti-shield-check',  color: 'var(--green)'   },
-    { label: 'Adoption',   icon: 'ti-users',         color: 'var(--cyan)'    },
-    { label: 'Speed',      icon: 'ti-clock',         color: 'var(--amber)'   },
-    { label: 'Economics',  icon: 'ti-coin',          color: 'var(--pink)'    }
+  var dimensions = [
+    {
+      label:    'Quality',
+      icon:     'ti-star',
+      color:    'var(--accent)',
+      question: 'Does the AI output meet or exceed analyst accuracy on the same sample?'
+    },
+    {
+      label:    'Control',
+      icon:     'ti-shield-check',
+      color:    'var(--green)',
+      question: 'Is every AI decision traceable to a named human approval gate?'
+    },
+    {
+      label:    'Adoption',
+      icon:     'ti-users',
+      color:    'var(--cyan)',
+      question: 'Do the people who must use this actually use it on real work?'
+    },
+    {
+      label:    'Speed',
+      icon:     'ti-clock',
+      color:    'var(--amber)',
+      question: 'Has end-to-end cycle time improved on the bounded process?'
+    },
+    {
+      label:    'Economics',
+      icon:     'ti-coin',
+      color:    'var(--pink)',
+      question: 'Is cost per successful outcome within the target range?'
+    }
   ];
 
   function build() {
     container.innerHTML = '';
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.style.cssText = 'width:100%;height:100%;overflow:visible;';
-    container.appendChild(svg);
 
-    var w = container.offsetWidth || 400;
-    var h = container.offsetHeight || 220;
-    var cx = w / 2;
-    var cy = h / 2;
-    var r = Math.min(w, h) * 0.35;
-    var nr = 28;
+    // Two-row layout: 3 cards top, central connector row, 2 cards bottom
+    var outer = document.createElement('div');
+    outer.style.cssText = 'display:flex;flex-direction:column;gap:8px;height:100%;padding:12px 16px;justify-content:center;';
 
-    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    // Top row: Quality, Control, Adoption
+    var topRow = document.createElement('div');
+    topRow.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;';
+    [0, 1, 2].forEach(function(i) { topRow.appendChild(makeCard(dimensions[i])); });
+    outer.appendChild(topRow);
 
-    // Draw ring
-    var ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    ring.setAttribute('cx', cx);
-    ring.setAttribute('cy', cy);
-    ring.setAttribute('r', r);
-    ring.setAttribute('fill', 'none');
-    ring.setAttribute('stroke', 'var(--border-1)');
-    ring.setAttribute('stroke-width', '1');
-    ring.setAttribute('stroke-dasharray', '4 6');
-    ring.style.opacity = '0';
-    ring.style.transition = 'opacity 400ms ease';
-    ring.id = 'plRing';
-    svg.appendChild(ring);
+    // Center connector: "Five dimensions that together constitute evidence"
+    var midRow = document.createElement('div');
+    midRow.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 0;';
+    var connLine = document.createElement('div');
+    connLine.className = 'scene-node';
+    connLine.dataset.beat = 'connector';
+    connLine.style.cssText = 'flex:1;height:1px;background:var(--border-1);';
+    var connLabel = document.createElement('div');
+    connLabel.className = 'scene-node';
+    connLabel.dataset.beat = 'center-label';
+    connLabel.style.cssText = 'flex-shrink:0;font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);text-align:center;padding:0 12px;';
+    connLabel.textContent = 'Five dimensions of evidence';
+    var connLine2 = document.createElement('div');
+    connLine2.className = 'scene-node';
+    connLine2.dataset.beat = 'connector';
+    connLine2.style.cssText = 'flex:1;height:1px;background:var(--border-1);';
+    midRow.appendChild(connLine);
+    midRow.appendChild(connLabel);
+    midRow.appendChild(connLine2);
+    outer.appendChild(midRow);
 
-    nodes.forEach(function(node, i) {
-      var angle = (i / nodes.length) * Math.PI * 2 - Math.PI / 2;
-      var x = cx + r * Math.cos(angle);
-      var y = cy + r * Math.sin(angle);
+    // Bottom row: Speed, Economics (centred)
+    var botRow = document.createElement('div');
+    botRow.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:66%;margin:0 auto;width:100%;';
+    [3, 4].forEach(function(i) { botRow.appendChild(makeCard(dimensions[i])); });
+    outer.appendChild(botRow);
 
-      var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      g.className.baseVal = 'proof-node';
-      g.dataset = {};
-      g.setAttribute('data-node-idx', i);
-      g.style.cssText = 'opacity:0;transition:opacity 400ms ease';
-
-      var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('cx', x);
-      circle.setAttribute('cy', y);
-      circle.setAttribute('r', nr);
-      circle.setAttribute('fill', 'var(--surface-1)');
-      circle.setAttribute('stroke', node.color);
-      circle.setAttribute('stroke-width', '1.5');
-      g.appendChild(circle);
-
-      var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      text.setAttribute('x', x);
-      text.setAttribute('y', y + 4);
-      text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('font-family', '"Space Grotesk", sans-serif');
-      text.setAttribute('font-size', '14');
-      text.setAttribute('font-weight', '600');
-      text.setAttribute('fill', node.color);
-      text.textContent = node.label;
-      g.appendChild(text);
-
-      svg.appendChild(g);
-    });
-
-    // Central label
-    var cLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    cLabel.setAttribute('x', cx);
-    cLabel.setAttribute('y', cy + 4);
-    cLabel.setAttribute('text-anchor', 'middle');
-    cLabel.setAttribute('font-family', '"JetBrains Mono", monospace');
-    cLabel.setAttribute('font-size', '12');
-    cLabel.setAttribute('letter-spacing', '0.06em');
-    cLabel.setAttribute('fill', 'var(--text-3)');
-    cLabel.style.cssText = 'opacity:0;transition:opacity 400ms ease';
-    cLabel.id = 'plCenter';
-    cLabel.textContent = 'PROOF';
-    svg.appendChild(cLabel);
+    container.appendChild(outer);
   }
 
-  var steps = [
-    { delay: 300, run: function() {
-      var ring = container.querySelector('#plRing');
-      if (ring) ring.style.opacity = '1';
-    }}
-  ].concat(nodes.map(function(_, i) {
-    return { delay: 700 + i * 900, run: function() {
-      var g = container.querySelector('[data-node-idx="' + i + '"]');
-      if (g) g.style.opacity = '1';
+  function makeCard(dim) {
+    var card = document.createElement('div');
+    card.className = 'scene-node';
+    card.dataset.dimLabel = dim.label;
+    card.style.cssText = 'background:var(--surface-1);border:1px solid ' + dim.color
+      + ';border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;';
+    card.innerHTML =
+      '<div style="display:flex;align-items:center;gap:8px">'
+      + '<i class="ti ' + dim.icon + '" style="font-size:20px;color:' + dim.color + ';flex-shrink:0"></i>'
+      + '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:16px;font-weight:700;color:' + dim.color + '">' + dim.label + '</span>'
+      + '</div>'
+      + '<div style="font-family:\'Inter\',sans-serif;font-size:13px;color:var(--text-2);line-height:1.5">' + dim.question + '</div>';
+    return card;
+  }
+
+  var steps = dimensions.map(function(dim, i) {
+    return { delay: 400 + i * 800, run: function() {
+      var card = container.querySelector('[data-dim-label="' + dim.label + '"]');
+      if (card) card.classList.add('visible');
     }};
-  })).concat([
-    { delay: 700 + nodes.length * 900, run: function() {
-      var c = container.querySelector('#plCenter');
-      if (c) c.style.opacity = '1';
-    }}
-  ]);
+  }).concat([{
+    delay: 400 + dimensions.length * 800,
+    run: function() {
+      container.querySelectorAll('[data-beat="connector"], [data-beat="center-label"]').forEach(function(n) {
+        n.classList.add('visible');
+      });
+    }
+  }]);
 
   var tl = createTimeline(steps);
 
   return {
-    play: function() { build(); tl.play(); },
-    pause: tl.pause,
-    resume: tl.resume,
-    reset: function() { build(); tl.reset(); },
-    finish: function() {
+    play:    function() { build(); tl.play(); },
+    pause:   tl.pause,
+    resume:  tl.resume,
+    reset:   function() { build(); tl.reset(); },
+    finish:  function() {
       build();
-      var ring = container.querySelector('#plRing');
-      if (ring) ring.style.opacity = '1';
-      var ctr = container.querySelector('#plCenter');
-      if (ctr) ctr.style.opacity = '1';
-      container.querySelectorAll('[data-node-idx]').forEach(function(g) { g.style.opacity = '1'; });
+      container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
     },
     destroy: function() { container.innerHTML = ''; tl.destroy(); }
   };

@@ -69,6 +69,68 @@
   padding: 3px 8px;
 }
 
+/* ── Obligation thread ── compact sub-header in screen-hdr (screens 04-09) ── */
+.obligation-thread {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 10px;
+  background: rgba(161,0,255,.07);
+  border: 1px solid rgba(161,0,255,.35);
+  border-radius: 4px;
+  margin: 8px 0 10px;
+  flex-shrink: 0;
+}
+
+.obligation-thread-dot {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.obligation-thread-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.obligation-thread-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.obligation-thread-sep {
+  width: 1px;
+  height: 14px;
+  background: rgba(161,0,255,.25);
+  flex-shrink: 0;
+}
+
+.obligation-thread-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.obligation-thread-status.s-processing { color: var(--cyan);   background: rgba(34,211,238,.08);  }
+.obligation-thread-status.s-mapping    { color: var(--accent); background: rgba(161,0,255,.08);   }
+.obligation-thread-status.s-reviewed   { color: var(--amber);  background: rgba(251,191,36,.08);  }
+.obligation-thread-status.s-approved   { color: var(--green);  background: rgba(52,211,153,.08);  }
+.obligation-thread-status.s-evidenced  { color: var(--green);  background: rgba(52,211,153,.12);  }
+
 /* ── Obligation token ── persistent visual thread across screens ── */
 .obligation-token {
   display: inline-flex;
