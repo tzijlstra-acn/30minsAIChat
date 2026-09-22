@@ -447,6 +447,8 @@ section{height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
   .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1!important;transform:none!important;}
   #bgCanvas{display:none!important;}
+  /* D3 SVG: disable any transition on SVG elements */
+  svg *{transition:none!important;animation:none!important;}
 }
 
 /* ── AI LANDSCAPE READINESS BAR ── */

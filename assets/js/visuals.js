@@ -1035,6 +1035,11 @@ function renderSolutionPortfolio(sec){
   render();
 }
 
+// ── MOTION PREFERENCE ──
+function prefersReducedMotion(){
+  return window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+}
+
 // ── RENDER CONTRACTS ──
 var VISUAL_CONTRACTS={
   solutionPortfolio:'solutionPortfolioArea',
