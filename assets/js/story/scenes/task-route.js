@@ -18,9 +18,9 @@ SceneDirector.register('task-route', function(container, manifest, reduced) {
       row.className = 'scene-node';
       row.style.cssText = 'display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px;';
       row.innerHTML =
-        '<span style="font-size:12.5px;color:var(--text-1)">' + ex.task + '</span>' +
-        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:8.5px;letter-spacing:.06em;color:' + ex.color + ';white-space:nowrap">' + ex.tier + '</span>' +
-        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:8.5px;letter-spacing:.04em;color:var(--text-2);white-space:nowrap">' + ex.pattern + '</span>';
+        '<span style="font-size:15px;color:var(--text-1);line-height:1.4">' + ex.task + '</span>' +
+        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:.06em;color:' + ex.color + ';white-space:nowrap;font-weight:600">' + ex.tier + '</span>' +
+        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:.04em;color:var(--text-2);white-space:nowrap">' + ex.pattern + '</span>';
       list.appendChild(row);
     });
     container.appendChild(list);

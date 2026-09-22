@@ -21,14 +21,14 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
       el.className = 'scene-node';
       el.dataset.stateLabel = s.label;
       el.style.cssText = 'background:var(--surface-1);border:1px solid ' + s.color + ';border-radius:10px;padding:14px;text-align:center;';
-      el.innerHTML = '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;color:' + s.color + ';margin-bottom:6px">' + s.label + '</div><div style="font-size:11px;color:var(--text-2);line-height:1.4">' + s.desc + '</div>';
+      el.innerHTML = '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:18px;font-weight:700;color:' + s.color + ';margin-bottom:8px">' + s.label + '</div><div style="font-size:14px;color:var(--text-2);line-height:1.5">' + s.desc + '</div>';
       statesRow.appendChild(el);
     });
     wrap.appendChild(statesRow);
 
     // Shared platform spine
     var spineLabel = document.createElement('div');
-    spineLabel.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;';
+    spineLabel.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px;';
     spineLabel.textContent = 'Shared platform spine';
     spineLabel.className = 'scene-node';
     spineLabel.dataset.spineLabel = '1';
@@ -40,7 +40,7 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
       var chip = document.createElement('div');
       chip.className = 'scene-node';
       chip.dataset.spineChip = '1';
-      chip.style.cssText = 'background:var(--surface-2);border:1px solid var(--border-1);border-radius:5px;padding:5px 10px;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--text-2);';
+      chip.style.cssText = 'background:var(--surface-2);border:1px solid var(--border-1);border-radius:5px;padding:6px 12px;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--text-2);';
       chip.textContent = s;
       spineRow.appendChild(chip);
     });

@@ -19,7 +19,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
     var hdr = document.createElement('div');
     hdr.className = 'scene-node';
     hdr.dataset.engineHdr = eng.label;
-    hdr.style.cssText = 'font-family:"Space Grotesk",sans-serif;font-size:12px;font-weight:700;color:' + eng.color + ';margin-bottom:10px;line-height:1.3;';
+    hdr.style.cssText = 'font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:' + eng.color + ';margin-bottom:12px;line-height:1.3;';
     hdr.textContent = eng.label;
     col.appendChild(hdr);
 
@@ -27,7 +27,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       var el = document.createElement('div');
       el.className = 'scene-node';
       el.dataset.engineItem = item;
-      el.style.cssText = 'display:flex;align-items:center;gap:7px;margin-bottom:7px;font-size:11.5px;color:var(--text-2);';
+      el.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:14px;color:var(--text-2);line-height:1.4;';
       el.innerHTML = '<i class="ti ti-check" style="color:' + eng.color + ';font-size:12px;flex-shrink:0"></i>' + item;
       col.appendChild(el);
     });

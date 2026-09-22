@@ -18,8 +18,8 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       var el = document.createElement('div');
       el.className = 'ai-stack-layer';
       el.style.cssText = 'width:' + w + ';background:' + layer.color + ';border:1px solid var(--border-1);border-radius:6px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;';
-      el.innerHTML = '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:12px;font-weight:600;color:var(--text-1)">' + layer.label + '</span>' +
-        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.08em;color:' + layer.tagColor + '">' + layer.tag + '</span>';
+      el.innerHTML = '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:600;color:var(--text-1)">' + layer.label + '</span>' +
+        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.08em;color:' + layer.tagColor + '">' + layer.tag + '</span>';
       wrap.appendChild(el);
     });
     container.appendChild(wrap);

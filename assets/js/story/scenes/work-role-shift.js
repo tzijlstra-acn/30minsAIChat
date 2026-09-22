@@ -19,8 +19,8 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
     wrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;height:100%;padding:16px;justify-content:center;';
 
     var hdr = document.createElement('div');
-    hdr.style.cssText = 'display:flex;gap:12px;margin-bottom:4px;font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);';
-    hdr.innerHTML = '<span style="flex:1">Task</span><span style="width:130px">Shifts to</span><span style="width:80px">Pattern</span>';
+    hdr.style.cssText = 'display:flex;gap:12px;margin-bottom:6px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);';
+    hdr.innerHTML = '<span style="flex:1">Task</span><span style="width:160px">Shifts to</span><span style="width:100px">Pattern</span>';
     wrap.appendChild(hdr);
 
     tasks.forEach(function(t, i) {
@@ -28,9 +28,9 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
       row.className = 'scene-node';
       row.style.cssText = 'display:flex;gap:12px;align-items:center;background:var(--surface-1);border:1px solid var(--border-1);border-radius:7px;padding:8px 12px;';
       row.innerHTML =
-        '<span style="flex:1;font-size:12px;color:var(--text-1)">' + t.label + '</span>' +
-        '<span style="width:130px;font-size:11px;color:' + shiftColors[t.shift] + ';font-weight:600">' + t.to + '</span>' +
-        '<span style="width:80px;font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.06em;color:' + shiftColors[t.shift] + '">' + shiftLabels[t.shift] + '</span>';
+        '<span style="flex:1;font-size:14px;color:var(--text-1);line-height:1.4">' + t.label + '</span>' +
+        '<span style="width:160px;font-size:14px;color:' + shiftColors[t.shift] + ';font-weight:600;line-height:1.3">' + t.to + '</span>' +
+        '<span style="width:100px;font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.06em;color:' + shiftColors[t.shift] + '">' + shiftLabels[t.shift] + '</span>';
       wrap.appendChild(row);
     });
     container.appendChild(wrap);

@@ -21,7 +21,7 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
       el.className = 'scene-node';
       el.dataset.stepLabel = s.label;
       el.style.cssText = 'background:var(--surface-1);border:1px solid ' + s.color + ';border-radius:10px;padding:14px 12px;text-align:center;';
-      el.innerHTML = '<i class="ti ' + s.icon + '" style="font-size:22px;color:' + s.color + ';display:block;margin-bottom:6px"></i><div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.1em;color:' + s.color + ';font-weight:700;margin-bottom:4px">' + s.label + '</div><div style="font-size:11px;color:var(--text-2);line-height:1.4">' + s.desc + '</div>';
+      el.innerHTML = '<i class="ti ' + s.icon + '" style="font-size:26px;color:' + s.color + ';display:block;margin-bottom:8px"></i><div style="font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:.1em;color:' + s.color + ';font-weight:700;margin-bottom:6px">' + s.label + '</div><div style="font-size:14px;color:var(--text-2);line-height:1.5">' + s.desc + '</div>';
       pathRow.appendChild(el);
 
       if (i < steps_data.length - 1) {
@@ -38,7 +38,7 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
     var gateEl = document.createElement('div');
     gateEl.className = 'scene-node';
     gateEl.dataset.gateEl = '1';
-    gateEl.style.cssText = 'background:rgba(0,200,100,.06);border:1px solid var(--green);border-radius:8px;padding:12px 16px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.06em;color:var(--green);text-align:center;';
+    gateEl.style.cssText = 'background:rgba(0,200,100,.06);border:1px solid var(--green);border-radius:8px;padding:14px 20px;font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:.06em;color:var(--green);text-align:center;font-weight:600;';
     gateEl.textContent = gate;
     wrap.appendChild(gateEl);
 

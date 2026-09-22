@@ -19,7 +19,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
       var card = document.createElement('div');
       card.className = 'pressure-card';
       card.style.cssText = 'background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;padding:12px 14px;transition-delay:' + (i * 0) + 'ms';
-      card.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><i class="ti ' + p.icon + '" style="color:var(--accent);font-size:16px"></i><span style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1)">' + p.label + '</span></div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">' + p.sub + '</div>';
+      card.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><i class="ti ' + p.icon + '" style="color:var(--accent);font-size:20px"></i><span style="font-family:\'Space Grotesk\',sans-serif;font-size:16px;font-weight:700;color:var(--text-1)">' + p.label + '</span></div><div style="font-size:14px;color:var(--text-2);line-height:1.5">' + p.sub + '</div>';
       cardsCol.appendChild(card);
     });
 

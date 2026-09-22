@@ -20,7 +20,7 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       row.style.cssText = 'display:flex;align-items:center;gap:10px;';
 
       var label = document.createElement('div');
-      label.style.cssText = 'width:160px;font-size:11px;color:var(--text-2);flex-shrink:0;text-align:right;';
+      label.style.cssText = 'width:190px;font-size:14px;color:var(--text-2);flex-shrink:0;text-align:right;line-height:1.3;';
       label.textContent = s.label;
 
       var barWrap = document.createElement('div');
@@ -33,7 +33,7 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       barWrap.appendChild(bar);
 
       var pct = document.createElement('div');
-      pct.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:8.5px;color:' + s.color + ';width:32px;text-align:right;opacity:0;transition:opacity 300ms ease;';
+      pct.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:12px;color:' + s.color + ';width:38px;text-align:right;opacity:0;transition:opacity 300ms ease;font-weight:600;';
       pct.textContent = Math.round(s.relative * 100) + '%';
       pct.dataset.pctIdx = i;
 

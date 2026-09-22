@@ -22,7 +22,7 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       el.className = 'tr-block';
       el.dataset.blockId = b.id;
       el.style.cssText = 'background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;';
-      el.innerHTML = '<i class="ti ' + b.icon + '" style="font-size:20px;color:' + b.color + '"></i><span style="font-family:\'Space Grotesk\',sans-serif;font-size:11px;font-weight:600;color:var(--text-1);line-height:1.3">' + b.label + '</span>';
+      el.innerHTML = '<i class="ti ' + b.icon + '" style="font-size:24px;color:' + b.color + '"></i><span style="font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);line-height:1.3">' + b.label + '</span>';
       grid.appendChild(el);
     });
     container.appendChild(grid);

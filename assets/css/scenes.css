@@ -1,4 +1,13 @@
-/* ── SCENES.CSS ── V13 scene layout and animation classes ── */
+/* ── SCENES.CSS ── V14 scene layout, typography and animation classes ── */
+
+/* ── Typography scale (V14 minimums) ──
+   Core titles:   42-58px  (handled by .slide-h in pitch.css)
+   Subtitles:     20-26px  (handled by .slide-sub in pitch.css)
+   Scene titles:  20-28px  → .v14-scene-title
+   Scene labels:  14-18px  → .v14-label
+   Support text:  14px min → .v14-body
+   Dense grids:   12px ok for supporting cell text in a labelled table
+*/
 
 /* Screen layout */
 .scene-screen {
@@ -29,7 +38,7 @@
   flex-shrink: 0;
   margin-top: 12px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: .07em;
   color: var(--text-3);
   line-height: 1.5;
@@ -50,7 +59,7 @@
   margin-top: 8px;
   display: inline-block;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: .09em;
   text-transform: uppercase;
   color: var(--amber, #F59E0B);
@@ -60,7 +69,78 @@
   padding: 3px 8px;
 }
 
-/* Scene entry animation classes */
+/* ── Obligation token ── persistent visual thread across screens ── */
+.obligation-token {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(161,0,255,.07);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.obligation-token-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.obligation-token-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+  line-height: 1.2;
+}
+
+.obligation-token-status {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.obligation-token-status.s-extracting { color: var(--cyan); background: rgba(34,211,238,.08); }
+.obligation-token-status.s-mapping    { color: var(--accent); background: rgba(161,0,255,.08); }
+.obligation-token-status.s-reviewed   { color: var(--amber); background: rgba(251,191,36,.08); }
+.obligation-token-status.s-approved   { color: var(--green); background: rgba(52,211,153,.08); }
+.obligation-token-status.s-evidenced  { color: var(--green); background: rgba(52,211,153,.12); }
+
+/* ── V14 typography helpers ── */
+.v14-scene-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -.01em;
+  line-height: 1.1;
+}
+
+.v14-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.v14-body {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+/* ── Scene entry animation classes ── */
 .scene-node {
   opacity: 0;
   transition: opacity 400ms ease;
@@ -124,6 +204,17 @@
   transform: scale(1);
 }
 
+/* Obligation pill in process grid */
+.obligation-pill {
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+.obligation-pill.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 /* Transformation blocks */
 .tr-block {
   opacity: 0;
@@ -146,12 +237,12 @@
 
 /* Cost station bars */
 .cost-station-bar {
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 500ms ease;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 600ms ease;
 }
 .cost-station-bar.visible {
-  transform: scaleY(1);
+  transform: scaleX(1);
 }
 
 /* Nav scene controls */
@@ -170,12 +261,15 @@
   display: none;
 }
 
-/* Print hide: hide scene stages and show static content for print */
+/* Print: hide scene stages, reveal static content */
 @media print {
   .scene-stage {
     display: none;
   }
   .evidence-badge {
     display: block;
+  }
+  .obligation-token {
+    display: none;
   }
 }

@@ -63,7 +63,7 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
       text.setAttribute('y', y + 4);
       text.setAttribute('text-anchor', 'middle');
       text.setAttribute('font-family', '"Space Grotesk", sans-serif');
-      text.setAttribute('font-size', '11');
+      text.setAttribute('font-size', '14');
       text.setAttribute('font-weight', '600');
       text.setAttribute('fill', node.color);
       text.textContent = node.label;
@@ -78,7 +78,7 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
     cLabel.setAttribute('y', cy + 4);
     cLabel.setAttribute('text-anchor', 'middle');
     cLabel.setAttribute('font-family', '"JetBrains Mono", monospace');
-    cLabel.setAttribute('font-size', '9');
+    cLabel.setAttribute('font-size', '12');
     cLabel.setAttribute('letter-spacing', '0.06em');
     cLabel.setAttribute('fill', 'var(--text-3)');
     cLabel.style.cssText = 'opacity:0;transition:opacity 400ms ease';
