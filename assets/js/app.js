@@ -84,6 +84,7 @@ window.addEventListener('DOMContentLoaded',function(){
     var pCard=e.target.closest('[data-pid]');
     if(pCard){
       togglePressure(pCard.dataset.pid);
+      if(typeof store!=='undefined')store.dispatch({type:'TOGGLE_PRESSURE',payload:pCard.dataset.pid});
       document.querySelectorAll('[data-pid]').forEach(function(c){
         var p=c.dataset.pid;
         c.classList.toggle('selected',CLIENT_STATE.pressures.indexOf(p)>-1);

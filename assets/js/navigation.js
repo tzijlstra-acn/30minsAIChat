@@ -25,7 +25,7 @@ function buildChapterTabs(){
   var coreChapters=chapterMap.filter(function(c){return c.id!=='reference';});
   navCh.innerHTML=coreChapters.map(function(c){
     return '<button class="nav-ch-btn" data-chid="'+c.id+'" onclick="goToIndex('+c.firstIdx+')" title="'+c.title+'">'+c.title+'</button>';
-  }).join('')+'<button class="nav-ch-btn" data-chid="reference" onclick="goToId(\'app-caps\')" title="Reference">Ref</button>';
+  }).join('')+'<button class="nav-ch-btn" data-chid="reference" onclick="goToId(\'ref-room\')" title="Reference room">Ref</button>';
 }
 
 function buildAgendaDrawer(){

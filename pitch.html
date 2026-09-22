@@ -443,7 +443,7 @@
       <button class="sec-opt" onclick="exportSessionJSON()"><i class="ti ti-download"></i>Export session JSON</button>
       <a class="sec-opt" href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI: next steps"><i class="ti ti-mail"></i>Email next steps</a>
       <button class="sec-opt" onclick="resetSession()"><i class="ti ti-refresh"></i>Reset session</button>
-      <button class="sec-opt" onclick="goToId('app-caps')"><i class="ti ti-book"></i>Open reference</button>
+      <button class="sec-opt" onclick="goToId('ref-room')"><i class="ti ti-book"></i>Open reference room</button>
     </div>
   </div>
 </section>
@@ -451,6 +451,19 @@
 <!-- ══════════════════════════════════════════════════════
      REFERENCE ROOM (excluded from core counter)
 ══════════════════════════════════════════════════════ -->
+
+<!-- REF-INDEX · REFERENCE ROOM ENTRY -->
+<section id="ref-room" data-slide data-route="reference" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Reference room" data-render="refRoom">
+  <div class="inner">
+    <div class="sec-tag reveal">Reference Room</div>
+    <h2 class="slide-h reveal">Reference room.</h2>
+    <p class="slide-sub reveal">Supporting material excluded from the core conversation counter. Search by keyword or browse by group.</p>
+    <div class="ref-search-wrap reveal" style="margin-top:16px">
+      <input id="refSearch" type="search" class="ref-search-input" placeholder="Search reference material..." oninput="filterRefCards(this.value)" autocomplete="off">
+    </div>
+    <div id="refCardGrid" class="ref-card-grid" style="margin-top:14px"></div>
+  </div>
+</section>
 
 <!-- REF · PRESSURE-TO-PROOF BRIDGE -->
 <section id="pressure-to-proof" data-slide data-route="reference"

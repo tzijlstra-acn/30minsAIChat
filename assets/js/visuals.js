@@ -1962,7 +1962,58 @@ function safeRender(fn,sec){
 }
 
 // ── RENDER REGISTRY ──
+// ── REFERENCE ROOM INDEX ──
+var REF_GROUPS=[
+  {id:'risk-function-model',label:'Risk function model',screens:[
+    {id:'pressure-to-proof',title:'From pressure to proof',desc:'Four-stage bridge: pressure to capability to proof candidate.'},
+    {id:'how-blocks-built',title:'How blocks are designed',desc:'Five-stage evidence pipeline underlying each transformation block.'},
+    {id:'maturity-matrix',title:'Maturity matrix',desc:'Set current and target maturity across eight transformation blocks.'}
+  ]},
+  {id:'opportunity-catalogue',label:'Opportunity catalogue',screens:[
+    {id:'opportunity-portfolio',title:'AI opportunity patterns',desc:'Twenty AI opportunity patterns across the risk function.'},
+    {id:'solution-portfolio',title:'Source-backed solutions',desc:'28 solutions across seven practice clusters.'}
+  ]},
+  {id:'reference-detail',label:'Reference detail',screens:[
+    {id:'app-caps',title:'47 capability catalogue',desc:'Full catalogue with outcome statements and mapped AI opportunities.'},
+    {id:'app-blocks',title:'Transformation block detail',desc:'Design rationale for the eight transformation blocks.'},
+    {id:'app-maturity',title:'Maturity level definitions',desc:'Five maturity levels and what each requires.'},
+    {id:'app-evidence',title:'Evidence requirements',desc:'What evidence is needed before AI can be proved.'},
+    {id:'app-method',title:'Methodology principles',desc:'Lean client entry: three gates.'},
+    {id:'app-usecases',title:'Use case inventory',desc:'Full use case inventory.'},
+    {id:'app-kpis',title:'KPI library',desc:'Proof KPIs: what to measure and how.'},
+    {id:'app-rai',title:'Responsible AI checklist',desc:'Minimum checklist for risk use cases.'},
+    {id:'app-arch',title:'Architecture reference',desc:'Technology patterns by use case tier.'},
+    {id:'app-assets',title:'NFR AI Assets portal',desc:'Source assets and frameworks.'},
+    {id:'app-assumptions',title:'Assumptions and disclaimers',desc:'Assumptions, sources, and disclaimers.'},
+    {id:'app-team',title:'Team and credentials',desc:'The delivery team.'}
+  ]}
+];
+
+function renderRefRoom(sec){
+  var grid=sec.querySelector('#refCardGrid');if(!grid)return;
+  function buildCards(query){
+    var q=(query||'').toLowerCase().trim();
+    grid.innerHTML=REF_GROUPS.map(function(g){
+      var filtered=g.screens.filter(function(s){
+        return !q||s.title.toLowerCase().indexOf(q)>-1||s.desc.toLowerCase().indexOf(q)>-1;
+      });
+      if(!filtered.length)return '';
+      return '<div class="ref-group"><div class="ref-group-label">'+g.label+'</div>'
+        +'<div class="ref-group-cards">'+filtered.map(function(s){
+          return '<a class="ref-card" href="#'+s.id+'" onclick="goToId(\''+s.id+'\');return false;">'
+            +'<div class="ref-card-title">'+s.title+'</div>'
+            +'<div class="ref-card-desc">'+s.desc+'</div>'
+            +'<div class="ref-card-link"><i class="ti ti-arrow-right" style="font-size:11px"></i> Open</div>'
+            +'</a>';
+        }).join('')+'</div></div>';
+    }).join('');
+  }
+  buildCards('');
+  window.filterRefCards=buildCards;
+}
+
 var renderers={
+  'refRoom':renderRefRoom,
   'solutionPortfolio':renderSolutionPortfolio,
   'pressureToProof':renderPressureToProof,
   'aiLandscape':renderAITaskRouter,

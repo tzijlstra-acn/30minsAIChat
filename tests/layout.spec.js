@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * V11 Layout and Interaction Tests — NFR AI Executive Conversation
+ * V12 Layout and Interaction Tests -- NFR AI Executive Conversation
  * Run: npx playwright test tests/layout.spec.js
  * Pre-requisite: python -m http.server 8080 from repo root
  */
@@ -213,4 +213,79 @@ test('run-economics screen renders', async ({ page }) => {
   await page.evaluate(() => { const el = document.getElementById('run-economics'); if (el) el.scrollIntoView(); });
   await page.waitForTimeout(600);
   await expect(page.locator('#run-economics')).toBeAttached();
+});
+
+// ── V12: ROUTE STRUCTURE ──
+test('V12: exactly 14 core screens', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(500);
+  const coreCount = await page.evaluate(() =>
+    document.querySelectorAll('section[data-slide][data-route="core"]').length
+  );
+  expect(coreCount).toBe(14);
+});
+
+test('V12: process-twin appears before transformation-system in DOM', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const order = await page.evaluate(() => {
+    const ids = Array.from(document.querySelectorAll('section[data-slide]')).map(s => s.id);
+    return { pt: ids.indexOf('process-twin'), ts: ids.indexOf('transformation-system') };
+  });
+  expect(order.pt).toBeLessThan(order.ts);
+});
+
+test('V12: story.json manifest is accessible', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  const res = await page.goto('/assets/data/story.json');
+  expect(res && res.status()).toBe(200);
+  const json = await res.json();
+  expect(json.version).toBe('12');
+  expect(json.screens).toHaveLength(14);
+});
+
+test('V12: reference room section is in DOM and excluded from core', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const refRoom = page.locator('#ref-room');
+  await expect(refRoom).toBeAttached();
+  const route = await refRoom.getAttribute('data-route');
+  expect(route).toBe('reference');
+});
+
+test('V12: candidate token container injected on process-twin screen', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.evaluate(() => { const el = document.getElementById('process-twin'); if (el) el.scrollIntoView(); });
+  await page.waitForTimeout(600);
+  const token = page.locator('#process-twin .v12-candidate-token');
+  await expect(token).toBeAttached();
+});
+
+test('V12: nfr:themechange event fires on theme toggle', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const fired = await page.evaluate(() => {
+    return new Promise(resolve => {
+      document.addEventListener('nfr:themechange', function(e) { resolve(e.detail.theme); }, { once: true });
+      if (typeof toggleTheme !== 'undefined') toggleTheme();
+      else resolve(null);
+    });
+  });
+  expect(fired).toMatch(/^(light|dark)$/);
+});
+
+test('V12: no hard-coded hex colors in core section inner HTML', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const hexInCore = await page.evaluate(() => {
+    const coreSecs = document.querySelectorAll('section[data-route="core"] .inner');
+    let found = [];
+    coreSecs.forEach(function(sec) {
+      const html = sec.innerHTML;
+      const matches = html.match(/(?:color|background):\s*#[0-9A-Fa-f]{3,6}/g);
+      if (matches) found = found.concat(matches);
+    });
+    return found;
+  });
+  expect(hexInCore, 'Hard-coded hex colors found in core sections').toHaveLength(0);
 });
