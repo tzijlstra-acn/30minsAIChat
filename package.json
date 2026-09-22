@@ -1,0 +1,16 @@
+{
+  "name": "nfr-ai-pitch",
+  "version": "9.0.0",
+  "private": true,
+  "description": "NFR AI Executive Conversation pitch — layout and quality tests",
+  "scripts": {
+    "test": "playwright test",
+    "test:layout": "playwright test tests/layout.spec.js",
+    "serve": "python -m http.server 8080",
+    "lint-copy": "python scripts/lint-copy.py",
+    "check-emdash": "python scripts/check-emdash.py"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  }
+}
