@@ -1408,7 +1408,7 @@ function cycleMaturity(blockId,levelId){
   if(sec)renderMaturityMatrix(sec);
 }
 
-// ── TAKEAWAY / DECISION (Screen 18) ──
+// ── TAKEAWAY / DECISION (Screen 18) -- Phase 9: ambition + live synthesis canvas ──
 function renderTakeaway(sec){
   function setTa(id,val){var e=sec.querySelector('#'+id);if(e)e.textContent=val||'';}
   var pLabels={'reg-vol':'Regulatory volume and change','cost-cap':'Cost and capacity pressure','frag-data':'Fragmented risk and control data','slow-dec':'Slow decisions and reporting','ctrl-ev':'Control effectiveness and evidence','ai-gov':'AI governance and model risk'};
@@ -1417,13 +1417,46 @@ function renderTakeaway(sec){
   var selCaps=CLIENT_STATE.selectedCapabilityIds.map(getCapabilityById).filter(Boolean);
   setTa('ta-caps',selCaps.map(function(c){return c.name;}).join(', ')||'Select capabilities on screen 07');
   var proofCap=CLIENT_STATE.proofCapabilityId?getCapabilityById(CLIENT_STATE.proofCapabilityId):null;
-  setTa('ta-proof',proofCap?proofCap.name:'Not yet selected');
+  // Also try as use case id (Phase 5+ sets proofCandidateId to a use case id)
+  var state=(typeof store!=='undefined')?store.getState():null;
+  var proofUCById=null;
+  if(state&&state.proofCandidateId&&typeof USE_CASES!=='undefined'){
+    proofUCById=USE_CASES.find(function(u){return u.id===state.proofCandidateId;});
+  }
+  setTa('ta-proof',proofUCById?proofUCById.name:(proofCap?proofCap.name:'Not yet selected'));
   var proofUC=CLIENT_STATE.proofUseCaseId?getUseCaseById(CLIENT_STATE.proofUseCaseId):null;
   setTa('ta-usecase',proofUC?proofUC.name:'Not yet selected');
-  // Maturity gaps
   var gaps=TRANSFORMATION_BLOCKS.filter(function(b){return CLIENT_STATE.maturity[b.id]&&CLIENT_STATE.targetMaturity[b.id]&&CLIENT_STATE.maturity[b.id]!==CLIENT_STATE.targetMaturity[b.id];}).map(function(b){var cur=MATURITY_LEVELS.find(function(l){return l.id===CLIENT_STATE.maturity[b.id];});var tgt=MATURITY_LEVELS.find(function(l){return l.id===CLIENT_STATE.targetMaturity[b.id];});return b.name+': '+(cur?cur.label:'?')+' to '+(tgt?tgt.label:'?');});
   setTa('ta-gaps',gaps.join('; ')||'Set current and target state on screen 06');
   setTa('ta-decisions',CLIENT_STATE.openDecisions.map(function(d){return d.text;}).join('\n')||'None recorded');
+
+  // ── Live synthesis canvas ──
+  var canvas=sec.querySelector('#synthCanvas');
+  if(!canvas||typeof selectSynthesis==='undefined')return;
+  var syn=selectSynthesis(state||{});
+  var NEXT_LABELS={
+    'run-proof':'Define the proof plan and confirm baseline metrics.',
+    'select-candidate':'Select a proof candidate on screen 09 (working candidate set).',
+    'select-capabilities':'Select capabilities relevant to your context on screen 07.'
+  };
+  var ARC_LABELS={'proof':'Proof mode: narrow scope, quick learning cycle','pilot':'Pilot mode: controlled deployment with expanded scope','scale':'Full scale: production deployment across the function'};
+  var GATE_LABELS={'not-configured':'Not yet configured','in-evidence-assembly':'In evidence assembly','gate-ready':'Gate ready','approved-to-pilot':'Approved to pilot'};
+  var ambLbl={'prove-one-use-case':'Prove one use case','scale-across-function':'Scale across function','transform-operating-model':'Transform operating model'};
+  var ambition=(state&&state.maturity&&state.maturity.ambition)||'prove-one-use-case';
+  canvas.innerHTML='<div class="synth-canvas">'
+    +'<div class="synth-hd"><span>Live session synthesis</span><span class="status-badge '+(syn.isIllustrative?'status-illustrative':'status-live')+'">'+( syn.isIllustrative?'ILLUSTRATIVE':'LIVE')+'</span></div>'
+    +'<div class="synth-grid">'
+    +'<div class="synth-row"><div class="synth-item-lbl">Ambition</div><div class="synth-item-val '+(ambition!=='prove-one-use-case'?'synth-highlight':'')+'">'+( ambLbl[ambition]||ambition)+'</div></div>'
+    +'<div class="synth-row"><div class="synth-item-lbl">Architecture mode</div><div class="synth-item-val">'+(ARC_LABELS[syn.architectureMode]||syn.architectureMode)+'</div></div>'
+    +'<div class="synth-row"><div class="synth-item-lbl">Gate status</div><div class="synth-item-val">'+(GATE_LABELS[syn.gateStatus]||syn.gateStatus)+'</div></div>'
+    +(syn.maturityGaps.length?'<div class="synth-row"><div class="synth-item-lbl">Transformation gaps</div><div class="synth-item-val synth-warn">'
+      +syn.maturityGaps.slice(0,3).map(function(g){return g.blockName;}).join(', ')+(syn.maturityGaps.length>3?' + '+(syn.maturityGaps.length-3)+' more':'')
+    +'</div></div>':'')
+    +'<div class="synth-row"><div class="synth-item-lbl">Cost per successful case</div><div class="synth-item-val">'+(syn.unitEconomics&&syn.unitEconomics.costPerSuccessful?'$'+syn.unitEconomics.costPerSuccessful.toFixed(2):'not yet modelled')+'</div></div>'
+    +'</div>'
+    +'<div class="synth-next-action"><div class="synth-next-lbl">Recommended next action</div>'
+    +'<div class="synth-next-val">'+( NEXT_LABELS[syn.nextAction]||syn.nextAction)+'</div></div>'
+  +'</div>';
 }
 
 // ── APPENDIX CAPABILITIES ──
@@ -1950,6 +1983,14 @@ document.addEventListener('nfr:statechange',function(e){
   // Eco stations: re-render on economics param changes
   if(action.type==='SET_ECONOMICS_PARAM'){
     if(typeof renderEcoStations==='function')renderEcoStations();
+  }
+  // Synthesis canvas: re-render takeaway on any material state change
+  if(action.type==='SET_MATURITY_AMBITION'||action.type==='SET_ARCHITECTURE_SCALE'||action.type==='SET_PROOF_GATE'||action.type==='SET_PROOF_CANDIDATE'){
+    var taSec=document.getElementById('decision-next-step');
+    if(taSec&&typeof rendered!=='undefined'&&rendered.has(getSlideIndex('decision-next-step'))){
+      rendered.delete(getSlideIndex('decision-next-step'));
+      renderSection(taSec);
+    }
   }
   // Shortlist: re-render on weight changes, lens changes, capability or proof candidate changes
   if(action.type==='UPDATE_CANDIDATE_WEIGHT'||action.type==='SET_LENS'||action.type==='TOGGLE_CAPABILITY'||action.type==='SET_PROOF_CANDIDATE'){

@@ -412,6 +412,12 @@
     <div class="sec-tag reveal">Commit · 15</div>
     <h2 class="slide-h reveal">A staged transition can limit early commitment.</h2>
     <p class="slide-sub reveal">Run value, lighthouse, foundation, and adoption work in parallel, with explicit gates.</p>
+    <div class="ambition-selector reveal" style="margin-top:14px">
+      <span class="ambition-lbl">Ambition level:</span>
+      <button class="ambition-btn active" data-amb="prove-one-use-case" onclick="document.querySelectorAll('.ambition-btn').forEach(function(b){b.classList.toggle('active',b.dataset.amb===this.dataset.amb);},this);if(typeof store!=='undefined')store.dispatch({type:'SET_MATURITY_AMBITION',payload:'prove-one-use-case'});">Prove one use case</button>
+      <button class="ambition-btn" data-amb="scale-across-function" onclick="document.querySelectorAll('.ambition-btn').forEach(function(b){b.classList.toggle('active',b.dataset.amb===this.dataset.amb);},this);if(typeof store!=='undefined')store.dispatch({type:'SET_MATURITY_AMBITION',payload:'scale-across-function'});">Scale across function</button>
+      <button class="ambition-btn" data-amb="transform-operating-model" onclick="document.querySelectorAll('.ambition-btn').forEach(function(b){b.classList.toggle('active',b.dataset.amb===this.dataset.amb);},this);if(typeof store!=='undefined')store.dispatch({type:'SET_MATURITY_AMBITION',payload:'transform-operating-model'});">Transform operating model</button>
+    </div>
     <div class="ptw-wrap reveal" style="margin-top:18px">
       <!-- Column headers -->
       <div class="ptw-header-row">
@@ -488,6 +494,7 @@
       <div class="ta-section wide"><div class="ta-label">Maturity gaps identified</div><div class="ta-val" id="ta-gaps">Set current and target state on screen 06</div></div>
       <div class="ta-section wide"><div class="ta-label">Open decisions</div><div class="ta-val" id="ta-decisions">None recorded</div></div>
     </div>
+    <div id="synthCanvas" style="margin-top:14px"></div>
     <div class="ta-actions reveal" style="margin-top:16px">
       <button class="sec-opt" onclick="copyTakeaway()"><i class="ti ti-copy"></i>Copy summary</button>
       <button class="sec-opt" onclick="exportSessionJSON()"><i class="ti ti-download"></i>Export session JSON</button>

@@ -810,6 +810,23 @@ body[data-mode="explain"] .explain-only{display:block;}
 .ras-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;}
 .ras-val{font-size:14px;font-weight:600;color:var(--accent);min-width:32px;}
 
+/* ── PHASE 9: AMBITION SELECTOR + SYNTHESIS CANVAS ── */
+.ambition-selector{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;}
+.ambition-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;}
+.ambition-btn{padding:6px 14px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .14s,color .14s,border-color .14s;}
+.ambition-btn.active{background:var(--accent-soft);border-color:rgba(161,0,255,.4);color:var(--accent);font-weight:700;}
+.synth-canvas{background:var(--surface-2);border:1px solid var(--border-1);border-radius:10px;padding:14px 16px;}
+.synth-hd{display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.synth-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.synth-row{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;}
+.synth-item-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.06em;min-width:180px;text-transform:uppercase;}
+.synth-item-val{font-size:14px;color:var(--text-1);line-height:1.4;}
+.synth-highlight{color:var(--accent);font-weight:600;}
+.synth-warn{color:var(--amber);font-weight:600;}
+.synth-next-action{background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px;}
+.synth-next-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+.synth-next-val{font-size:14px;color:var(--text-1);line-height:1.5;}
+
 /* ── PHASE 8: ECO COST STATIONS ── */
 .eco-stations{background:var(--surface-2);border:1px solid var(--border-1);border-radius:10px;padding:12px 14px;}
 .eco-stations-hd{display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;flex-wrap:wrap;gap:4px;}
