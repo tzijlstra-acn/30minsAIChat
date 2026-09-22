@@ -338,7 +338,7 @@ function renderAITaskRouter(sec){
 
   function openATRDrawer(station){
     var tabs=[
-      {id:'bestfit',label:'Best fit',html:'<div class="drawer-section"><div class="dr-q">'+station.name+'</div><div class="dr-h">Best fit for</div><div class="dr-body">'+station.bestFit+'</div><div class="dr-h" style="margin-top:10px">Description</div><div class="dr-body">'+station.desc+'</div></div>'},
+      {id:'bestfit',label:'Typical fit',html:'<div class="drawer-section"><div class="dr-q">'+station.name+'</div><div class="dr-h">Typical fit for</div><div class="dr-body">'+station.bestFit+'</div><div class="dr-h" style="margin-top:10px">Description</div><div class="dr-body">'+station.desc+'</div></div>'},
       {id:'poorfit',label:'Poor fit',html:'<div class="drawer-section"><div class="dr-h">Poor fit for</div><div class="dr-body">'+station.poorFit+'</div></div>'},
       {id:'control',label:'Control profile',html:'<div class="drawer-section"><div class="dr-h">Control considerations</div><div class="dr-body">'+station.controlProfile+'</div></div>'},
       {id:'evidence',label:'Evidence needed',html:'<div class="drawer-section"><div class="dr-h">Evidence to track</div><div class="dr-body">'+station.evidenceNeeded+'</div></div>'},
@@ -662,7 +662,7 @@ function updateCapConsequences(){
   var strip=document.getElementById('cap-consequence-strip');if(!strip)return;
   var sel=CLIENT_STATE.selectedCapabilityIds;
   if(!sel||!sel.length){
-    strip.innerHTML='<div class="cap-empty-state"><i class="ti ti-hand-click" style="margin-right:6px;opacity:.6"></i>Select capabilities relevant to your context. Your selections will drive the candidate set below.</div>';
+    strip.innerHTML='<div class="cap-empty-state"><i class="ti ti-hand-click" style="margin-right:6px;opacity:.6"></i>Select capabilities relevant to your context. Your selections drive the candidate set below.</div>';
     return;
   }
   var oppCount=0;
