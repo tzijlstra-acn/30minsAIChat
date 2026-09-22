@@ -142,7 +142,7 @@ var TRANSFORMATION_BLOCKS=[
     kpis:['Data freshness by source','Evidence completeness (%)','Lineage coverage','Knowledge base coverage for priority capabilities']
   },
   {
-    id:'ai-automation-platforms',name:'AI, automation, integration & platforms',icon:'cpu',color:'#FF50C8',position:'foundation-right',
+    id:'ai-automation-platforms',name:'AI, automation, integration & platforms',icon:'cpu',color:'#A100FF',position:'foundation-right',
     executiveQuestion:'Which technology pattern is appropriate, and what shared platform capabilities prevent every team from building its own stack?',
     why:'Without shared platform services, every use case builds its own AI stack, creating cost, security, and governance debt.',
     failureModes:['Multiple disconnected AI tools deployed without governance','No model gateway or routing: every team calls models directly','Evaluation and observability absent until a failure occurs'],
@@ -162,7 +162,7 @@ var TRANSFORMATION_BLOCKS=[
     kpis:['Capacity captured (%age of freed time redeployed)','Adoption rate','Human gate completion rate','Skills gap closure']
   },
   {
-    id:'governance-security',name:'Governance, security, resilience & assurance',icon:'shield',color:'#EF4444',position:'rail-left',
+    id:'governance-security',name:'Governance, security, resilience & assurance',icon:'shield',color:'#B46A00',position:'rail-left',
     executiveQuestion:'What must be proven before autonomy increases?',
     why:'Without proportionate governance, AI in risk functions creates new model risk, accountability gaps, and regulatory exposure.',
     failureModes:['AI models deployed without validation or documented accountability','Agent access not controlled: can act beyond intended scope','No audit trail for AI-assisted decisions presented to regulators'],
