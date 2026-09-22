@@ -490,6 +490,17 @@ section{height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;
 .prov-expert-validated{background:rgba(15,138,98,.15);color:#0F8A62;}
 .prov-source-backed{background:rgba(14,116,144,.15);color:#0E7490;}
 
+/* ── TRANSFORMATION SYSTEM PATH MODE ── */
+.trsys-path-banner{display:flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(161,0,255,.09);border:1px solid rgba(161,0,255,.25);border-radius:8px;margin-bottom:8px;font:12px/1.4 'Space Grotesk',sans-serif;color:var(--accent);}
+.trsys-path-banner i{flex-shrink:0;}
+.trsys-path-banner strong{color:var(--text-1);}
+.trsys-path-clear{margin-left:auto;display:flex;align-items:center;gap:4px;font:11px/1 Inter,sans-serif;color:var(--text-3);background:none;border:1px solid var(--border-1);border-radius:5px;padding:4px 8px;cursor:pointer;transition:color .15s,border-color .15s;}
+.trsys-path-clear:hover{color:var(--text-1);border-color:rgba(255,255,255,.25);}
+
+/* ── EVIDENCE FLOW DIAGRAM ── */
+.ef-node{transition:opacity .2s;}
+.ef-node:hover rect{fill-opacity:0.25 !important;}
+
 /* ── PROVABILITY FRONTIER SVG ── */
 .pf-svg-wrap{position:relative;width:100%;}
 .pf-tooltip{position:absolute;background:var(--surface-2);border:1px solid rgba(161,0,255,.35);border-radius:8px;padding:8px 12px;pointer-events:none;z-index:10;max-width:220px;transform:translateX(-50%);box-shadow:0 4px 20px rgba(0,0,0,.4);}
