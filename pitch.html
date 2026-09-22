@@ -60,13 +60,13 @@
       <div class="agenda-tab-panel" data-panel="story" id="agendaStory"></div>
       <div class="agenda-tab-panel" data-panel="questions" id="agendaQuestions"></div>
       <div class="agenda-tab-panel" data-panel="deepdives">
-        <div style="padding:18px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Deep dives available</p><p style="font-size:13px;color:var(--text-2);line-height:1.6">Click any transformation block or capability card to open the 5-tab detail drawer: Why it exists / Diagnose / What good looks like / How we change it / Metrics.</p></div>
+        <div style="padding:18px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Deep dives available</p><p style="font-size:13px;color:var(--text-2);line-height:1.6">Transformation blocks and capability cards each carry a 5-tab detail panel: why it exists, how to diagnose, what good looks like, how to change it, and which metrics to track.</p></div>
       </div>
       <div class="agenda-tab-panel" data-panel="method">
         <div style="padding:18px">
           <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Lean client entry: three gates</p>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 1 · Discover</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Select priority blocks and capabilities. Typically no direct client cost at this stage. Output: scoped intent document.</div></div>
+            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 1 · Discover</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Scope priority blocks and capabilities. Typically no direct client cost at this stage. Output: scoped intent document.</div></div>
             <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 2 · Diagnose</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">AI-assisted evidence assembly and maturity scoring. 2&#x2013;4 weeks. Output: maturity baseline and prioritised use case.</div></div>
             <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 3 · Prove</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Lighthouse delivery in a controlled environment with a gate-ready evidence pack and board-ready metrics.</div></div>
           </div>
@@ -87,7 +87,7 @@
 <div class="toast" id="toast"></div>
 
 <!-- ══════════════════════════════════════════════════════
-     CORE SCREENS — V13 (12 screens, presenter-led)
+     CORE SCREENS -- V13 (12 screens, presenter-led)
 ══════════════════════════════════════════════════════ -->
 
 <!-- 00 · COVER -->
@@ -303,7 +303,7 @@
   <div class="inner">
     <div class="sec-tag reveal">Locate the Value · 07</div>
     <h2 class="slide-h reveal">Twenty AI opportunity patterns across the risk function.</h2>
-    <p class="slide-sub reveal">These patterns combine multiple capabilities and transformation blocks. Filtered to your selected capabilities.</p>
+    <p class="slide-sub reveal">These patterns combine multiple capabilities and transformation blocks across the risk function.</p>
     <div id="oppPortfolioArea" style="margin-top:14px"></div>
   </div>
 </section>
@@ -323,12 +323,12 @@
   <div class="inner">
     <div class="sec-tag reveal">Reference · M1</div>
     <h2 class="slide-h reveal">Where are you today, and where do you need to be?</h2>
-    <p class="slide-sub reveal">Click each block row to set current and target maturity. These inform the transformation gap and the intervention sequencing.</p>
+    <p class="slide-sub reveal">Current and target maturity levels indicate where gaps exist and where interventions may be sequenced.</p>
     <div id="maturityTable" style="margin-top:14px"></div>
     <div style="margin-top:10px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
       <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span class="mat-marker mat-c">C</span> Current state</span>
       <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span class="mat-marker mat-t">T</span> Target state (hypothesis)</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)">Click cell to cycle · Click block label to open drawer</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)">Indicative maturity reference</span>
     </div>
   </div>
 </section>

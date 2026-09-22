@@ -630,7 +630,7 @@ function renderCapabilityHotspots(sec){
   area.innerHTML='<div id="cap-consequence-strip" class="cap-consequence-strip"></div><div class="cap-layout"><div class="cap-main"><div class="cap-categories" id="capCatList">'+RISK_CATEGORIES.map(function(cat){
     var selCount=CLIENT_STATE.selectedCapabilityIds.filter(function(id){return cat.caps.indexOf(id)>-1;}).length;
     return '<button class="cap-cat-btn" data-catid="'+cat.id+'" onclick="toggleCatPanel(\''+cat.id+'\')" style="border-color:'+(selCount?cat.color:'var(--border-1)')+'"><i class="ti ti-'+cat.icon+'" style="color:'+cat.color+'"></i><span class="cap-cat-btn-name">'+cat.name+'</span><span class="cap-cat-btn-count">'+cat.caps.length+(selCount?' · '+selCount+' selected':'')+'</span><i class="ti ti-chevron-right cap-cat-chev" id="catChev-'+cat.id+'"></i></button>';
-  }).join('')+'</div><div class="cap-cat-panel" id="capCatPanel" style="display:none"></div></div><div class="cap-sidebar" id="capSidebar"><div class="cap-sel-tray"><div class="cap-sel-tray-h"><span>Selected capabilities</span><span class="cap-sel-badge" id="capSelCount">0 / 5</span></div><div class="cap-sel-chips" id="capSelChips"><div class="cap-empty-msg">Select up to 5 capabilities to build the shortlist.</div></div></div></div></div>';
+  }).join('')+'</div><div class="cap-cat-panel" id="capCatPanel" style="display:none"></div></div><div class="cap-sidebar" id="capSidebar"><div class="cap-sel-tray"><div class="cap-sel-tray-h"><span>Selected capabilities</span><span class="cap-sel-badge" id="capSelCount">0 / 5</span></div><div class="cap-sel-chips" id="capSelChips"><div class="cap-empty-msg">Capabilities will appear here once a category is explored.</div></div></div></div></div>';
   updateCapConsequences();
   updateCapSidebar();
 }
@@ -683,7 +683,7 @@ function updateCapSidebar(){
   var count=document.getElementById('capSelCount');
   var sel=CLIENT_STATE.selectedCapabilityIds;
   if(!chips)return;
-  if(!sel.length){chips.innerHTML='<div class="cap-empty-msg">Select up to 5 capabilities.</div>';}
+  if(!sel.length){chips.innerHTML='<div class="cap-empty-msg">No capabilities selected.</div>';}
   else{chips.innerHTML=sel.map(function(id){var c=getCapabilityById(id);return c?'<div class="cap-sel-chip"><span>'+c.name+'</span><button class="cap-chip-rm" onclick="toggleSelectCap(\''+id+'\')" aria-label="Remove '+c.name+'">×</button></div>':'';}).join('');}
   if(count)count.textContent=sel.length+' / 5';
 }
