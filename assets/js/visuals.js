@@ -789,12 +789,95 @@ function openUseCaseDrawer(ucId){
 function renderAccentureEdge(sec){
   var engineA=sec.querySelector('#engineA');
   var engineB=sec.querySelector('#engineB');
-  var outcomes=sec.querySelector('#edgeOutcomes');
   if(!engineA||!engineB)return;
-  var edgeA=ACCENTURE_EDGE.filter(function(e){return e.engine==='A'||e.engine==='A+B';});
-  var edgeB=ACCENTURE_EDGE.filter(function(e){return e.engine==='B'||e.engine==='A+B';});
-  engineA.innerHTML=edgeA.map(function(e){return '<div class="engine-item"><div class="engine-item-name">'+e.name+'</div><div class="engine-item-effect dr-muted">'+e.clientEffect+'</div><button class="inline-link" onclick="openEdgeDrawer(\''+e.id+'\')">→ How it works</button></div>';}).join('');
-  engineB.innerHTML=edgeB.map(function(e){return '<div class="engine-item"><div class="engine-item-name">'+e.name+'</div><div class="engine-item-effect dr-muted">'+e.clientEffect+'</div><button class="inline-link" onclick="openEdgeDrawer(\''+e.id+'\')">→ How it works</button></div>';}).join('');
+
+  var A=ACCENTURE_EDGE.filter(function(e){return e.engine==='A';});
+  var B=ACCENTURE_EDGE.filter(function(e){return e.engine==='B';});
+  var AB=ACCENTURE_EDGE.filter(function(e){return e.engine==='A+B';});
+
+  if(typeof d3!=='undefined'){
+    // D3 connected diagram replaces the parent .edge-dual div
+    var parent=sec.querySelector('.edge-dual');
+    if(parent){
+      parent.style.display='none';
+      var existing=sec.querySelector('.edge-d3-wrap');
+      if(existing)existing.remove();
+      var wrap=document.createElement('div');
+      wrap.className='edge-d3-wrap';
+      wrap.style.cssText='margin-top:14px;width:100%;';
+      parent.parentNode.insertBefore(wrap,parent.nextSibling);
+      var W=wrap.clientWidth||840,H=260;
+      var svg=d3.select(wrap).append('svg').attr('viewBox','0 0 '+W+' '+H)
+        .attr('width','100%').attr('height',H).attr('role','img').attr('aria-label','Accenture dual-engine model');
+      var COL_A=150,COL_AB=W/2,COL_B=W-150;
+
+      // Node positions
+      var nodes=[];
+      var nodeById={};
+      function addNodes(items,col,color,prefix){
+        var total=items.length;
+        items.forEach(function(e,i){
+          var ny=H/2+(i-(total-1)/2)*70;
+          var n={id:e.id,label:e.name,effect:e.clientEffect,color:color,x:col,y:ny,engine:e.engine};
+          nodes.push(n);nodeById[e.id]=n;
+        });
+      }
+      addNodes(A,COL_A,'#0F8A62');
+      addNodes(AB,COL_AB,'#A100FF');
+      addNodes(B,COL_B,'#0E7490');
+
+      // Edges: A -> AB, B -> AB
+      var edges=[];
+      A.forEach(function(a){AB.forEach(function(ab){edges.push({from:a.id,to:ab.id});});});
+      B.forEach(function(b){AB.forEach(function(ab){edges.push({from:b.id,to:ab.id});});});
+
+      // Column labels
+      [{x:COL_A,label:'ENGINE A',sub:'Transform the function',c:'#0F8A62'},
+       {x:COL_AB,label:'SHARED VALUE',sub:'Realized with both',c:'#A100FF'},
+       {x:COL_B,label:'ENGINE B',sub:'Accelerate delivery',c:'#0E7490'}].forEach(function(col){
+        svg.append('text').attr('x',col.x).attr('y',18).attr('text-anchor','middle')
+          .attr('font-size','8').attr('font-family','JetBrains Mono, monospace').attr('font-weight','700')
+          .attr('fill',col.c).attr('letter-spacing','0.08em').text(col.label);
+        svg.append('text').attr('x',col.x).attr('y',30).attr('text-anchor','middle')
+          .attr('font-size','8').attr('font-family','Inter, sans-serif').attr('fill','rgba(255,255,255,0.4)').text(col.sub);
+      });
+
+      // Edges
+      edges.forEach(function(e){
+        var from=nodeById[e.from],to=nodeById[e.to];if(!from||!to)return;
+        var mx=(from.x+to.x)/2;
+        svg.append('path').attr('d','M'+from.x+','+from.y+' C'+mx+','+from.y+' '+mx+','+to.y+' '+to.x+','+to.y)
+          .attr('fill','none').attr('stroke','rgba(255,255,255,0.1)').attr('stroke-width',1.5);
+      });
+
+      // Nodes
+      nodes.forEach(function(n){
+        var g=svg.append('g').style('cursor','pointer').attr('role','button').attr('tabindex','0').attr('aria-label',n.label);
+        g.append('rect').attr('x',n.x-80).attr('y',n.y-22).attr('width',160).attr('height',44).attr('rx',8)
+          .attr('fill',n.color).attr('fill-opacity',0.12).attr('stroke',n.color).attr('stroke-opacity',0.45).attr('stroke-width',1.5);
+        // Word-wrap label
+        var words=n.label.split(' '),line1=words.slice(0,Math.ceil(words.length/2)).join(' '),line2=words.slice(Math.ceil(words.length/2)).join(' ');
+        svg.append('text').attr('x',n.x).attr('y',n.y-5+(line2?0:5)).attr('text-anchor','middle')
+          .attr('font-size','9.5').attr('font-weight','600').attr('font-family','Space Grotesk, sans-serif').attr('fill',n.color).text(line1);
+        if(line2)svg.append('text').attr('x',n.x).attr('y',n.y+8).attr('text-anchor','middle')
+          .attr('font-size','9.5').attr('font-weight','600').attr('font-family','Space Grotesk, sans-serif').attr('fill',n.color).text(line2);
+        g.on('click',function(){openEdgeDrawer(n.id);})
+         .on('mouseenter',function(){d3.select(this).select('rect').attr('fill-opacity',0.28);})
+         .on('mouseleave',function(){d3.select(this).select('rect').attr('fill-opacity',0.12);})
+         .on('keydown',function(event){if(event.key==='Enter')openEdgeDrawer(n.id);});
+      });
+      // Re-append nodes on top
+      nodes.forEach(function(n){
+        var g=svg.select('g[aria-label="'+n.label+'"]');g.raise();
+      });
+    }
+  } else {
+    // Fallback: text cards
+    var edgeA2=ACCENTURE_EDGE.filter(function(e){return e.engine==='A'||e.engine==='A+B';});
+    var edgeB2=ACCENTURE_EDGE.filter(function(e){return e.engine==='B'||e.engine==='A+B';});
+    engineA.innerHTML=edgeA2.map(function(e){return '<div class="engine-item"><div class="engine-item-name">'+e.name+'</div><div class="engine-item-effect dr-muted">'+e.clientEffect+'</div><button class="inline-link" onclick="openEdgeDrawer(\''+e.id+'\')">→ How it works</button></div>';}).join('');
+    engineB.innerHTML=edgeB2.map(function(e){return '<div class="engine-item"><div class="engine-item-name">'+e.name+'</div><div class="engine-item-effect dr-muted">'+e.clientEffect+'</div><button class="inline-link" onclick="openEdgeDrawer(\''+e.id+'\')">→ How it works</button></div>';}).join('');
+  }
 }
 
 function openEdgeDrawer(edgeId){
@@ -865,23 +948,46 @@ function renderAppCaps(sec){
 }
 
 // ── TEAM ──
+var COUNTERPART_ROLES=[
+  'CRO or Risk Director',
+  'Head of NFR / Operational Risk',
+  'Regulatory Affairs lead',
+  'Chief Data Officer or Data Governance lead',
+  'Head of Internal Controls or GRC',
+  'Head of Financial Crime',
+  'CTO / Chief Architect (Risk Technology)'
+];
+
 function renderTeam(sec){
   var grid=sec.querySelector('#teamGrid');if(!grid)return;
   var visibleTeam=(EXPERTS||[]).filter(function(e){return e.clientVisible!==false;});
-  grid.innerHTML=visibleTeam.map(function(e){
+  grid.innerHTML=visibleTeam.map(function(e,i){
     var initials=e.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2);
     var focusHtml=(e.approvedFocus&&e.approvedFocus.length)?
       '<div class="team-focus">'+e.approvedFocus.map(function(f){return '<span class="etag">'+f+'</span>';}).join('')+'</div>':'';
     var titleHtml=e.approvedTitle?'<div class="expert-title">'+e.approvedTitle+'</div>':'';
-    return '<a class="expert" href="'+(e.mail?'mailto:'+e.mail:'#')+'" aria-label="'+e.name+(e.mail?' ('+e.mail+')':'')+'">'+
-      '<img class="expert-photo" src="'+e.photo+'" alt="'+e.name+'" loading="lazy"'+
-        ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'+
-      '<div class="expert-ph-fallback" style="display:none">'+initials+'</div>'+
-      '<div class="expert-name">'+e.name+'</div>'+
-      titleHtml+
-      focusHtml+
-      (e.mail?'<div class="expert-mail">'+e.mail+'</div>':'')
-    +'</a>';
+    var counterpart=COUNTERPART_ROLES[i]||'Client counterpart (to be confirmed)';
+    return '<div class="delivery-cell-pair">'
+      +'<div class="delivery-cell-acn">'
+        +'<a class="expert" href="'+(e.mail?'mailto:'+e.mail:'#')+'" aria-label="'+e.name+(e.mail?' ('+e.mail+')':'')+'">'+
+          '<img class="expert-photo" src="'+e.photo+'" alt="'+e.name+'" loading="lazy"'+
+            ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'+
+          '<div class="expert-ph-fallback" style="display:none">'+initials+'</div>'+
+          '<div class="expert-name">'+e.name+'</div>'+
+          titleHtml+
+          focusHtml+
+          (e.mail?'<div class="expert-mail">'+e.mail+'</div>':'')
+        +'</a>'
+      +'</div>'
+      +'<div class="delivery-cell-connector"><div class="dcc-line"></div></div>'
+      +'<div class="delivery-cell-client">'
+        +'<div class="client-role-card">'
+          +'<div class="crc-label">Client counterpart</div>'
+          +'<div class="crc-role">'+counterpart+'</div>'
+          +'<div class="crc-note">To be confirmed</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
   }).join('');
 }
 
