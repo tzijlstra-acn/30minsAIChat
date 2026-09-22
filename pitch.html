@@ -1,1672 +1,608 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NFR AI Executive Conversation — Accenture</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NFR AI — Executive Conversation</title>
 <script>if(sessionStorage.getItem('pitch_auth')!=='1'){location.replace('index.html');}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
-<style>
-/* ── THEME TOKENS ── */
-:root,:root[data-theme="light"]{
-  --bg:#FCFBF9;--surface-1:#FFFFFF;--surface-2:#F5F3F1;--surface-3:#EEEAE7;
-  --text-1:#15181C;--text-2:#4C535A;--text-3:#70777F;
-  --border-1:#E1E4E8;--border-2:#C8CDD2;
-  --nav-bg:rgba(252,251,249,.92);--shadow-1:0 8px 28px rgba(21,24,28,.08);
-  --accent:#A100FF;--accent-strong:#7500C0;--accent-soft:rgba(161,0,255,.07);
-  --pink:#FF50C8;--cyan:#0E7490;--green:#0F8A62;--amber:#B46A00;
-  --canvas-op:.022;
-  /* V4 compat aliases */
-  --canvas:var(--bg);--s1:var(--surface-1);--s2:var(--surface-2);
-  --tp:var(--text-1);--ts:var(--text-2);--tm:var(--text-3);
-  --brand:var(--accent);--brandMid:var(--accent-strong);--border:var(--border-1);
-  --radius:10px;--radiusL:16px;
-}
-:root[data-theme="dark"]{
-  --bg:#08081A;--surface-1:#131325;--surface-2:#1A1A30;--surface-3:#23233A;
-  --text-1:#EDE8F7;--text-2:#B5AECF;--text-3:#8D84A6;
-  --border-1:rgba(161,0,255,.22);--border-2:rgba(255,255,255,.14);
-  --nav-bg:rgba(8,0,20,.88);--shadow-1:0 12px 34px rgba(0,0,0,.28);
-  --accent:#C77BFF;--accent-strong:#A100FF;--accent-soft:rgba(161,0,255,.14);
-  --pink:#FF50C8;--cyan:#22D3EE;--green:#34D399;--amber:#FBBF24;
-  --canvas-op:.08;
-  --canvas:var(--bg);--s1:var(--surface-1);--s2:var(--surface-2);
-  --tp:var(--text-1);--ts:var(--text-2);--tm:var(--text-3);
-  --brand:var(--accent);--brandMid:var(--accent-strong);--border:var(--border-1);
-  --radius:10px;--radiusL:16px;--pink:#FF50C8;
-}
-/* ── BASE ── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-snap-type:y mandatory;scroll-behavior:smooth;}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text-1);-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s;}
-h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;}
-.mono{font-family:'JetBrains Mono',monospace;}
-a{color:inherit;text-decoration:none;}
-#bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:var(--canvas-op);transition:opacity .8s ease;}
-/* ── NAV ── */
-.nav{position:fixed;top:0;left:0;right:0;height:56px;z-index:200;display:flex;align-items:center;gap:0;padding:0 20px;background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border-1);}
-.nav-brand{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);flex-shrink:0;}
-.nav-brand svg{width:20px;height:20px;}
-.nav-chapters{display:flex;gap:2px;flex:1;justify-content:center;overflow:hidden;}
-.nav-ch-btn{padding:5px 10px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.07em;background:transparent;border:1px solid transparent;color:var(--text-3);cursor:pointer;transition:background .15s,color .15s,border-color .15s;white-space:nowrap;}
-.nav-ch-btn:hover{background:var(--accent-soft);color:var(--text-1);}
-.nav-ch-btn.active{background:var(--accent-soft);border-color:rgba(161,0,255,.25);color:var(--accent);}
-.nav-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.nav-icon-btn{width:30px;height:30px;border-radius:8px;background:transparent;border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;font-size:15px;}
-.nav-icon-btn:hover{background:var(--accent-soft);color:var(--accent);}
-.counter-wrap{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:70px;}
-.chapter-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;}
-.counter{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);text-align:center;}
-/* ── PROGRESS BAR (mobile) ── */
-.progress-bar{position:fixed;top:56px;left:0;right:0;height:3px;background:var(--border-1);z-index:199;}
-.progress-fill{height:100%;background:var(--accent);transition:width .3s ease;width:0%;}
-/* ── AGENDA DRAWER ── */
-.agenda-overlay{position:fixed;inset:0;z-index:400;display:none;background:rgba(15,15,30,.55);backdrop-filter:blur(4px);}
-.agenda-overlay.open{display:flex;}
-.agenda-drawer{background:var(--bg);border-right:1px solid var(--border-1);width:320px;max-width:90vw;height:100%;display:flex;flex-direction:column;overflow-y:auto;box-shadow:4px 0 32px rgba(0,0,0,.12);}
-.agenda-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border-1);flex-shrink:0;}
-.agenda-hdr-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);}
-.agenda-close-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border-1);background:transparent;color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;}
-.agenda-method-ribbon{display:flex;align-items:center;gap:6px;padding:10px 20px;background:var(--accent-soft);flex-wrap:wrap;flex-shrink:0;}
-.arm-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-right:4px;}
-.arm-pill{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);background:rgba(161,0,255,.1);border:1px solid rgba(161,0,255,.2);border-radius:5px;padding:2px 8px;}
-.arm-sep{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);}
-.agenda-chapters{padding:12px 0;}
-.agenda-chapter{margin-bottom:4px;}
-.agenda-ch-head{display:flex;align-items:center;gap:10px;padding:8px 20px;cursor:pointer;}
-.agenda-ch-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--text-1);}
-.agenda-ch-method{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;}
-.agenda-slides{padding:0 0 4px 36px;}
-.agenda-slide-link{display:flex;align-items:center;gap:8px;padding:5px 20px 5px 0;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);border-radius:6px;transition:background .12s,color .12s;}
-.agenda-slide-link:hover{background:var(--accent-soft);color:var(--accent);}
-.agenda-slide-link.active{color:var(--accent);font-weight:600;}
-.agenda-slide-dot{width:6px;height:6px;border-radius:50%;background:var(--border-2);flex-shrink:0;transition:background .15s;}
-.agenda-slide-link.active .agenda-slide-dot{background:var(--accent);}
-/* ── SECTIONS ── */
-section{height:100vh;overflow-y:auto;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:72px 48px 40px;position:relative;}
-.inner{max-width:1100px;margin:0 auto;width:100%;position:relative;z-index:1;}
-.sec-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--text-3);text-transform:uppercase;margin-bottom:16px;}
-.slide-h{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,4vw,48px);font-weight:700;color:var(--text-1);letter-spacing:-.02em;line-height:1.08;margin-bottom:14px;}
-.slide-sub{font-size:17px;color:var(--text-2);line-height:1.6;margin-bottom:6px;max-width:680px;}
-/* ── ANIMATION ENGINE ── */
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease;}
-.reveal.visible{opacity:1;transform:translateY(0);}
-.reveal-left{opacity:0;transform:translateX(-28px);transition:opacity .55s ease,transform .55s ease;}
-.reveal-left.visible{opacity:1;transform:translateX(0);}
-.reveal-right{opacity:0;transform:translateX(28px);transition:opacity .55s ease,transform .55s ease;}
-.reveal-right.visible{opacity:1;transform:translateX(0);}
-.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .45s ease,transform .45s ease;}
-.reveal-scale.visible{opacity:1;transform:scale(1);}
-/* ── KEYFRAMES ── */
-@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
-@keyframes glow{0%{opacity:.4;}100%{opacity:1;}}
-@keyframes aiGlow{0%,100%{box-shadow:0 0 20px rgba(161,0,255,.12)}50%{box-shadow:0 0 44px rgba(161,0,255,.32)}}
-@keyframes flowPulse{0%,100%{opacity:.4;transform:translateY(0)}50%{opacity:.9;transform:translateY(3px)}}
-@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.2}}
-@keyframes drawLine{from{transform:scaleX(0);}to{transform:scaleX(1);}}
-@keyframes growBar{from{transform:scaleY(0);}to{transform:scaleY(1);}}
-/* ── GRADIENT TEXT ── */
-.grad{background:linear-gradient(100deg,#C77BFF 10%,#FF50C8 90%);-webkit-background-clip:text;background-clip:text;color:transparent;}
-/* ── BRANDED DARK SCREENS ── */
-.branded-dark{background:radial-gradient(130% 140% at 65% -10%,#52088F 0%,#08081A 58%)!important;}
-.branded-dark .slide-h,.branded-dark h1,.branded-dark .hero-h1{color:#fff!important;}
-.branded-dark .slide-sub,.branded-dark .hero-sub{color:rgba(255,255,255,.6)!important;}
-.branded-dark .sec-tag{color:rgba(255,255,255,.35)!important;}
-.branded-dark-alt{background:radial-gradient(130% 140% at 35% 110%,#3D0066 0%,#08081A 55%)!important;}
-/* ── BADGE ILLUSTRATIVE ── */
-.badge-illus{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--text-3);background:var(--surface-2);border:1px solid var(--border-1);border-radius:5px;padding:3px 9px;cursor:pointer;text-decoration:none;}
-.badge-illus:hover{color:var(--accent);border-color:rgba(161,0,255,.3);}
-/* ── COVER (SCREEN 0) ── */
-.hero-inner{display:flex;flex-direction:column;align-items:center;text-align:center;}
-.hero-h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(50px,8vw,92px);font-weight:700;letter-spacing:-.03em;line-height:1.0;color:#fff;}
-.hero-sub{font-family:'Inter',sans-serif;font-size:19px;color:rgba(255,255,255,.58);max-width:620px;margin:26px auto 0;line-height:1.6;}
-.hero-path{display:flex;align-items:center;justify-content:center;gap:0;margin-top:44px;flex-wrap:nowrap;}
-.hp-node{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,.85);white-space:nowrap;}
-.hp-node.checkpoint{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:#34D399;}
-.hp-arrow{color:rgba(161,0,255,.55);font-size:18px;margin:0 6px;flex-shrink:0;}
-.scroll-hint{font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,255,255,.3);margin-top:44px;animation:bob 2.2s ease-in-out infinite;}
-/* ── CONVERGENCE (SCREEN 1) ── */
-.convergence{display:flex;align-items:center;gap:24px;margin-top:28px;}
-.conv-streams{display:flex;flex-direction:column;gap:12px;flex:1;}
-.conv-stream{background:var(--surface-1);border:1px solid var(--border-1);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-1);}
-.conv-stream-icon{font-size:20px;color:var(--accent);flex-shrink:0;}
-.conv-stream-text{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--text-1);line-height:1.25;}
-.conv-arr{color:var(--accent);font-size:28px;flex-shrink:0;animation:flowPulse 2s ease-in-out infinite;}
-.conv-center{background:var(--accent-soft);border:2px solid rgba(161,0,255,.28);border-radius:16px;padding:28px 22px;flex:1;text-align:center;}
-.conv-ctr-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
-.conv-ctr-text{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:var(--text-1);line-height:1.3;}
-.conv-sub{font-family:'Inter',sans-serif;font-size:14px;color:var(--text-2);line-height:1.6;margin-top:16px;max-width:580px;}
-/* ── TECH SPECTRUM (SCREEN 2) ── */
-.tech-spectrum{margin-top:20px;display:flex;flex-direction:column;gap:10px;}
-.tech-axis-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;}
-.tech-bands{display:flex;gap:8px;align-items:stretch;height:260px;}
-.tech-band{flex:1;background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;padding:14px 12px;cursor:pointer;transition:flex .35s ease,border-color .2s,background .2s;overflow:hidden;display:flex;flex-direction:column;gap:8px;}
-.tech-band:hover,.tech-band:focus{border-color:rgba(161,0,255,.4);outline:none;}
-.tech-band.active{flex:2.8;background:var(--accent-soft);border-color:rgba(161,0,255,.4);}
-.tb-icon{font-size:20px;color:var(--accent);}
-.tb-name{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);line-height:1.2;}
-.tb-detail{display:none;flex-direction:column;gap:6px;margin-top:4px;}
-.tech-band.active .tb-detail{display:flex;}
-.tbd-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.09em;color:var(--text-3);text-transform:uppercase;}
-.tbd-val{font-family:'Inter',sans-serif;font-size:11.5px;color:var(--text-2);line-height:1.4;}
-.tech-rails{display:flex;gap:10px;flex-wrap:wrap;background:var(--surface-2);border:1px solid var(--border-1);border-radius:8px;padding:9px 14px;align-items:center;}
-.tech-rails-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.09em;color:var(--text-3);text-transform:uppercase;flex-shrink:0;margin-right:6px;}
-.tech-rail{display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11.5px;color:var(--text-2);}
-.tech-rail::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0;}
-.tech-principle{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--text-2);font-style:italic;text-align:center;padding:4px 0;}
-/* ── AGENDA ROUTE (SCREEN 3) ── */
-.agenda-route{position:relative;margin-top:36px;}
-.ar-track{position:absolute;top:20px;left:calc(100%/14);right:calc(100%/14);height:2px;background:var(--border-1);z-index:0;}
-.ar-track-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--pink));border-radius:1px;transform-origin:left;animation:drawLine 1.2s cubic-bezier(.22,1,.36,1) .4s both;}
-.ar-stages{display:flex;gap:0;position:relative;z-index:1;}
-.ar-stage{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 6px;cursor:pointer;gap:8px;transition:opacity .2s;}
-.ar-stage:hover .ar-dot{transform:scale(1.25);background:var(--accent);border-color:var(--accent);}
-.ar-stage.active-chapter .ar-dot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
-.ar-dot{width:20px;height:20px;border-radius:50%;background:var(--surface-1);border:2px solid var(--border-2);transition:background .2s,border-color .2s,transform .2s,box-shadow .2s;flex-shrink:0;}
-.ar-name{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);line-height:1.2;}
-.ar-output{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.4;}
-.ar-method{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--accent);letter-spacing:.08em;margin-top:2px;}
-/* ── PRESSURE CARDS ── */
-.prs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;}
-.prs-card{background:var(--surface-1);border:1px solid var(--border-1);border-radius:12px;padding:18px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s,box-shadow .2s;position:relative;box-shadow:var(--shadow-1);}
-.prs-card:hover{border-color:rgba(161,0,255,.4);transform:translateY(-2px);box-shadow:0 12px 32px rgba(161,0,255,.1);}
-.prs-card.selected{border-color:rgba(161,0,255,.6);background:var(--accent-soft);}
-.prs-card.selected::after{content:'✓';position:absolute;top:10px;right:12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);}
-.prs-icon{font-size:22px;color:var(--accent);margin-bottom:8px;}
-.prs-label{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text-1);margin-bottom:5px;}
-.prs-desc{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.5;}
-.prs-footer{display:flex;align-items:center;justify-content:space-between;margin-top:18px;}
-.prs-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);}
-/* ── ROLE BARS ── */
-.arch-toggle{display:flex;gap:8px;margin-bottom:18px;}
-.arch-btn{padding:7px 16px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .15s,border-color .15s,color .15s;}
-.arch-btn.active{background:var(--accent-soft);border-color:rgba(161,0,255,.4);color:var(--accent);}
-.roles-table{width:100%;display:flex;flex-direction:column;gap:7px;margin-top:6px;}
-.role-row{display:flex;align-items:center;gap:12px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:9px;padding:9px 14px;transition:border-color .2s;}
-.role-row:hover{border-color:rgba(161,0,255,.3);}
-.role-name{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-1);flex:1;font-weight:500;}
-.role-share{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);width:36px;text-align:right;flex-shrink:0;}
-.role-splitbar{width:160px;height:8px;border-radius:4px;overflow:hidden;display:flex;flex-shrink:0;}
-.rsb-seg{height:100%;}
-.rsb-cyan{background:#06B6D4;}
-.rsb-purple{background:#A100FF;}
-.rsb-pink{background:#FF50C8;}
-.role-legend{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;}
-.role-leg{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);}
-.role-leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
-/* ── CAPABILITY MAP ── */
-.cap-layout{display:grid;grid-template-columns:1fr 280px;gap:16px;margin-top:16px;max-height:calc(100vh - 220px);}
-.cap-map-area{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-content:start;overflow-y:auto;}
-.cap-cat{background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-1);}
-.cap-cat.focused{border-color:rgba(161,0,255,.4);}
-.cap-cat-hdr{width:100%;display:flex;align-items:center;gap:8px;padding:11px 13px;background:transparent;border:none;color:var(--text-1);cursor:pointer;text-align:left;transition:background .15s;}
-.cap-cat-hdr:hover{background:var(--surface-2);}
-.cap-cat-name{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;flex:1;}
-.cap-cat-count{font-size:9px;color:var(--text-3);font-family:'JetBrains Mono',monospace;}
-.cap-cat-chevron{color:var(--text-3);font-size:12px;transition:transform .2s;margin-left:auto;}
-.cap-cat-body{padding:0 7px 7px;}
-.cap-item{width:100%;display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;background:transparent;border:1px solid transparent;color:var(--text-2);font-family:'Inter',sans-serif;font-size:11.5px;cursor:pointer;text-align:left;transition:background .12s,border-color .12s;margin-bottom:2px;}
-.cap-item:hover{background:var(--surface-2);}
-.cap-item.selected{background:var(--accent-soft);border-color:rgba(161,0,255,.35);color:var(--text-1);}
-.cap-chk{width:14px;height:14px;border-radius:3px;border:1px solid var(--border-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:8px;color:transparent;transition:background .12s,border-color .12s,color .12s;}
-.cap-item.selected .cap-chk{background:var(--accent-strong);border-color:var(--accent-strong);color:#fff;}
-.cap-sidebar{display:flex;flex-direction:column;gap:10px;}
-.cap-sel-tray{background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;padding:14px;flex-shrink:0;}
-.cap-sel-tray-h{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
-.cap-sel-badge{color:var(--accent);font-weight:600;}
-.cap-sel-chips{display:flex;flex-direction:column;gap:5px;min-height:80px;}
-.cap-sel-chip{background:var(--accent-soft);border:1px solid rgba(161,0,255,.3);border-radius:6px;padding:5px 10px;font-family:'Inter',sans-serif;font-size:11px;color:var(--text-1);display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.cap-chip-rm{background:transparent;border:none;color:var(--text-3);cursor:pointer;font-size:13px;line-height:1;padding:0;}
-.cap-empty-msg{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-3);font-style:italic;text-align:center;padding:16px 0;}
-/* ── PRIORITY MATRIX ── */
-.prio-2x2{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;margin-top:18px;height:320px;}
-.prio-q{background:var(--surface-1);border:1px solid var(--border-1);border-radius:11px;padding:14px;display:flex;flex-direction:column;box-shadow:var(--shadow-1);}
-.prio-q-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:8px;}
-.prio-q.best{border-color:rgba(161,0,255,.35);background:var(--accent-soft);}
-.prio-q.best .prio-q-label{color:var(--accent);}
-.prio-chips{display:flex;flex-wrap:wrap;gap:6px;}
-.prio-chip{font-family:'Inter',sans-serif;font-size:11px;background:rgba(161,0,255,.1);border:1px solid rgba(161,0,255,.3);border-radius:5px;padding:3px 10px;color:var(--text-1);}
-/* ── SHORTLIST ── */
-.shortlist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px;}
-.shortlist-card{background:var(--surface-1);border:1px solid var(--border-1);border-radius:13px;padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow-1);}
-.sc-num{font-size:24px;font-weight:700;color:var(--accent);line-height:1;font-family:'Space Grotesk',sans-serif;}
-.sc-cap{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);line-height:1.2;}
-.sc-cat{font-size:9px;letter-spacing:.1em;color:var(--text-3);font-family:'JetBrains Mono',monospace;}
-.sc-row{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-top:1px solid var(--border-1);}
-.sc-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;}
-.sc-val{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.4;margin-top:2px;}
-.sc-lens{font-size:9px;letter-spacing:.08em;color:var(--accent);margin-top:auto;font-family:'JetBrains Mono',monospace;}
-.lens-btns{display:flex;gap:7px;margin-top:14px;}
-.lens-btn{padding:6px 14px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.07em;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-3);cursor:pointer;transition:background .14s,color .14s,border-color .14s;}
-.lens-btn.active{background:var(--accent-soft);border-color:rgba(161,0,255,.35);color:var(--accent);}
-.shortlist-empty{background:var(--surface-2);border:1px dashed var(--border-2);border-radius:12px;padding:40px;text-align:center;font-family:'Inter',sans-serif;font-size:14px;color:var(--text-3);grid-column:1/-1;}
-/* ── USE CASES ── */
-.uc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px;}
-.uc-card{background:var(--surface-1);border:1px solid var(--border-1);border-radius:11px;padding:14px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s,box-shadow .2s;box-shadow:var(--shadow-1);}
-.uc-card:hover{border-color:rgba(161,0,255,.4);transform:translateY(-2px);box-shadow:0 10px 28px rgba(161,0,255,.1);}
-.uc-card.selected{border-color:rgba(161,0,255,.6);background:var(--accent-soft);}
-.uc-type{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:7px;}
-.uc-type.live{background:rgba(15,138,98,.1);color:var(--green);border:1px solid rgba(15,138,98,.3);}
-.uc-type.team{background:var(--accent-soft);color:var(--accent);border:1px solid rgba(161,0,255,.25);}
-.uc-type.illustrative{background:var(--surface-2);color:var(--text-3);border:1px solid var(--border-1);}
-.uc-type.nda{background:rgba(180,106,0,.08);color:var(--amber);border:1px solid rgba(180,106,0,.22);}
-.uc-name{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;color:var(--text-1);line-height:1.3;margin-bottom:4px;}
-.uc-tool{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);}
-.uc-mini-flow{display:flex;gap:3px;align-items:center;margin-top:8px;flex-wrap:wrap;}
-.uc-mf-step{font-family:'JetBrains Mono',monospace;font-size:7.5px;background:var(--surface-2);border:1px solid var(--border-1);border-radius:3px;padding:2px 5px;color:var(--text-3);}
-.uc-mf-step.human{background:rgba(15,138,98,.08);border-color:rgba(15,138,98,.25);color:var(--green);}
-.uc-mf-arr{font-size:8px;color:var(--border-2);}
-/* ── SWIMLANE (SCREEN 10) ── */
-.swimlane{margin-top:20px;overflow-x:auto;}
-.swim-inner{min-width:700px;}
-.swim-header{display:grid;grid-template-columns:140px repeat(6,1fr);gap:0;margin-bottom:6px;}
-.swim-step-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.08em;color:var(--text-3);text-align:center;padding-bottom:4px;}
-.swim-lanes{display:flex;flex-direction:column;gap:4px;}
-.swim-lane{display:grid;grid-template-columns:140px repeat(6,1fr);gap:4px;align-items:start;}
-.swim-lane-name{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.09em;color:var(--text-3);text-transform:uppercase;padding:12px 8px;text-align:right;border-right:2px solid var(--border-1);display:flex;align-items:center;justify-content:flex-end;}
-.swim-cell{background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:9px;font-family:'Inter',sans-serif;font-size:11px;color:var(--text-2);line-height:1.4;min-height:52px;display:flex;align-items:center;}
-.swim-cell.empty{background:transparent;border-color:transparent;}
-.swim-cell.ai-cell{background:var(--accent-soft);border-color:rgba(161,0,255,.3);color:var(--text-1);}
-.swim-cell.human-cell{background:rgba(15,138,98,.07);border-color:rgba(15,138,98,.28);color:var(--text-1);}
-.swim-cell.evidence-cell{background:rgba(14,116,144,.07);border-color:rgba(14,116,144,.28);color:var(--text-1);}
-.swim-checkpoint{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:8px;background:rgba(15,138,98,.1);border:1px solid rgba(15,138,98,.3);border-radius:4px;padding:2px 6px;color:var(--green);margin-top:5px;white-space:nowrap;}
-/* ── PROOF DESIGN ── */
-.proof-loop{display:flex;gap:0;margin-top:20px;align-items:center;flex-wrap:wrap;}
-.proof-step{background:var(--surface-1);border:1px solid var(--border-1);border-radius:11px;padding:14px;flex:1;min-width:100px;box-shadow:var(--shadow-1);}
-.proof-step.gate-step{background:var(--accent-soft);border-color:rgba(161,0,255,.35);}
-.proof-step-n{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:5px;}
-.proof-step-h{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--text-1);}
-.proof-step-body{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-2);line-height:1.4;margin-top:4px;}
-.proof-arr{display:flex;align-items:center;justify-content:center;width:24px;flex-shrink:0;color:rgba(161,0,255,.45);font-size:14px;}
-.proof-canvas{background:var(--surface-1);border:1px solid var(--border-1);border-radius:12px;padding:18px;margin-top:16px;box-shadow:var(--shadow-1);}
-.proof-header{font-family:'Inter',sans-serif;font-size:14px;color:var(--text-2);margin-bottom:14px;}
-.proof-header span{color:var(--text-1);font-weight:600;}
-.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
-.proof-field{background:var(--surface-2);border:1px solid var(--border-1);border-radius:9px;padding:11px;}
-.proof-field.span2{grid-column:span 2;}
-.proof-field.span3{grid-column:span 3;}
-.proof-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:4px;}
-.proof-val{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.5;}
-.proof-val.tbd{color:var(--text-3);font-style:italic;}
-/* ── EVIDENCE SCORECARD ── */
-.scorecard{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;}
-.sc-quad{background:var(--surface-1);border:1px solid var(--border-1);border-radius:13px;padding:22px;position:relative;overflow:hidden;box-shadow:var(--shadow-1);}
-.sc-quad-accent{position:absolute;top:0;left:0;right:0;height:3px;}
-.sc-quad-icon{font-size:22px;margin-bottom:10px;display:block;}
-.sc-quad-h{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:8px;}
-.sc-quad-body{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-2);line-height:1.6;}
-.sc-quad-note{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);margin-top:10px;letter-spacing:.05em;}
-/* ── ARCHITECTURE ── */
-.arch-stack{display:flex;flex-direction:column;gap:7px;margin-top:20px;}
-.arch-layer-row{background:var(--surface-1);border:1px solid var(--border-1);border-radius:11px;padding:12px 18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-1);}
-.arch-layer-row.ai-layer{background:var(--accent-soft);border-color:rgba(161,0,255,.3);animation:aiGlow 3s ease-in-out infinite;}
-.arch-layer-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);width:18px;flex-shrink:0;}
-.arch-layer-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text-1);flex:1;}
-.arch-layer-chips{display:flex;gap:5px;flex-wrap:wrap;}
-.arch-layer-chip{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 8px;border-radius:5px;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);}
-.arch-connector-v{text-align:center;font-size:12px;color:rgba(161,0,255,.4);padding:2px 0;animation:flowPulse 1.5s ease-in-out infinite;}
-/* ── OPERATING MODEL ── */
-.opmodel-groups{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px;}
-.opmodel-group{background:var(--surface-1);border:1px solid var(--border-1);border-radius:13px;padding:18px;box-shadow:var(--shadow-1);}
-.opmodel-group-h{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--text-1);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border-1);}
-.opmodel-role-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--surface-2);}
-.opmodel-role-item:last-child{border-bottom:none;}
-.opmodel-role-icon{font-size:18px;color:var(--accent);flex-shrink:0;margin-top:1px;}
-.opmodel-role-name{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);}
-.opmodel-role-rights{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-2);line-height:1.4;margin-top:3px;}
-/* ── STAGE-GATE ROADMAP ── */
-.sgt-wrap{margin-top:24px;overflow-x:auto;}
-.sgt-inner{min-width:700px;position:relative;}
-.sgt-track{position:absolute;top:28px;left:6%;right:6%;height:2px;background:var(--border-1);z-index:0;}
-.sgt-track-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--pink));border-radius:1px;width:40%;animation:drawLine 1.2s cubic-bezier(.22,1,.36,1) .3s both;}
-.sgt-stages{display:flex;align-items:flex-start;position:relative;z-index:1;}
-.sgt-stage-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;}
-.sgt-node{width:28px;height:28px;border-radius:50%;background:var(--surface-1);border:2px solid var(--border-2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s;}
-.sgt-stage-wrap.active .sgt-node{background:var(--accent);border-color:var(--accent);}
-.sgt-stage-wrap.active .sgt-node-inner{background:#fff;}
-.sgt-node-inner{width:8px;height:8px;border-radius:50%;background:var(--border-2);}
-.sgt-stage-card{background:var(--surface-1);border:1px solid var(--border-1);border-radius:11px;padding:12px 10px;text-align:center;width:100%;box-shadow:var(--shadow-1);}
-.sgt-stage-wrap.active .sgt-stage-card{border-color:rgba(161,0,255,.35);background:var(--accent-soft);}
-.sgt-dur{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.06em;margin-bottom:4px;}
-.sgt-name{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);line-height:1.2;margin-bottom:6px;}
-.sgt-output{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-2);line-height:1.3;}
-.sgt-gate-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:14px;flex-shrink:0;width:40px;}
-.sgt-diamond{width:16px;height:16px;background:var(--surface-3);border:2px solid var(--border-2);transform:rotate(45deg);}
-.sgt-gate-lbl{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--text-3);letter-spacing:.08em;white-space:nowrap;}
-/* ── TAKEAWAY ── */
-.ta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
-.ta-section{background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;padding:14px;box-shadow:var(--shadow-1);}
-.ta-section.wide{grid-column:span 2;}
-.ta-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:5px;}
-.ta-val{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-2);line-height:1.5;}
-.ta-actions{display:flex;gap:10px;margin-top:14px;}
-/* ── BUTTONS ── */
-.btn-primary{display:inline-flex;align-items:center;gap:10px;padding:16px 40px;border-radius:13px;background:linear-gradient(135deg,#3D0066,#A100FF);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;box-shadow:0 8px 32px rgba(161,0,255,.35);transition:filter .15s,transform .15s;margin-top:14px;}
-.btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px);}
-.sec-opt{padding:11px 20px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border-1);font-size:13px;font-weight:500;color:var(--text-1);cursor:pointer;display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:background .14s,border-color .14s;-webkit-appearance:none;appearance:none;font-family:inherit;}
-.sec-opt:hover{background:var(--accent-soft);border-color:rgba(161,0,255,.35);color:var(--accent);}
-.sec-opt i{color:var(--accent);font-size:16px;}
-.start-opts{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:22px;}
-.foot-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.3);text-align:center;margin-top:26px;line-height:1.6;}
-.hub-link{display:block;text-align:center;margin-top:8px;font-size:13px;font-weight:600;color:rgba(199,123,255,.8);}
-.hub-link:hover{color:#FF50C8;}
-/* ── TEAM + TRUST ── */
-.team-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:24px;}
-.expert{width:148px;text-align:center;background:var(--surface-1);border:1px solid var(--border-1);border-radius:13px;padding:16px 10px;display:block;text-decoration:none;transition:transform .2s,border-color .2s,box-shadow .2s;box-shadow:var(--shadow-1);}
-.expert:hover{transform:translateY(-4px);border-color:rgba(161,0,255,.35);box-shadow:0 12px 32px rgba(161,0,255,.12);}
-.expert-photo{width:76px;height:76px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;border:2px solid var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
-.expert-ph-fallback{width:76px;height:76px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3D0066,#A100FF);color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;border:2px solid var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
-.expert-name{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);}
-.expert-tags{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:7px;}
-.etag{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 6px;border-radius:4px;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);}
-.expert-mail{display:block;margin-top:7px;font-size:9.5px;color:var(--accent);opacity:0;transition:opacity .2s;}
-.expert:hover .expert-mail{opacity:1;}
-.trust-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;text-align:left;margin-top:20px;}
-.trust{border-radius:13px;padding:18px 22px;display:flex;align-items:flex-start;gap:12px;}
-.trust.solid{background:var(--surface-1);border:1px solid var(--border-1);box-shadow:var(--shadow-1);}
-.trust.dashed{background:transparent;border:1.5px dashed rgba(161,0,255,.3);}
-.trust i{color:var(--accent);font-size:22px;flex-shrink:0;margin-top:1px;}
-.trust p{font-size:13px;color:var(--text-2);line-height:1.6;}
-/* ── APPENDIX ── */
-.app-inner{max-height:calc(100vh - 200px);overflow-y:auto;padding-right:8px;}
-.app-cat-section{margin-bottom:16px;}
-.app-cat-head{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--text-1);padding:9px 13px;border-left:3px solid;border-radius:0 7px 7px 0;background:var(--surface-1);margin-bottom:7px;}
-.app-caps-list{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
-.app-cap-item{background:var(--surface-2);border:1px solid var(--border-1);border-radius:6px;padding:7px 11px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);}
-.app-table{width:100%;border-collapse:collapse;font-size:12px;}
-.app-table th{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;text-align:left;padding:7px 11px;border-bottom:1px solid var(--border-1);}
-.app-table td{padding:7px 11px;color:var(--text-2);border-bottom:1px solid var(--surface-2);}
-.kpi-group{margin-bottom:16px;}
-.kpi-group-h{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text-1);margin-bottom:7px;}
-.kpi-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:5px;}
-.kpi-list li{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-2);line-height:1.5;padding-left:14px;position:relative;}
-.kpi-list li::before{content:'—';position:absolute;left:0;color:var(--text-3);}
-.rai-section{margin-bottom:13px;}
-.rai-h{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--text-1);margin-bottom:6px;}
-.rai-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:4px;}
-.rai-list li{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.5;padding-left:14px;position:relative;}
-.rai-list li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:10px;}
-.disc-block{background:var(--surface-1);border:1px solid var(--border-1);border-radius:9px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow-1);}
-.disc-h{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--text-1);margin-bottom:6px;}
-.disc-body{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-2);line-height:1.6;}
-/* ── PRINT ── */
-@media print{
-  html{color-scheme:light;}
-  body{background:#fff!important;color:#000!important;}
-  .nav,.agenda-overlay,.progress-bar,.scroll-hint,.btn-primary,.sec-opt,.ta-actions,.prs-footer,.lens-btns,.arch-toggle{display:none!important;}
-  section:not(#takeaway):not(#app-assumptions){display:none!important;}
-  #takeaway,#app-assumptions{display:block!important;height:auto!important;page-break-after:always;}
-}
-/* ── RESPONSIVE ── */
-@media(max-width:768px){
-  .nav-chapters{display:none;}
-  section{padding:66px 20px 32px;}
-  .prs-grid{grid-template-columns:1fr 1fr;}
-  .cap-layout{grid-template-columns:1fr;}
-  .cap-map-area{grid-template-columns:1fr 1fr;}
-  .shortlist-grid,.uc-grid,.opmodel-groups{grid-template-columns:1fr 1fr;}
-  .scorecard,.ta-grid,.proof-grid{grid-template-columns:1fr;}
-  .convergence{flex-direction:column;}
-  .tech-bands{flex-direction:column;height:auto;}
-  .tech-band.active{flex:none;}
-  .ar-stages{flex-wrap:wrap;}
-  .ar-stage{flex:1 1 25%;}
-  .proof-loop{flex-wrap:wrap;}
-  .proof-step{flex:1 1 100%;}
-  .proof-arr{display:none;}
-  .sgt-inner,.swim-inner{overflow-x:auto;}
-  .trust-row{grid-template-columns:1fr;}
-}
-/* ── REDUCED MOTION ── */
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
-  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1!important;transform:none!important;}
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="./assets/css/pitch.css">
 </head>
 <body>
 <canvas id="bgCanvas"></canvas>
 
-<!-- ── NAV ── -->
+<!-- NAV -->
 <nav class="nav">
   <div class="nav-brand">
-    <svg viewBox="0 0 22 22" fill="none"><path d="M11 2L20 19H2L11 2Z" fill="#A100FF"/></svg>
-    NFR AI Practice
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2" opacity=".4"/><circle cx="16" cy="16" r="8" fill="var(--accent)" opacity=".7"/></svg>
+    NFR AI
   </div>
   <div class="nav-chapters" id="navChapters"></div>
   <div class="nav-right">
-    <button class="nav-icon-btn" id="agendaBtn" onclick="openAgenda()" title="Agenda (G)" aria-label="Open agenda"><i class="ti ti-layout-list"></i></button>
-    <button class="nav-icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light/dark theme"><i class="ti ti-sun"></i></button>
-    <button class="nav-icon-btn" onclick="goToId('app-caps')" title="Reference appendix" aria-label="Jump to appendix"><i class="ti ti-book"></i></button>
-    <button class="nav-icon-btn" onclick="goToIndex(current-1)" aria-label="Previous slide"><i class="ti ti-chevron-left"></i></button>
     <div class="counter-wrap">
-      <span class="chapter-label" id="chapter-label">Set the scene</span>
-      <span class="counter" id="counter">1 / 26</span>
+      <div class="chapter-label" id="chapterLabel">Cover</div>
+      <div class="counter" id="counter">1 / 31</div>
     </div>
-    <button class="nav-icon-btn" onclick="goToIndex(current+1)" aria-label="Next slide"><i class="ti ti-chevron-right"></i></button>
+    <button class="nav-icon-btn" onclick="openAgenda()" title="Agenda (G)"><i class="ti ti-list"></i></button>
+    <button class="nav-icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme"><i class="ti ti-sun"></i></button>
   </div>
 </nav>
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 
-<!-- ── AGENDA DRAWER ── -->
-<div class="agenda-overlay" id="agendaOverlay" aria-hidden="true" onclick="handleOverlayClick(event)">
-  <div class="agenda-drawer" id="agendaDrawer" role="dialog" aria-label="Session agenda">
+<!-- AGENDA OVERLAY -->
+<div class="agenda-overlay" id="agendaOverlay" aria-hidden="true" onclick="handleAgendaOverlay(event)">
+  <div class="agenda-panel" id="agendaPanel" tabindex="-1">
     <div class="agenda-hdr">
-      <span class="agenda-hdr-title">Session agenda</span>
-      <button class="agenda-close-btn" onclick="closeAgenda()" aria-label="Close agenda"><i class="ti ti-x"></i></button>
+      <div class="agenda-hdr-title">Agenda</div>
+      <button class="nav-icon-btn" onclick="closeAgenda()"><i class="ti ti-x"></i></button>
     </div>
-    <div class="agenda-method-ribbon">
-      <span class="arm-label">Method</span>
-      <span class="arm-pill">Listen</span><span class="arm-sep">→</span>
-      <span class="arm-pill">Prioritize</span><span class="arm-sep">→</span>
-      <span class="arm-pill">Prove</span><span class="arm-sep">→</span>
-      <span class="arm-pill">Scale</span>
+    <div class="agenda-tabs">
+      <button class="agenda-tab-btn" data-atab="story" onclick="switchAgendaTab('story')">Story</button>
+      <button class="agenda-tab-btn" data-atab="questions" onclick="switchAgendaTab('questions')">Questions</button>
+      <button class="agenda-tab-btn" data-atab="deepdives" onclick="switchAgendaTab('deepdives')">Deep Dives</button>
+      <button class="agenda-tab-btn" data-atab="method" onclick="switchAgendaTab('method')">Method</button>
     </div>
-    <div class="agenda-chapters" id="agendaContent"></div>
+    <div class="agenda-content">
+      <div class="agenda-tab-panel" data-panel="story" id="agendaStory"></div>
+      <div class="agenda-tab-panel" data-panel="questions" id="agendaQuestions"></div>
+      <div class="agenda-tab-panel" data-panel="deepdives">
+        <div style="padding:18px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Deep dives available</p><p style="font-size:13px;color:var(--text-2);line-height:1.6">Click any transformation block or capability card to open the 5-tab detail drawer: Why it exists / Diagnose / What good looks like / How we change it / Metrics.</p></div>
+      </div>
+      <div class="agenda-tab-panel" data-panel="method">
+        <div style="padding:18px">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Lean client entry — three gates</p>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 1 · Discover</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Select priority blocks and capabilities. No client cost. Output: scoped intent document.</div></div>
+            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 2 · Diagnose</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">AI-assisted evidence assembly and maturity scoring. 2–4 weeks. Output: maturity baseline and prioritised use case.</div></div>
+            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 3 · Prove</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Lighthouse delivery in a controlled environment with a gate-ready evidence pack and board-ready metrics.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ═══ SCREEN 0 — COVER ═══ -->
-<section id="cover" data-slide data-chapter-id="case-for-change" data-chapter-title="Case for change" data-method-label="Set the scene" data-nav-title="Cover" class="branded-dark" style="justify-content:center;align-items:center;">
-  <div class="inner hero-inner">
-    <div class="sec-tag reveal">Accenture NFR AI Practice</div>
-    <h1 class="hero-h1 reveal" style="transition-delay:.1s">AI is changing the<br>unit of work in risk.</h1>
-    <p class="hero-sub reveal" style="transition-delay:.2s">The decision is where to automate, where to augment, and where human judgment must remain.</p>
-    <div class="hero-path reveal" style="transition-delay:.3s">
-      <div class="hp-node">Signal detected</div>
-      <span class="hp-arrow">→</span>
-      <div class="hp-node">Context assembled</div>
-      <span class="hp-arrow">→</span>
-      <div class="hp-node checkpoint"><i class="ti ti-user-check" style="font-size:12px"></i> Human decision</div>
-      <span class="hp-arrow">→</span>
-      <div class="hp-node">Evidence captured</div>
+<!-- CONTEXT DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" aria-hidden="true" onclick="handleDrawerOverlay(event)">
+  <div class="drawer-panel" id="drawerPanel" tabindex="-1">
+    <div class="drawer-hdr"><div class="drawer-title" id="drawerTitle"></div><button class="drawer-close" onclick="closeDrawer()"><i class="ti ti-x"></i></button></div>
+    <div class="drawer-tabs-bar" id="drawerTabs"></div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     CORE SCREENS
+══════════════════════════════════════════════════════ -->
+
+<!-- 00 · COVER -->
+<section id="cover" data-slide data-chapter-id="cover" data-chapter-title="Cover" data-nav-title="Risk at machine speed" data-method-label="60-minute executive conversation" class="branded-dark">
+  <div class="inner hero-inner reveal">
+    <div class="sec-tag">NFR AI · Accenture · <span class="yr"></span></div>
+    <h1 class="hero-h1">Risk is becoming a<br><span class="grad">machine-speed function.</span><br>The operating model must catch up.</h1>
+    <p class="hero-sub">A 60-minute working conversation on where AI changes the risk function, what eight transformation blocks must advance, and what the leanest first move looks like for your context.</p>
+    <div class="decision-path" style="margin-top:36px">
+      <div class="dp-node">Pressures &amp; landscape<span class="dp-gate-label">Where we start</span></div>
+      <div class="dp-arr">→</div>
+      <div class="dp-node">Transformation system<span class="dp-gate-label">What must change</span></div>
+      <div class="dp-arr">→</div>
+      <div class="dp-node">Locate the value<span class="dp-gate-label">47 capabilities</span></div>
+      <div class="dp-arr">→</div>
+      <div class="dp-node gate">Commit<span class="dp-gate-label">First move</span></div>
     </div>
-    <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.28);margin-top:18px;letter-spacing:.12em;text-transform:uppercase;" class="reveal" style="transition-delay:.4s">A working session for CRO and CFO leaders · 60 minutes</p>
-    <div class="scroll-hint reveal" style="transition-delay:.5s">↓ scroll or arrow keys</div>
+    <div class="hero-start">
+      <button class="btn-primary" data-start-route="executive"><i class="ti ti-presentation"></i>Executive conversation</button>
+      <button class="btn-secondary" data-start-route="working-session"><i class="ti ti-users"></i>Working session</button>
+    </div>
+    <div class="scroll-hint">↓ scroll or arrow keys</div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 1 — THREE FORCES ═══ -->
-<section id="setting-scene" data-slide data-chapter-id="case-for-change" data-chapter-title="Case for change" data-method-label="Set the scene" data-nav-title="Three forces">
+<!-- 01 · SETTING THE SCENE -->
+<section id="setting-scene" data-slide data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="Why act now?" data-method-label="Listen · 15 min">
   <div class="inner">
-    <div class="sec-tag reveal">00 · Set the scene</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Three forces are converging<br>on the risk function.</h2>
-    <div class="convergence">
-      <div class="conv-streams">
-        <div class="conv-stream reveal" style="transition-delay:.1s"><i class="ti ti-notes conv-stream-icon"></i><span class="conv-stream-text">More obligations and evidence requirements</span></div>
-        <div class="conv-stream reveal" style="transition-delay:.18s"><i class="ti ti-coin-off conv-stream-icon"></i><span class="conv-stream-text">Less tolerance for cost, latency, and error</span></div>
-        <div class="conv-stream reveal" style="transition-delay:.26s"><i class="ti ti-brain conv-stream-icon"></i><span class="conv-stream-text">More powerful AI — and more AI risk to govern</span></div>
+    <div class="sec-tag reveal">AI Landscape · 01</div>
+    <h2 class="slide-h reveal">Three forces are converging<br>that the current model was not built for.</h2>
+    <div class="conv-grid reveal" style="margin-top:20px">
+      <div class="conv-forces">
+        <div class="conv-force">
+          <div class="conv-force-icon"><i class="ti ti-gavel"></i></div>
+          <div class="conv-force-label">Regulatory acceleration</div>
+          <div class="conv-force-sub">Volume, complexity, and cross-border reach of requirements are compounding faster than manual compliance cycles can absorb.</div>
+        </div>
+        <div class="conv-force">
+          <div class="conv-force-icon"><i class="ti ti-cpu"></i></div>
+          <div class="conv-force-label">AI penetration in the business</div>
+          <div class="conv-force-sub">Client-facing, trading, and operations functions are deploying AI. The risk function must govern, audit, and approve at the same speed.</div>
+        </div>
+        <div class="conv-force">
+          <div class="conv-force-icon"><i class="ti ti-coin"></i></div>
+          <div class="conv-force-label">Cost and capacity constraint</div>
+          <div class="conv-force-sub">Headcount-based scaling is no longer viable. The cost per risk decision must fall while quality and explainability requirements rise.</div>
+        </div>
       </div>
-      <div class="conv-arr reveal" style="transition-delay:.36s"><i class="ti ti-arrow-right"></i></div>
-      <div class="conv-center reveal" style="transition-delay:.44s">
-        <div class="conv-ctr-lbl">The right response</div>
-        <div class="conv-ctr-text">Redesign the operating model, not just individual tasks</div>
+      <div class="conv-arrow-col"><i class="ti ti-arrows-right"></i></div>
+      <div class="conv-result reveal-right">
+        <div class="conv-result-lbl">The strategic imperative</div>
+        <div class="conv-result-h">The risk operating model must be rebuilt for machine-speed operation — or it becomes the bottleneck for the entire enterprise.</div>
+        <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.08em;line-height:1.5">This conversation maps where to act, what must transform, and what the leanest proof of value looks like.</div>
       </div>
     </div>
-    <p class="conv-sub reveal" style="transition-delay:.54s">Point solutions can remove effort. A redesigned risk function changes how work, decisions, controls, and evidence flow together.</p>
   </div>
 </section>
 
-<!-- ═══ SCREEN 2 — AI / AUTOMATION LANDSCAPE ═══ -->
-<section id="ai-landscape" data-slide data-chapter-id="ai-landscape" data-chapter-title="AI landscape" data-method-label="Frame" data-nav-title="AI and automation spectrum">
+<!-- 02 · AI LANDSCAPE -->
+<section id="ai-landscape" data-slide data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="AI landscape today" data-render="aiLandscape">
   <div class="inner">
-    <div class="sec-tag reveal">01 · Make sense of the AI landscape</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Not every problem needs GenAI.<br>Not every GenAI use case needs an agent.</h2>
-    <div class="tech-spectrum reveal" style="transition-delay:.15s">
-      <div class="tech-axis-row"><span>Lower autonomy</span><span>Higher autonomy →</span></div>
-      <div class="tech-bands" id="techBands">
-        <div class="tech-band active" data-idx="0" tabindex="0" onclick="focusBand(0)" onkeydown="if(event.key==='Enter')focusBand(0)">
-          <i class="ti ti-git-branch tb-icon"></i>
-          <div class="tb-name">Rules and workflow</div>
-          <div class="tb-detail">
-            <div class="tbd-lbl">Best for</div><div class="tbd-val">Deterministic decisions, conditional routing, approval thresholds</div>
-            <div class="tbd-lbl">Human role</div><div class="tbd-val">Design the rules and handle exceptions</div>
-            <div class="tbd-lbl">Control question</div><div class="tbd-val">Are the rules complete, current, and tested?</div>
-          </div>
-        </div>
-        <div class="tech-band" data-idx="1" tabindex="0" onclick="focusBand(1)" onkeydown="if(event.key==='Enter')focusBand(1)">
-          <i class="ti ti-refresh tb-icon"></i>
-          <div class="tb-name">RPA and orchestration</div>
-          <div class="tb-detail">
-            <div class="tbd-lbl">Best for</div><div class="tbd-val">Repeatable cross-system execution, data movement, reconciliation</div>
-            <div class="tbd-lbl">Human role</div><div class="tbd-val">Monitor for failures and edge cases</div>
-            <div class="tbd-lbl">Control question</div><div class="tbd-val">What happens when the process breaks?</div>
-          </div>
-        </div>
-        <div class="tech-band" data-idx="2" tabindex="0" onclick="focusBand(2)" onkeydown="if(event.key==='Enter')focusBand(2)">
-          <i class="ti ti-chart-line tb-icon"></i>
-          <div class="tb-name">Analytics and ML</div>
-          <div class="tb-detail">
-            <div class="tbd-lbl">Best for</div><div class="tbd-val">Prediction, scoring, anomaly detection, pattern recognition</div>
-            <div class="tbd-lbl">Human role</div><div class="tbd-val">Review model output; approve consequential actions</div>
-            <div class="tbd-lbl">Control question</div><div class="tbd-val">Is the model validated and monitored for drift?</div>
-          </div>
-        </div>
-        <div class="tech-band" data-idx="3" tabindex="0" onclick="focusBand(3)" onkeydown="if(event.key==='Enter')focusBand(3)">
-          <i class="ti ti-message-bolt tb-icon"></i>
-          <div class="tb-name">GenAI copilots</div>
-          <div class="tb-detail">
-            <div class="tbd-lbl">Best for</div><div class="tbd-val">Search, summarise, draft, explain, translate documents and data</div>
-            <div class="tbd-lbl">Human role</div><div class="tbd-val">Review every output before use or distribution</div>
-            <div class="tbd-lbl">Control question</div><div class="tbd-val">Is output always reviewed before it leaves the team?</div>
-          </div>
-        </div>
-        <div class="tech-band" data-idx="4" tabindex="0" onclick="focusBand(4)" onkeydown="if(event.key==='Enter')focusBand(4)">
-          <i class="ti ti-robot tb-icon"></i>
-          <div class="tb-name">Agents</div>
-          <div class="tb-detail">
-            <div class="tbd-lbl">Best for</div><div class="tbd-val">Plan, coordinate, and act across tools and systems over multiple steps</div>
-            <div class="tbd-lbl">Human role</div><div class="tbd-val">Define scope and accountability; approve consequential actions</div>
-            <div class="tbd-lbl">Control question</div><div class="tbd-val">What can the agent do without approval?</div>
-          </div>
-        </div>
-      </div>
-      <div class="tech-rails">
-        <span class="tech-rails-lbl">Shared guardrails</span>
-        <span class="tech-rail">Trusted data and context</span>
-        <span class="tech-rail">Identity and access</span>
-        <span class="tech-rail">Human accountability</span>
-        <span class="tech-rail">Testing and monitoring</span>
-        <span class="tech-rail">Logging and evidence</span>
-      </div>
-      <div class="tech-principle">"Use the least complex technology that reliably delivers the outcome."</div>
-    </div>
+    <div class="sec-tag reveal">AI Landscape · 02</div>
+    <h2 class="slide-h reveal">Five technology bands. Different maturity, different risk profile.</h2>
+    <p class="slide-sub reveal">Each band's maturity determines which use cases are provable now, which need foundation work first, and which remain speculative.</p>
+    <div id="aiLandscapeArea" style="margin-top:16px"></div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 3 — WORKING AGENDA ═══ -->
-<section id="agenda" data-slide data-chapter-id="case-for-change" data-chapter-title="Case for change" data-method-label="Set the scene" data-nav-title="Today's route">
+<!-- 03 · THREE MAPS -->
+<section id="three-maps" data-slide data-chapter-id="landscape" data-chapter-title="AI Landscape" data-nav-title="Three maps — orientation">
   <div class="inner">
-    <div class="sec-tag reveal">00 · Set the scene</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Today's route: from pressure<br>to a proof worth funding.</h2>
-    <p class="slide-sub reveal" style="transition-delay:.1s">Click any stage to jump directly. Each stage produces one output.</p>
-    <div class="agenda-route reveal" style="transition-delay:.2s">
-      <div class="ar-track"><div class="ar-track-fill"></div></div>
-      <div class="ar-stages" id="agendaRouteStages">
-        <div class="ar-stage" onclick="goToId('setting-scene')" title="Go to: Three forces">
-          <div class="ar-dot"></div>
-          <div class="ar-name">Case for change</div>
-          <div class="ar-output">Shared urgency and question</div>
-          <div class="ar-method">Set the scene</div>
-        </div>
-        <div class="ar-stage" onclick="goToId('ai-landscape')" title="Go to: AI landscape">
-          <div class="ar-dot"></div>
-          <div class="ar-name">AI landscape</div>
-          <div class="ar-output">Common language for AI</div>
-          <div class="ar-method">Frame</div>
-        </div>
-        <div class="ar-stage" onclick="goToId('client-pressures')" title="Go to: Client pressures">
-          <div class="ar-dot"></div>
-          <div class="ar-name">Locate value</div>
-          <div class="ar-output">Priority pressures and impacted work</div>
-          <div class="ar-method">Listen</div>
-        </div>
-        <div class="ar-stage" onclick="goToId('capability-landscape')" title="Go to: Capability landscape">
-          <div class="ar-dot"></div>
-          <div class="ar-name">First move</div>
-          <div class="ar-output">Shortlist and proof candidate</div>
-          <div class="ar-method">Prioritize</div>
-        </div>
-        <div class="ar-stage" onclick="goToId('use-cases')" title="Go to: Use cases">
-          <div class="ar-dot"></div>
-          <div class="ar-name">Prove safely</div>
-          <div class="ar-output">Proof scope and evidence plan</div>
-          <div class="ar-method">Prove</div>
-        </div>
-        <div class="ar-stage" onclick="goToId('target-architecture')" title="Go to: Architecture">
-          <div class="ar-dot"></div>
-          <div class="ar-name">Build to scale</div>
-          <div class="ar-output">Architecture and roadmap</div>
-          <div class="ar-method">Scale</div>
-        </div>
-        <div class="ar-stage" onclick="goToId('takeaway')" title="Go to: Takeaway">
-          <div class="ar-dot"></div>
-          <div class="ar-name">Commit</div>
-          <div class="ar-output">Agreed next action</div>
-          <div class="ar-method">Close</div>
-        </div>
+    <div class="sec-tag reveal">AI Landscape · 03</div>
+    <h2 class="slide-h reveal">Three maps orient this conversation.</h2>
+    <p class="slide-sub reveal">Each map answers a different question. Navigate between them at any point using the buttons below.</p>
+    <div class="three-maps reveal">
+      <div class="map-panel" onclick="goToId('transformation-system')" tabindex="0">
+        <div class="map-panel-q">WHERE · WHAT</div>
+        <div class="map-panel-icon"><i class="ti ti-layout-grid"></i></div>
+        <div class="map-panel-h">Transformation System</div>
+        <div class="map-panel-desc">Eight interdependent blocks that must advance for AI to work in the risk function. Click any block for a full diagnostic and intervention toolkit.</div>
+        <div class="map-panel-jump">→ Transformation System</div>
+      </div>
+      <div class="map-panel" onclick="goToId('capability-hotspots')" tabindex="0">
+        <div class="map-panel-q">WHERE</div>
+        <div class="map-panel-icon"><i class="ti ti-map-pin"></i></div>
+        <div class="map-panel-h">Risk Capability Map</div>
+        <div class="map-panel-desc">47 risk capabilities across 6 domains. Select the ones relevant to your pressures to generate a prioritised shortlist with evidence plan.</div>
+        <div class="map-panel-jump">→ Capability Map</div>
+      </div>
+      <div class="map-panel" onclick="goToId('exec-shortlist')" tabindex="0">
+        <div class="map-panel-q">HOW</div>
+        <div class="map-panel-icon"><i class="ti ti-checklist"></i></div>
+        <div class="map-panel-h">Executive Shortlist</div>
+        <div class="map-panel-desc">Three proof candidates with decision logic. Select your first-move capability and proceed to value-capture modelling and use-case mapping.</div>
+        <div class="map-panel-jump">→ Executive Shortlist</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 4 — CLIENT PRESSURES ═══ -->
-<section id="client-pressures" data-slide data-chapter-id="locate-value" data-chapter-title="Locate the value" data-method-label="Listen" data-nav-title="Client pressures" data-render="pressures">
+<!-- 04 · TRANSFORMATION SYSTEM -->
+<section id="transformation-system" data-slide data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="Transformation system" data-method-label="What must change · 10 min" data-render="trSystem">
   <div class="inner">
-    <div class="sec-tag reveal">02 · Locate the value</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Which pressure is forcing<br>the conversation now?</h2>
-    <p class="slide-sub reveal" style="transition-delay:.1s">Select up to three. Your choices shape the rest of the session.</p>
-    <div class="prs-grid">
-      <div class="prs-card reveal" data-pid="reg-vol" onclick="togglePressure('reg-vol')" style="transition-delay:.12s"><div class="prs-icon"><i class="ti ti-antenna"></i></div><div class="prs-label">Regulatory volume and change</div><div class="prs-desc">Volume of new rules, interpretations, and reporting requirements exceeds team capacity.</div></div>
-      <div class="prs-card reveal" data-pid="cost-cap" onclick="togglePressure('cost-cap')" style="transition-delay:.18s"><div class="prs-icon"><i class="ti ti-coin"></i></div><div class="prs-label">Cost and capacity pressure</div><div class="prs-desc">Risk function is under pressure to do more with the same or fewer headcount.</div></div>
-      <div class="prs-card reveal" data-pid="frag-data" onclick="togglePressure('frag-data')" style="transition-delay:.24s"><div class="prs-icon"><i class="ti ti-circles-relation"></i></div><div class="prs-label">Fragmented risk and control data</div><div class="prs-desc">Risk data lives in siloed systems with no shared view across processes.</div></div>
-      <div class="prs-card reveal" data-pid="slow-dec" onclick="togglePressure('slow-dec')" style="transition-delay:.3s"><div class="prs-icon"><i class="ti ti-clock-hour-3"></i></div><div class="prs-label">Slow decisions and reporting</div><div class="prs-desc">Senior decisions rely on stale data and lengthy manual reporting cycles.</div></div>
-      <div class="prs-card reveal" data-pid="ctrl-ev" onclick="togglePressure('ctrl-ev')" style="transition-delay:.36s"><div class="prs-icon"><i class="ti ti-file-check"></i></div><div class="prs-label">Control effectiveness and evidence</div><div class="prs-desc">Demonstrating control effectiveness to audit and regulators is manual and inconsistent.</div></div>
-      <div class="prs-card reveal" data-pid="ai-gov" onclick="togglePressure('ai-gov')" style="transition-delay:.42s"><div class="prs-icon"><i class="ti ti-brain"></i></div><div class="prs-label">AI governance and model risk</div><div class="prs-desc">Growing use of AI and models requires governance frameworks not yet in place.</div></div>
-    </div>
-    <div class="prs-footer reveal" style="transition-delay:.48s">
-      <span class="prs-count" id="prs-count">0 / 3 selected</span>
-      <a class="badge-illus" href="#app-assumptions" onclick="goToId('app-assumptions')"><i class="ti ti-info-circle" style="font-size:12px"></i>Illustrative working assumptions</a>
-    </div>
+    <div class="sec-tag reveal">Transformation System · 04</div>
+    <h2 class="slide-h reveal">AI does not plug into the current model. The model must change.</h2>
+    <p class="slide-sub reveal">Eight blocks must advance together — from data infrastructure to governance design. Click any block to open its diagnostic and intervention toolkit.</p>
+    <div id="trSysGrid" style="margin-top:12px"></div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 5 — ROLE-FAMILY IMPACT ═══ -->
-<section id="role-impact" data-slide data-chapter-id="locate-value" data-chapter-title="Locate the value" data-method-label="Listen" data-nav-title="Role-family impact" data-render="roles">
+<!-- 05 · HOW BLOCKS ARE BUILT -->
+<section id="how-blocks-built" data-slide data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="How blocks are designed">
   <div class="inner">
-    <div class="sec-tag reveal">02 · Locate the value</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Where does AI release the most<br>capacity in your risk function?</h2>
-    <div class="arch-toggle reveal" style="transition-delay:.1s" id="archToggle">
-      <button class="arch-btn active" onclick="setArch('A')">Universal / cantonal bank</button>
-      <button class="arch-btn" onclick="setArch('B')">Private / wealth bank</button>
-    </div>
-    <div class="roles-table reveal" style="transition-delay:.2s" id="rolesTable">
-      <!-- rendered by JS -->
-    </div>
-    <div class="role-legend reveal" style="transition-delay:.3s">
-      <div class="role-leg"><div class="role-leg-dot rsb-cyan"></div>Capacity freed by automation</div>
-      <div class="role-leg"><div class="role-leg-dot rsb-purple"></div>Augmentation and co-pilot</div>
-      <div class="role-leg"><div class="role-leg-dot rsb-pink"></div>Oversight and judgment raised</div>
-    </div>
-    <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);margin-top:12px;">Illustrative — validate split assumptions with client team before sharing externally.</p>
-  </div>
-</section>
-
-<!-- ═══ SCREEN 6 — CAPABILITY LANDSCAPE ═══ -->
-<section id="capability-landscape" data-slide data-chapter-id="first-move" data-chapter-title="First move" data-method-label="Prioritize" data-nav-title="Capability landscape" data-render="capabilities">
-  <div class="inner" style="max-height:calc(100vh - 80px);overflow:hidden;">
-    <div class="sec-tag reveal">03 · First move</div>
-    <h2 class="slide-h reveal" style="font-size:clamp(24px,3vw,38px);transition-delay:.05s">Select up to 5 capabilities<br>most relevant to your priorities.</h2>
-    <div class="cap-layout reveal" style="transition-delay:.15s">
-      <div class="cap-map-area" id="capMapArea"><!-- rendered by JS --></div>
-      <div class="cap-sidebar">
-        <div class="cap-sel-tray">
-          <div class="cap-sel-tray-h"><span>Selected</span><span class="cap-sel-badge" id="capCount">0 / 5</span></div>
-          <div class="cap-sel-chips" id="capChips"><div class="cap-empty-msg">Select a capability to begin.</div></div>
-        </div>
-        <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;padding:12px;font-size:12px;color:var(--text-2);line-height:1.5;">
-          <strong style="font-family:'Space Grotesk',sans-serif;font-size:13px;display:block;margin-bottom:6px;">Lens: what are you optimizing for?</strong>
-          <div class="lens-btns" id="capLensBtns" style="margin-top:6px;">
-            <button class="lens-btn active" onclick="setLens('joint')">Joint view</button>
-            <button class="lens-btn" onclick="setLens('cro')">CRO lens</button>
-            <button class="lens-btn" onclick="setLens('cfo')">CFO lens</button>
-          </div>
-        </div>
-      </div>
+    <div class="sec-tag reveal">Transformation System · 05</div>
+    <h2 class="slide-h reveal">Each block is built on evidence — not assumption.</h2>
+    <p class="slide-sub reveal">Accenture's block design follows a five-stage evidence-to-intervention pipeline. Maturity targets are context-dependent, not maximum by default.</p>
+    <div class="arch-stack" style="margin-top:18px">
+      <div class="arch-layer reveal"><div class="arch-layer-num">01</div><div class="arch-layer-name">Evidence assembly</div><div class="arch-layer-chips"><span class="arch-chip">Policies</span><span class="arch-chip">Process maps</span><span class="arch-chip">Control inventory</span><span class="arch-chip">AI-assisted ingestion</span></div></div>
+      <div class="arch-conn-v">↓</div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">02</div><div class="arch-layer-name">Diagnostic questions</div><div class="arch-layer-chips"><span class="arch-chip">Failure mode mapping</span><span class="arch-chip">Maturity scoring</span><span class="arch-chip">Gap analysis</span></div></div>
+      <div class="arch-conn-v">↓</div>
+      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">03</div><div class="arch-layer-name">Target-state design</div><div class="arch-layer-chips"><span class="arch-chip">Principles</span><span class="arch-chip">Decision rights</span><span class="arch-chip">Technology pattern</span><span class="arch-chip">Human-AI interface</span></div></div>
+      <div class="arch-conn-v">↓</div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">04</div><div class="arch-layer-name">Intervention pathway</div><div class="arch-layer-chips"><span class="arch-chip">No-regret moves</span><span class="arch-chip">Lighthouse</span><span class="arch-chip">Industrialise</span><span class="arch-chip">Scale</span></div></div>
+      <div class="arch-conn-v">↓</div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">05</div><div class="arch-layer-name">Gate evidence</div><div class="arch-layer-chips"><span class="arch-chip">Business KPIs</span><span class="arch-chip">Operational metrics</span><span class="arch-chip">Control effectiveness</span></div></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 7 — PRIORITY MATRIX ═══ -->
-<section id="priority-matrix" data-slide data-chapter-id="first-move" data-chapter-title="First move" data-method-label="Prioritize" data-nav-title="Priority logic">
+<!-- 06 · MATURITY MATRIX -->
+<section id="maturity-matrix" data-slide data-chapter-id="transformation" data-chapter-title="Transformation System" data-nav-title="Maturity matrix" data-render="maturityMatrix">
   <div class="inner">
-    <div class="sec-tag reveal">03 · First move</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">High impact, low complexity<br>wins should move first.</h2>
-    <p class="slide-sub reveal" style="transition-delay:.1s">Your selected capabilities, placed by likely impact and implementation readiness.</p>
-    <div class="prio-2x2 reveal" style="transition-delay:.2s" id="priorityMatrix">
-      <div class="prio-q best" id="pqBestBet"><div class="prio-q-label">High impact · Low complexity — Best bets</div><div class="prio-chips" id="pqBestChips"></div></div>
-      <div class="prio-q" id="pqStrategic"><div class="prio-q-label">High impact · High complexity — Strategic bets</div><div class="prio-chips" id="pqStratChips"></div></div>
-      <div class="prio-q" id="pqQuickWin"><div class="prio-q-label">Low impact · Low complexity — Quick wins</div><div class="prio-chips" id="pqQuickChips"></div></div>
-      <div class="prio-q" id="pqFuture"><div class="prio-q-label">Low impact · High complexity — Defer</div><div class="prio-chips" id="pqFutureChips"></div></div>
-    </div>
-    <p style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text-3);margin-top:14px;">Placement is indicative. Adjust with client based on in-house data, team capability, and regulatory urgency.</p>
-  </div>
-</section>
-
-<!-- ═══ SCREEN 8 — EXECUTIVE SHORTLIST ═══ -->
-<section id="exec-shortlist" data-slide data-chapter-id="first-move" data-chapter-title="First move" data-method-label="Prioritize" data-nav-title="Executive shortlist" data-render="shortlist">
-  <div class="inner">
-    <div class="sec-tag reveal">03 · First move</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Three capabilities worth proving<br>in the next 90 days.</h2>
-    <div class="lens-btns reveal" style="transition-delay:.1s">
-      <button class="lens-btn active" onclick="setLens('joint');renderSection(document.getElementById('exec-shortlist'))">Joint</button>
-      <button class="lens-btn" onclick="setLens('cro');renderSection(document.getElementById('exec-shortlist'))">CRO lens</button>
-      <button class="lens-btn" onclick="setLens('cfo');renderSection(document.getElementById('exec-shortlist'))">CFO lens</button>
-    </div>
-    <div class="shortlist-grid reveal" style="transition-delay:.2s" id="shortlistGrid"><!-- rendered by JS --></div>
-  </div>
-</section>
-
-<!-- ═══ SCREEN 9 — USE CASES ═══ -->
-<section id="use-cases" data-slide data-chapter-id="prove-safely" data-chapter-title="Prove safely" data-method-label="Prove" data-nav-title="Accenture use cases" data-render="usecases">
-  <div class="inner">
-    <div class="sec-tag reveal">04 · Prove safely</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Accenture has already built<br>and deployed many of these.</h2>
-    <p class="slide-sub reveal" style="transition-delay:.1s">Select the use cases most relevant to your shortlist. This shapes the proof plan.</p>
-    <div class="uc-grid reveal" style="transition-delay:.2s" id="ucGrid"><!-- rendered by JS --></div>
-    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;" class="reveal" style="transition-delay:.3s">
-      <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span style="background:rgba(15,138,98,.12);border:1px solid rgba(15,138,98,.3);border-radius:3px;padding:1px 6px;color:var(--green);">LIVE</span>Live in production</span>
-      <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span style="background:var(--accent-soft);border:1px solid rgba(161,0,255,.25);border-radius:3px;padding:1px 6px;color:var(--accent);">TEAM</span>Built by this team</span>
-      <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span style="background:var(--surface-2);border:1px solid var(--border-1);border-radius:3px;padding:1px 6px;color:var(--text-3);">ILLUSTRATIVE</span>Illustrative working example</span>
-      <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span style="background:rgba(180,106,0,.08);border:1px solid rgba(180,106,0,.22);border-radius:3px;padding:1px 6px;color:var(--amber);">NDA</span>Under NDA — ask team for details</span>
+    <div class="sec-tag reveal">Transformation System · 06</div>
+    <h2 class="slide-h reveal">Where are you today — and where do you need to be?</h2>
+    <p class="slide-sub reveal">Click each block row to set current and target maturity. These inform the transformation gap and the intervention sequencing.</p>
+    <div id="maturityGrid" style="margin-top:14px"></div>
+    <div style="margin-top:10px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span class="mat-marker mat-c">C</span> Current state</span>
+      <span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)"><span class="mat-marker mat-t">T</span> Target state (hypothesis)</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3)">Click cell to cycle · Click block label to open drawer</span>
     </div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 10 — END-TO-END FLOW (SWIMLANE) ═══ -->
-<section id="end-to-end-flow" data-slide data-chapter-id="prove-safely" data-chapter-title="Prove safely" data-method-label="Prove" data-nav-title="End-to-end flow">
+<!-- 07 · CAPABILITY HOTSPOTS -->
+<section id="capability-hotspots" data-slide data-chapter-id="locate" data-chapter-title="Locate the Value" data-nav-title="Risk capability map" data-method-label="Locate the value · 15 min" data-render="capHotspots">
   <div class="inner">
-    <div class="sec-tag reveal">04 · Prove safely</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">From signal to supervised decision:<br>how the work actually flows.</h2>
-    <p class="slide-sub reveal" style="transition-delay:.1s">Four lanes — data, AI, human judgment, and evidence — always connected.</p>
-    <div class="swimlane reveal" style="transition-delay:.2s">
-      <div class="swim-inner">
-        <div class="swim-header">
-          <div></div>
-          <div class="swim-step-label">Ingest</div>
-          <div class="swim-step-label">Assess</div>
-          <div class="swim-step-label">Contextualise</div>
-          <div class="swim-step-label">Draft</div>
-          <div class="swim-step-label">Review</div>
-          <div class="swim-step-label">Decide &amp; log</div>
-        </div>
-        <div class="swim-lanes">
-          <div class="swim-lane">
-            <div class="swim-lane-name">Data &amp; context</div>
-            <div class="swim-cell">Source data, policies, obligations</div>
-            <div class="swim-cell ai-cell">Structured extraction and tagging</div>
-            <div class="swim-cell ai-cell">Risk register, historic decisions, peer data</div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell">Audit trail and version record</div>
-          </div>
-          <div class="swim-lane">
-            <div class="swim-lane-name">AI &amp; automation</div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell ai-cell">Anomaly detection / scoring / relevance filter</div>
-            <div class="swim-cell ai-cell">Retrieval-augmented reasoning</div>
-            <div class="swim-cell ai-cell">Draft: findings, commentary, recommendations</div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell empty"></div>
-          </div>
-          <div class="swim-lane">
-            <div class="swim-lane-name">Human judgment</div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell human-cell">Analyst review of draft output</div>
-            <div class="swim-cell human-cell">Risk officer: approve, modify, reject
-              <div><span class="swim-checkpoint"><i class="ti ti-user-check" style="font-size:9px"></i> Approval gate</span></div>
-            </div>
-            <div class="swim-cell human-cell">Sign-off and accountability record</div>
-          </div>
-          <div class="swim-lane">
-            <div class="swim-lane-name">Evidence &amp; control</div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell evidence-cell">Provenance and confidence score attached</div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell empty"></div>
-            <div class="swim-cell evidence-cell">Control evidence written to audit log
-              <div><span class="swim-checkpoint"><i class="ti ti-certificate" style="font-size:9px"></i> Evidence locked</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="sec-tag reveal">Locate the Value · 07</div>
+    <h2 class="slide-h reveal">47 risk capabilities. Which create most value for you?</h2>
+    <p class="slide-sub reveal">Select capabilities relevant to your context. Your selections drive the shortlist, use-case mapping, and value-capture model.</p>
+    <div id="capHotspotArea" style="margin-top:14px"></div>
+  </div>
+</section>
+
+<!-- 08 · WORK / WORKFORCE / WORKBENCH -->
+<section id="work-workforce-workbench" data-slide data-chapter-id="locate" data-chapter-title="Locate the Value" data-nav-title="AI impact on roles" data-render="roleBars">
+  <div class="inner">
+    <div class="sec-tag reveal">Locate the Value · 08</div>
+    <h2 class="slide-h reveal">AI changes the work, the workforce, and the workbench.</h2>
+    <p class="slide-sub reveal">Illustrative impact across risk function roles. Toggle archetype to compare universal bank vs. private / wealth context.</p>
+    <div class="arch-toggle reveal" style="margin-top:14px">
+      <button class="arch-btn active" data-arch="A">Universal / Cantonal bank</button>
+      <button class="arch-btn" data-arch="B">Private / Wealth manager</button>
+    </div>
+    <div id="roleBarsArea" style="margin-top:10px"></div>
+    <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-3)"><span style="width:10px;height:10px;border-radius:2px;background:#06B6D4;display:inline-block"></span>Capacity freed</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-3)"><span style="width:10px;height:10px;border-radius:2px;background:#A100FF;display:inline-block"></span>Human + AI together</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-3)"><span style="width:10px;height:10px;border-radius:2px;background:#FF50C8;display:inline-block"></span>Output raised</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em">Illustrative — validate with client data</span>
     </div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 11 — PROOF PLAN ═══ -->
-<section id="proof-plan" data-slide data-chapter-id="prove-safely" data-chapter-title="Prove safely" data-method-label="Prove" data-nav-title="Proof plan" data-render="proof">
+<!-- 09 · OPPORTUNITY PORTFOLIO -->
+<section id="opportunity-portfolio" data-slide data-chapter-id="locate" data-chapter-title="Locate the Value" data-nav-title="AI opportunity patterns" data-render="oppPortfolio">
   <div class="inner">
-    <div class="sec-tag reveal">04 · Prove safely</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Prove value in 6–10 weeks<br>before committing to scale.</h2>
-    <div class="proof-loop reveal" style="transition-delay:.12s">
-      <div class="proof-step"><div class="proof-step-n">Step 1</div><div class="proof-step-h">Define</div><div class="proof-step-body">Scope one decision or process segment to prove.</div></div>
-      <div class="proof-arr"><i class="ti ti-chevron-right"></i></div>
-      <div class="proof-step"><div class="proof-step-n">Step 2</div><div class="proof-step-h">Build</div><div class="proof-step-body">MVP: data ingestion → AI layer → human review → evidence log.</div></div>
-      <div class="proof-arr"><i class="ti ti-chevron-right"></i></div>
-      <div class="proof-step gate-step"><div class="proof-step-n">Gate</div><div class="proof-step-h">Evidence review</div><div class="proof-step-body">Validate quality, risk, and adoption signal before scale.</div></div>
-      <div class="proof-arr"><i class="ti ti-chevron-right"></i></div>
-      <div class="proof-step"><div class="proof-step-n">Step 3</div><div class="proof-step-h">Scale</div><div class="proof-step-body">Extend to full process, additional use cases, or enterprise rollout.</div></div>
+    <div class="sec-tag reveal">Locate the Value · 09</div>
+    <h2 class="slide-h reveal">Twenty AI opportunity patterns across the risk function.</h2>
+    <p class="slide-sub reveal">These patterns combine multiple capabilities and transformation blocks. Filtered to your selected capabilities.</p>
+    <div id="oppPortfolioArea" style="margin-top:14px"></div>
+  </div>
+</section>
+
+<!-- 10 · EXECUTIVE SHORTLIST -->
+<section id="exec-shortlist" data-slide data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Executive shortlist" data-method-label="Prove safely · 15 min" data-render="shortlist">
+  <div class="inner">
+    <div class="sec-tag reveal">Prove Safely · 10</div>
+    <h2 class="slide-h reveal">Three proof candidates. One first move.</h2>
+    <p class="slide-sub reveal">Derived from your selected capabilities. Use lens buttons to weight the decision from CRO, CFO, or joint perspective.</p>
+    <div class="arch-toggle reveal" style="margin-top:12px">
+      <button class="arch-btn active" data-lens="joint">Joint lens</button>
+      <button class="arch-btn" data-lens="cro">CRO lens</button>
+      <button class="arch-btn" data-lens="cfo">CFO lens</button>
     </div>
-    <div class="proof-canvas reveal" style="transition-delay:.24s" id="proofCanvas">
-      <div class="proof-header">Proof canvas for <span id="proofCapName">your chosen capability</span></div>
-      <div class="proof-grid">
-        <div class="proof-field span2"><div class="proof-lbl">Problem statement</div><div class="proof-val tbd" id="pf-problem">To be defined with client team</div></div>
-        <div class="proof-field"><div class="proof-lbl">Primary success metric</div><div class="proof-val tbd" id="pf-metric">TBD — validate with SME</div></div>
-        <div class="proof-field"><div class="proof-lbl">Data source</div><div class="proof-val tbd" id="pf-data">TBD</div></div>
-        <div class="proof-field"><div class="proof-lbl">AI approach</div><div class="proof-val tbd" id="pf-ai">TBD</div></div>
-        <div class="proof-field"><div class="proof-lbl">Human review step</div><div class="proof-val tbd" id="pf-human">Analyst reviews AI output before any action</div></div>
-        <div class="proof-field"><div class="proof-lbl">Evidence artefact</div><div class="proof-val tbd" id="pf-evidence">Decision log, confidence score, approval record</div></div>
-        <div class="proof-field"><div class="proof-lbl">Timeline</div><div class="proof-val tbd" id="pf-timeline">6–10 weeks MVP</div></div>
-        <div class="proof-field"><div class="proof-lbl">RAI risks</div><div class="proof-val tbd" id="pf-rai">Bias, hallucination, accountability — review against RAI checklist</div></div>
-        <div class="proof-field"><div class="proof-lbl">Gate criterion</div><div class="proof-val tbd" id="pf-gate">Evidence review: accuracy ≥ target, adoption signal confirmed</div></div>
-      </div>
+    <div id="shortlistGrid" style="margin-top:10px"></div>
+  </div>
+</section>
+
+<!-- 11 · USE CASE FLOW -->
+<section id="use-case-flow" data-slide data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Use case library" data-render="useCases">
+  <div class="inner">
+    <div class="sec-tag reveal">Prove Safely · 11</div>
+    <h2 class="slide-h reveal">Sixteen use cases — four delivery statuses.</h2>
+    <p class="slide-sub reveal">Live assets, team-built tools, NDA references, and illustrative patterns. Click any card to see the end-to-end flow and required transformation blocks.</p>
+    <div id="ucGrid" style="margin-top:14px"></div>
+  </div>
+</section>
+
+<!-- 12 · PROOF & VALUE CAPTURE -->
+<section id="proof-value-capture" data-slide data-chapter-id="prove" data-chapter-title="Prove Safely" data-nav-title="Proof and value capture" data-render="proofValueCapture">
+  <div class="inner">
+    <div class="sec-tag reveal">Prove Safely · 12</div>
+    <h2 class="slide-h reveal">From theoretical potential to realised value — seven stages.</h2>
+    <p class="slide-sub reveal">Each stage has a gate test. Value captured at each stage depends on your proof capability selection and control environment.</p>
+    <div id="valueWaterfall" style="margin-top:14px"></div>
+    <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">All value figures require client-provided data and Accenture-approved benchmarks before presentation. Do not use illustrative numbers as measured outcomes.</div>
+  </div>
+</section>
+
+<!-- 13 · INDUSTRIALIZATION ARCHITECTURE -->
+<section id="industrialization-arch" data-slide data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Industrialization architecture" data-method-label="Build to scale · 10 min">
+  <div class="inner">
+    <div class="sec-tag reveal">Build to Scale · 13</div>
+    <h2 class="slide-h reveal">Six layers. Proof runs on one. Scale demands all six.</h2>
+    <p class="slide-sub reveal">The industrialization architecture is layered. Each proof use case surfaces which layers need investment before scale.</p>
+    <div class="arch-stack" style="margin-top:18px">
+      <div class="arch-layer reveal"><div class="arch-layer-num">06</div><div class="arch-layer-name">Interaction layer</div><div class="arch-layer-chips"><span class="arch-chip">Chat / copilot</span><span class="arch-chip">API consumers</span><span class="arch-chip">Dashboards</span></div></div>
+      <div class="arch-conn-v">↓</div>
+      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">05</div><div class="arch-layer-name">Agent orchestration</div><div class="arch-layer-chips"><span class="arch-chip">Planner agents</span><span class="arch-chip">Specialist agents</span><span class="arch-chip">Human-in-loop gates</span></div></div>
+      <div class="arch-conn-v">↓</div>
+      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">04</div><div class="arch-layer-name">AI services</div><div class="arch-layer-chips"><span class="arch-chip">Foundation models</span><span class="arch-chip">Fine-tuned models</span><span class="arch-chip">Vision / speech</span></div></div>
+      <div class="arch-conn-v">↓</div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">03</div><div class="arch-layer-name">Platform and MLOps</div><div class="arch-layer-chips"><span class="arch-chip">Model registry</span><span class="arch-chip">Feature store</span><span class="arch-chip">Drift monitoring</span></div></div>
+      <div class="arch-conn-v">↓</div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">02</div><div class="arch-layer-name">Data and knowledge</div><div class="arch-layer-chips"><span class="arch-chip">Risk data mesh</span><span class="arch-chip">Knowledge graph</span><span class="arch-chip">Vector store</span></div></div>
+      <div class="arch-conn-v">↓</div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">01</div><div class="arch-layer-name">Control and governance</div><div class="arch-layer-chips"><span class="arch-chip">Model risk policy</span><span class="arch-chip">AI risk framework</span><span class="arch-chip">Audit trail</span></div></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 12 — EVIDENCE SCORECARD ═══ -->
-<section id="value-evidence" data-slide data-chapter-id="prove-safely" data-chapter-title="Prove safely" data-method-label="Prove" data-nav-title="Value and evidence">
+<!-- 14 · RUN ECONOMICS -->
+<section id="run-economics" data-slide data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Run economics and tokenomics">
   <div class="inner">
-    <div class="sec-tag reveal">04 · Prove safely</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Value shows up in four places.<br>Evidence must come from your data.</h2>
-    <div class="scorecard reveal" style="transition-delay:.15s">
-      <div class="sc-quad">
-        <div class="sc-quad-accent" style="background:linear-gradient(90deg,var(--accent),var(--pink))"></div>
-        <i class="ti ti-clock-hour-4 sc-quad-icon" style="color:var(--accent)"></i>
-        <div class="sc-quad-h">Capacity and speed</div>
-        <div class="sc-quad-body">Time removed from recurring analysis, reporting, and evidence preparation cycles. Measured as hours per cycle before and after.</div>
-        <div class="sc-quad-note">Measure: time-per-task before vs after · validate with operations</div>
-      </div>
-      <div class="sc-quad">
-        <div class="sc-quad-accent" style="background:linear-gradient(90deg,var(--cyan),var(--green))"></div>
-        <i class="ti ti-shield-check sc-quad-icon" style="color:var(--cyan)"></i>
-        <div class="sc-quad-h">Risk and control quality</div>
-        <div class="sc-quad-body">Reduction in missed exceptions, inconsistent assessments, and late escalations. Measured against existing control performance data.</div>
-        <div class="sc-quad-note">Measure: exception catch-rate, false-negative rate · validate with control owners</div>
-      </div>
-      <div class="sc-quad">
-        <div class="sc-quad-accent" style="background:linear-gradient(90deg,var(--green),var(--amber))"></div>
-        <i class="ti ti-certificate sc-quad-icon" style="color:var(--green)"></i>
-        <div class="sc-quad-h">Regulatory and audit readiness</div>
-        <div class="sc-quad-body">Completeness and speed of evidence assembly for exam requests, internal audit, and model risk reviews.</div>
-        <div class="sc-quad-note">Measure: evidence assembly time, completeness score · validate with compliance</div>
-      </div>
-      <div class="sc-quad">
-        <div class="sc-quad-accent" style="background:linear-gradient(90deg,var(--amber),var(--pink))"></div>
-        <i class="ti ti-users sc-quad-icon" style="color:var(--amber)"></i>
-        <div class="sc-quad-h">Team and talent impact</div>
-        <div class="sc-quad-body">Shift of analyst time from data assembly to judgment. Retention and talent signal from removing low-value work.</div>
-        <div class="sc-quad-note">Measure: task-type time allocation before vs after · validate with HR/COO</div>
-      </div>
+    <div class="sec-tag reveal">Build to Scale · 14</div>
+    <h2 class="slide-h reveal">Six cost drivers determine what it costs to run AI at scale.</h2>
+    <p class="slide-sub reveal">Understanding the cost driver tree enables accurate FinOps modelling and prevents surprises in the business case. Click each driver to expand its levers.</p>
+    <div class="eco-tree reveal" style="margin-top:16px">
+      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-cpu" style="color:var(--accent)"></i><span class="eco-driver-name">Inference compute</span><span class="eco-driver-weight">~35–55% of run cost</span></div><div class="eco-driver-levers"><div class="eco-lever">Model selection: smaller, quantised, or distilled models reduce cost per token significantly</div><div class="eco-lever">Caching strategies: prompt caching for repeated context reduces redundant inference</div><div class="eco-lever">Batching: asynchronous workloads can be batched vs. real-time premium pricing</div></div></div>
+      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-database" style="color:var(--cyan)"></i><span class="eco-driver-name">Data retrieval and embedding</span><span class="eco-driver-weight">~10–20% of run cost</span></div><div class="eco-driver-levers"><div class="eco-lever">Embedding model size and refresh frequency drive storage and compute cost</div><div class="eco-lever">Vector database sizing and query patterns determine retrieval infrastructure cost</div></div></div>
+      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-users" style="color:var(--green)"></i><span class="eco-driver-name">Human review and oversight</span><span class="eco-driver-weight">~15–30% of run cost</span></div><div class="eco-driver-levers"><div class="eco-lever">Review rate determines staffing: what share of AI outputs require human sign-off?</div><div class="eco-lever">Escalation design: clear confidence thresholds reduce unnecessary escalation volume</div></div></div>
+      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-shield" style="color:var(--amber)"></i><span class="eco-driver-name">Model risk and compliance</span><span class="eco-driver-weight">~8–15% of run cost</span></div><div class="eco-driver-levers"><div class="eco-lever">Model validation cycles, documentation, and SR 11-7 equivalents drive ongoing cost</div><div class="eco-lever">Bias monitoring, fairness testing, and explainability tooling are ongoing, not one-off</div></div></div>
+      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-tools" style="color:var(--pink)"></i><span class="eco-driver-name">Platform and tooling</span><span class="eco-driver-weight">~8–12% of run cost</span></div><div class="eco-driver-levers"><div class="eco-lever">MLOps platform licensing or build cost amortised across use case volume</div><div class="eco-lever">Feature store, model registry, and experiment tracking infrastructure</div></div></div>
+      <div class="eco-driver"><div class="eco-driver-hdr" onclick="this.parentElement.classList.toggle('open')"><i class="ti ti-refresh" style="color:var(--text-2)"></i><span class="eco-driver-name">Retraining and drift management</span><span class="eco-driver-weight">~5–10% of run cost</span></div><div class="eco-driver-levers"><div class="eco-lever">Retraining frequency depends on regulatory change velocity and data drift rates</div><div class="eco-lever">Automated drift detection reduces manual monitoring overhead over time</div></div></div>
     </div>
-    <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);margin-top:14px;">Do not promise specific percentage savings without client-validated baseline data. These are value dimensions, not benchmarks.</p>
+    <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em" class="reveal">Cost ranges are illustrative and depend on use-case architecture, cloud provider, model selection, and volume. Validate with client data.</div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 13 — TARGET ARCHITECTURE ═══ -->
-<section id="target-architecture" data-slide data-chapter-id="build-to-scale" data-chapter-title="Build to scale" data-method-label="Scale" data-nav-title="Target architecture">
+<!-- 15 · ACCENTURE EDGE -->
+<section id="accenture-edge" data-slide data-chapter-id="build" data-chapter-title="Build to Scale" data-nav-title="Accenture dual-engine USP" data-render="accentureEdge">
   <div class="inner">
-    <div class="sec-tag reveal">05 · Build to scale</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">Five layers. One principle:<br>AI assists; humans stay accountable.</h2>
-    <div class="arch-stack reveal" style="transition-delay:.15s">
-      <div class="arch-layer-row" style="border-left:3px solid var(--cyan)">
-        <div class="arch-layer-num">5</div>
-        <div class="arch-layer-name">Consumption</div>
-        <div class="arch-layer-chips">
-          <span class="arch-layer-chip">Risk dashboards</span>
-          <span class="arch-layer-chip">Regulatory reporting</span>
-          <span class="arch-layer-chip">Audit evidence packages</span>
-          <span class="arch-layer-chip">Decision memos</span>
-        </div>
-      </div>
-      <div class="arch-connector-v">↕</div>
-      <div class="arch-layer-row ai-layer" style="border-left:3px solid var(--accent)">
-        <div class="arch-layer-num">4</div>
-        <div class="arch-layer-name">AI and orchestration</div>
-        <div class="arch-layer-chips">
-          <span class="arch-layer-chip">LLM / GenAI models</span>
-          <span class="arch-layer-chip">ML risk scoring</span>
-          <span class="arch-layer-chip">Agentic workflows</span>
-          <span class="arch-layer-chip">Human-in-the-loop gates</span>
-        </div>
-      </div>
-      <div class="arch-connector-v">↕</div>
-      <div class="arch-layer-row" style="border-left:3px solid var(--pink)">
-        <div class="arch-layer-num">3</div>
-        <div class="arch-layer-name">Risk knowledge layer</div>
-        <div class="arch-layer-chips">
-          <span class="arch-layer-chip">Regulatory corpus</span>
-          <span class="arch-layer-chip">Policy and procedure library</span>
-          <span class="arch-layer-chip">Risk register and history</span>
-          <span class="arch-layer-chip">Control evidence store</span>
-        </div>
-      </div>
-      <div class="arch-connector-v">↕</div>
-      <div class="arch-layer-row" style="border-left:3px solid var(--green)">
-        <div class="arch-layer-num">2</div>
-        <div class="arch-layer-name">Data and integration</div>
-        <div class="arch-layer-chips">
-          <span class="arch-layer-chip">Core banking / GL</span>
-          <span class="arch-layer-chip">GRC platform</span>
-          <span class="arch-layer-chip">Model inventory</span>
-          <span class="arch-layer-chip">Transaction data</span>
-          <span class="arch-layer-chip">Third-party feeds</span>
-        </div>
-      </div>
-      <div class="arch-connector-v">↕</div>
-      <div class="arch-layer-row" style="border-left:3px solid var(--amber)">
-        <div class="arch-layer-num">1</div>
-        <div class="arch-layer-name">Governance and controls</div>
-        <div class="arch-layer-chips">
-          <span class="arch-layer-chip">Identity and access</span>
-          <span class="arch-layer-chip">AI model risk governance</span>
-          <span class="arch-layer-chip">Logging and audit trail</span>
-          <span class="arch-layer-chip">Data lineage</span>
-        </div>
-      </div>
-    </div>
+    <div class="sec-tag reveal">Build to Scale · 15</div>
+    <h2 class="slide-h reveal">Two engines. Neither one works without the other.</h2>
+    <p class="slide-sub reveal">Accenture delivers risk AI transformation through a dual-engine model: transforming the client's risk function while accelerating delivery through proprietary assets and talent.</p>
+    <div id="edgeArea" style="margin-top:14px"></div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 14 — OPERATING MODEL ═══ -->
-<section id="operating-model" data-slide data-chapter-id="build-to-scale" data-chapter-title="Build to scale" data-method-label="Scale" data-nav-title="Operating model">
+<!-- 16 · LEAN TRANSITION -->
+<section id="lean-transition" data-slide data-chapter-id="commit" data-chapter-title="Commit" data-nav-title="Lean transition method" data-method-label="Commit · 10 min">
   <div class="inner">
-    <div class="sec-tag reveal">05 · Build to scale</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">The operating model determines<br>who owns what in an AI-assisted function.</h2>
-    <div class="opmodel-groups reveal" style="transition-delay:.15s">
-      <div class="opmodel-group">
-        <div class="opmodel-group-h" style="border-color:var(--accent);">First line — risk teams</div>
-        <div class="opmodel-role-item"><i class="ti ti-user opmodel-role-icon"></i><div><div class="opmodel-role-name">Risk analyst</div><div class="opmodel-role-rights">Reviews AI drafts; approves or escalates. Remains accountable for output quality.</div></div></div>
-        <div class="opmodel-role-item"><i class="ti ti-user-check opmodel-role-icon"></i><div><div class="opmodel-role-name">Risk officer</div><div class="opmodel-role-rights">Approves consequential decisions. Cannot delegate accountability to AI.</div></div></div>
-        <div class="opmodel-role-item"><i class="ti ti-chart-bar opmodel-role-icon"></i><div><div class="opmodel-role-name">Domain SME</div><div class="opmodel-role-rights">Validates AI output against specialist judgment. Flags calibration gaps.</div></div></div>
-      </div>
-      <div class="opmodel-group">
-        <div class="opmodel-group-h" style="border-color:var(--pink);">Second line — oversight</div>
-        <div class="opmodel-role-item"><i class="ti ti-shield opmodel-role-icon" style="color:var(--pink)"></i><div><div class="opmodel-role-name">Model risk manager</div><div class="opmodel-role-rights">Validates AI models. Reviews scope, data, fairness, and drift monitoring.</div></div></div>
-        <div class="opmodel-role-item"><i class="ti ti-certificate opmodel-role-icon" style="color:var(--pink)"></i><div><div class="opmodel-role-name">Chief Compliance Officer</div><div class="opmodel-role-rights">Confirms AI-assisted outputs meet regulatory and internal policy requirements.</div></div></div>
-        <div class="opmodel-role-item"><i class="ti ti-eye opmodel-role-icon" style="color:var(--pink)"></i><div><div class="opmodel-role-name">Internal audit</div><div class="opmodel-role-rights">Tests controls, samples AI decisions, verifies evidence completeness.</div></div></div>
-      </div>
-      <div class="opmodel-group">
-        <div class="opmodel-group-h" style="border-color:var(--cyan);">Technology and AI enablement</div>
-        <div class="opmodel-role-item"><i class="ti ti-robot opmodel-role-icon" style="color:var(--cyan)"></i><div><div class="opmodel-role-name">AI product owner</div><div class="opmodel-role-rights">Owns use-case scope, success metrics, and adoption across risk teams.</div></div></div>
-        <div class="opmodel-role-item"><i class="ti ti-database opmodel-role-icon" style="color:var(--cyan)"></i><div><div class="opmodel-role-name">Data steward</div><div class="opmodel-role-rights">Maintains data lineage, quality, and access rights for AI ingestion.</div></div></div>
-        <div class="opmodel-role-item"><i class="ti ti-lock opmodel-role-icon" style="color:var(--cyan)"></i><div><div class="opmodel-role-name">Security and identity</div><div class="opmodel-role-rights">Enforces data boundaries, prompt isolation, and model access controls.</div></div></div>
-      </div>
+    <div class="sec-tag reveal">Commit · 16</div>
+    <h2 class="slide-h reveal">The leanest path from conversation to proved value.</h2>
+    <p class="slide-sub reveal">Six phases with explicit gate outputs. No phase starts without the previous gate test passing. Client can expand or pause at each gate.</p>
+    <div class="lean-phases reveal" style="margin-top:20px">
+      <div class="lean-phase"><div class="lean-phase-dur">Wk 1–2</div><div class="lean-phase-name">Discover</div><div class="lean-phase-out">Scoped intent. Priority blocks confirmed. No client cost.</div></div>
+      <div class="lean-phase"><div class="lean-phase-dur">Wk 3–6</div><div class="lean-phase-name">Diagnose</div><div class="lean-phase-out">Maturity baseline. Evidence assembled with AI assist. Gap map.</div></div>
+      <div class="lean-phase"><div class="lean-phase-dur">Wk 7–10</div><div class="lean-phase-name">Design</div><div class="lean-phase-out">Target-state design for selected block and use case. Tech pattern confirmed.</div></div>
+      <div class="lean-phase active"><div class="lean-phase-dur">Wk 11–18</div><div class="lean-phase-name">Pilot</div><div class="lean-phase-out">Lighthouse in controlled environment. Gate-ready evidence pack.</div></div>
+      <div class="lean-phase"><div class="lean-phase-dur">Wk 19–34</div><div class="lean-phase-name">Industrialise</div><div class="lean-phase-out">Production hardening. MLOps. Model risk sign-off. Control integration.</div></div>
+      <div class="lean-phase"><div class="lean-phase-dur">Ongoing</div><div class="lean-phase-name">Scale</div><div class="lean-phase-out">Platform extension. Additional use cases. Enterprise deployment wave.</div></div>
     </div>
+    <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.08em;line-height:1.5" class="reveal">Timelines are illustrative. Actual durations depend on client data readiness, regulatory review cycles, and available resource. Validated during Diagnose phase.</div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 15 — STAGE-GATE ROADMAP ═══ -->
-<section id="roadmap" data-slide data-chapter-id="build-to-scale" data-chapter-title="Build to scale" data-method-label="Scale" data-nav-title="Roadmap to scale">
+<!-- 17 · ROADMAP -->
+<section id="roadmap" data-slide data-chapter-id="commit" data-chapter-title="Commit" data-nav-title="Stage-gate roadmap">
   <div class="inner">
-    <div class="sec-tag reveal">05 · Build to scale</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">From first proof to enterprise scale:<br>a gated journey, not a big-bang rollout.</h2>
-    <div class="sgt-wrap reveal" style="transition-delay:.15s">
+    <div class="sec-tag reveal">Commit · 17</div>
+    <h2 class="slide-h reveal">Five stage gates. Each unlocks the next.</h2>
+    <p class="slide-sub reveal">No stage proceeds without its gate test. This prevents premature scaling and ensures each phase is grounded in evidence before investment expands.</p>
+    <div class="sgt-wrap reveal" style="margin-top:20px">
       <div class="sgt-inner">
         <div class="sgt-track"><div class="sgt-track-fill"></div></div>
         <div class="sgt-stages">
           <div class="sgt-stage-wrap active">
             <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-stage-card">
-              <div class="sgt-dur">Weeks 1–2</div>
-              <div class="sgt-name">Mobilise</div>
-              <div class="sgt-output">Use-case scope locked, data access confirmed, team assembled</div>
-            </div>
+            <div class="sgt-card"><div class="sgt-dur">Wk 1–6</div><div class="sgt-name">Discover &amp; Diagnose</div><div class="sgt-output">Scoped intent · Maturity baseline · Gap map</div></div>
           </div>
-          <div class="sgt-gate-wrap">
-            <div class="sgt-diamond"></div>
-            <div class="sgt-gate-lbl">Gate 1</div>
-          </div>
+          <div class="sgt-gate-wrap"><div class="sgt-diamond"></div><div class="sgt-gate-lbl">Gate 1</div></div>
           <div class="sgt-stage-wrap">
             <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-stage-card">
-              <div class="sgt-dur">Weeks 3–8</div>
-              <div class="sgt-name">Prove</div>
-              <div class="sgt-output">Working MVP, human-in-the-loop tested, evidence log live</div>
-            </div>
+            <div class="sgt-card"><div class="sgt-dur">Wk 7–10</div><div class="sgt-name">Design</div><div class="sgt-output">Target state · Tech pattern · Proof plan</div></div>
           </div>
-          <div class="sgt-gate-wrap">
-            <div class="sgt-diamond"></div>
-            <div class="sgt-gate-lbl">Gate 2</div>
-          </div>
+          <div class="sgt-gate-wrap"><div class="sgt-diamond"></div><div class="sgt-gate-lbl">Gate 2</div></div>
           <div class="sgt-stage-wrap">
             <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-stage-card">
-              <div class="sgt-dur">Weeks 9–16</div>
-              <div class="sgt-name">Harden</div>
-              <div class="sgt-output">Security, audit, model risk sign-off; RAI checklist passed</div>
-            </div>
+            <div class="sgt-card"><div class="sgt-dur">Wk 11–18</div><div class="sgt-name">Pilot</div><div class="sgt-output">Evidence pack · Board metrics · Approval readiness</div></div>
           </div>
-          <div class="sgt-gate-wrap">
-            <div class="sgt-diamond"></div>
-            <div class="sgt-gate-lbl">Gate 3</div>
-          </div>
+          <div class="sgt-gate-wrap"><div class="sgt-diamond"></div><div class="sgt-gate-lbl">Gate 3</div></div>
           <div class="sgt-stage-wrap">
             <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-stage-card">
-              <div class="sgt-dur">Months 5–8</div>
-              <div class="sgt-name">Scale</div>
-              <div class="sgt-output">Full process coverage, additional capabilities onboarded</div>
-            </div>
+            <div class="sgt-card"><div class="sgt-dur">Wk 19–34</div><div class="sgt-name">Industrialise</div><div class="sgt-output">Production · MLOps · Model risk sign-off</div></div>
           </div>
-          <div class="sgt-gate-wrap">
-            <div class="sgt-diamond"></div>
-            <div class="sgt-gate-lbl">Gate 4</div>
-          </div>
+          <div class="sgt-gate-wrap"><div class="sgt-diamond"></div><div class="sgt-gate-lbl">Gate 4</div></div>
           <div class="sgt-stage-wrap">
             <div class="sgt-node"><div class="sgt-node-inner"></div></div>
-            <div class="sgt-stage-card">
-              <div class="sgt-dur">Month 9+</div>
-              <div class="sgt-name">Transform</div>
-              <div class="sgt-output">Operating model redesigned; AI-native risk function in steady state</div>
-            </div>
+            <div class="sgt-card"><div class="sgt-dur">Ongoing</div><div class="sgt-name">Scale</div><div class="sgt-output">Platform · Additional use cases · Enterprise wave</div></div>
           </div>
         </div>
       </div>
     </div>
-    <p style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text-3);margin-top:16px;">Timeline is illustrative. Each gate requires evidence review — do not proceed without it.</p>
+    <div style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em" class="reveal">Timelines illustrative. Gate criteria confirmed during Diagnose phase and tailored to client regulatory and governance context.</div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 16 — CLIENT TAKEAWAY ═══ -->
-<section id="takeaway" data-slide data-chapter-id="commit" data-chapter-title="Commit" data-method-label="Close" data-nav-title="Client takeaway" data-render="takeaway">
+<!-- 18 · DECISION & NEXT STEP -->
+<section id="decision-next-step" data-slide data-chapter-id="commit" data-chapter-title="Commit" data-nav-title="Decision and next step" data-render="takeaway">
   <div class="inner">
-    <div class="sec-tag reveal">06 · Commit</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">What you've decided today.</h2>
-    <div class="ta-grid reveal" style="transition-delay:.15s" id="takeawayGrid">
-      <div class="ta-section">
-        <div class="ta-label">Agreed pressures</div>
-        <div class="ta-val" id="ta-pressures">—</div>
-      </div>
-      <div class="ta-section">
-        <div class="ta-label">Lens / archetype</div>
-        <div class="ta-val" id="ta-arch">—</div>
-      </div>
-      <div class="ta-section">
-        <div class="ta-label">Priority capabilities</div>
-        <div class="ta-val" id="ta-caps">—</div>
-      </div>
-      <div class="ta-section">
-        <div class="ta-label">Proof candidate</div>
-        <div class="ta-val" id="ta-proof">—</div>
-      </div>
-      <div class="ta-section wide">
-        <div class="ta-label">Use cases to explore</div>
-        <div class="ta-val" id="ta-usecases">—</div>
-      </div>
-      <div class="ta-section wide">
-        <div class="ta-label">Agreed next action</div>
-        <div class="ta-val" id="ta-next" style="color:var(--text-3);font-style:italic;">To be completed in session</div>
-      </div>
-    </div>
-    <div class="ta-actions reveal" style="transition-delay:.3s">
-      <button class="sec-opt" onclick="copyTakeaway()"><i class="ti ti-copy"></i> Copy summary</button>
-      <button class="sec-opt" onclick="window.print()"><i class="ti ti-printer"></i> Print / PDF</button>
-      <button class="sec-opt" onclick="resetSession()" style="color:var(--text-3)"><i class="ti ti-refresh"></i> Reset session</button>
+    <div class="sec-tag reveal">Commit · 18</div>
+    <h2 class="slide-h reveal">What did we agree? What happens next?</h2>
+    <p class="slide-sub reveal">Session summary — built from your in-conversation selections. Export to share with your team.</p>
+    <div id="takeawayArea" style="margin-top:14px"></div>
+    <div class="ta-actions reveal" style="margin-top:16px">
+      <button class="sec-opt" onclick="copyTakeaway()"><i class="ti ti-copy"></i>Copy summary</button>
+      <button class="sec-opt" onclick="exportSessionJSON()"><i class="ti ti-download"></i>Export session JSON</button>
+      <a class="sec-opt" href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI — next steps"><i class="ti ti-mail"></i>Email next steps</a>
+      <button class="sec-opt" onclick="resetSession()"><i class="ti ti-refresh"></i>Reset session</button>
+      <button class="sec-opt" onclick="goToId('app-caps')"><i class="ti ti-book"></i>Open reference</button>
     </div>
   </div>
 </section>
 
-<!-- ═══ SCREEN 17 — NEXT STEP ═══ -->
-<section id="next-step" data-slide data-chapter-id="commit" data-chapter-title="Commit" data-method-label="Close" data-nav-title="Next step" class="branded-dark-alt">
-  <div class="inner" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;">
-    <div class="sec-tag reveal" style="color:rgba(255,255,255,.3)!important">06 · Commit</div>
-    <h2 class="slide-h reveal" style="color:#fff!important;font-size:clamp(32px,5vw,58px);transition-delay:.05s">One agreed action<br>before you leave this room.</h2>
-    <p class="slide-sub reveal" style="color:rgba(255,255,255,.55)!important;max-width:520px;text-align:center;transition-delay:.12s">Proof of concept scoped, sponsor named, and timeline locked. That is all you need to leave with.</p>
-    <div class="start-opts reveal" style="transition-delay:.22s">
-      <a href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI — Proof Scope Follow-up" class="btn-primary"><i class="ti ti-mail" style="font-size:18px"></i>Start the proof scope</a>
-    </div>
-    <div class="start-opts reveal" style="transition-delay:.3s">
-      <a class="sec-opt" href="https://tzijlstra-acn.github.io/NFRAIAssets/" target="_blank" rel="noopener noreferrer" style="color:rgba(255,255,255,.55);background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);"><i class="ti ti-external-link"></i>All NFR assets</a>
-      <button class="sec-opt" onclick="goToId('app-caps')" style="color:rgba(255,255,255,.55);background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);"><i class="ti ti-book"></i>Reference appendix</button>
-    </div>
-    <p class="foot-note reveal" style="transition-delay:.4s">Accenture NFR AI Practice &middot; <span class="yr"></span> &middot; Confidential — prepared for discussion purposes</p>
-    <a href="https://tzijlstra-acn.github.io/NFRAIAssets/" class="hub-link reveal" style="transition-delay:.45s">NFRAIAssets hub →</a>
-  </div>
-</section>
+<!-- ══════════════════════════════════════════════════════
+     APPENDIX REFERENCE SECTIONS
+══════════════════════════════════════════════════════ -->
 
-<!-- ═══ APPENDIX 18 — CAPABILITY CATALOGUE ═══ -->
-<section id="app-caps" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-method-label="Appendix" data-nav-title="Capability catalogue" data-render="appendixCapabilities">
+<!-- APP-CAPS · FULL CAPABILITY CATALOGUE -->
+<section id="app-caps" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="47 capability catalogue" data-render="appCaps">
   <div class="inner">
-    <div class="sec-tag">REF · Capability catalogue</div>
-    <h2 class="slide-h" style="font-size:clamp(20px,2.5vw,30px);margin-bottom:14px;">Full 47-capability inventory</h2>
-    <div class="app-inner" id="appCapsBody"><!-- rendered by JS --></div>
+    <div class="sec-tag reveal">Reference · A1</div>
+    <h2 class="slide-h reveal">47 risk capabilities — full catalogue.</h2>
+    <p class="slide-sub reveal">All capabilities across six domains with outcome statements and mapped AI opportunities.</p>
+    <div id="appCapsGrid" style="margin-top:14px"></div>
   </div>
 </section>
 
-<!-- ═══ APPENDIX 19 — ROLE METHODOLOGY ═══ -->
-<section id="app-roles" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-method-label="Appendix" data-nav-title="Role methodology">
+<!-- APP-BLOCKS · TRANSFORMATION BLOCK DETAIL -->
+<section id="app-blocks" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Transformation block detail">
   <div class="inner">
-    <div class="sec-tag">REF · Role-impact methodology</div>
-    <h2 class="slide-h" style="font-size:clamp(20px,2.5vw,30px);margin-bottom:14px;">How role-family split data was constructed</h2>
-    <div class="app-inner">
-      <div class="disc-block"><div class="disc-h">What the bars show</div><div class="disc-body">Each role family row shows the illustrative share of total risk FTE in each archetype (cantonal / private), and an indicative split of that headcount into: capacity freed by automation, both (augmented and automated), and output raised through AI-assisted judgment. These splits are directional — they are based on structured discussion with Accenture NFR practitioners, not client-validated time studies.</div></div>
-      <div class="disc-block"><div class="disc-h">Universal / cantonal archetype (A)</div><div class="disc-body">Characterised by broad product range, large retail credit book, significant regulatory reporting burden, and embedded first-line risk teams across business units. Credit and underwriting (32%) dominates headcount. Data and reporting automation has high leverage.</div></div>
-      <div class="disc-block"><div class="disc-h">Private / wealth archetype (B)</div><div class="disc-body">Characterised by high AUM concentration, complex client structures, strong regulatory and tax reporting requirements, and a proportionally larger non-financial risk function (35%) including conduct, operational risk, and fiduciary oversight. Model validation and appetite scenario work is relatively smaller.</div></div>
-      <div class="disc-block"><div class="disc-h">Assumption and validation requirement</div><div class="disc-body">Before using any specific percentage in client communications, validate: (1) actual FTE distribution against the client's own HR or cost data; (2) time-per-task breakdown for priority roles; (3) current automation baseline (some roles may already have partial automation). Do not present these figures as Accenture-guaranteed benchmarks.</div></div>
+    <div class="sec-tag reveal">Reference · A2</div>
+    <h2 class="slide-h reveal">Eight transformation blocks — design rationale.</h2>
+    <p class="slide-sub reveal">Click any block on screen 04 to open the full 5-tab analysis. This page summarises the purpose of each block and how they relate to the risk function.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px" class="reveal">
+      <div class="arch-layer"><div class="arch-layer-num">B1</div><div class="arch-layer-name">Data foundation</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Risk data quality, lineage, and access — the prerequisite for any AI use case at production scale.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num">B2</div><div class="arch-layer-name">AI &amp; model risk governance</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">The policy, validation, and monitoring infrastructure that governs AI models through their lifecycle.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num">B3</div><div class="arch-layer-name">Process &amp; workflow redesign</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Redesigning risk processes around AI insertion points, human-in-loop gates, and straight-through processing.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num">B4</div><div class="arch-layer-name">Talent &amp; capability</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Building the risk function's capacity to specify, use, validate, and govern AI tools without over-dependence on IT.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num">B5</div><div class="arch-layer-name">Technology &amp; platform</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">The ML platform, inference infrastructure, and tooling layer that supports production AI at scale.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num">B6</div><div class="arch-layer-name">Controls &amp; audit integration</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Embedding AI outputs into the control framework so they are auditable, comparable, and defensible.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num">B7</div><div class="arch-layer-name">Regulatory interface</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">How the organisation engages with regulators on AI use, model approvals, and ongoing supervisory expectations.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num">B8</div><div class="arch-layer-name">Operating model</div><div style="font-size:11.5px;color:var(--text-2);line-height:1.4">Decision rights, accountability structures, and organisational design for a risk function that runs AI at production scale.</div></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ APPENDIX 20 — USE-CASE INVENTORY ═══ -->
-<section id="app-usecases" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-method-label="Appendix" data-nav-title="Use-case inventory">
+<!-- APP-MATURITY · MATURITY LEVEL DEFINITIONS -->
+<section id="app-maturity" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Maturity level definitions">
   <div class="inner">
-    <div class="sec-tag">REF · Use-case inventory</div>
-    <h2 class="slide-h" style="font-size:clamp(20px,2.5vw,30px);margin-bottom:14px;">Accenture use-case asset register</h2>
-    <div class="app-inner">
-      <table class="app-table">
-        <thead><tr><th>Use case</th><th>Type</th><th>Primary capability</th><th>For details</th></tr></thead>
-        <tbody>
-          <tr><td>Regulatory data validation (RegAIlytics)</td><td><span class="uc-type live">LIVE</span></td><td>Regulatory horizon scanning</td><td>Ask team for asset link</td></tr>
-          <tr><td>Data quality assurance (Data Conqueror)</td><td><span class="uc-type live">LIVE</span></td><td>Data quality and governance</td><td>Ask team for asset link</td></tr>
-          <tr><td>AI-assisted RCSA workflow</td><td><span class="uc-type team">TEAM</span></td><td>RCSA automation</td><td>Thomas Zijlstra</td></tr>
-          <tr><td>Regulatory change impact analysis</td><td><span class="uc-type team">TEAM</span></td><td>Reg change management</td><td>Thomas Zijlstra</td></tr>
-          <tr><td>Model documentation and validation support</td><td><span class="uc-type team">TEAM</span></td><td>Model validation support</td><td>Thomas Zijlstra</td></tr>
-          <tr><td>Automated control testing (sampling and evidence)</td><td><span class="uc-type team">TEAM</span></td><td>Control testing automation</td><td>Thomas Zijlstra</td></tr>
-          <tr><td>Risk appetite scenario generation</td><td><span class="uc-type illustrative">ILLUSTRATIVE</span></td><td>Appetite and scenario support</td><td>Working example only</td></tr>
-          <tr><td>Credit memo drafting copilot</td><td><span class="uc-type illustrative">ILLUSTRATIVE</span></td><td>Credit assessment tools</td><td>Working example only</td></tr>
-          <tr><td>Conduct risk signal aggregation</td><td><span class="uc-type illustrative">ILLUSTRATIVE</span></td><td>Conduct risk monitoring</td><td>Working example only</td></tr>
-          <tr><td>Operational risk event triage</td><td><span class="uc-type illustrative">ILLUSTRATIVE</span></td><td>RCSA and ORM automation</td><td>Working example only</td></tr>
-          <tr><td>Regulatory report drafting</td><td><span class="uc-type illustrative">ILLUSTRATIVE</span></td><td>Automated regulatory reporting</td><td>Working example only</td></tr>
-          <tr><td>KRI monitoring and escalation</td><td><span class="uc-type illustrative">ILLUSTRATIVE</span></td><td>KRI monitoring</td><td>Working example only</td></tr>
-          <tr><td>Third-party risk AI assessment</td><td><span class="uc-type nda">NDA</span></td><td>Third-party risk</td><td>Contact team for details</td></tr>
-          <tr><td>AML transaction pattern detection</td><td><span class="uc-type nda">NDA</span></td><td>AML monitoring</td><td>Contact team for details</td></tr>
-          <tr><td>Sanctions screening optimisation</td><td><span class="uc-type nda">NDA</span></td><td>Sanctions screening</td><td>Contact team for details</td></tr>
-          <tr><td>Climate risk data aggregation</td><td><span class="uc-type illustrative">ILLUSTRATIVE</span></td><td>Climate risk reporting</td><td>Working example only</td></tr>
-        </tbody>
-      </table>
+    <div class="sec-tag reveal">Reference · A3</div>
+    <h2 class="slide-h reveal">Five maturity levels — what each requires.</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+      <div class="arch-layer reveal"><div class="arch-layer-num">L1</div><div class="arch-layer-name">Assist</div><div class="arch-layer-chips"><span class="arch-chip">AI surfaces insight, human acts</span><span class="arch-chip">Annotation and summarisation</span><span class="arch-chip">Copilot for analyst</span></div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">L2</div><div class="arch-layer-name">Augment</div><div class="arch-layer-chips"><span class="arch-chip">AI generates draft, human reviews and approves</span><span class="arch-chip">Workflow embedded</span></div></div>
+      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">L3</div><div class="arch-layer-name">Automate</div><div class="arch-layer-chips"><span class="arch-chip">AI acts within defined parameters</span><span class="arch-chip">Human monitors and escalates</span><span class="arch-chip">STP for standard cases</span></div></div>
+      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">L4</div><div class="arch-layer-name">Orchestrate</div><div class="arch-layer-chips"><span class="arch-chip">Multi-agent execution</span><span class="arch-chip">Dynamic task delegation</span><span class="arch-chip">AI coordinates AI</span></div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">L5</div><div class="arch-layer-name">Bounded autonomy</div><div class="arch-layer-chips"><span class="arch-chip">AI acts with defined authority limits</span><span class="arch-chip">Full audit trail</span><span class="arch-chip">Regulatory pre-approval required</span></div></div>
     </div>
+    <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">Target maturity is not maximum by default. Appropriate level depends on use-case risk tier, data quality, control environment, and regulatory context. Bounded autonomy requires explicit regulatory and governance approval.</div>
   </div>
 </section>
 
-<!-- ═══ APPENDIX 21 — KPI LIBRARY ═══ -->
-<section id="app-kpis" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-method-label="Appendix" data-nav-title="Proof KPI library">
+<!-- APP-EVIDENCE · EVIDENCE REQUIREMENTS -->
+<section id="app-evidence" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Evidence requirements">
   <div class="inner">
-    <div class="sec-tag">REF · Proof KPI library</div>
-    <h2 class="slide-h" style="font-size:clamp(20px,2.5vw,30px);margin-bottom:14px;">What to measure in a proof of concept</h2>
-    <div class="app-inner">
-      <div class="kpi-group"><div class="kpi-group-h">Capacity and speed</div><ul class="kpi-list"><li>Hours per regulatory change impact assessment (before vs after)</li><li>Time from RCSA trigger to draft sign-off</li><li>Analyst hours per monthly risk report cycle</li><li>Evidence assembly time per audit request</li></ul></div>
-      <div class="kpi-group"><div class="kpi-group-h">Risk and control quality</div><ul class="kpi-list"><li>Exception catch-rate vs manual baseline (sample test)</li><li>False-negative rate for material risk events</li><li>Consistency score across assessors (AI-assisted vs manual)</li><li>Control test sample coverage rate</li></ul></div>
-      <div class="kpi-group"><div class="kpi-group-h">Regulatory and audit readiness</div><ul class="kpi-list"><li>Evidence completeness score per exam request</li><li>Days from regulatory query to evidence package delivered</li><li>Model documentation completeness at submission</li><li>Number of audit findings related to evidence gaps</li></ul></div>
-      <div class="kpi-group"><div class="kpi-group-h">AI and model quality (process metrics)</div><ul class="kpi-list"><li>Human override rate on AI draft outputs</li><li>Model confidence score distribution (calibration check)</li><li>Data freshness and completeness at ingestion</li><li>Hallucination or factual error rate (sampled review)</li></ul></div>
-      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);margin-top:12px;">Do not present KPI targets without a validated client baseline. Use these as measurement framework, not promised outcomes.</p>
+    <div class="sec-tag reveal">Reference · A4</div>
+    <h2 class="slide-h reveal">What evidence is needed before AI can be proved?</h2>
+    <p class="slide-sub reveal">Accenture's AI-assisted evidence assembly accelerates the diagnostic phase. This page lists minimum evidence requirements per block category.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px" class="reveal">
+      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-file-text" style="font-size:14px"></i></div><div class="arch-layer-name">Policy &amp; framework documents</div><div class="arch-layer-chips"><span class="arch-chip">Risk appetite statement</span><span class="arch-chip">AI risk policy</span><span class="arch-chip">Control framework</span></div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-sitemap" style="font-size:14px"></i></div><div class="arch-layer-name">Process maps</div><div class="arch-layer-chips"><span class="arch-chip">RCSA workflow</span><span class="arch-chip">Approval chains</span><span class="arch-chip">Escalation logic</span></div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-database" style="font-size:14px"></i></div><div class="arch-layer-name">Data inventory</div><div class="arch-layer-chips"><span class="arch-chip">Data lineage</span><span class="arch-chip">Quality metrics</span><span class="arch-chip">Access controls</span></div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-shield" style="font-size:14px"></i></div><div class="arch-layer-name">Control &amp; model inventory</div><div class="arch-layer-chips"><span class="arch-chip">Existing model logs</span><span class="arch-chip">MRM catalogue</span><span class="arch-chip">Validation findings</span></div></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ APPENDIX 22 — RESPONSIBLE AI ═══ -->
-<section id="app-rai" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-method-label="Appendix" data-nav-title="Responsible AI checklist">
+<!-- APP-METHOD · METHODOLOGY DETAIL -->
+<section id="app-method" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Methodology detail">
   <div class="inner">
-    <div class="sec-tag">REF · Responsible AI</div>
-    <h2 class="slide-h" style="font-size:clamp(20px,2.5vw,30px);margin-bottom:14px;">Responsible AI and control checklist</h2>
-    <div class="app-inner">
-      <div class="rai-section"><div class="rai-h">Accountability and governance</div><ul class="rai-list"><li>A named human is accountable for every consequential AI-assisted decision</li><li>AI cannot approve its own outputs — a human review step exists</li><li>Scope of AI authority is documented and bounded</li><li>Escalation path defined for edge cases and failures</li></ul></div>
-      <div class="rai-section"><div class="rai-h">Data and model quality</div><ul class="rai-list"><li>Training and retrieval data is documented, sourced, and fit for purpose</li><li>Model validation has been completed (or is in scope)</li><li>Drift monitoring is in place with defined thresholds</li><li>Data lineage is traceable end to end</li></ul></div>
-      <div class="rai-section"><div class="rai-h">Fairness and bias</div><ul class="rai-list"><li>Potential protected-characteristic bias has been assessed for each use case</li><li>Outputs have been tested across relevant population segments</li><li>Adverse outcome review process exists</li></ul></div>
-      <div class="rai-section"><div class="rai-h">Transparency and explainability</div><ul class="rai-list"><li>AI-assisted outputs are labelled as such to human reviewers</li><li>Reasoning or evidence basis is surfaced alongside output</li><li>Confidence scores or uncertainty signals are provided where material</li></ul></div>
-      <div class="rai-section"><div class="rai-h">Security and privacy</div><ul class="rai-list"><li>Client and counterparty data is not used to train external models</li><li>Prompt isolation prevents data leakage between clients or sessions</li><li>Access controls and role-based permissions are enforced at the model layer</li><li>Data residency requirements are met</li></ul></div>
-      <div class="rai-section"><div class="rai-h">Regulatory alignment</div><ul class="rai-list"><li>Use case is reviewed against EU AI Act risk classification</li><li>Model risk management framework covers AI models in scope</li><li>Evidence of control effectiveness is available for regulatory review</li></ul></div>
+    <div class="sec-tag reveal">Reference · A5</div>
+    <h2 class="slide-h reveal">Lean client entry — methodology principles.</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+      <div class="arch-layer reveal"><div class="arch-layer-num">P1</div><div class="arch-layer-name">Evidence before design</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">No target state is designed before the diagnostic evidence is assembled. Prevents designing for a context that doesn't match the client's actual operating model.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">P2</div><div class="arch-layer-name">Gate-first, not timeline-first</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">Each phase has a gate test. The next phase only begins when the gate test passes. Timelines are targets, not commitments.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">P3</div><div class="arch-layer-name">Lighthouse before platform</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">Prove value in one controlled use case before investing in platform infrastructure. Lighthouse evidence justifies the platform investment.</div></div>
+      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">P4</div><div class="arch-layer-name">Human-centred AI design</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">Every use case design specifies exactly which decisions remain with humans, which are AI-assisted, and what the escalation triggers are. Not configurable at runtime without governance approval.</div></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ APPENDIX 23 — ARCHITECTURE DETAIL ═══ -->
-<section id="app-arch" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-method-label="Appendix" data-nav-title="Architecture detail">
+<!-- APP-USECASES · USE CASE INVENTORY -->
+<section id="app-usecases" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Use case inventory">
   <div class="inner">
-    <div class="sec-tag">REF · Architecture</div>
-    <h2 class="slide-h" style="font-size:clamp(20px,2.5vw,30px);margin-bottom:14px;">Architecture principles and technology notes</h2>
-    <div class="app-inner">
-      <div class="disc-block"><div class="disc-h">Deployment model</div><div class="disc-body">Preference is sovereign cloud or on-premises deployment for all regulated risk data. LLM API calls should never send client transaction data or personal information to external model providers without explicit data-processing agreements and regulatory approval. Use retrieval-augmented generation (RAG) to avoid embedding sensitive data in model weights.</div></div>
-      <div class="disc-block"><div class="disc-h">Integration approach</div><div class="disc-body">Prioritise event-driven or API integration over batch extraction. Risk data freshness is a material concern — stale data embedded in AI context produces confident but wrong outputs. Data contracts between source systems and the AI layer should be version-controlled and tested.</div></div>
-      <div class="disc-block"><div class="disc-h">Human-in-the-loop pattern</div><div class="disc-body">Every consequential output (risk assessment, regulatory submission, model decision, credit recommendation) must pass through a documented human review step before action. The AI layer surfaces output with confidence score and evidence provenance; the human reviewer approves, modifies, or rejects. The approval event is written to an immutable audit log.</div></div>
-      <div class="disc-block"><div class="disc-h">Technology choices</div><div class="disc-body">Technology stack is client-driven — Accenture is vendor-neutral. Common patterns include Azure OpenAI (for European data residency), Databricks for ML and data pipelines, ServiceNow or Archer for GRC integration, and Confluent or Azure Event Hubs for event streaming. Any specific technology recommendation must be validated against client existing architecture and procurement constraints.</div></div>
-      <div class="disc-block"><div class="disc-h">Scope of this slide deck</div><div class="disc-body">Architecture in this deck is illustrative — representative of common patterns observed across European bank engagements. It is not a delivered architecture design. A formal architecture assessment would require access to client system inventory, data flows, security policy, and cloud strategy.</div></div>
+    <div class="sec-tag reveal">Reference · A6</div>
+    <h2 class="slide-h reveal">Full use case inventory.</h2>
+    <p class="slide-sub reveal">Navigate to screen 11 to interact with all 16 use cases. Status key: LIVE = deployed at a client, TEAM = built by the NFR AI team, NDA = reference only, ILLUSTRATIVE = design pattern for scoping.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px" class="reveal">
+      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-live">LIVE</span></div><div class="arch-layer-name">Deployed at client</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Production use case with verifiable outcomes. Can be referenced by name in proposals. NDA may apply.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-team">TEAM</span></div><div class="arch-layer-name">Built by NFR AI team</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Developed and tested by the Accenture NFR AI team. Available for demonstration. Contact thomas.zijlstra@accenture.com for access.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-nda">NDA</span></div><div class="arch-layer-name">NDA reference</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Live or team-built but restricted from public reference. Do not name client or share artefacts without explicit permission.</div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-illustrative">ILLUSTRATIVE</span></div><div class="arch-layer-name">Design pattern</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Scoping-level illustration. Not deployed. Do not present outcomes as measured results. For discovery and design conversations only.</div></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ APPENDIX 24 — ASSUMPTIONS ═══ -->
-<section id="app-assumptions" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-method-label="Appendix" data-nav-title="Assumptions and sources">
+<!-- APP-KPIS · KPI LIBRARY -->
+<section id="app-kpis" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="KPI library">
   <div class="inner">
-    <div class="sec-tag">REF · Assumptions and disclaimers</div>
-    <h2 class="slide-h" style="font-size:clamp(20px,2.5vw,30px);margin-bottom:14px;">What you should know before sharing this content</h2>
-    <div class="app-inner">
-      <div class="disc-block"><div class="disc-h">Status of this material</div><div class="disc-body">This presentation is a working conversation tool prepared for internal discussion with client leadership. It is not a formal Accenture deliverable, proposal, or offer. Content has not passed Accenture risk, legal, or client-approval processes. Do not share externally without those reviews.</div></div>
-      <div class="disc-block"><div class="disc-h">Data and numbers</div><div class="disc-body">All percentage figures, FTE splits, timelines, and capability descriptions are illustrative. They are based on practitioner judgment and pattern observations from prior engagements, not validated client studies or published research. Do not cite as Accenture benchmarks. Validate all quantitative claims against client-specific baseline data before including in any formal proposal or client-facing document.</div></div>
-      <div class="disc-block"><div class="disc-h">Use cases and client references</div><div class="disc-body">Use cases marked ILLUSTRATIVE are working examples for discussion purposes — they do not represent live deployments. Use cases marked LIVE or TEAM-BUILT are real assets. Use cases marked NDA are real but may not be described in detail without client consent — contact the team before referencing. No client names are used without explicit consent from Accenture account leadership.</div></div>
-      <div class="disc-block"><div class="disc-h">AI and technology</div><div class="disc-body">AI capabilities described are technically possible today. Implementation complexity, timeline, and outcome depend heavily on client data quality, technology infrastructure, regulatory context, and organisational readiness. No specific outcome or savings figure should be presented as guaranteed or typical.</div></div>
-      <div class="disc-block"><div class="disc-h">Responsible AI</div><div class="disc-body">Accenture is committed to responsible and ethical AI. All AI implementations must comply with Accenture's Responsible AI principles, the EU AI Act where applicable, and client-specific model risk governance frameworks. This tool does not substitute for a formal AI risk assessment.</div></div>
+    <div class="sec-tag reveal">Reference · A7</div>
+    <h2 class="slide-h reveal">Proof KPIs — what to measure and how.</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px" class="reveal">
+      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-clock" style="font-size:14px;color:var(--accent)"></i></div><div class="arch-layer-name">Speed and throughput</div><div class="arch-layer-chips"><span class="arch-chip">Time per task (before vs. after)</span><span class="arch-chip">Cases processed per FTE</span><span class="arch-chip">STP rate for standard cases</span></div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-chart-bar" style="font-size:14px;color:var(--green)"></i></div><div class="arch-layer-name">Quality and accuracy</div><div class="arch-layer-chips"><span class="arch-chip">False positive rate</span><span class="arch-chip">Model discrimination</span><span class="arch-chip">Human override rate</span></div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-shield-check" style="font-size:14px;color:var(--amber)"></i></div><div class="arch-layer-name">Control effectiveness</div><div class="arch-layer-chips"><span class="arch-chip">Control failure incidents</span><span class="arch-chip">Audit findings trend</span><span class="arch-chip">Regulatory breach rate</span></div></div>
+      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-coin" style="font-size:14px;color:var(--pink)"></i></div><div class="arch-layer-name">Economic metrics</div><div class="arch-layer-chips"><span class="arch-chip">Run cost per decision</span><span class="arch-chip">FTE redeployment rate</span><span class="arch-chip">Penalty avoidance (if quantifiable)</span></div></div>
+    </div>
+    <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">All KPI baselines must be validated with client data before inclusion in a business case. Do not use industry benchmark ranges without explicit Accenture approval and clear source attribution.</div>
+  </div>
+</section>
+
+<!-- APP-RAI · RESPONSIBLE AI -->
+<section id="app-rai" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Responsible AI checklist">
+  <div class="inner">
+    <div class="sec-tag reveal">Reference · A8</div>
+    <h2 class="slide-h reveal">Responsible AI — minimum checklist for risk use cases.</h2>
+    <div style="display:flex;flex-direction:column;gap:7px;margin-top:18px">
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Explainability</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Every AI decision that affects a person or portfolio must produce an explanation that satisfies the relevant regulator's standards. Confirm this before selecting a model architecture.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Bias and fairness</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Training data and model outputs must be audited for protected-class bias before deployment. Ongoing monitoring required at production.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Human oversight</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Decision authority limits must be defined before pilot begins. AI does not exceed its defined authority without explicit governance approval.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Data provenance</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">All training and inference data must have a documented lineage, consent basis (where applicable), and retention policy aligned to regulatory requirements.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-check" style="color:var(--green)"></i></div><div class="arch-layer-name">Model risk governance</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">All production models must be registered, documented, validated, and approved per the client's MRM policy before deployment. SR 11-7 equivalents apply in applicable jurisdictions.</div></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ APPENDIX 25 — TEAM ═══ -->
-<section id="app-team" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-method-label="Appendix" data-nav-title="Team" data-render="team">
-  <div class="inner" style="text-align:center;">
-    <div class="sec-tag reveal">REF · Meet the team</div>
-    <h2 class="slide-h reveal" style="transition-delay:.05s">The people behind this practice.</h2>
-    <p class="slide-sub reveal" style="transition-delay:.1s;text-align:center;">NFR AI specialists across risk, technology, and regulatory domains.</p>
-    <div class="team-row" id="teamRow"><!-- rendered by JS --></div>
-    <div class="trust-row reveal" style="transition-delay:.4s;margin-top:24px;">
-      <div class="trust solid"><i class="ti ti-chart-bar"></i><p><strong>47 capabilities</strong> mapped across 6 risk domains. Each validated with domain specialists before inclusion.</p></div>
-      <div class="trust solid"><i class="ti ti-shield-check"></i><p><strong>Responsible AI first.</strong> Every use case assessed against Accenture RAI principles and EU AI Act requirements.</p></div>
-      <div class="trust dashed"><i class="ti ti-building-bank"></i><p><strong>European banking focus.</strong> Content calibrated for ECB, PRA, FINMA, and DNB regulatory environments.</p></div>
-      <div class="trust dashed"><i class="ti ti-lock"></i><p><strong>Data sovereignty.</strong> All reference architectures assume sovereign or on-premises deployment for regulated data.</p></div>
+<!-- APP-ARCH · ARCHITECTURE DETAIL -->
+<section id="app-arch" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Architecture reference">
+  <div class="inner">
+    <div class="sec-tag reveal">Reference · A9</div>
+    <h2 class="slide-h reveal">Architecture reference — technology patterns by use case tier.</h2>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:18px">
+      <div class="arch-layer reveal"><div class="arch-layer-num">T1</div><div class="arch-layer-name">Summarisation &amp; extraction</div><div class="arch-layer-chips"><span class="arch-chip">RAG pipeline</span><span class="arch-chip">Document parser</span><span class="arch-chip">Fine-tuned LLM</span></div></div>
+      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">T2</div><div class="arch-layer-name">Classification &amp; scoring</div><div class="arch-layer-chips"><span class="arch-chip">Classifier model</span><span class="arch-chip">Threshold engine</span><span class="arch-chip">Explainability layer (SHAP)</span></div></div>
+      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">T3</div><div class="arch-layer-name">Agentic workflows</div><div class="arch-layer-chips"><span class="arch-chip">Orchestration agent</span><span class="arch-chip">Tool calling</span><span class="arch-chip">Human-in-loop gate</span><span class="arch-chip">State management</span></div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num">T4</div><div class="arch-layer-name">Predictive &amp; simulation</div><div class="arch-layer-chips"><span class="arch-chip">Time-series models</span><span class="arch-chip">Monte Carlo engines</span><span class="arch-chip">Scenario APIs</span></div></div>
     </div>
   </div>
 </section>
 
-<!-- PART4 -->
-<script>
-// ── DATA ──
-var CAPABILITIES=[
-  {name:'Enterprise Risk & Resilience',icon:'shield-check',color:'#A100FF',caps:[
-    {n:'RCSA automation',q:'best'},{n:'Operational risk event triage',q:'best'},
-    {n:'KRI monitoring and escalation',q:'best'},{n:'Risk appetite statement support',q:'strategic'},
-    {n:'Appetite and scenario support',q:'strategic'},{n:'Third-party risk',q:'strategic'},
-    {n:'Business continuity and resilience',q:'defer'},{n:'Conduct risk monitoring',q:'best'},
-    {n:'Climate risk reporting',q:'quick'},{n:'Geopolitical risk monitoring',q:'defer'},
-    {n:'Emerging risk horizon scanning',q:'quick'},{n:'Fraud risk monitoring',q:'best'}
-  ]},
-  {name:'Compliance',icon:'certificate',color:'#0891B2',caps:[
-    {n:'Regulatory horizon scanning',q:'best'},{n:'Regulatory change management',q:'best'},
-    {n:'Compliance monitoring',q:'best'},{n:'Regulatory reporting automation',q:'best'},
-    {n:'Policy management',q:'quick'},{n:'Compliance training and awareness',q:'quick'}
-  ]},
-  {name:'Financial Risk',icon:'chart-bar',color:'#F59E0B',caps:[
-    {n:'Credit assessment tools',q:'strategic'},{n:'Credit portfolio monitoring',q:'best'},
-    {n:'Market risk analytics',q:'strategic'},{n:'Liquidity risk monitoring',q:'best'},
-    {n:'Counterparty risk monitoring',q:'best'},{n:'Model development support',q:'strategic'},
-    {n:'Model validation support',q:'best'},{n:'Stress testing support',q:'strategic'},
-    {n:'Capital optimisation analytics',q:'defer'},{n:'ESG and climate financial risk',q:'quick'}
-  ]},
-  {name:'Financial Crime',icon:'search',color:'#EF4444',caps:[
-    {n:'AML monitoring',q:'strategic'},{n:'Sanctions screening',q:'best'},
-    {n:'Fraud detection',q:'best'},{n:'Transaction monitoring',q:'best'},
-    {n:'KYC/CDD automation',q:'strategic'}
-  ]},
-  {name:'Data & Reporting',icon:'database',color:'#10B981',caps:[
-    {n:'Risk data aggregation',q:'best'},{n:'Automated regulatory reporting',q:'best'},
-    {n:'Risk dashboards and visualisation',q:'quick'},{n:'Data quality and governance',q:'best'},
-    {n:'Data lineage and traceability',q:'quick'},{n:'Management reporting automation',q:'best'},
-    {n:'BCBS 239 compliance',q:'strategic'}
-  ]},
-  {name:'Controls & GRC',icon:'checks',color:'#FF50C8',caps:[
-    {n:'Control testing automation',q:'best'},{n:'Audit evidence preparation',q:'best'},
-    {n:'GRC platform automation',q:'best'},{n:'Issue and action tracking',q:'quick'},
-    {n:'SOX and internal control testing',q:'best'},{n:'Policy compliance monitoring',q:'quick'},
-    {n:'Model risk governance',q:'strategic'}
-  ]}
-];
-var ROLE_DATA=[
-  {name:'Reporting and risk data',shareA:15,shareB:13,splitA:[70,15,15],splitB:[70,15,15]},
-  {name:'Governance and policy',shareA:9,shareB:10,splitA:[65,15,20],splitB:[65,15,20]},
-  {name:'Market and treasury',shareA:8,shareB:6,splitA:[60,15,25],splitB:[60,15,25]},
-  {name:'Credit and underwriting',shareA:32,shareB:20,splitA:[45,20,35],splitB:[55,20,25]},
-  {name:'Model development',shareA:12,shareB:7,splitA:[55,20,25],splitB:[55,20,25]},
-  {name:'Non-financial risk',shareA:12,shareB:35,splitA:[30,30,40],splitB:[30,30,40]},
-  {name:'Appetite and scenarios',shareA:6,shareB:5,splitA:[35,15,50],splitB:[35,15,50]},
-  {name:'Model validation',shareA:6,shareB:4,splitA:[25,20,55],splitB:[25,20,55]}
-];
-var USE_CASES=[
-  {id:'regalytics',name:'Regulatory data validation (RegAIlytics)',type:'live',cat:'Compliance',tool:'Custom AI + Python',flow:['Ingest regs','Extract obligations','Flag gaps','Dashboard']},
-  {id:'dataconq',name:'Data quality assurance (Data Conqueror)',type:'live',cat:'Data & Reporting',tool:'AI + SQL',flow:['Profile data','Score quality','Flag issues','Report']},
-  {id:'rcsa-ai',name:'AI-assisted RCSA workflow',type:'team',cat:'Enterprise Risk',tool:'LLM + GRC API',flow:['Trigger','AI draft','Review ✓','Sign off']},
-  {id:'regchange',name:'Regulatory change impact analysis',type:'team',cat:'Compliance',tool:'LLM + RAG',flow:['Ingest rule','Map obligations','Gap analysis','Action plan']},
-  {id:'modeldoc',name:'Model documentation and validation support',type:'team',cat:'Financial Risk',tool:'LLM + Model repo',flow:['Extract model','Draft docs','Validate ✓','Submit']},
-  {id:'ctrltest',name:'Automated control testing',type:'team',cat:'Controls & GRC',tool:'AI + GRC',flow:['Sample controls','Test evidence','Score ✓','Report']},
-  {id:'appetite',name:'Risk appetite scenario generation',type:'illustrative',cat:'Enterprise Risk',tool:'LLM + Excel',flow:['Input params','Generate scenarios','Stress ✓','Board pack']},
-  {id:'creditmemo',name:'Credit memo drafting copilot',type:'illustrative',cat:'Financial Risk',tool:'GenAI copilot',flow:['Load file','AI draft','Analyst edit ✓','Submit']},
-  {id:'conduct',name:'Conduct risk signal aggregation',type:'illustrative',cat:'Enterprise Risk',tool:'ML + NLP',flow:['Ingest signals','Classify','Score ✓','Escalate']},
-  {id:'oprisktriage',name:'Operational risk event triage',type:'illustrative',cat:'Enterprise Risk',tool:'ML classification',flow:['Event logged','Classify','Route ✓','Resolve']},
-  {id:'regdraft',name:'Regulatory report drafting',type:'illustrative',cat:'Compliance',tool:'LLM + templates',flow:['Pull data','AI draft','Review ✓','File']},
-  {id:'kri',name:'KRI monitoring and escalation',type:'illustrative',cat:'Enterprise Risk',tool:'ML + alerting',flow:['Monitor','Threshold','Alert ✓','Investigate']},
-  {id:'tprisk',name:'Third-party risk AI assessment',type:'nda',cat:'Enterprise Risk',tool:'Ask team',flow:['Ingest profile','Score','Review ✓','Decision']},
-  {id:'aml',name:'AML transaction pattern detection',type:'nda',cat:'Financial Crime',tool:'Ask team',flow:['Ingest txns','Score','Alert ✓','Investigate']},
-  {id:'sanctions',name:'Sanctions screening optimisation',type:'nda',cat:'Financial Crime',tool:'Ask team',flow:['Screen','Reduce FP','Review ✓','Clear']},
-  {id:'climate',name:'Climate risk data aggregation',type:'illustrative',cat:'Data & Reporting',tool:'AI + ESG feeds',flow:['Ingest data','Classify','Score ✓','Report']}
-];
-var experts=[
-  {name:'Thomas Zijlstra',title:'NFR AI Lead',tags:['Strategy','GenAI','Risk'],mail:'thomas.zijlstra@accenture.com',photo:'thomas'},
-  {name:'Nils Smedegaard',title:'Risk Technology',tags:['Architecture','Data','GRC'],mail:'',photo:'nils'},
-  {name:'Elisa Martín',title:'Regulatory AI',tags:['Compliance','LLM','EU AI Act'],mail:'',photo:'elisa'},
-  {name:'James Whitfield',title:'Model Risk',tags:['MRM','Validation','ML'],mail:'',photo:'james'},
-  {name:'Sara Hoffmann',title:'Financial Crime',tags:['AML','Sanctions','FinCrime'],mail:'',photo:'sara'},
-  {name:'Lukas De Vries',title:'Controls & GRC',tags:['Audit','Controls','Sox'],mail:'',photo:'lukas'},
-  {name:'Amélie Fontaine',title:'Climate & ESG Risk',tags:['ESG','CSRD','Reporting'],mail:'',photo:'amelie'}
-];
-var PHOTO_BASE='https://tzijlstra-acn.github.io/NFRAIAssets/assets/';
-var PROOF_DATA={
-  'RCSA automation':{problem:'Automate RCSA event capture, assessment drafting, and sign-off workflow for first-line risk teams.',metric:'Time-per-RCSA-cycle; analyst hours per quarter',data:'Incident management system, risk register, historical RCSA data',ai:'LLM draft generation + classification model for event routing',human:'Risk analyst reviews AI draft; risk officer approves assessment',evidence:'Decision log with AI confidence score; approval timestamp; full audit trail'},
-  'Regulatory change management':{problem:'Identify and assess impact of incoming regulatory changes on policies, controls, and reporting obligations.',metric:'Hours per regulatory-change assessment; % missed obligations',data:'Regulatory corpus (EUR-Lex, national regulators), internal policy library',ai:'LLM extraction + RAG retrieval for obligation mapping and gap analysis',human:'Compliance analyst reviews mapping; CCO approves impact assessment',evidence:'Obligation matrix with provenance; gap analysis report; approval record'},
-  'Control testing automation':{problem:'Automate control test sampling, evidence extraction, and exception reporting for the annual control cycle.',metric:'Control test coverage %; hours per test cycle',data:'GRC platform, transaction systems, evidence repository',ai:'Automated sampling + AI evidence extraction + exception classification',human:'Control owner reviews exceptions; internal audit approves test sign-off',evidence:'Test population, sample selection, evidence artefacts, exception log'},
-  'Model validation support':{problem:'Accelerate model documentation review and validation support for the model risk function.',metric:'Days per model validation; documentation completeness score',data:'Model inventory, model documentation, validation templates, backtesting data',ai:'LLM gap analysis of model docs + automated completeness scoring',human:'Model risk analyst reviews AI findings; MRM head approves validation',evidence:'Model documentation score card; gap list with provenance; validation record'}
-};
+<!-- APP-ASSETS · NFR AI ASSETS PORTAL -->
+<section id="app-assets" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="NFR AI Assets portal">
+  <div class="inner" style="text-align:center">
+    <div class="sec-tag reveal">Reference · A10</div>
+    <h2 class="slide-h reveal">NFR AI Assets Portal</h2>
+    <p class="slide-sub reveal" style="margin:14px auto">Full asset library including use case demos, architecture diagrams, regulatory intelligence, and team credentials.</p>
+    <a href="https://tzijlstra-acn.github.io/NFRAIAssets/" target="_blank" rel="noopener" class="btn-primary reveal" style="display:inline-flex;margin:20px auto 0"><i class="ti ti-external-link"></i>Open NFR AI Assets Portal</a>
+    <p style="margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.07em" class="reveal">Access is restricted. Contact thomas.zijlstra@accenture.com for access.</p>
+  </div>
+</section>
 
-// ── STATE ──
-var CLIENT_STATE={archetype:'A',lens:'joint',pressures:[],selectedCapabilities:[],proofCapability:null,proofUseCase:null};
+<!-- APP-ASSUMPTIONS · ASSUMPTIONS & DISCLAIMERS -->
+<section id="app-assumptions" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Assumptions and disclaimers">
+  <div class="inner">
+    <div class="sec-tag reveal">Reference · A11</div>
+    <h2 class="slide-h reveal">Assumptions, sources, and disclaimers.</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-alert-triangle" style="color:var(--amber)"></i></div><div class="arch-layer-name">No unvalidated benchmarks</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">All economic figures shown as illustrative must be replaced with client-provided data or Accenture-approved benchmarks with explicit source citation before inclusion in any proposal or business case.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-alert-triangle" style="color:var(--amber)"></i></div><div class="arch-layer-name">No regulatory claims</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">This presentation does not constitute regulatory or legal advice. Compliance assessments and regulatory interpretations require engagement with Accenture's regulatory advisory practice and, where appropriate, external legal counsel.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-info-circle" style="color:var(--accent)"></i></div><div class="arch-layer-name">Maturity assessments are hypotheses</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Any maturity ratings set during this conversation are working hypotheses. They must be validated through the Diagnose phase evidence assembly before being presented as assessments.</div></div>
+      <div class="arch-layer reveal"><div class="arch-layer-num"><i class="ti ti-info-circle" style="color:var(--accent)"></i></div><div class="arch-layer-name">Technology references</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Product and vendor names referenced are illustrative of technology patterns. Architecture decisions require formal vendor evaluation aligned to client procurement and security policies.</div></div>
+    </div>
+    <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">Confidential — prepared for client discussion purposes only. Not for distribution. © <span class="yr"></span> Accenture. All rights reserved.</div>
+  </div>
+</section>
 
-// ── RENDERERS ──
-var renderers={roles:renderRoleBars,capabilities:renderCapabilityMap,shortlist:renderShortlist,usecases:renderUseCases,proof:renderProof,takeaway:renderTakeaway,appendixCapabilities:renderAppCaps,team:renderTeam};
-function renderSection(sec){var k=sec&&sec.dataset.render;if(k&&renderers[k])renderers[k](sec);}
+<!-- APP-TEAM · TEAM & CREDENTIALS -->
+<section id="app-team" data-slide data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Team and credentials" data-render="team">
+  <div class="inner">
+    <div class="sec-tag reveal">Reference · A12</div>
+    <h2 class="slide-h reveal" style="text-align:center">The team</h2>
+    <p class="slide-sub reveal" style="text-align:center;max-width:480px;margin:8px auto 0">Specialists across risk transformation, AI engineering, model risk, regulatory, and data. Contact any expert directly.</p>
+    <div id="teamGrid" style="margin-top:20px"></div>
+  </div>
+</section>
 
-function renderRoleBars(){
-  var tbl=document.getElementById('rolesTable');if(!tbl)return;
-  var arch=CLIENT_STATE.archetype,data=ROLE_DATA;
-  tbl.innerHTML=data.map(function(r){
-    var share=arch==='A'?r.shareA:r.shareB;
-    var split=arch==='A'?r.splitA:r.splitB;
-    return '<div class="role-row"><span class="role-name">'+r.name+'</span><span class="role-share">'+share+'% of FTE</span><div class="role-splitbar"><div class="rsb-seg rsb-cyan" style="width:'+split[0]+'%"></div><div class="rsb-seg rsb-purple" style="width:'+split[1]+'%"></div><div class="rsb-seg rsb-pink" style="width:'+split[2]+'%"></div></div></div>';
-  }).join('');
-}
-
-function renderCapabilityMap(){
-  var area=document.getElementById('capMapArea');if(!area)return;
-  area.innerHTML=CAPABILITIES.map(function(cat,ci){
-    var items=cat.caps.map(function(c){
-      var sel=CLIENT_STATE.selectedCapabilities.indexOf(c.n)>-1;
-      return '<button class="cap-item'+(sel?' selected':'')+'\" onclick=\"toggleCap(\''+c.n.replace(/'/g,"\\'")+'\')\"><div class="cap-chk">'+( sel?'✓':'' )+'</div>'+c.n+'</button>';
-    }).join('');
-    return '<div class="cap-cat" id="capcat-'+ci+'"><button class="cap-cat-hdr" onclick="toggleCatExpand('+ci+')" aria-expanded="true"><span class="cap-cat-name" style="color:'+cat.color+'">'+cat.name+'</span><span class="cap-cat-count">'+cat.caps.length+'</span><i class="ti ti-chevron-down cap-cat-chevron" id="capchev-'+ci+'"></i></button><div class="cap-cat-body" id="capbody-'+ci+'">'+items+'</div></div>';
-  }).join('');
-  updateCapChips();
-}
-function toggleCatExpand(ci){
-  var body=document.getElementById('capbody-'+ci);
-  var chev=document.getElementById('capchev-'+ci);
-  if(!body)return;
-  var open=body.style.display!=='none';
-  body.style.display=open?'none':'';
-  if(chev)chev.style.transform=open?'rotate(-90deg)':'';
-}
-function toggleCap(name){
-  var sel=CLIENT_STATE.selectedCapabilities;
-  var idx=sel.indexOf(name);
-  if(idx>-1){sel.splice(idx,1);}
-  else if(sel.length<5){sel.push(name);}
-  renderCapabilityMap();
-  updatePriorityMatrix();
-}
-function updateCapChips(){
-  var chips=document.getElementById('capChips');
-  var count=document.getElementById('capCount');
-  if(!chips)return;
-  if(!CLIENT_STATE.selectedCapabilities.length){chips.innerHTML='<div class="cap-empty-msg">Select a capability to begin.</div>';}
-  else{chips.innerHTML=CLIENT_STATE.selectedCapabilities.map(function(n){return '<div class="cap-sel-chip">'+n+'<button class="cap-chip-rm" onclick="toggleCap(\''+n.replace(/'/g,"\\'")+'\')" aria-label="Remove">×</button></div>';}).join('');}
-  if(count)count.textContent=CLIENT_STATE.selectedCapabilities.length+' / 5';
-}
-function updatePriorityMatrix(){
-  var qs={best:[],strategic:[],quick:[],defer:[]};
-  CLIENT_STATE.selectedCapabilities.forEach(function(n){
-    CAPABILITIES.forEach(function(cat){cat.caps.forEach(function(c){if(c.n===n)qs[c.q]?qs[c.q].push(n):null;});});
-  });
-  function setQ(id,items){var el=document.getElementById(id);if(el)el.innerHTML=items.map(function(n){return '<div class="prio-chip">'+n+'</div>';}).join('')||'<span style="font-size:11px;color:var(--text-3);font-family:Inter,sans-serif;">Select capabilities above</span>';}
-  setQ('pqBestChips',qs.best);setQ('pqStratChips',qs.strategic);setQ('pqQuickChips',qs.quick);setQ('pqFutureChips',qs.defer);
-}
-
-function renderShortlist(){
-  var grid=document.getElementById('shortlistGrid');if(!grid)return;
-  var sel=CLIENT_STATE.selectedCapabilities.slice(0,3);
-  if(!sel.length){grid.innerHTML='<div class="shortlist-empty">Select capabilities on the previous screen to populate your shortlist.</div>';return;}
-  var lens=CLIENT_STATE.lens;
-  var lensLabel={cro:'CRO lens: risk and control quality',cfo:'CFO lens: cost and reporting efficiency',joint:'Joint view: balanced impact'};
-  grid.innerHTML=sel.map(function(n,i){
-    var cat=null;CAPABILITIES.forEach(function(c){if(c.caps.some(function(x){return x.n===n;}))cat=c;});
-    var ucMatch=USE_CASES.filter(function(u){return u.cat&&cat&&u.cat.indexOf(cat.name.split(' ')[0])>-1||u.cat&&u.cat.indexOf(n.split(' ')[0])>-1;});
-    var ucName=ucMatch.length?ucMatch[0].name:'Scoped in proof planning session';
-    return '<div class="shortlist-card"><div class="sc-num">0'+(i+1)+'</div><div class="sc-cap">'+n+'</div><div class="sc-cat">'+(cat?cat.name:'')+'</div><div class="sc-row"><div class="sc-label">Accenture use case</div><div class="sc-val">'+ucName+'</div></div><div class="sc-row"><div class="sc-label">Proof readiness</div><div class="sc-val">High — existing assets available</div></div><div class="sc-row"><div class="sc-label">'+lensLabel[lens]+'</div><div class="sc-val">Efficiency and risk quality improvement; validate against client baseline</div></div><div class="sc-lens">→ Set as proof candidate</div></div>';
-  }).join('');
-  var lbs=document.querySelectorAll('.lens-btn');lbs.forEach(function(b){b.classList.remove('active');if(b.textContent.toLowerCase().indexOf(lens)>-1||b.textContent.toLowerCase()==='joint'&&lens==='joint')b.classList.add('active');});
-}
-
-function renderUseCases(){
-  var grid=document.getElementById('ucGrid');if(!grid)return;
-  var typeMap={live:'live',team:'team',illustrative:'illustrative',nda:'nda'};
-  var typeLabel={live:'LIVE',team:'TEAM',illustrative:'ILLUSTRATIVE',nda:'NDA'};
-  grid.innerHTML=USE_CASES.map(function(u){
-    var sel=CLIENT_STATE.proofUseCase===u.id;
-    var flowHtml=u.flow.map(function(s,i){return (i?'<span class="uc-mf-arr">→</span>':'')+'<span class="uc-mf-step'+(s.indexOf('✓')>-1?' human':'')+'">'+s+'</span>';}).join('');
-    return '<div class="uc-card'+(sel?' selected':'')+'\" onclick=\"toggleUseCase(\''+u.id+'\')\"><span class="uc-type '+typeMap[u.type]+'">'+typeLabel[u.type]+'</span><div class="uc-name">'+u.name+'</div><div class="uc-tool">'+u.tool+'</div><div class="uc-mini-flow">'+flowHtml+'</div></div>';
-  }).join('');
-}
-function toggleUseCase(id){
-  CLIENT_STATE.proofUseCase=CLIENT_STATE.proofUseCase===id?null:id;
-  renderUseCases();
-}
-
-function renderProof(){
-  var cap=CLIENT_STATE.proofCapability||CLIENT_STATE.selectedCapabilities[0]||'';
-  var el=document.getElementById('proofCapName');if(el)el.textContent=cap||'your chosen capability';
-  var d=PROOF_DATA[cap]||{};
-  function set(id,val){var e=document.getElementById(id);if(e){e.textContent=val||'To be defined with client team';e.className=val?'proof-val':'proof-val tbd';}}
-  set('pf-problem',d.problem);set('pf-metric',d.metric);set('pf-data',d.data);
-  set('pf-ai',d.ai);set('pf-human',d.human||'Analyst reviews AI output before any action');
-  set('pf-evidence',d.evidence||'Decision log, confidence score, approval record');
-  set('pf-timeline','6–10 weeks MVP');
-  set('pf-rai','Bias, hallucination, accountability — review against RAI checklist');
-  set('pf-gate','Evidence review: accuracy ≥ target, adoption signal confirmed');
-}
-
-function renderTakeaway(){
-  function setTa(id,val){var e=document.getElementById(id);if(e)e.textContent=val||'—';}
-  var pLabels={
-    'reg-vol':'Regulatory volume and change',
-    'cost-cap':'Cost and capacity pressure',
-    'frag-data':'Fragmented risk and control data',
-    'slow-dec':'Slow decisions and reporting',
-    'ctrl-ev':'Control effectiveness and evidence',
-    'ai-gov':'AI governance and model risk'
-  };
-  setTa('ta-pressures',CLIENT_STATE.pressures.map(function(p){return pLabels[p]||p;}).join('; ')||'—');
-  setTa('ta-arch',CLIENT_STATE.archetype==='A'?'Universal / cantonal bank':'Private / wealth bank');
-  setTa('ta-caps',CLIENT_STATE.selectedCapabilities.join(', ')||'—');
-  setTa('ta-proof',CLIENT_STATE.proofCapability||CLIENT_STATE.selectedCapabilities[0]||'—');
-  var ucSel=USE_CASES.filter(function(u){return CLIENT_STATE.proofUseCase===u.id;});
-  setTa('ta-usecases',ucSel.length?ucSel[0].name:'—');
-}
-
-function renderAppCaps(){
-  var body=document.getElementById('appCapsBody');if(!body)return;
-  body.innerHTML=CAPABILITIES.map(function(cat){
-    var items=cat.caps.map(function(c){return '<div class="app-cap-item">'+c.n+'</div>';}).join('');
-    return '<div class="app-cat-section"><div class="app-cat-head" style="border-color:'+cat.color+'"><i class="ti ti-'+cat.icon+'" style="color:'+cat.color+'"></i>'+cat.name+' ('+cat.caps.length+')</div><div class="app-caps-list">'+items+'</div></div>';
-  }).join('');
-}
-
-function renderTeam(){
-  var row=document.getElementById('teamRow');if(!row)return;
-  row.innerHTML=experts.map(function(e){
-    var initials=e.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2);
-    var tagsHtml=e.tags.map(function(t){return '<span class="etag">'+t+'</span>';}).join('');
-    var mail=e.mail?'<span class="expert-mail">'+e.mail+'</span>':'';
-    var href=e.mail?'mailto:'+e.mail:'#';
-    return '<a class="expert" href="'+href+'"><img class="expert-photo" src="'+PHOTO_BASE+e.photo+'.jpg" alt="'+e.name+'" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"><div class="expert-ph-fallback" style="display:none">'+initials+'</div><div class="expert-name">'+e.name+'</div><div style="font-size:11px;color:var(--text-2);margin-top:3px;">'+e.title+'</div><div class="expert-tags">'+tagsHtml+'</div>'+mail+'</a>';
-  }).join('');
-}
-
-// ── HANDLERS ──
-function togglePressure(pid){
-  var ps=CLIENT_STATE.pressures,idx=ps.indexOf(pid);
-  if(idx>-1){ps.splice(idx,1);}else if(ps.length<3){ps.push(pid);}
-  document.querySelectorAll('.prs-card').forEach(function(c){
-    var p=c.dataset.pid;
-    c.classList.toggle('selected',ps.indexOf(p)>-1);
-    if(ps.indexOf(p)===-1&&ps.length>=3)c.style.opacity='0.55';
-    else c.style.opacity='';
-  });
-  var cnt=document.getElementById('prs-count');if(cnt)cnt.textContent=ps.length+' / 3 selected';
-}
-
-function setArch(v){
-  CLIENT_STATE.archetype=v;
-  document.querySelectorAll('#archToggle .arch-btn').forEach(function(b,i){b.classList.toggle('active',i===(v==='A'?0:1));});
-  renderRoleBars();
-}
-
-function setLens(v){
-  CLIENT_STATE.lens=v;
-  document.querySelectorAll('.lens-btn').forEach(function(b){
-    var t=b.textContent.trim().toLowerCase();
-    b.classList.toggle('active',t==='joint'&&v==='joint'||t.indexOf('cro')>-1&&v==='cro'||t.indexOf('cfo')>-1&&v==='cfo');
-  });
-}
-
-function focusBand(idx){
-  document.querySelectorAll('.tech-band').forEach(function(b,i){b.classList.toggle('active',i===idx);});
-}
-
-function copyTakeaway(){
-  var lines=['NFR AI Session — Client Takeaway',''];
-  var ids=['ta-pressures','ta-arch','ta-caps','ta-proof','ta-usecases','ta-next'];
-  var lbls=['Pressures','Archetype','Capabilities','Proof candidate','Use cases','Next action'];
-  ids.forEach(function(id,i){var e=document.getElementById(id);if(e)lines.push(lbls[i]+': '+(e.textContent||'—'));});
-  if(navigator.clipboard){navigator.clipboard.writeText(lines.join('\n'));}
-}
-
-function resetSession(){
-  CLIENT_STATE.pressures=[];CLIENT_STATE.selectedCapabilities=[];
-  CLIENT_STATE.proofCapability=null;CLIENT_STATE.proofUseCase=null;
-  CLIENT_STATE.archetype='A';CLIENT_STATE.lens='joint';
-  location.reload();
-}
-
-// ── NAVIGATION ──
-var sections=[],current=0,rendered=new Set(),chapterMap=[];
-
-function buildNav(){
-  sections=Array.from(document.querySelectorAll('section[data-slide]'));
-  if(!sections.length)return;
-  // Build chapter map
-  var chapters={},chapterOrder=[];
-  sections.forEach(function(sec,i){
-    var cid=sec.dataset.chapterId||'unknown';
-    if(!chapters[cid]){chapters[cid]={id:cid,title:sec.dataset.chapterTitle||cid,firstIdx:i,slides:[]};chapterOrder.push(cid);}
-    chapters[cid].slides.push({idx:i,title:sec.dataset.navTitle||'Slide '+(i+1),id:sec.id});
-  });
-  chapterMap=chapterOrder.map(function(cid){return chapters[cid];});
-  // Build chapter tabs
-  var navCh=document.getElementById('navChapters');
-  if(navCh){
-    navCh.innerHTML=chapterMap.filter(function(c){return c.id!=='reference';}).map(function(c){
-      return '<button class="nav-ch-btn" data-chid="'+c.id+'" onclick="goToIndex('+c.firstIdx+')" title="'+c.title+'">'+c.title+'</button>';
-    }).join('')+'<button class="nav-ch-btn" data-chid="reference" onclick="goToId(\'app-caps\')" title="Reference">Ref</button>';
-  }
-  // Build agenda content
-  var agendaEl=document.getElementById('agendaContent');
-  if(agendaEl){
-    agendaEl.innerHTML=chapterMap.map(function(c){
-      var slides=c.slides.map(function(s){
-        return '<a class="agenda-slide-link" data-sidx="'+s.idx+'" onclick="goToIndex('+s.idx+');closeAgenda()" href="#'+s.id+'"><div class="agenda-slide-dot"></div>'+s.title+'</a>';
-      }).join('');
-      var method=sections[c.firstIdx]&&sections[c.firstIdx].dataset.methodLabel||'';
-      return '<div class="agenda-chapter"><div class="agenda-ch-head"><div style="flex:1"><div class="agenda-ch-name">'+c.title+'</div><div class="agenda-ch-method">'+method+'</div></div></div><div class="agenda-slides">'+slides+'</div></div>';
-    }).join('');
-  }
-  setupObservers();
-}
-
-function goToIndex(i){
-  if(i<0)i=0;if(i>=sections.length)i=sections.length-1;
-  sections[i].scrollIntoView({behavior:'smooth'});
-}
-function goToId(id){
-  var sec=document.getElementById(id);
-  if(sec)sec.scrollIntoView({behavior:'smooth'});
-}
-
-function updateNav(idx){
-  current=idx;
-  var total=sections.length;
-  var sec=sections[idx];
-  // Counter
-  var ctr=document.getElementById('counter');if(ctr)ctr.textContent=(idx+1)+' / '+total;
-  // Chapter label
-  var chl=document.getElementById('chapter-label');
-  if(chl&&sec){chl.textContent=sec.dataset.chapterTitle||'';}
-  // Progress
-  var pf=document.getElementById('progressFill');if(pf)pf.style.width=(((idx)/(total-1))*100)+'%';
-  // Chapter tab active
-  var curCid=sec&&sec.dataset.chapterId;
-  document.querySelectorAll('.nav-ch-btn').forEach(function(b){b.classList.toggle('active',b.dataset.chid===curCid);});
-  // Agenda links active
-  document.querySelectorAll('.agenda-slide-link').forEach(function(a){a.classList.toggle('active',parseInt(a.dataset.sidx)===idx);});
-  // Agenda route stages
-  chapterMap.forEach(function(c,ci){
-    var stagEl=document.querySelectorAll('#agendaRouteStages .ar-stage')[ci];
-    if(stagEl)stagEl.classList.toggle('active-chapter',sec&&sec.dataset.chapterId===c.id);
-  });
-  // Hash
-  if(sec&&sec.id)history.replaceState(null,null,'#'+sec.id);
-  // Render
-  if(!rendered.has(idx)){rendered.add(idx);renderSection(sec);}
-}
-
-function setupObservers(){
-  var slideObs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){if(e.isIntersecting){var idx=sections.indexOf(e.target);if(idx>-1)updateNav(idx);}});
-  },{threshold:0.5});
-  sections.forEach(function(s){slideObs.observe(s);});
-  var revObs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target);}});
-  },{threshold:0.12});
-  document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(function(el){revObs.observe(el);});
-}
-
-function openAgenda(){
-  var ov=document.getElementById('agendaOverlay');if(ov){ov.classList.add('open');ov.setAttribute('aria-hidden','false');}
-  document.getElementById('agendaDrawer')&&document.getElementById('agendaDrawer').focus();
-}
-function closeAgenda(){
-  var ov=document.getElementById('agendaOverlay');if(ov){ov.classList.remove('open');ov.setAttribute('aria-hidden','true');}
-}
-function handleOverlayClick(e){if(e.target===document.getElementById('agendaOverlay'))closeAgenda();}
-
-// ── THEME ──
-function toggleTheme(){
-  var t=document.documentElement.getAttribute('data-theme');
-  var next=t==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',next);
-  localStorage.setItem('nfr-pitch-theme',next);
-  var btn=document.getElementById('themeBtn');
-  if(btn)btn.querySelector('i').className='ti ti-'+(next==='dark'?'moon':'sun');
-}
-
-// ── KEYBOARD + SWIPE ──
-document.addEventListener('keydown',function(e){
-  if(['INPUT','TEXTAREA'].indexOf(e.target.tagName)>-1)return;
-  if(e.key==='ArrowRight'||e.key==='ArrowDown')goToIndex(current+1);
-  else if(e.key==='ArrowLeft'||e.key==='ArrowUp')goToIndex(current-1);
-  else if(e.key==='g'||e.key==='G'){e.preventDefault();openAgenda();}
-  else if(e.key==='Escape')closeAgenda();
-});
-(function(){var sx=0,sy=0;
-  document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
-  document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>50){goToIndex(dx<0?current+1:current-1);}},{passive:true});
-}());
-
-// ── INIT ──
-window.addEventListener('DOMContentLoaded',function(){
-  // Apply saved theme
-  var t=localStorage.getItem('nfr-pitch-theme');
-  if(t){document.documentElement.setAttribute('data-theme',t);var btn=document.getElementById('themeBtn');if(btn)btn.querySelector('i').className='ti ti-'+(t==='dark'?'moon':'sun');}
-  // Build nav
-  buildNav();
-  // Hash nav
-  if(location.hash){var el=document.getElementById(location.hash.slice(1));if(el)setTimeout(function(){el.scrollIntoView();},200);}
-  // Dynamic year
-  document.querySelectorAll('.yr').forEach(function(el){el.textContent=new Date().getFullYear();});
-});
-
-// ── NEURAL CANVAS ──
-(function(){
-  var canvas=document.getElementById('bgCanvas');
-  if(!canvas||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  var ctx=canvas.getContext('2d'),W,H,pts,sparks,rings,scanY,mx=-9999,my=-9999;
-  function rnd(a,b){return a+Math.random()*(b-a);}
-  function build(){
-    var n=Math.min(Math.max(Math.floor(W*H/9000),30),60);
-    pts=Array.from({length:n},function(){var hub=Math.random()<.09;return{x:rnd(0,W),y:rnd(0,H),vx:rnd(-.12,.12),vy:rnd(-.08,.08),r:hub?rnd(3,4.5):rnd(1,2.2),hub:hub,hue:Math.random()<.6?274:Math.random()<.55?316:248,ph:rnd(0,Math.PI*2)};});
-    sparks=[];rings=[];scanY=0;
-  }
-  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;build();}
-  setInterval(function(){if(!pts||sparks.length>12)return;var a=Math.floor(Math.random()*pts.length),b=Math.floor(Math.random()*pts.length);if(a===b)return;var dx=pts[a].x-pts[b].x,dy=pts[a].y-pts[b].y;if(Math.sqrt(dx*dx+dy*dy)<130)sparks.push({a:a,b:b,t:0});},350);
-  setInterval(function(){if(!pts||rings.length>3)return;var hubs=pts.filter(function(p){return p.hub;});if(!hubs.length)return;var h=hubs[Math.floor(Math.random()*hubs.length)];rings.push({x:h.x,y:h.y,r:h.r+2,alpha:.5,hue:h.hue});},2800);
-  var paused=false;
-  document.addEventListener('visibilitychange',function(){paused=document.hidden;});
-  function draw(ts){
-    requestAnimationFrame(draw);
-    if(paused)return;
-    ctx.clearRect(0,0,W,H);
-    scanY=(scanY||0)+.18;if(scanY>H+16)scanY=-16;
-    var sg=ctx.createLinearGradient(0,scanY-12,0,scanY+12);sg.addColorStop(0,'rgba(161,0,255,0)');sg.addColorStop(.5,'rgba(161,0,255,.045)');sg.addColorStop(1,'rgba(161,0,255,0)');ctx.fillStyle=sg;ctx.fillRect(0,scanY-12,W,24);
-    pts.forEach(function(p){var dx=p.x-mx,dy=p.y-my,d=Math.sqrt(dx*dx+dy*dy);if(d<90&&d>0){var f=(90-d)/90*.5;p.x+=dx/d*f;p.y+=dy/d*f;}p.x+=p.vx;p.y+=p.vy;if(p.x<-32)p.x=W+32;if(p.x>W+32)p.x=-32;if(p.y<-32)p.y=H+32;if(p.y>H+32)p.y=-32;});
-    for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle='rgba(161,0,255,'+(Math.pow(1-d/130,2)*.38)+')';ctx.lineWidth=.7;ctx.stroke();}}
-    rings=rings.filter(function(r){r.r+=.65;r.alpha-=.006;if(r.alpha<=0)return false;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.strokeStyle='hsla('+r.hue+',100%,68%,'+r.alpha+')';ctx.lineWidth=1.2;ctx.stroke();return true;});
-    sparks=sparks.filter(function(s){s.t+=.007;if(s.t>=1)return false;var a=pts[s.a],b=pts[s.b];if(!a||!b)return false;var edx=b.x-a.x,edy=b.y-a.y;if(Math.sqrt(edx*edx+edy*edy)>182)return false;var sx=a.x+edx*s.t,sy=a.y+edy*s.t,g=ctx.createRadialGradient(sx,sy,0,sx,sy,8);g.addColorStop(0,'rgba(255,80,200,1)');g.addColorStop(.4,'rgba(255,80,200,.3)');g.addColorStop(1,'rgba(255,80,200,0)');ctx.beginPath();ctx.arc(sx,sy,8,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();return true;});
-    var t=ts*.001;
-    pts.forEach(function(p){var pulse=Math.sin(t+p.ph)*.5+.5;if(p.hub){var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*10);g.addColorStop(0,'hsla('+p.hue+',100%,68%,'+(0.28+pulse*.18)+')');g.addColorStop(1,'hsla('+p.hue+',100%,68%,0)');ctx.beginPath();ctx.arc(p.x,p.y,p.r*10,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();}ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.hub?'hsla('+p.hue+',100%,80%,'+(0.8+pulse*.15)+')':'rgba(210,175,255,'+(0.18+pulse*.12)+')';ctx.fill();});
-  }
-  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;});
-  window.addEventListener('resize',resize);
-  resize();requestAnimationFrame(draw);
-}());
-</script>
+<!-- ══ SCRIPTS ══ -->
+<script src="./assets/js/content.js"></script>
+<script src="./assets/js/state.js"></script>
+<script src="./assets/js/components.js"></script>
+<script src="./assets/js/visuals.js"></script>
+<script src="./assets/js/navigation.js"></script>
+<script src="./assets/js/app.js"></script>
 </body>
 </html>
