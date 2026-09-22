@@ -527,10 +527,29 @@ function updateCapSidebar(){
 function renderRoleBars(sec){
   var tbl=sec.querySelector('#rolesTable');if(!tbl)return;
   var arch=CLIENT_STATE.archetype;
-  tbl.innerHTML=ROLE_DATA.map(function(r){
+  tbl.innerHTML=ROLE_DATA.map(function(r,i){
     var share=arch==='A'?r.shareA:r.shareB;
     var split=arch==='A'?r.splitA:r.splitB;
-    return '<div class="role-row"><span class="role-name">'+r.name+'</span><span class="role-share">'+share+'% of FTE</span><div class="role-splitbar"><div class="rsb-seg rsb-cyan" style="width:'+split[0]+'%"></div><div class="rsb-seg rsb-purple" style="width:'+split[1]+'%"></div><div class="rsb-seg rsb-pink" style="width:'+split[2]+'%"></div></div></div>';
+    var detailHtml='';
+    if(r.tasks&&r.tasks.length){
+      detailHtml='<div class="role-detail">'
+        +'<div class="role-detail-col"><div class="role-detail-hd">Work &amp; decisions</div>'
+        +r.tasks.map(function(t){return '<div class="role-detail-item">'+t+'</div>';}).join('')
+        +'</div>'
+        +(r.workbench?'<div class="role-detail-col"><div class="role-detail-hd">Workbench</div><div class="role-detail-item">'+r.workbench+'</div></div>':'')
+        +'</div>';
+    }
+    return '<div class="role-row" onclick="this.classList.toggle(\'open\')">'
+      +'<span class="role-name">'+r.name+'</span>'
+      +'<span class="role-share">'+share+'% of FTE</span>'
+      +'<div class="role-splitbar">'
+        +'<div class="rsb-seg rsb-cyan" style="width:'+split[0]+'%"></div>'
+        +'<div class="rsb-seg rsb-purple" style="width:'+split[1]+'%"></div>'
+        +'<div class="rsb-seg rsb-pink" style="width:'+split[2]+'%"></div>'
+      +'</div>'
+      +'<span class="role-expand-icon"><i class="ti ti-chevron-down"></i></span>'
+      +detailHtml
+    +'</div>';
   }).join('');
 }
 

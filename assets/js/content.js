@@ -257,14 +257,30 @@ var ECONOMICS_DRIVERS=[
 
 // ── ROLE DATA ──
 var ROLE_DATA=[
-  {name:'Reporting and risk data',shareA:15,shareB:13,splitA:[70,15,15],splitB:[70,15,15]},
-  {name:'Governance and policy',shareA:9,shareB:10,splitA:[65,15,20],splitB:[65,15,20]},
-  {name:'Market and treasury',shareA:8,shareB:6,splitA:[60,15,25],splitB:[60,15,25]},
-  {name:'Credit and underwriting',shareA:32,shareB:20,splitA:[45,20,35],splitB:[55,20,25]},
-  {name:'Model development',shareA:12,shareB:7,splitA:[55,20,25],splitB:[55,20,25]},
-  {name:'Non-financial risk',shareA:12,shareB:35,splitA:[30,30,40],splitB:[30,30,40]},
-  {name:'Appetite and scenarios',shareA:6,shareB:5,splitA:[35,15,50],splitB:[35,15,50]},
-  {name:'Model validation',shareA:6,shareB:4,splitA:[25,20,55],splitB:[25,20,55]}
+  {name:'Reporting and risk data',shareA:15,shareB:13,splitA:[70,15,15],splitB:[70,15,15],
+   tasks:['AI assembles structured data into draft reports','Human reviews exceptions, narrative quality, and sign-off'],
+   workbench:'AI-drafted commentary, automated aggregation, exception workflow, audit trail'},
+  {name:'Governance and policy',shareA:9,shareB:10,splitA:[65,15,20],splitB:[65,15,20],
+   tasks:['AI maps regulations to internal policies and flags gaps','Human validates interpretations and approves policy updates'],
+   workbench:'Regulation tracker, policy gap analyser, change-management workflow'},
+  {name:'Market and treasury',shareA:8,shareB:6,splitA:[60,15,25],splitB:[60,15,25],
+   tasks:['AI monitors positions and flags threshold breaches','Human decides on exceptions, hedging actions, and limit changes'],
+   workbench:'Real-time monitoring copilot, scenario runner, limit management interface'},
+  {name:'Credit and underwriting',shareA:32,shareB:20,splitA:[45,20,35],splitB:[55,20,25],
+   tasks:['AI scores and pre-qualifies standard applications','Human reviews borderline cases, approves large or complex decisions'],
+   workbench:'AI credit model, explanation panel, borderline case queue, decision log'},
+  {name:'Model development',shareA:12,shareB:7,splitA:[55,20,25],splitB:[55,20,25],
+   tasks:['AI accelerates code generation, testing, and documentation','Human defines objectives, reviews model behaviour, approves deployment'],
+   workbench:'AI coding assistant, automated test suite, model card generator, bias audit toolkit'},
+  {name:'Non-financial risk',shareA:12,shareB:35,splitA:[30,30,40],splitB:[30,30,40],
+   tasks:['AI ingests evidence and populates RCSA, KRI, and incident records','Human interprets residual risk, owns control assessments, escalates'],
+   workbench:'AI evidence ingestion, RCSA copilot, KRI monitoring, incident pattern detector'},
+  {name:'Appetite and scenarios',shareA:6,shareB:5,splitA:[35,15,50],splitB:[35,15,50],
+   tasks:['AI generates scenario variants and stress-test outputs','Human defines narrative assumptions, selects scenarios, interprets outcomes'],
+   workbench:'Scenario generation engine, stress-test runner, appetite dashboard, board-ready output generator'},
+  {name:'Model validation',shareA:6,shareB:4,splitA:[25,20,55],splitB:[25,20,55],
+   tasks:['AI executes standard validation checks and flags anomalies','Human interprets findings, owns the validation opinion, approves deployment'],
+   workbench:'Automated validation toolkit, performance monitor, validation report generator, challenger model runner'}
 ];
 
 // ── PROCESS TWIN TEMPLATES ──
