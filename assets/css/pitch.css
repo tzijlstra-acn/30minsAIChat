@@ -723,6 +723,43 @@ body.edge-pinned #edgeBackdrop{display:none;}
 body[data-mode="explain"] .explain-only{display:block;}
 .explain-only{display:none;}
 
+/* ── AI TASK ROUTER ── */
+.atr-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.atr-pill{padding:7px 16px;border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);cursor:pointer;transition:background .15s,border-color .15s,color .15s;white-space:nowrap;}
+.atr-pill:hover{background:var(--accent-soft);border-color:rgba(161,0,255,.25);color:var(--accent);}
+.atr-pill.active{background:var(--accent-soft);border-color:rgba(161,0,255,.5);color:var(--accent);font-weight:700;}
+.atr-stations{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+@media(max-width:900px){.atr-stations{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:560px){.atr-stations{grid-template-columns:1fr 1fr;}}
+.atr-station-card{border:1.5px solid var(--border-1);border-radius:10px;padding:14px 12px 12px;cursor:pointer;transition:border-color .18s,background .18s,box-shadow .18s;position:relative;overflow:hidden;}
+.atr-station-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sc,var(--accent));opacity:.4;transition:opacity .18s;}
+.atr-station-card:hover{background:var(--surface-2);border-color:var(--sc,var(--accent));box-shadow:0 0 0 2px rgba(161,0,255,.06);}
+.atr-station-card.active{border-color:var(--sc,var(--accent));background:var(--accent-soft);}
+.atr-station-card.active::before{opacity:1;}
+.atr-station-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:6px;margin-top:4px;}
+.atr-station-fit{font-size:13px;color:var(--text-3);line-height:1.4;margin-bottom:10px;min-height:36px;}
+.atr-station-badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.07em;padding:3px 8px;border-radius:4px;font-weight:700;display:inline-block;}
+.atr-ready-test{background:rgba(15,138,98,.1);color:var(--green);border:1px solid rgba(15,138,98,.3);}
+.atr-ready-foundation{background:rgba(14,116,144,.1);color:var(--cyan);border:1px solid rgba(14,116,144,.3);}
+.atr-ready-validate{background:rgba(180,106,0,.08);color:var(--amber);border:1px solid rgba(180,106,0,.22);}
+.atr-ready-not-assessed{background:var(--surface-2);color:var(--text-3);border:1px solid var(--border-1);}
+.atr-selection-badge{margin-top:12px;padding:8px 14px;border-radius:8px;background:var(--accent-soft);border:1px solid rgba(161,0,255,.2);font-size:14px;color:var(--text-2);}
+.atr-badge-label{font-size:14px;}
+/* ── PRESSURE-TO-PROOF BRIDGE ── */
+.ptp-stations{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap;margin-bottom:14px;overflow-x:auto;}
+@media(max-width:640px){.ptp-stations{flex-wrap:wrap;}}
+.ptp-station{flex:1;min-width:140px;border:1.5px solid var(--border-1);border-radius:10px;padding:14px 12px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center;}
+.ptp-station:hover{border-color:var(--accent);background:var(--accent-soft);}
+.ptp-station:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.ptp-station-icon{font-size:20px;color:var(--accent);margin-bottom:6px;}
+.ptp-station-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:8px;}
+.ptp-station-value{font-size:14px;color:var(--text-1);font-weight:500;line-height:1.35;}
+.ptp-station-content{margin-top:6px;}
+.ptp-empty{color:var(--text-3)!important;font-style:italic;}
+.ptp-choose-hint{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);display:block;margin-top:5px;}
+.ptp-connector{display:flex;align-items:center;justify-content:center;padding:0 10px;color:var(--accent);font-size:20px;flex-shrink:0;}
+.ptp-prompt{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.04em;padding:8px 14px;border:1px solid var(--border-1);border-radius:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+
 /* ── FONT SIZE CORRECTIONS (V11) ── */
 /* All core screen labels minimum 14px */
 .sec-tag{font-size:11px;letter-spacing:.1em;} /* tag stays smaller by design as meta info */

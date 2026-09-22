@@ -1,4 +1,4 @@
-// ── SCREEN RENDERERS ──
+﻿// ── SCREEN RENDERERS ──
 // Each renderer takes the section element and populates it
 
 // ── TRANSFORMATION SYSTEM (Screen 4): deterministic SVG layout ──
@@ -112,192 +112,231 @@ function renderTransformationSystem(sec){
   });
 }
 
-// ── AI LANDSCAPE: D3 Provability Frontier ──
-function renderAILandscape(sec){
+// AI TASK ROUTER (Screen 02)
+function renderAITaskRouter(sec){
   var container=sec.querySelector('#aiLandscapeGrid');if(!container)return;
   container.innerHTML='';
 
-  var BANDS=[
-    {id:'rules-workflow',  label:'Rules & workflow',  pct:85,color:'#0F8A62',
-     desc:'Deterministic routing, thresholds, conditional logic. No inference cost.',
-     human:'Design rules and handle exceptions',
-     control:'Are rules complete, current, and tested?'},
-    {id:'rpa-orchestration',label:'RPA & orchestration',pct:80,color:'#0E7490',
+  var STATIONS=[
+    {id:'rules-workflow',name:'Rules and workflow',
+     bestFit:'Deterministic routing, threshold checks, conditional logic',
+     readiness:'TEST NOW',readinessCls:'ready-test',
+     desc:'Deterministic routing and rule execution. No inference cost. Transparent and auditable.',
+     poorFit:'Open-ended language tasks, edge-case variation requiring human judgement',
+     controlProfile:'Rule completeness review, test coverage, exception monitoring',
+     evidenceNeeded:'Rule inventory, exception rate, test pass rate',
+     costDrivers:'Design and maintenance; compute cost only at runtime',
+     color:'#0F8A62'},
+    {id:'rpa-orchestration',name:'RPA and orchestration',
+     bestFit:'Repeatable cross-system data movement and integration',
+     readiness:'FOUNDATION FIRST',readinessCls:'ready-foundation',
      desc:'Repeatable cross-system data movement. Compute only.',
-     human:'Monitor failures and edge cases',
-     control:'What happens when the process breaks?'},
-    {id:'analytics-ml',    label:'Analytics & ML',    pct:65,color:'#B46A00',
-     desc:'Prediction, scoring, anomaly detection. Inference scales with volume.',
-     human:'Review model output; approve consequential decisions',
-     control:'Is the model validated and monitored for drift?'},
-    {id:'genai-copilots',  label:'GenAI copilots',    pct:55,color:'#A100FF',
+     poorFit:'Unstructured input, frequent UI changes, high exception rates',
+     controlProfile:'Process monitoring, failure alerting, fallback paths',
+     evidenceNeeded:'Error rate, throughput, downtime frequency',
+     costDrivers:'Licensing, maintenance, infrastructure',
+     color:'#0E7490'},
+    {id:'analytics-ml',name:'Analytics and ML',
+     bestFit:'Prediction, scoring, anomaly detection, pattern recognition',
+     readiness:'TEST NOW',readinessCls:'ready-test',
+     desc:'Prediction and scoring. Inference cost scales with volume.',
+     poorFit:'Real-time natural language, novel reasoning requiring explanation',
+     controlProfile:'Model validation, drift monitoring, outcome audit',
+     evidenceNeeded:'Precision, recall, drift frequency, audit trail',
+     costDrivers:'Training, inference at scale, monitoring',
+     color:'#B46A00'},
+    {id:'genai-copilot',name:'GenAI copilot',
+     bestFit:'Search, summarise, draft, and explain from documents',
+     readiness:'NEEDS FURTHER VALIDATION',readinessCls:'ready-validate',
      desc:'Search, summarise, draft, explain. Token cost per call.',
-     human:'Review every output before use or distribution',
-     control:'Is output reviewed before leaving the team?'},
-    {id:'agents',          label:'AI Agents',         pct:30,color:'#FF50C8',
+     poorFit:'Deterministic numerical outputs, regulated decisions without human review',
+     controlProfile:'Output review before use, hallucination testing, prompt governance',
+     evidenceNeeded:'Accuracy rate, review rate, user adoption, output quality',
+     costDrivers:'Token cost per call, human review time',
+     color:'#A100FF'},
+    {id:'agents',name:'Agent',
+     bestFit:'Multi-step coordination across tools, systems, or data sources',
+     readiness:'NOT YET ASSESSED',readinessCls:'ready-not-assessed',
      desc:'Plan, coordinate, act across tools. Elevated cost and uncertainty.',
-     human:'Define scope; approve consequential actions; set guardrails',
-     control:'What can the agent do without human approval?'}
+     poorFit:'Single-step tasks, regulated workflows without human checkpoints',
+     controlProfile:'Scope boundary controls, action approval gates, audit log',
+     evidenceNeeded:'Task completion rate, error rate, human intervention frequency',
+     costDrivers:'Multiple model calls, tool invocations, retry loops',
+     color:'#FF50C8'}
   ];
 
-  var CLUSTER_COLOR={};
-  (PORTFOLIO_CLUSTERS||[]).forEach(function(c){CLUSTER_COLOR[c.id]=c.color;});
+  var TASKS=[
+    {id:'reconcile',label:'Reconcile a known rule',stationId:'rules-workflow'},
+    {id:'detect',label:'Detect an unusual pattern',stationId:'analytics-ml'},
+    {id:'draft',label:'Draft from documents',stationId:'genai-copilot'},
+    {id:'coordinate',label:'Coordinate a multi-step case',stationId:'agents'}
+  ];
 
-  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var activeTask=null,activeStation=null;
 
-  // Build header info row (5 columns)
-  var infoRow=document.createElement('div');
-  infoRow.className='ail-landscape-grid';
-  BANDS.forEach(function(b){
-    var col=document.createElement('div');
-    col.className='ail-col';
-    col.style.setProperty('--bc',b.color);
-    col.setAttribute('data-band',b.id);
-    col.innerHTML=
-      '<div class="ail-col-hdr"><span class="ail-col-name">'+b.label+'</span><span class="ail-col-pct">'+b.pct+'%</span></div>'
-      +'<div class="ail-col-bar"><div class="ail-col-bar-fill" style="width:'+b.pct+'%"></div></div>'
-      +'<div class="ail-col-body">'
-        +'<div class="ail-col-desc">'+b.desc+'</div>'
-        +'<div class="ail-col-lbl">Human role</div><div class="ail-col-val">'+b.human+'</div>'
-        +'<div class="ail-col-lbl">Control question</div><div class="ail-col-val">'+b.control+'</div>'
-      +'</div>';
-    infoRow.appendChild(col);
-  });
-  container.appendChild(infoRow);
-
-  // D3 Frontier SVG: solution nodes by band
-  if(typeof d3==='undefined'||(typeof SOLUTIONS==='undefined'||!SOLUTIONS.length)){
-    container.appendChild(function(){var f=document.createElement('div');f.className='ail-landscape-footer';f.innerHTML='<span class="ail-footer-principle">Use the least complex technology that can own the work safely and economically.</span>';return f;}());
-    return;
-  }
-
-  var svgWrap=document.createElement('div');
-  svgWrap.className='pf-svg-wrap';
-  svgWrap.style.cssText='margin-top:10px;position:relative;';
-  container.appendChild(svgWrap);
-
-  var W=svgWrap.clientWidth||860,BAND_H=56,PAD_L=0,PAD_R=0;
-  var H=BANDS.length*BAND_H;
-
-  var svg=d3.select(svgWrap).append('svg')
-    .attr('viewBox','0 0 '+W+' '+H)
-    .attr('width','100%')
-    .attr('height',H)
-    .attr('aria-label','Provability Frontier: solution nodes by technology pattern')
-    .attr('role','img');
-
-  // Band backgrounds
-  BANDS.forEach(function(b,i){
-    var y=i*BAND_H;
-    svg.append('rect').attr('x',0).attr('y',y).attr('width',W).attr('height',BAND_H)
-      .attr('fill',b.color).attr('fill-opacity',i%2===0?0.04:0.02).attr('rx',0);
-    svg.append('line').attr('x1',0).attr('y1',y+BAND_H-0.5).attr('x2',W).attr('y2',y+BAND_H-0.5)
-      .attr('stroke','rgba(255,255,255,0.07)').attr('stroke-width',0.5);
-    // Readiness bar on left
-    var barW=(W-PAD_L-PAD_R)*b.pct/100*0.92;
-    svg.append('rect').attr('x',PAD_L).attr('y',y+BAND_H-5).attr('width',barW).attr('height',2)
-      .attr('fill',b.color).attr('fill-opacity',0.35).attr('rx',1);
-  });
-
-  // Solution nodes
-  var bandIndex={};
-  BANDS.forEach(function(b,i){bandIndex[b.id]=i;});
-  var countPerBand={};
-  BANDS.forEach(function(b){countPerBand[b.id]=0;});
-
-  var EVIDENCE_MAX=4;
-  function evidenceCount(s){
-    var f=s.evidenceFlags||{};
-    return [f.concept,f.prototype,f.asset,f.demo].filter(function(v){return v===true;}).length;
-  }
-  // V9 grammar: source-backed = any confirmed flag; working hypothesis = none confirmed
-  function isSourceBacked(s){return evidenceCount(s)>0;}
-
-  var nodeData=SOLUTIONS.filter(function(s){return s.technologyPatternId&&bandIndex[s.technologyPatternId]!==undefined;});
-
-  // Spread nodes horizontally within band
-  var bandSols={};
-  BANDS.forEach(function(b){bandSols[b.id]=[];});
-  nodeData.forEach(function(s){if(bandSols[s.technologyPatternId])bandSols[s.technologyPatternId].push(s);});
-
-  var tooltip=d3.select(svgWrap).append('div').attr('class','pf-tooltip').style('display','none');
-
-  BANDS.forEach(function(b,bi){
-    var sols=bandSols[b.id]||[];
-    var N=sols.length;
-    if(!N)return;
-    var cy=bi*BAND_H+BAND_H/2;
-    var spacing=Math.min(36,(W-PAD_L-PAD_R-20)/(N||1));
-    var totalW=spacing*(N-1);
-    var startX=PAD_L+10+(W-PAD_L-PAD_R-10-totalW)/2;
-
-    sols.forEach(function(s,si){
-      var ev=evidenceCount(s);
-      var backed=isSourceBacked(s);
-      var r=backed?6+ev*1.5:5;
-      var cx=startX+si*spacing;
-      var clColor=backed?(CLUSTER_COLOR[s.portfolioClusterId]||b.color):'#B46A00';
-      var dashArr=backed?'none':'4,3';
-      var fillOp=backed?0.22:0.07;
-      var strokeOp=backed?0.85:0.5;
-
-      var g=svg.append('g').style('cursor','pointer').attr('role','button').attr('tabindex','0').attr('aria-label',s.displayName+(backed?'':', working hypothesis'));
-
-      g.append('circle')
-        .attr('cx',cx).attr('cy',cy).attr('r',r)
-        .attr('fill',clColor).attr('fill-opacity',fillOp)
-        .attr('stroke',clColor).attr('stroke-width',backed?1.5:1).attr('stroke-opacity',strokeOp)
-        .attr('stroke-dasharray',dashArr);
-
-      if(backed){
-        g.append('circle')
-          .attr('cx',cx).attr('cy',cy).attr('r',2.5)
-          .attr('fill',clColor).attr('fill-opacity',0.9);
-      }
-
-      g.on('mouseenter',function(event){
-        d3.select(this).select('circle').attr('fill-opacity',backed?0.55:0.2).attr('stroke-opacity',1);
-        var evLabels=[];
-        if(s.evidenceFlags){['concept','prototype','asset','demo'].forEach(function(k){if(s.evidenceFlags[k]===true)evLabels.push(k);});}
-        tooltip.style('display','block')
-          .style('left',(cx/W*100)+'%')
-          .style('top',(bi*BAND_H+BAND_H+4)+'px')
-          .html('<div class="pf-tt-name">'+s.displayName+'</div>'
-            +'<div class="pf-tt-src">'+s.sourceName+'</div>'
-            +(evLabels.length?'<div class="pf-tt-ev">'+evLabels.join(' · ')+'</div>':'<div class="pf-tt-ev" style="color:var(--amber);font-size:10px">Working hypothesis</div>')
-            +'<div class="pf-tt-share">'+s.sharingStatus.replace(/-/g,' ')+'</div>');
-      })
-      .on('mouseleave',function(){
-        d3.select(this).select('circle').attr('fill-opacity',fillOp).attr('stroke-opacity',strokeOp);
-        tooltip.style('display','none');
-      })
-      .on('click',function(){openSolutionDrawer(s.id);})
-      .on('keydown',function(event){if(event.key==='Enter'||event.key===' ')openSolutionDrawer(s.id);});
+  // Task pills
+  var pillsDiv=document.createElement('div');
+  pillsDiv.className='atr-pills';
+  TASKS.forEach(function(task){
+    var pill=document.createElement('button');
+    pill.className='atr-pill';
+    pill.setAttribute('data-taskid',task.id);
+    pill.textContent=task.label;
+    pill.addEventListener('click',function(){
+      if(activeTask===task.id){activeTask=null;activeStation=null;}
+      else{activeTask=task.id;activeStation=task.stationId;}
+      updateRouter();
     });
+    pillsDiv.appendChild(pill);
   });
+  container.appendChild(pillsDiv);
 
-  // Grammar legend
-  var legend=document.createElement('div');
-  legend.style.cssText='display:flex;gap:16px;align-items:center;margin-top:6px;flex-wrap:wrap;';
-  legend.innerHTML=
-    '<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="rgba(14,116,144,0.22)" stroke="#0E7490" stroke-width="1.5"/></svg><span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--text-3)">Source-backed</span>'
-    +'<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="rgba(180,106,0,0.07)" stroke="#B46A00" stroke-width="1" stroke-dasharray="4,3"/></svg><span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--text-3)">Working hypothesis</span>'
-    +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--text-3)">Circle size = evidence flags confirmed. Colour = portfolio cluster.</span>';
-  container.appendChild(legend);
+  // Stations row
+  var stationsDiv=document.createElement('div');
+  stationsDiv.className='atr-stations';
+  STATIONS.forEach(function(station){
+    var card=document.createElement('div');
+    card.className='atr-station-card';
+    card.setAttribute('data-stationid',station.id);
+    card.style.setProperty('--sc',station.color);
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.innerHTML=
+      '<div class="atr-station-name">'+station.name+'</div>'
+      +'<div class="atr-station-fit">'+station.bestFit+'</div>'
+      +'<div class="atr-station-badge atr-'+station.readinessCls+'">'+station.readiness+'</div>';
+    card.addEventListener('click',function(){
+      if(typeof store!=='undefined')store.dispatch({type:'SELECT_SOLUTION',payload:station.id});
+      openATRDrawer(station);
+    });
+    card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' ')card.click();});
+    stationsDiv.appendChild(card);
+  });
+  container.appendChild(stationsDiv);
 
-  // Footer
+  // Secondary selection badge
+  var badgeDiv=document.createElement('div');
+  badgeDiv.id='atr-selection-badge';
+  badgeDiv.className='atr-selection-badge';
+  badgeDiv.style.display='none';
+  container.appendChild(badgeDiv);
+
+  // Footer principle
   var footer=document.createElement('div');
   footer.className='ail-landscape-footer';
-  footer.innerHTML=
-    '<span class="ail-footer-principle">Use the least complex technology that can own the work safely and economically.</span>'
-    +'<div class="ail-foundations">'
-      +'<span>Trusted data</span><span>Identity and access</span>'
-      +'<span>Human accountability</span><span>Testing and monitoring</span>'
-      +'<span>Logging</span><span>Cost governance</span>'
-    +'</div>';
+  footer.innerHTML='<span class="ail-footer-principle">Use the least complex technology that can own the work safely and economically.</span>';
   container.appendChild(footer);
+
+  function updateRouter(){
+    pillsDiv.querySelectorAll('.atr-pill').forEach(function(p){
+      p.classList.toggle('active',p.getAttribute('data-taskid')===activeTask);
+    });
+    stationsDiv.querySelectorAll('.atr-station-card').forEach(function(c){
+      c.classList.toggle('active',!!activeStation&&c.getAttribute('data-stationid')===activeStation);
+    });
+    if(activeStation){
+      var found=null;
+      for(var si=0;si<STATIONS.length;si++){if(STATIONS[si].id===activeStation){found=STATIONS[si];break;}}
+      badgeDiv.style.display='';
+      badgeDiv.innerHTML='<span class="atr-badge-label">Selected pattern: <strong>'+(found?found.name:activeStation)+'</strong></span>';
+    } else {
+      badgeDiv.style.display='none';
+    }
+  }
+
+  function openATRDrawer(station){
+    var tabs=[
+      {id:'bestfit',label:'Best fit',html:'<div class="drawer-section"><div class="dr-q">'+station.name+'</div><div class="dr-h">Best fit for</div><div class="dr-body">'+station.bestFit+'</div><div class="dr-h" style="margin-top:10px">Description</div><div class="dr-body">'+station.desc+'</div></div>'},
+      {id:'poorfit',label:'Poor fit',html:'<div class="drawer-section"><div class="dr-h">Poor fit for</div><div class="dr-body">'+station.poorFit+'</div></div>'},
+      {id:'control',label:'Control profile',html:'<div class="drawer-section"><div class="dr-h">Control considerations</div><div class="dr-body">'+station.controlProfile+'</div></div>'},
+      {id:'evidence',label:'Evidence needed',html:'<div class="drawer-section"><div class="dr-h">Evidence to track</div><div class="dr-body">'+station.evidenceNeeded+'</div></div>'},
+      {id:'cost',label:'Cost drivers',html:'<div class="drawer-section"><div class="dr-h">Illustrative cost drivers</div><div class="dr-body">'+station.costDrivers+'</div><div class="dr-note">All cost figures are illustrative. Validate with actual usage data before presenting.</div></div>'}
+    ];
+    openDrawer(station.name,tabs,'bestfit');
+  }
 }
 
+// PRESSURE-TO-PROOF BRIDGE
+function renderPressureToProof(sec){
+  var container=sec.querySelector('#ptp-visual');if(!container)return;
+  container.innerHTML='';
+
+  var state=(typeof store!=='undefined')?store.getState():{selectedPressures:[],selectedCapabilities:[],proofCandidateId:null};
+  var selectedPressures=state.selectedPressures||[];
+
+  var PRESSURE_LABELS={
+    'reg-vol':'Regulatory volume and change',
+    'cost-cap':'Cost and capacity pressure',
+    'frag-data':'Fragmented risk and control data',
+    'slow-dec':'Slow decisions and reporting',
+    'ctrl-ev':'Control effectiveness and evidence',
+    'ai-gov':'AI governance and model risk'
+  };
+
+  var PTP_STATIONS=[
+    {id:'pressure',label:'Pressure',icon:'ti-alert-triangle',targetId:'setting-scene'},
+    {id:'capability',label:'Capability',icon:'ti-sparkles',targetId:'capability-hotspots'},
+    {id:'blocks',label:'Transformation blocks',icon:'ti-layout-grid',targetId:'transformation-system'},
+    {id:'proof',label:'Proof candidate',icon:'ti-flask',targetId:'exec-shortlist'}
+  ];
+
+  var hasSelection=selectedPressures.length>0;
+  var displayPressure=hasSelection?(PRESSURE_LABELS[selectedPressures[0]]||selectedPressures[0]):'Evidence burden';
+
+  var wrap=document.createElement('div');
+  wrap.className='ptp-stations';
+
+  PTP_STATIONS.forEach(function(station,idx){
+    var stDiv=document.createElement('div');
+    stDiv.className='ptp-station';
+    stDiv.setAttribute('role','button');
+    stDiv.setAttribute('tabindex','0');
+
+    var content='';
+    if(station.id==='pressure'){
+      content='<div class="ptp-station-value">'+displayPressure+'</div>'
+        +(!hasSelection?'<div class="ptp-choose-hint">Illustrative example</div>':'');
+    } else if(station.id==='capability'){
+      var selCaps=state.selectedCapabilities||[];
+      content=selCaps.length
+        ?'<div class="ptp-station-value">'+selCaps.length+' capability'+(selCaps.length!==1?'s':'')+' selected</div>'
+        :'<div class="ptp-station-value ptp-empty">Not yet selected</div>';
+    } else if(station.id==='blocks'){
+      content='<div class="ptp-station-value">Data and knowledge</div>'
+        +(!hasSelection?'<div class="ptp-choose-hint">Illustrative example</div>':'');
+    } else if(station.id==='proof'){
+      var cid=state.proofCandidateId;
+      content=cid
+        ?'<div class="ptp-station-value">'+cid+'</div>'
+        :'<div class="ptp-station-value ptp-empty">Not yet set</div>';
+    }
+
+    stDiv.innerHTML=
+      '<div class="ptp-station-icon"><i class="ti '+station.icon+'"></i></div>'
+      +'<div class="ptp-station-label">'+station.label+'</div>'
+      +'<div class="ptp-station-content">'+content+'</div>';
+
+    stDiv.addEventListener('click',function(){if(typeof goToId==='function')goToId(station.targetId);});
+    stDiv.addEventListener('keydown',function(e){if(e.key==='Enter'&&typeof goToId==='function')goToId(station.targetId);});
+    wrap.appendChild(stDiv);
+
+    if(idx<PTP_STATIONS.length-1){
+      var arrow=document.createElement('div');
+      arrow.className='ptp-connector';
+      arrow.innerHTML='<i class="ti ti-chevron-right"></i>';
+      wrap.appendChild(arrow);
+    }
+  });
+
+  container.appendChild(wrap);
+
+  if(!hasSelection){
+    var prompt=document.createElement('div');
+    prompt.className='ptp-prompt';
+    prompt.innerHTML='<i class="ti ti-info-circle"></i> Select a pressure on slide 01 to personalise this view. Currently showing an illustrative example. <span class="status-badge status-illustrative" style="margin-left:6px">ILLUSTRATIVE</span>';
+    container.appendChild(prompt);
+  }
+}
 // ── SOLUTION DRAWER ──
 function openSolutionDrawer(solId){
   var s=(SOLUTIONS||[]).find(function(x){return x.id===solId;});if(!s)return;
@@ -1256,7 +1295,9 @@ function openProcessNodeDrawer(tpl,node){
 // ── RENDER CONTRACTS ──
 var VISUAL_CONTRACTS={
   solutionPortfolio:'solutionPortfolioArea',
-  aiLandscape:'aiLandscapeGrid',trSystem:'trSysGrid',evidenceFlow:'evidenceFlowDiagram',
+  pressureToProof:'ptp-visual',
+  aiLandscape:'aiLandscapeGrid',aiTaskRouter:'aiLandscapeGrid',
+  trSystem:'trSysGrid',evidenceFlow:'evidenceFlowDiagram',
   maturityMatrix:'maturityTable',capHotspots:'capHotspotArea',roleBars:'rolesTable',
   oppPortfolio:'oppPortfolioArea',shortlist:'shortlistGrid',useCases:'ucGrid',
   processTwin:'processTwinArea',
@@ -1275,7 +1316,9 @@ function safeRender(fn,sec){
 // ── RENDER REGISTRY ──
 var renderers={
   'solutionPortfolio':renderSolutionPortfolio,
-  'aiLandscape':renderAILandscape,
+  'pressureToProof':renderPressureToProof,
+  'aiLandscape':renderAITaskRouter,
+  'aiTaskRouter':renderAITaskRouter,
   'trSystem':renderTransformationSystem,
   'evidenceFlow':renderEvidenceFlow,
   'maturityMatrix':renderMaturityMatrix,
@@ -1296,3 +1339,26 @@ function renderSection(sec){
   var key=sec&&sec.dataset.render;
   if(key&&renderers[key])safeRender(renderers[key],sec);
 }
+
+// REACTIVE STATE LISTENERS
+// Re-render sections when relevant store state changes
+document.addEventListener('nfr:statechange',function(e){
+  var action=e&&e.detail&&e.detail.action;
+  if(!action)return;
+  // Transformation system: re-render on proof candidate or maturity changes
+  if(action.type==='SET_PROOF_CANDIDATE'||action.type==='SET_MATURITY_ANSWER'||action.type==='SET_MATURITY_AMBITION'){
+    var trSec=document.getElementById('transformation-system');
+    if(trSec&&typeof rendered!=='undefined'&&rendered.has(getSlideIndex('transformation-system'))){
+      rendered.delete(getSlideIndex('transformation-system'));
+      renderSection(trSec);
+    }
+  }
+  // Pressure-to-proof bridge: re-render on pressure, capability, or proof candidate changes
+  if(action.type==='TOGGLE_PRESSURE'||action.type==='TOGGLE_CAPABILITY'||action.type==='SET_PROOF_CANDIDATE'){
+    var ptpSec=document.getElementById('pressure-to-proof');
+    if(ptpSec&&typeof rendered!=='undefined'&&rendered.has(getSlideIndex('pressure-to-proof'))){
+      rendered.delete(getSlideIndex('pressure-to-proof'));
+      renderSection(ptpSec);
+    }
+  }
+});
