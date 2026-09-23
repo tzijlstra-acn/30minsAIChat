@@ -677,6 +677,33 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
       build();
       showAll();
     },
+    renderStatic: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showAll();
+    },
+    renderError: function(err) {
+      container.innerHTML = '';
+      var w = document.createElement('div');
+      w.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;';
+      var m = document.createElement('div');
+      m.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);text-align:center;';
+      m.textContent = 'Scene unavailable';
+      var s = document.createElement('div');
+      s.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--border-2);text-align:center;';
+      s.textContent = err && err.message ? err.message : 'render error';
+      w.appendChild(m); w.appendChild(s); container.appendChild(w);
+    },
+    resize: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showAll();
+    },
+    seek: function(p) {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      if (p >= 1) { showAll(); }
+    },
     getAccessibleSummary: function() {
       return 'A regulatory clause passes through five stages: Source, Structure, Connect, Challenge, and Evidence. Obligations are extracted, matched to policy and controls, challenged by a human reviewer, and sealed with verified evidence. Each step is source-backed.';
     },

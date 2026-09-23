@@ -609,6 +609,33 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
       revealHeader(false);
     },
     finish:  function() { build(); showFinal(); },
+    renderStatic: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showFinal();
+    },
+    renderError: function(err) {
+      container.innerHTML = '';
+      var w = document.createElement('div');
+      w.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;';
+      var m = document.createElement('div');
+      m.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);text-align:center;';
+      m.textContent = 'Scene unavailable';
+      var s = document.createElement('div');
+      s.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--border-2);text-align:center;';
+      s.textContent = err && err.message ? err.message : 'render error';
+      w.appendChild(m); w.appendChild(s); container.appendChild(w);
+    },
+    resize: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showFinal();
+    },
+    seek: function(p) {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      if (p >= 1) { showFinal(); }
+    },
     getAccessibleSummary: function() {
       return 'A regulatory clause is parsed into a structured obligation object. AI detects a gap in the evidence chain and proposes a link. The obligation connects to a verified evidence record. AI changes risk work.';
     },

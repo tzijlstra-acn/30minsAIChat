@@ -291,6 +291,48 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       build();
       showFinal();
     },
+    renderStatic: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showFinal();
+    },
+    renderError: function(err) {
+      container.innerHTML = '';
+      var w = document.createElement('div');
+      w.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;';
+      var m = document.createElement('div');
+      m.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);text-align:center;';
+      m.textContent = 'Scene unavailable';
+      var s = document.createElement('div');
+      s.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--border-2);text-align:center;';
+      s.textContent = err && err.message ? err.message : 'render error';
+      w.appendChild(m); w.appendChild(s); container.appendChild(w);
+    },
+    resize: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showFinal();
+    },
+    seek: function(p) {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      if (p >= 1) { showFinal(); return; }
+      var st = container.querySelector('#ue-stations');
+      var mt = container.querySelector('#ue-meter');
+      var cp = container.querySelector('#ue-controls');
+      if (st) st.style.opacity = '1';
+      if (p > 0.15 && mt) {
+        mt.style.opacity = '1';
+        var pctHigh = 90 - Math.floor(p * 60);
+        setMeter(Math.max(30, pctHigh));
+        setLevel(pctHigh > 50 ? 'HIGH' : 'LOWER', pctHigh > 50 ? 'var(--pink)' : 'var(--green)');
+      }
+      if (p > 0.3 && cp) {
+        cp.style.opacity = '1';
+        var ctrlCount = Math.floor((p - 0.3) / 0.7 * controls.length);
+        controls.slice(0, ctrlCount).forEach(function(ctrl) { activateRow(ctrl.id); });
+      }
+    },
     getAccessibleSummary: function() {
       return 'Six cost stations are shown: Data and context, Model reasoning, Orchestration, Retries, Human review, and Platform assurance. Six design controls activate one by one, each reducing the cost meter. The meter ends at LOWER. One control notes a quality trade-off. No client data, no validated percentages.';
     },

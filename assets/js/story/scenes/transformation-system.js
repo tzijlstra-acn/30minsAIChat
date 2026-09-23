@@ -274,6 +274,33 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       showAll();
     },
 
+    renderStatic: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showAll();
+    },
+    renderError: function(err) {
+      container.innerHTML = '';
+      var w = document.createElement('div');
+      w.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;';
+      var m = document.createElement('div');
+      m.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);text-align:center;';
+      m.textContent = 'Scene unavailable';
+      var s = document.createElement('div');
+      s.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--border-2);text-align:center;';
+      s.textContent = err && err.message ? err.message : 'render error';
+      w.appendChild(m); w.appendChild(s); container.appendChild(w);
+    },
+    resize: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showAll();
+    },
+    seek: function(p) {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      if (p >= 1) { showAll(); }
+    },
     getAccessibleSummary: function() {
       return 'Obligation Art. 7(3) Data minimisation triggers changes across five systems: '
         + 'Policy documentation, Control framework, Data catalogue, Process maps, and Governance register. '

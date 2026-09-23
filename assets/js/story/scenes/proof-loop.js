@@ -349,6 +349,41 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
       build();
       showFinalFrame();
     },
+    renderStatic: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showFinalFrame();
+    },
+    renderError: function(err) {
+      container.innerHTML = '';
+      var w = document.createElement('div');
+      w.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;';
+      var m = document.createElement('div');
+      m.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);text-align:center;';
+      m.textContent = 'Scene unavailable';
+      var s = document.createElement('div');
+      s.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--border-2);text-align:center;';
+      s.textContent = err && err.message ? err.message : 'render error';
+      w.appendChild(m); w.appendChild(s); container.appendChild(w);
+    },
+    resize: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showFinalFrame();
+    },
+    seek: function(p) {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      if (p >= 1) { showFinalFrame(); return; }
+      var el = container.querySelector('#pf-flow-row');
+      if (el) el.style.opacity = '1';
+      var stepsToShow = Math.floor(p * nodes.length);
+      nodes.slice(0, stepsToShow).forEach(function(node) {
+        highlightNode(node.id, node.color, node.labelColor);
+      });
+      var tracksToFill = Math.floor(Math.max(0, p - 0.5) / 0.5 * tracks.length);
+      tracks.slice(0, tracksToFill).forEach(function(track) { fillTrack(track.id); });
+    },
     getAccessibleSummary: function() {
       return 'A proof pipeline runs an obligation through five stages: Baseline, Run, Compare, Challenge, and Decide. Five evidence tracks fill progressively. An evidence gate presents four human-selected paths -- Stop and review, Refine approach, Repeat proof, or Controlled scale -- with no outcome preselected. A human decision-maker reviews the evidence and chooses.';
     },
