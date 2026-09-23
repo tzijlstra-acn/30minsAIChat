@@ -318,15 +318,16 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
 
   function _buildEvidence() {
     _evidenceG = svgEl('g', {});
-    _evidenceG.style.cssText = 'opacity:0;transform-origin:950px 386px;transform:scale(0.6);'
+    // Positioned to the right of all graph nodes (rightmost: control cx=940); clear at x=1010+
+    _evidenceG.style.cssText = 'opacity:0;transform-origin:1097px 226px;transform:scale(0.6);'
       + 'transition:opacity 200ms ease,transform 260ms cubic-bezier(.16,1,.3,1);';
 
-    var ex = 860, ey = 360, ew = 180, eh = 52;
+    var ex = 1010, ey = 200, ew = 175, eh = 52;
 
     _evidenceG.appendChild(svgEl('path', {
-      d: 'M' + ex + ',' + ey +
-         ' C' + (ex - 200) + ',' + (ey - 80) +
-         ' 200,310' +
+      d: 'M' + ex + ',' + (ey + eh) +
+         ' C' + ex + ',440' +
+         ' 220,450' +
          ' 180,374',
       fill: 'none', stroke: C.green, 'stroke-width': '1',
       'stroke-dasharray': '4 4', opacity: '0.4'
@@ -368,11 +369,12 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
 
   function _buildAiProposal() {
     _aiPropG = svgEl('g', {});
-    // Starts from below; slides up
-    _aiPropG.style.cssText = 'opacity:0;transform:translateY(16px);'
+    // Starts from above; slides down into cleared top space
+    _aiPropG.style.cssText = 'opacity:0;transform:translateY(-16px);'
       + 'transition:opacity 280ms ease,transform 280ms cubic-bezier(.16,1,.3,1);';
 
-    var px = 540, py = 268, pw = 220, ph = 46;
+    // Positioned above the graph cluster (nodes start at cy=200); clear at y=50-96
+    var px = 700, py = 50, pw = 240, ph = 46;
 
     _aiPropG.appendChild(svgEl('rect', {
       x: px, y: py, width: pw, height: ph, rx: 5,
@@ -409,6 +411,19 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     });
     subTxt.textContent = 'confidence high -- auto-linked';
     _aiPropG.appendChild(subTxt);
+
+    // Arrow pointing from box center-bottom down to the GAP badge
+    var arrowMx = px + Math.round(pw / 2);
+    _aiPropG.appendChild(svgEl('line', {
+      x1: String(arrowMx), y1: String(py + ph + 4),
+      x2: '918', y2: '264',
+      stroke: C.accent, 'stroke-width': '1.5',
+      'stroke-dasharray': '4 3', opacity: '0.55'
+    }));
+    _aiPropG.appendChild(svgEl('polygon', {
+      points: '913,256 923,256 918,265',
+      fill: C.accent, opacity: '0.55'
+    }));
 
     _rootG.appendChild(_aiPropG);
   }
