@@ -1,331 +1,266 @@
 // Scene: pressure-convergence (Screen 01 -- WHY NOW)
-// Three obligation/pressure streams converge on a manual bottleneck,
-// then an arrow shows the path to an evidence-led operating model.
+// Three pressure streams converge on a shared vertical bus, then route to the manual bottleneck.
+// V24: convergence bus replaces three independent diagonal arrows.
+// Connectors are routed from measured label-group ports (getBBox) after DOM insertion.
 SceneDirector.register('pressure-convergence', function(container, manifest, reduced) {
   var _timers = [];
 
-  // ── colours ──
   var C_PINK   = '#F0758A';
   var C_AMBER  = '#F3B34C';
   var C_PURPLE = '#B44CFF';
   var C_CYAN   = '#55C7E8';
   var C_DARK   = 'rgba(255,255,255,0.06)';
   var C_BORDER = 'rgba(255,255,255,0.18)';
+  var C_BUS    = 'rgba(255,255,255,0.38)';
+  var BUS_X    = 316;
+
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    if (attrs) Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
+    return el;
+  }
+
+  function makeMkr(defs, id, color) {
+    var m = svgEl('marker', { id: id, markerWidth: '8', markerHeight: '6', refX: '7', refY: '3', orient: 'auto' });
+    m.appendChild(svgEl('polygon', { points: '0 0, 8 3, 0 6', fill: color }));
+    defs.appendChild(m);
+  }
 
   function build() {
     container.innerHTML = '';
-
-    // Root wrapper
     var root = document.createElement('div');
     root.className = 'scene-root';
     root.style.cssText = 'width:100%;height:100%;position:relative;overflow:hidden;';
 
-    // SVG
     var svg = svgEl('svg', {
       viewBox: '0 0 1120 440',
       preserveAspectRatio: 'xMidYMid meet',
       style: 'width:100%;height:100%;display:block;'
     });
 
-    // ── defs: arrowhead markers ──
     var defs = svgEl('defs');
-
-    function makeMarker(id, color) {
-      var marker = svgEl('marker', {
-        id: id,
-        markerWidth: '8',
-        markerHeight: '6',
-        refX: '7',
-        refY: '3',
-        orient: 'auto'
-      });
-      var poly = svgEl('polygon', {
-        points: '0 0, 8 3, 0 6',
-        fill: color
-      });
-      marker.appendChild(poly);
-      return marker;
-    }
-
-    defs.appendChild(makeMarker('arrow-pink',   C_PINK));
-    defs.appendChild(makeMarker('arrow-amber',  C_AMBER));
-    defs.appendChild(makeMarker('arrow-purple', C_PURPLE));
-    defs.appendChild(makeMarker('arrow-cyan',   C_CYAN));
+    makeMkr(defs, 'arr-pink',   C_PINK);
+    makeMkr(defs, 'arr-amber',  C_AMBER);
+    makeMkr(defs, 'arr-purple', C_PURPLE);
+    makeMkr(defs, 'arr-bus',    C_BUS);
+    makeMkr(defs, 'arr-cyan',   C_CYAN);
     svg.appendChild(defs);
 
-    // ── Stream labels (left section x=30..250, arrows start at x=270) ──
-    // Each stream occupies a clear vertical band; labels end before arrow start.
-    // Stream 1 band: y=20..130  label=y55/73  arrow y=110
-    // Stream 2 band: y=165..285 label=y185/203 arrow y=225
-    // Stream 3 band: y=320..440 label=y335/353 arrow y=385
+    // ── Pressure stream label groups ─────────────────────────────────────
+    // Each group: two text nodes (title + subtitle), measured after DOM insertion
+    // for right-centre port routing.
 
-    // Stream 1 -- obligation
-    var lbl1 = svgEl('text', {
-      x: '30', y: '55',
-      fill: C_PINK,
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '15',
-      'font-weight': '700',
-      opacity: '0'
+    // Stream 1 (pink) -- obligation
+    var grp1 = svgEl('g', { id: 'pc-grp1', opacity: '0' });
+    var l1 = svgEl('text', { x: '30', y: '56', fill: C_PINK,
+      'font-family': "'Space Grotesk',sans-serif", 'font-size': '15', 'font-weight': '700' });
+    l1.textContent = 'Rising obligation volume';
+    var s1 = svgEl('text', { x: '30', y: '74', fill: C_PINK,
+      'font-family': "'Space Grotesk',sans-serif", 'font-size': '12' });
+    s1.textContent = 'More obligations, faster cycles';
+    grp1.appendChild(l1); grp1.appendChild(s1);
+    svg.appendChild(grp1);
+
+    // Stream 2 (amber) -- cost
+    var grp2 = svgEl('g', { id: 'pc-grp2', opacity: '0' });
+    var l2 = svgEl('text', { x: '30', y: '192', fill: C_AMBER,
+      'font-family': "'Space Grotesk',sans-serif", 'font-size': '15', 'font-weight': '700' });
+    l2.textContent = 'Tighter economics';
+    var s2 = svgEl('text', { x: '30', y: '210', fill: C_AMBER,
+      'font-family': "'Space Grotesk',sans-serif", 'font-size': '12' });
+    s2.textContent = 'Cost per decision under pressure';
+    grp2.appendChild(l2); grp2.appendChild(s2);
+    svg.appendChild(grp2);
+
+    // Stream 3 (purple) -- AI
+    var grp3 = svgEl('g', { id: 'pc-grp3', opacity: '0' });
+    var l3 = svgEl('text', { x: '30', y: '340', fill: C_PURPLE,
+      'font-family': "'Space Grotesk',sans-serif", 'font-size': '15', 'font-weight': '700' });
+    l3.textContent = 'More capable AI available';
+    var s3 = svgEl('text', { x: '30', y: '358', fill: C_PURPLE,
+      'font-family': "'Space Grotesk',sans-serif", 'font-size': '12' });
+    s3.textContent = 'Opportunity and new governance obligations';
+    grp3.appendChild(l3); grp3.appendChild(s3);
+    svg.appendChild(grp3);
+
+    // ── Connector layer (filled after DOM insertion via routeConnectors) ──
+    var connG = svgEl('g', { id: 'pc-conn' });
+    svg.appendChild(connG);
+
+    // ── Bottleneck box ────────────────────────────────────────────────────
+    var bnG = svgEl('g', { id: 'pc-bottleneck', opacity: '0' });
+    bnG.appendChild(svgEl('rect', {
+      x: '500', y: '95', width: '140', height: '215', rx: '10',
+      fill: C_DARK, stroke: C_BORDER, 'stroke-width': '1.5'
+    }));
+    var bt1 = svgEl('text', { x: '570', y: '125', 'text-anchor': 'middle',
+      fill: 'var(--text-1,#F0F0F0)', 'font-family': "'Space Grotesk',sans-serif",
+      'font-size': '13', 'font-weight': '700' });
+    bt1.textContent = 'Manual operating';
+    bnG.appendChild(bt1);
+    var bt2 = svgEl('text', { x: '570', y: '141', 'text-anchor': 'middle',
+      fill: 'var(--text-1,#F0F0F0)', 'font-family': "'Space Grotesk',sans-serif",
+      'font-size': '13', 'font-weight': '700' });
+    bt2.textContent = 'bottleneck';
+    bnG.appendChild(bt2);
+    svg.appendChild(bnG);
+
+    // Queue tokens
+    ['pc-tok1', 'pc-tok2', 'pc-tok3'].forEach(function(id, i) {
+      svg.appendChild(svgEl('rect', {
+        id: id, x: '516', y: String(168 + i * 24), width: '32', height: '18',
+        rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER,
+        'stroke-width': '1', opacity: '0'
+      }));
     });
-    lbl1.textContent = 'Rising obligation volume';
-    lbl1.id = 'pc-lbl1';
-    svg.appendChild(lbl1);
-
-    var sub1 = svgEl('text', {
-      x: '30', y: '73',
-      fill: C_PINK,
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '12',
-      'font-weight': '400',
-      opacity: '0'
-    });
-    sub1.textContent = 'More obligations, faster cycles';
-    sub1.id = 'pc-sub1';
-    svg.appendChild(sub1);
-
-    // Stream 2 -- cost
-    var lbl2 = svgEl('text', {
-      x: '30', y: '185',
-      fill: C_AMBER,
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '15',
-      'font-weight': '700',
-      opacity: '0'
-    });
-    lbl2.textContent = 'Tighter economics';
-    lbl2.id = 'pc-lbl2';
-    svg.appendChild(lbl2);
-
-    var sub2 = svgEl('text', {
-      x: '30', y: '203',
-      fill: C_AMBER,
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '12',
-      'font-weight': '400',
-      opacity: '0'
-    });
-    sub2.textContent = 'Cost per decision under pressure';
-    sub2.id = 'pc-sub2';
-    svg.appendChild(sub2);
-
-    // Stream 3 -- AI
-    var lbl3 = svgEl('text', {
-      x: '30', y: '335',
-      fill: C_PURPLE,
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '15',
-      'font-weight': '700',
-      opacity: '0'
-    });
-    lbl3.textContent = 'More capable AI available';
-    lbl3.id = 'pc-lbl3';
-    svg.appendChild(lbl3);
-
-    var sub3 = svgEl('text', {
-      x: '30', y: '353',
-      fill: C_PURPLE,
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '12',
-      'font-weight': '400',
-      opacity: '0'
-    });
-    sub3.textContent = 'Opportunity and new governance obligations';
-    sub3.id = 'pc-sub3';
-    svg.appendChild(sub3);
-
-    // ── Flow arrows -- start at x=270, clear of all label text ──
-    // Bottleneck left edge: x=500
-    // Stream 1: straight line at y=110
-    var path1 = svgEl('path', {
-      d: 'M 270 110 L 498 110',
-      stroke: C_PINK,
-      'stroke-width': '2.5',
-      'stroke-dasharray': '6 4',
-      fill: 'none',
-      'marker-end': 'url(#arrow-pink)',
-      opacity: '0'
-    });
-    path1.id = 'pc-path1';
-    svg.appendChild(path1);
-
-    // Stream 2: straight line at y=225 (centre of bottleneck)
-    var path2 = svgEl('path', {
-      d: 'M 270 225 L 498 225',
-      stroke: C_AMBER,
-      'stroke-width': '2.5',
-      fill: 'none',
-      'marker-end': 'url(#arrow-amber)',
-      opacity: '0'
-    });
-    path2.id = 'pc-path2';
-    svg.appendChild(path2);
-
-    // Stream 3: curves upward from y=385 to bottleneck bottom at y=295
-    var path3 = svgEl('path', {
-      d: 'M 270 385 C 380 385 440 295 498 295',
-      stroke: C_PURPLE,
-      'stroke-width': '2.5',
-      fill: 'none',
-      'marker-end': 'url(#arrow-purple)',
-      opacity: '0'
-    });
-    path3.id = 'pc-path3';
-    svg.appendChild(path3);
-
-    // ── Bottleneck box (x=500, y=160, 120x120) ──
-    var bottleneckG = svgEl('g', { opacity: '0', id: 'pc-bottleneck' });
-
-    var bnRect = svgEl('rect', {
-      x: '500', y: '95',
-      width: '140', height: '215',
-      rx: '10',
-      fill: C_DARK,
-      stroke: C_BORDER,
-      'stroke-width': '1.5'
-    });
-    bottleneckG.appendChild(bnRect);
-
-    var bnTitle1 = svgEl('text', {
-      x: '570', y: '125',
-      'text-anchor': 'middle',
-      fill: 'var(--text-1,#F0F0F0)',
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '13',
-      'font-weight': '700'
-    });
-    bnTitle1.textContent = 'Manual operating';
-    bottleneckG.appendChild(bnTitle1);
-
-    var bnTitle2 = svgEl('text', {
-      x: '570', y: '141',
-      'text-anchor': 'middle',
-      fill: 'var(--text-1,#F0F0F0)',
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '13',
-      'font-weight': '700'
-    });
-    bnTitle2.textContent = 'bottleneck';
-    bottleneckG.appendChild(bnTitle2);
-
-    svg.appendChild(bottleneckG);
-
-    // ── Queue tokens (inside bottleneck) ──
-    var token1 = svgEl('rect', { x: '516', y: '168', width: '32', height: '18', rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER, 'stroke-width': '1', opacity: '0', id: 'pc-tok1' });
-    var token2 = svgEl('rect', { x: '516', y: '192', width: '32', height: '18', rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER, 'stroke-width': '1', opacity: '0', id: 'pc-tok2' });
-    var token3 = svgEl('rect', { x: '516', y: '216', width: '32', height: '18', rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER, 'stroke-width': '1', opacity: '0', id: 'pc-tok3' });
-    svg.appendChild(token1);
-    svg.appendChild(token2);
-    svg.appendChild(token3);
-
-    // Queue label
-    var queueLbl = svgEl('text', {
-      x: '556', y: '200',
+    var qLbl = svgEl('text', {
+      id: 'pc-queue-lbl', x: '556', y: '200',
       fill: 'var(--text-2,rgba(240,240,240,0.55))',
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '11',
-      opacity: '0',
-      id: 'pc-queue-lbl'
+      'font-family': "'Space Grotesk',sans-serif", 'font-size': '11', opacity: '0'
     });
-    queueLbl.textContent = 'queue';
-    svg.appendChild(queueLbl);
+    qLbl.textContent = 'queue';
+    svg.appendChild(qLbl);
 
-    // ── Hand-off cost badge ──
-    var badgeG = svgEl('g', { opacity: '0', id: 'pc-badge' });
-    var badgeRect = svgEl('rect', {
-      x: '506', y: '268',
-      width: '128', height: '22',
-      rx: '4',
-      fill: 'rgba(243,179,76,0.18)',
-      stroke: C_AMBER,
-      'stroke-width': '1'
+    // Hand-off cost badge
+    var bdG = svgEl('g', { id: 'pc-badge', opacity: '0' });
+    bdG.appendChild(svgEl('rect', {
+      x: '506', y: '268', width: '128', height: '22', rx: '4',
+      fill: 'rgba(243,179,76,0.18)', stroke: C_AMBER, 'stroke-width': '1'
+    }));
+    var bdTxt = svgEl('text', {
+      x: '570', y: '283', 'text-anchor': 'middle',
+      fill: C_AMBER, 'font-family': "'JetBrains Mono',monospace",
+      'font-size': '11', 'font-weight': '700', 'letter-spacing': '0.05em'
     });
-    badgeG.appendChild(badgeRect);
-    var badgeTxt = svgEl('text', {
-      x: '570', y: '283',
-      'text-anchor': 'middle',
-      fill: C_AMBER,
-      'font-family': "'JetBrains Mono',monospace",
-      'font-size': '11',
-      'font-weight': '700',
-      'letter-spacing': '0.05em'
-    });
-    badgeTxt.textContent = 'HAND-OFF COST';
-    badgeG.appendChild(badgeTxt);
-    svg.appendChild(badgeG);
+    bdTxt.textContent = 'HAND-OFF COST';
+    bdG.appendChild(bdTxt);
+    svg.appendChild(bdG);
 
-    // ── Output arrow (bottleneck -> evidence-led) ──
+    // Output arrow + labels
     var outPath = svgEl('path', {
+      id: 'pc-outpath',
       d: 'M 640 202 L 890 202',
-      stroke: C_CYAN,
-      'stroke-width': '3',
-      fill: 'none',
-      'marker-end': 'url(#arrow-cyan)',
-      opacity: '0',
-      id: 'pc-outpath'
+      stroke: C_CYAN, 'stroke-width': '3', fill: 'none',
+      'marker-end': 'url(#arr-cyan)', opacity: '0'
     });
     svg.appendChild(outPath);
-
-    // Output label
-    var outLbl1 = svgEl('text', {
-      x: '900', y: '190',
-      fill: C_CYAN,
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '15',
-      'font-weight': '700',
-      opacity: '0',
-      id: 'pc-outlbl1'
+    var oL1 = svgEl('text', {
+      id: 'pc-outlbl1', x: '900', y: '190',
+      fill: C_CYAN, 'font-family': "'Space Grotesk',sans-serif",
+      'font-size': '15', 'font-weight': '700', opacity: '0'
     });
-    outLbl1.textContent = 'Evidence-led';
-    svg.appendChild(outLbl1);
-
-    var outLbl2 = svgEl('text', {
-      x: '900', y: '210',
-      fill: C_CYAN,
-      'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '15',
-      'font-weight': '700',
-      opacity: '0',
-      id: 'pc-outlbl2'
+    oL1.textContent = 'Evidence-led';
+    svg.appendChild(oL1);
+    var oL2 = svgEl('text', {
+      id: 'pc-outlbl2', x: '900', y: '210',
+      fill: C_CYAN, 'font-family': "'Space Grotesk',sans-serif",
+      'font-size': '15', 'font-weight': '700', opacity: '0'
     });
-    outLbl2.textContent = 'operating model';
-    svg.appendChild(outLbl2);
+    oL2.textContent = 'operating model';
+    svg.appendChild(oL2);
 
     root.appendChild(svg);
     container.appendChild(root);
+
+    // Route connectors now that groups are in the DOM and fonts are ready
+    routeConnectors(svg, connG);
   }
 
-  // Utility: set opacity via transition
+  // Measure each label group's bounding box and build the bus + connector paths.
+  // Called after DOM insertion (fonts.ready guard is in scene-director).
+  function routeConnectors(svg, connG) {
+    var grpIds = ['pc-grp1', 'pc-grp2', 'pc-grp3'];
+    var colors = [C_PINK, C_AMBER, C_PURPLE];
+    var fallbacks = [
+      { x: 258, y: 65 },
+      { x: 228, y: 201 },
+      { x: 272, y: 349 }
+    ];
+
+    var ports = grpIds.map(function(id, i) {
+      var g = svg.querySelector('#' + id);
+      if (!g) return fallbacks[i];
+      try {
+        var box = g.getBBox();
+        if (box.width > 0) {
+          return {
+            x: Math.min(box.x + box.width + 8, BUS_X - 4),
+            y: box.y + box.height / 2
+          };
+        }
+      } catch(e) {}
+      return fallbacks[i];
+    });
+
+    var topY    = ports[0].y;
+    var botY    = ports[2].y;
+    var busMidY = Math.round((topY + botY) / 2);
+
+    // Horizontal dash connectors: port → bus
+    grpIds.forEach(function(_, i) {
+      var p = ports[i];
+      var line = svgEl('line', {
+        id: 'pc-hconn' + i,
+        x1: String(Math.round(p.x)), y1: String(Math.round(p.y)),
+        x2: String(BUS_X),           y2: String(Math.round(p.y)),
+        stroke: colors[i], 'stroke-width': '2',
+        'stroke-dasharray': '5 3', opacity: '0'
+      });
+      connG.appendChild(line);
+    });
+
+    // Vertical bus
+    connG.appendChild(svgEl('line', {
+      id: 'pc-bus-line',
+      x1: String(BUS_X), y1: String(Math.round(topY)),
+      x2: String(BUS_X), y2: String(Math.round(botY)),
+      stroke: C_BUS, 'stroke-width': '2', opacity: '0'
+    }));
+
+    // Junction dots at each port on the bus
+    grpIds.forEach(function(_, i) {
+      connG.appendChild(svgEl('circle', {
+        id: 'pc-dot' + i,
+        cx: String(BUS_X), cy: String(Math.round(ports[i].y)), r: '3.5',
+        fill: colors[i], opacity: '0'
+      }));
+    });
+
+    // Bus centre → bottleneck left
+    connG.appendChild(svgEl('line', {
+      id: 'pc-bus-out',
+      x1: String(BUS_X), y1: String(busMidY),
+      x2: '498',          y2: String(busMidY),
+      stroke: C_BUS, 'stroke-width': '2.5',
+      'marker-end': 'url(#arr-bus)', opacity: '0'
+    }));
+  }
+
+  // Fade in by element id
   function show(id, dur) {
     var el = container.querySelector('#' + id);
     if (!el) return;
     el.style.transition = 'opacity ' + (dur || 350) + 'ms ease';
-    // double-raf to ensure transition fires
     requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        el.setAttribute('opacity', '1');
-      });
+      requestAnimationFrame(function() { el.setAttribute('opacity', '1'); });
     });
   }
 
-  // Animate a path by stroke-dashoffset
+  // Draw a path with stroke-dashoffset animation
   function drawPath(id, dur) {
     var el = container.querySelector('#' + id);
     if (!el) return;
-    var len = 400; // generous fallback; getTotalLength not always available on hidden SVG
+    var len = 400;
     try { var l = el.getTotalLength(); if (l > 0) len = l; } catch(e) {}
     el.style.strokeDasharray = len;
     el.style.strokeDashoffset = len;
     el.setAttribute('opacity', '1');
     el.style.transition = 'stroke-dashoffset ' + (dur || 600) + 'ms ease';
     requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        el.style.strokeDashoffset = '0';
-      });
+      requestAnimationFrame(function() { el.style.strokeDashoffset = '0'; });
     });
   }
 
-  // Scale-in the bottleneck box
   function scaleIn(id) {
     var el = container.querySelector('#' + id);
     if (!el) return;
@@ -334,87 +269,81 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     el.setAttribute('opacity', '1');
     el.style.transition = 'transform 400ms cubic-bezier(0.34,1.56,0.64,1)';
     requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        el.style.transform = 'scale(1)';
-      });
+      requestAnimationFrame(function() { el.style.transform = 'scale(1)'; });
     });
   }
 
-  // ── showAll: reveal final state without animation ──
+  // Reveal bus group: horizontal connectors + bus line + dots + output
+  function showBus() {
+    ['pc-hconn0', 'pc-hconn1', 'pc-hconn2'].forEach(function(id) { show(id, 280); });
+    show('pc-bus-line', 380);
+    show('pc-dot0', 180); show('pc-dot1', 180); show('pc-dot2', 180);
+    _timers.push(setTimeout(function() { show('pc-bus-out', 450); }, 320));
+  }
+
   function showAll() {
-    ['pc-lbl1','pc-sub1','pc-lbl2','pc-sub2','pc-lbl3','pc-sub3'].forEach(function(id) {
+    ['pc-grp1', 'pc-grp2', 'pc-grp3'].forEach(function(id) {
       var el = container.querySelector('#' + id);
       if (el) el.setAttribute('opacity', '1');
     });
-    ['pc-path1','pc-path2','pc-path3'].forEach(function(id) {
+    ['pc-hconn0', 'pc-hconn1', 'pc-hconn2', 'pc-bus-line',
+     'pc-dot0', 'pc-dot1', 'pc-dot2', 'pc-bus-out'].forEach(function(id) {
       var el = container.querySelector('#' + id);
-      if (!el) return;
-      el.setAttribute('opacity', '1');
-      el.style.strokeDashoffset = '0';
+      if (el) el.setAttribute('opacity', '1');
     });
     var bn = container.querySelector('#pc-bottleneck');
-    if (bn) { bn.setAttribute('opacity','1'); bn.style.transform = 'scale(1)'; }
-    ['pc-tok1','pc-tok2','pc-tok3','pc-queue-lbl'].forEach(function(id) {
+    if (bn) { bn.setAttribute('opacity', '1'); bn.style.transform = 'scale(1)'; }
+    ['pc-tok1', 'pc-tok2', 'pc-tok3', 'pc-queue-lbl'].forEach(function(id) {
       var el = container.querySelector('#' + id);
       if (el) el.setAttribute('opacity', '1');
     });
     var badge = container.querySelector('#pc-badge');
-    if (badge) badge.setAttribute('opacity','1');
-    ['pc-outpath','pc-outlbl1','pc-outlbl2'].forEach(function(id) {
+    if (badge) badge.setAttribute('opacity', '1');
+    ['pc-outpath', 'pc-outlbl1', 'pc-outlbl2'].forEach(function(id) {
       var el = container.querySelector('#' + id);
-      if (el) { el.setAttribute('opacity','1'); el.style.strokeDashoffset = '0'; }
+      if (el) { el.setAttribute('opacity', '1'); el.style.strokeDashoffset = '0'; }
     });
   }
 
   var steps = [
-    // 1. Obligation label
-    { delay: 200,  run: function() { show('pc-lbl1'); show('pc-sub1'); } },
-    // 2. Cost label
-    { delay: 600,  run: function() { show('pc-lbl2'); show('pc-sub2'); } },
-    // 3. AI label
-    { delay: 1000, run: function() { show('pc-lbl3'); show('pc-sub3'); } },
-    // 4. Stream 1 arrow draws
-    { delay: 1400, run: function() { drawPath('pc-path1', 550); } },
-    // 5. Stream 2 arrow draws
-    { delay: 1800, run: function() { drawPath('pc-path2', 550); } },
-    // 6. Stream 3 arrow draws
-    { delay: 2200, run: function() { drawPath('pc-path3', 650); } },
-    // 7. Bottleneck box scales in
-    { delay: 2800, run: function() { scaleIn('pc-bottleneck'); } },
-    // 8. Queue tokens stack up
-    { delay: 3400, run: function() { show('pc-tok1', 250); } },
-    { delay: 3650, run: function() { show('pc-tok2', 250); } },
-    { delay: 3900, run: function() { show('pc-tok3', 250); show('pc-queue-lbl', 300); } },
-    // 9. Hand-off cost badge
-    { delay: 4000, run: function() { show('pc-badge', 350); } },
-    // 10. Cyan output arrow + labels
-    { delay: 4800, run: function() { drawPath('pc-outpath', 600); show('pc-outlbl1', 400); show('pc-outlbl2', 400); } }
+    { delay: 200,  run: function() { show('pc-grp1', 350); } },
+    { delay: 600,  run: function() { show('pc-grp2', 350); } },
+    { delay: 1000, run: function() { show('pc-grp3', 350); } },
+    { delay: 1500, run: showBus },
+    { delay: 2600, run: function() { scaleIn('pc-bottleneck'); } },
+    { delay: 3200, run: function() { show('pc-tok1', 250); } },
+    { delay: 3450, run: function() { show('pc-tok2', 250); } },
+    { delay: 3700, run: function() { show('pc-tok3', 250); show('pc-queue-lbl', 300); } },
+    { delay: 3800, run: function() { show('pc-badge', 350); } },
+    { delay: 4600, run: function() {
+      drawPath('pc-outpath', 600);
+      show('pc-outlbl1', 400);
+      show('pc-outlbl2', 400);
+    }}
   ];
 
   var tl = createTimeline(steps);
 
   return {
     play: function() {
+      _timers.forEach(clearTimeout); _timers = [];
       build();
       tl.play();
     },
-    pause: tl.pause,
+    pause:  tl.pause,
     resume: tl.resume,
     reset: function() {
+      _timers.forEach(clearTimeout); _timers = [];
       build();
       tl.reset();
     },
     finish: function() {
+      _timers.forEach(clearTimeout); _timers = [];
       build();
-      if (reduced) {
-        showAll();
-      } else {
-        tl.finish();
-      }
+      showAll();
     },
     destroy: function() {
-      _timers.forEach(clearTimeout);
-      _timers = [];
+      _timers.forEach(clearTimeout); _timers = [];
       container.innerHTML = '';
       tl.destroy();
     }

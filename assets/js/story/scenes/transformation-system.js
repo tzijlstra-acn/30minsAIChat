@@ -118,7 +118,16 @@ SceneDirector.register('transformation-system', function(container, manifest, re
           data.nodes.forEach(function(jn) {
             var local = nodeById(jn.id);
             if (local) {
-              if (jn.label)    local.label    = jn.label;
+              // Prefer displayLabel; fall back to label. Never render the raw node ID.
+              var dl = jn.displayLabel || jn.label;
+              if (dl && dl !== jn.id) {
+                local.label = dl;
+              } else if (!dl || dl === jn.id) {
+                if (typeof console !== 'undefined' && console.error) {
+                  console.error('[transformation-system] Missing displayLabel for node ' + jn.id);
+                }
+                // Keep the local default label; do not expose raw ID.
+              }
               if (jn.sublabel) local.sublabel = jn.sublabel;
             }
           });
@@ -150,23 +159,28 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       fill: 'rgba(18,21,30,0.92)', stroke: 'rgba(180,76,255,0.35)', 'stroke-width': '1.5'
     }));
 
-    // Zone label: business meaning
+    // Zone label: business meaning -- sits in the header band above the nodes.
+    // Nodes have cy=200 (min radius 11), so top at y=189. Label is centered at y=176,
+    // keeping it clearly in the graph panel header strip (y=168..188).
     var bzLbl = svgEl('text', {
-      x: '593', y: '182',
+      x: '593', y: '176',
       'text-anchor': 'middle', 'dominant-baseline': 'middle',
-      fill: 'rgba(164,169,183,0.45)', 'font-size': '9',
-      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1.5'
+      fill: 'rgba(164,169,183,0.40)', 'font-size': '9',
+      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1.5',
+      'pointer-events': 'none'
     });
     bzLbl.textContent = 'BUSINESS MEANING';
     graphBg.appendChild(bzLbl);
 
-    // Zone label: operating execution (right side annotation)
+    // Zone label: execution -- placed in the left margin of the graph panel,
+    // below the off-chain execution cluster (prc/sys/own at cy=268..318).
+    // Horizontal, not rotated, to avoid overlapping the PROCESS GAP badge region.
     var execLbl = svgEl('text', {
-      x: '788', y: '290',
+      x: '436', y: '370',
       'text-anchor': 'start', 'dominant-baseline': 'middle',
-      fill: 'rgba(164,169,183,0.35)', 'font-size': '8',
+      fill: 'rgba(164,169,183,0.30)', 'font-size': '8',
       'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1',
-      transform: 'rotate(-90,788,290)'
+      'pointer-events': 'none'
     });
     execLbl.textContent = 'EXECUTION';
     graphBg.appendChild(execLbl);
@@ -329,21 +343,43 @@ SceneDirector.register('transformation-system', function(container, manifest, re
 
     svg.appendChild(gapG);
 
-    // ── Reuse insight banner ──
+    // ── Second use-case token + REUSES SHARED CONTEXT label ──
+    // Enters from upper-right edge and routes to illuminate shared nodes.
+    // The full sentence is in the HTML footer strip below the scene.
     var reuseG = svgEl('g', { 'data-id': 'reuse-note', opacity: '0' });
     reuseG.style.cssText = 'transition:opacity 500ms ease;';
+
+    // Small use-case token entering from right (positioned above the graph)
     reuseG.appendChild(svgEl('rect', {
-      x: '80', y: '527', width: '1040', height: '24', rx: '5',
-      fill: 'rgba(85,199,232,0.05)', stroke: 'rgba(85,199,232,0.25)', 'stroke-width': '1'
+      x: '950', y: '110', width: '68', height: '22', rx: '5',
+      fill: 'rgba(85,199,232,0.15)', stroke: '#55C7E8', 'stroke-width': '1.5'
     }));
-    var reuseT = svgEl('text', {
-      x: '600', y: '539',
+    var tok2T = svgEl('text', {
+      x: '984', y: '121',
       'text-anchor': 'middle', 'dominant-baseline': 'middle',
-      fill: '#55C7E8', 'font-size': '12', 'font-weight': '500',
+      fill: '#55C7E8', 'font-size': '9', 'font-weight': '700',
       'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '0.5'
     });
-    reuseT.textContent = 'A second use case shares regulation, policy and control nodes already in the graph';
-    reuseG.appendChild(reuseT);
+    tok2T.textContent = 'USE CASE 2';
+    reuseG.appendChild(tok2T);
+
+    // Connector from token to graph (dashed, towards reg-001 at cx=463, cy=200)
+    reuseG.appendChild(svgEl('path', {
+      d: 'M 950 121 C 800 121 600 180 475 200',
+      stroke: '#55C7E8', 'stroke-width': '1.5',
+      'stroke-dasharray': '5 3', fill: 'none', opacity: '0.6'
+    }));
+
+    // Short label below the token
+    var rsLbl = svgEl('text', {
+      x: '984', y: '144',
+      'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      fill: '#55C7E8', 'font-size': '9',
+      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '0.8'
+    });
+    rsLbl.textContent = 'REUSES SHARED CONTEXT';
+    reuseG.appendChild(rsLbl);
+
     svg.appendChild(reuseG);
 
     root.appendChild(svg);

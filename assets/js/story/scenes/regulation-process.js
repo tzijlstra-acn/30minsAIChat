@@ -135,19 +135,72 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
     ht.textContent = 'ART. 7(3) -- COVERAGE MAPPING';
     g.appendChild(ht);
 
-    g.appendChild(svgEl('circle', { cx: W - 56, cy: 29, r: 4, fill: C.accent, opacity: '0.8' }));
+    // LIVE pill -- measured to ensure text stays inside the pill rect
+    var livePill = buildLivePill(g);
+    g.appendChild(livePill);
 
-    var ls = svgEl('text', {
-      x: W - 48, y: 34,
+    svg.appendChild(g);
+  }
+
+  // Build a measured status pill for the LIVE indicator.
+  // Returns a <g> containing a rect + centred text; adjusts pill width to the
+  // measured text extent so text never clips or overflows the box.
+  function buildLivePill(parentG) {
+    var PILL_H  = 18;
+    var PAD_X   = 12;
+    var MIN_W   = 54;
+    var SAFE_R  = 22; // min gap from viewBox right edge
+    var PILL_CY = 29; // vertical centre of the header strip
+
+    // Temporary off-screen text to measure width
+    var tMeasure = svgEl('text', {
+      x: '-9999', y: '-9999',
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': 11,
+      'letter-spacing': '0.1em',
+      visibility: 'hidden'
+    });
+    tMeasure.textContent = 'LIVE';
+    svg.appendChild(tMeasure);
+    var tw = 28; // fallback
+    try { tw = tMeasure.getComputedTextLength() || tMeasure.getBBox().width || 28; } catch(e) {}
+    svg.removeChild(tMeasure);
+
+    var pillW = Math.max(MIN_W, Math.ceil(tw) + PAD_X * 2);
+    var pillX = Math.min(W - SAFE_R - pillW, W - SAFE_R - pillW); // rightmost safe position
+    pillX = W - SAFE_R - pillW; // right-aligned with safe inset
+
+    var pg = svgEl('g', {});
+
+    // Pill background rect
+    pg.appendChild(svgEl('rect', {
+      x: pillX, y: PILL_CY - PILL_H / 2,
+      width: pillW, height: PILL_H,
+      rx: 4,
+      fill: 'rgba(180,76,255,0.12)',
+      stroke: C.accent, 'stroke-width': 1
+    }));
+
+    // Live dot
+    pg.appendChild(svgEl('circle', {
+      cx: pillX + 10, cy: PILL_CY, r: 3,
+      fill: C.accent, opacity: '0.9'
+    }));
+
+    // Centred LIVE text (after dot)
+    var lsTxt = svgEl('text', {
+      x: pillX + 10 + 8 + (pillW - 18) / 2, y: PILL_CY,
+      'text-anchor': 'middle',
+      'dominant-baseline': 'middle',
       'font-family': 'JetBrains Mono, monospace',
       'font-size': 11,
       'letter-spacing': '0.1em',
       fill: C.accent
     });
-    ls.textContent = 'LIVE';
-    g.appendChild(ls);
+    lsTxt.textContent = 'LIVE';
+    pg.appendChild(lsTxt);
 
-    svg.appendChild(g);
+    return pg;
   }
 
   function buildCards() {
