@@ -1,10 +1,20 @@
 // Scene: dual-engine (Screen 10 - HOW TO SCALE)
-// V18: One partner from risk to run.
-// Three integrated fields map the journey from risk understanding to production run.
-// Delivery spine: Frame -> Design -> Build -> Prove -> Industrialise -> Optimise.
+// V17: Reduce the hand-off tax.
+// 4-state progression: fragmented islands -- delivery spine -- integrated route -- proof points
 SceneDirector.register('dual-engine', function(container, manifest, reduced) {
 
-  var fields = [
+  // Phase 1: fragmented islands (before Accenture)
+  var ISLANDS = [
+    { label: 'Risk team',        note: 'Interprets the obligation', color: 'rgba(85,199,232,.08)',  tc: 'var(--cyan)'   },
+    { label: 'AI team',          note: 'Builds without full context', color: 'rgba(180,76,255,.08)', tc: 'var(--accent)' },
+    { label: 'Run team',         note: 'Operates without design intent', color: 'rgba(88,201,148,.08)', tc: 'var(--green)' }
+  ];
+
+  // Phase 2: delivery spine
+  var SPINE_STEPS = ['Frame', 'Design', 'Build', 'Prove', 'Industrialise', 'Optimise'];
+
+  // Phase 3: integrated fields (replaces islands)
+  var FIELDS = [
     {
       id:    'risk',
       label: 'Risk and regulatory design',
@@ -13,8 +23,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
         'Risk capability and obligation mapping',
         'Process and control model',
         'Human decision rights and gate criteria',
-        'Regulatory interpretation and evidence standard',
-        'Workforce and adoption design'
+        'Regulatory interpretation and evidence standard'
       ]
     },
     {
@@ -25,8 +34,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
         'Data and context model',
         'Knowledge graph and retrieval',
         'Model selection and agent orchestration',
-        'Security, identity and provenance',
-        'Evaluation and observability'
+        'Security, identity and provenance'
       ]
     },
     {
@@ -37,141 +45,201 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
         'Least complex suitable technology',
         'Shared platform and context reuse',
         'Cost per case tracking and optimisation',
-        'Risk-based human review routing',
-        'Continuous governance and improvement'
+        'Risk-based human review routing'
       ]
     }
   ];
 
-  var spineSteps = ['Frame', 'Design', 'Build', 'Prove', 'Industrialise', 'Optimise'];
-
-  var evidenceTiles = [
+  // Phase 4: proof points
+  var PROOFS = [
     { label: '47-capability risk model',         color: 'var(--accent)' },
     { label: '28 source-backed AI solutions',     color: 'var(--cyan)'   },
     { label: 'Process and workforce methods',     color: 'var(--amber)'  },
     { label: 'Architecture and economics assets', color: 'var(--green)'  }
   ];
 
+  // --- Build helpers ---
+
+  function makeIslandRow() {
+    var row = document.createElement('div');
+    row.className = 'de-islands scene-node';
+    row.dataset.beat = 'islands';
+    row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;'
+      + 'flex:1;min-height:0;overflow:hidden;';
+    ISLANDS.forEach(function(isl) {
+      var card = document.createElement('div');
+      card.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;'
+        + 'gap:8px;padding:14px;background:' + isl.color + ';border-radius:8px;'
+        + 'border:1px dashed ' + isl.tc + ';text-align:center;';
+      card.innerHTML =
+        '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:700;color:' + isl.tc + '">' + isl.label + '</div>'
+        + '<div style="font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-3);line-height:1.4">' + isl.note + '</div>'
+        + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);'
+        + 'text-transform:uppercase;padding:3px 8px;background:var(--surface-1);border-radius:20px">isolated</div>';
+      row.appendChild(card);
+    });
+    return row;
+  }
+
+  function makeSpineRow(showLabel) {
+    var wrap = document.createElement('div');
+    wrap.className = 'de-spine scene-node';
+    wrap.dataset.beat = 'spine';
+    wrap.style.cssText = 'flex-shrink:0;display:flex;flex-direction:column;gap:5px;'
+      + 'opacity:0;transition:opacity .6s;';
+    if (showLabel) {
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;'
+        + 'text-transform:uppercase;color:var(--text-3);';
+      lbl.textContent = 'Delivery route';
+      wrap.appendChild(lbl);
+    }
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:4px;';
+    SPINE_STEPS.forEach(function(step, i) {
+      var chip = document.createElement('div');
+      chip.style.cssText = 'padding:4px 11px;background:var(--surface-2);border-radius:20px;'
+        + 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);'
+        + 'white-space:nowrap;border:1px solid var(--border-2);';
+      chip.textContent = step;
+      row.appendChild(chip);
+      if (i < SPINE_STEPS.length - 1) {
+        var arr = document.createElement('span');
+        arr.style.cssText = 'color:var(--border-2);font-size:14px;flex-shrink:0;';
+        arr.innerHTML = '&#8594;';
+        row.appendChild(arr);
+      }
+    });
+    wrap.appendChild(row);
+    return wrap;
+  }
+
+  function makeFieldsRow() {
+    var row = document.createElement('div');
+    row.className = 'de-fields scene-node';
+    row.dataset.beat = 'fields';
+    row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;'
+      + 'flex:1;min-height:0;overflow:hidden;opacity:0;transition:opacity .6s;';
+    FIELDS.forEach(function(field) {
+      var card = document.createElement('div');
+      card.style.cssText = 'display:flex;flex-direction:column;gap:6px;padding:12px;'
+        + 'background:var(--surface-1);border-top:3px solid ' + field.color + ';border-radius:8px;overflow:hidden;';
+      card.innerHTML =
+        '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;color:' + field.color + ';line-height:1.2">' + field.label + '</div>'
+        + '<div style="display:flex;flex-direction:column;gap:4px;overflow:hidden;">'
+        + field.items.map(function(item) {
+          return '<div style="display:flex;align-items:flex-start;gap:6px;font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-2);line-height:1.4">'
+            + '<span style="color:' + field.color + ';flex-shrink:0;margin-top:2px">&#8227;</span>' + item + '</div>';
+        }).join('')
+        + '</div>';
+      row.appendChild(card);
+    });
+    return row;
+  }
+
+  function makeProofsRow() {
+    var row = document.createElement('div');
+    row.className = 'de-proofs scene-node';
+    row.dataset.beat = 'proofs';
+    row.style.cssText = 'flex-shrink:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;'
+      + 'opacity:0;transition:opacity .5s;';
+    PROOFS.forEach(function(p) {
+      var t = document.createElement('div');
+      t.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 10px;'
+        + 'background:var(--surface-2);border-left:3px solid ' + p.color + ';border-radius:4px;';
+      t.innerHTML = '<span style="font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-2);line-height:1.3">' + p.label + '</span>';
+      row.appendChild(t);
+    });
+    return row;
+  }
+
+  // State machine: 4 phases
+  // Phase 0 (start): islands only
+  // Phase 1 (beat spine): spine appears below islands
+  // Phase 2 (beat fields): islands fade out, fields fade in
+  // Phase 3 (beat proofs): proofs appear below spine
+
   function build() {
     container.innerHTML = '';
     var outer = document.createElement('div');
     outer.style.cssText = 'display:flex;flex-direction:column;gap:8px;height:100%;padding:8px 14px;';
 
-    // Three-field row
-    var fields3 = document.createElement('div');
-    fields3.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex:1;min-height:0;';
+    // Label: before
+    var beforeLbl = document.createElement('div');
+    beforeLbl.className = 'de-before-lbl scene-node';
+    beforeLbl.dataset.beat = 'before-lbl';
+    beforeLbl.style.cssText = 'flex-shrink:0;font-family:\'JetBrains Mono\',monospace;font-size:9px;'
+      + 'letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);padding:0 2px;';
+    beforeLbl.textContent = 'Without integration';
+    outer.appendChild(beforeLbl);
 
-    fields.forEach(function(field, fi) {
-      var card = document.createElement('div');
-      card.className = 'scene-node';
-      card.dataset.beat = 'field-' + field.id;
-      card.style.cssText = 'display:flex;flex-direction:column;gap:6px;padding:12px;'
-        + 'background:var(--surface-1);border:1px solid ' + field.color + ';border-radius:10px;overflow:hidden;';
+    outer.appendChild(makeIslandRow());
 
-      // Field header
-      var hdr = document.createElement('div');
-      hdr.style.cssText = 'flex-shrink:0;';
-      hdr.innerHTML =
-        '<div style="width:28px;height:3px;background:' + field.color + ';border-radius:2px;margin-bottom:7px"></div>'
-        + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:700;color:' + field.color + ';line-height:1.2;margin-bottom:8px">' + field.label + '</div>';
-      card.appendChild(hdr);
-
-      // Items
-      var items = document.createElement('div');
-      items.style.cssText = 'display:flex;flex-direction:column;gap:4px;flex:1;overflow:hidden;';
-      field.items.forEach(function(item) {
-        var row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:flex-start;gap:6px;font-family:\'Inter\',sans-serif;font-size:13px;color:var(--text-2);line-height:1.45;';
-        row.innerHTML = '<span style="color:' + field.color + ';flex-shrink:0;margin-top:2px">&#8227;</span>' + item;
-        items.appendChild(row);
-      });
-      card.appendChild(items);
-      fields3.appendChild(card);
-    });
-    outer.appendChild(fields3);
-
-    // Delivery spine
-    var spine = document.createElement('div');
-    spine.className = 'scene-node';
-    spine.dataset.beat = 'spine';
-    spine.style.cssText = 'flex-shrink:0;display:flex;flex-direction:column;gap:5px;';
-
-    var spineHdr = document.createElement('div');
-    spineHdr.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:2px;';
-    spineHdr.textContent = 'Delivery route';
-    spine.appendChild(spineHdr);
-
-    var spineRow = document.createElement('div');
-    spineRow.style.cssText = 'display:flex;align-items:center;gap:4px;overflow-x:auto;';
-    spineSteps.forEach(function(step, i) {
-      var chip = document.createElement('div');
-      chip.style.cssText = 'display:flex;align-items:center;gap:4px;padding:4px 10px;'
-        + 'background:var(--surface-2);border:1px solid var(--border-1);border-radius:20px;white-space:nowrap;'
-        + 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);';
-      chip.textContent = step;
-      spineRow.appendChild(chip);
-      if (i < spineSteps.length - 1) {
-        var arr = document.createElement('span');
-        arr.style.cssText = 'color:var(--border-2);font-size:14px;flex-shrink:0;';
-        arr.textContent = '→';
-        spineRow.appendChild(arr);
-      }
-    });
-    spine.appendChild(spineRow);
+    // Spine (hidden initially)
+    var spine = makeSpineRow(true);
     outer.appendChild(spine);
 
-    // Evidence tiles
-    var tilesRow = document.createElement('div');
-    tilesRow.className = 'scene-node';
-    tilesRow.dataset.beat = 'tiles';
-    tilesRow.style.cssText = 'flex-shrink:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;';
+    // Fields (hidden initially, overlaps islands in DOM but opacity:0)
+    var fields = makeFieldsRow();
+    outer.appendChild(fields);
 
-    evidenceTiles.forEach(function(tile) {
-      var t = document.createElement('div');
-      t.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 10px;'
-        + 'background:var(--surface-2);border:1px solid ' + tile.color + ';border-radius:6px;';
-      t.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:' + tile.color + ';flex-shrink:0"></div>'
-        + '<span style="font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-2);line-height:1.3">' + tile.label + '</span>';
-      tilesRow.appendChild(t);
-    });
-    outer.appendChild(tilesRow);
+    // Proofs (hidden initially)
+    outer.appendChild(makeProofsRow());
 
     container.appendChild(outer);
   }
 
   var steps = [
-    { delay: 300,  run: function() {
-      var f = container.querySelector('[data-beat="field-business"]');
-      if (f) f.classList.add('visible');
+    // Phase 0: islands visible immediately
+    { delay: 100, run: function() {
+      container.querySelectorAll('.de-islands,.de-before-lbl').forEach(function(n) {
+        n.classList.add('visible');
+        n.style.opacity = '1';
+      });
     }},
-    { delay: 1000, run: function() {
-      var f = container.querySelector('[data-beat="field-technology"]');
-      if (f) f.classList.add('visible');
+    // Phase 1: spine appears
+    { delay: 1800, run: function() {
+      var s = container.querySelector('.de-spine');
+      if (s) { s.classList.add('visible'); s.style.opacity = '1'; }
     }},
-    { delay: 1700, run: function() {
-      var f = container.querySelector('[data-beat="field-economics"]');
-      if (f) f.classList.add('visible');
+    // Phase 2: islands/label fade, fields appear
+    { delay: 3200, run: function() {
+      var isl = container.querySelector('.de-islands');
+      var lbl = container.querySelector('.de-before-lbl');
+      if (isl) isl.style.cssText += 'opacity:0;transition:opacity .6s;pointer-events:none;';
+      if (lbl) lbl.style.opacity = '0';
+      var f = container.querySelector('.de-fields');
+      if (f) {
+        f.classList.add('visible'); f.style.opacity = '1';
+        // restructure: fields row replaces islands row visually by absolute positioning is complex,
+        // simpler: let islands collapse. Use grid-row trick.
+        f.style.gridRow = '';
+      }
     }},
-    { delay: 2600, run: function() {
-      var s = container.querySelector('[data-beat="spine"]');
-      if (s) s.classList.add('visible');
-    }},
-    { delay: 3400, run: function() {
-      var t = container.querySelector('[data-beat="tiles"]');
-      if (t) t.classList.add('visible');
+    // Phase 3: proofs appear
+    { delay: 5000, run: function() {
+      var p = container.querySelector('.de-proofs');
+      if (p) { p.classList.add('visible'); p.style.opacity = '1'; }
     }}
   ];
 
   var tl = createTimeline(steps);
 
   return {
-    play:    function() { build(); tl.play(); },
-    pause:   tl.pause,
-    resume:  tl.resume,
-    reset:   function() { build(); tl.reset(); },
-    finish:  function() {
+    play:   function() { build(); tl.play(); },
+    pause:  tl.pause,
+    resume: tl.resume,
+    reset:  function() { build(); tl.reset(); },
+    finish: function() {
       build();
-      container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
+      container.querySelectorAll('.scene-node').forEach(function(n) {
+        n.classList.add('visible');
+        n.style.opacity = '1';
+      });
+      var isl = container.querySelector('.de-islands');
+      if (isl) { isl.style.opacity = '0'; isl.style.pointerEvents = 'none'; }
+      var lbl = container.querySelector('.de-before-lbl');
+      if (lbl) lbl.style.opacity = '0';
     },
     destroy: function() { container.innerHTML = ''; tl.destroy(); }
   };
