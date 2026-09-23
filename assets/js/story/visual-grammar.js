@@ -1,13 +1,17 @@
-// -- VISUAL GRAMMAR -- V25 --
+// -- VISUAL GRAMMAR -- V26 --
 // Reusable visual primitive factories for scene composition.
-// V25 semantic colours:
+// V26 semantic colours:
 //   Cyan   (#55C7E8) -- data and context
 //   Purple (#B44CFF) -- AI work
 //   Amber  (#F3B34C) -- human judgement and control
 //   Green  (#58C994) -- approved evidence
 //   Red    (#F0758A) -- gap, exception or failure only
-// Primitives: SIGNAL, CONTEXT, HUMAN GATE, EVIDENCE RECORD
-// Exposes: Signal, ContextNode, HumanGate, EvidenceRecord, ObligationToken, ReuseMarker
+// V26 box rule: a box is allowed only for a real process object, system boundary,
+//               human approval gate, evidence record, or measurable state.
+//               Use SystemField for labelled background regions. Use MetricStrip for metrics.
+// Primitives: SIGNAL, CONTEXT, HUMAN GATE, EVIDENCE RECORD, SYSTEM FIELD, WORK LANE, METRIC STRIP
+// Exposes: Signal, ContextNode, HumanGate, EvidenceRecord, ObligationToken, ReuseMarker,
+//          SystemField, WorkLane, MetricStrip
 // Safe to include before scene files; no external dependencies.
 
 (function() {
@@ -489,6 +493,150 @@
     }
   };
 
+  // ── SystemField ──
+  // V26: a labelled background region -- NOT a card. Use for system boundary zones.
+  // Container is a positioned div; field is an absolutely-positioned label+region.
+  var SystemField = {
+    create: function(container, opts) {
+      opts = opts || {};
+      var label  = opts.label  || '';
+      var color  = opts.color  || 'rgba(255,255,255,0.04)';
+      var border = opts.border || 'rgba(255,255,255,0.06)';
+      var x      = opts.x      !== undefined ? opts.x      : 0;
+      var y      = opts.y      !== undefined ? opts.y      : 0;
+      var w      = opts.w      !== undefined ? opts.w      : 200;
+      var h      = opts.h      !== undefined ? opts.h      : 120;
+      var labelColor = opts.labelColor || 'rgba(255,255,255,0.25)';
+
+      var el = document.createElement('div');
+      el.setAttribute('data-visual-object', 'system-field');
+      el.style.cssText = [
+        'position:absolute',
+        'left:' + x + 'px',
+        'top:' + y + 'px',
+        'width:' + w + 'px',
+        'height:' + h + 'px',
+        'background:' + color,
+        'border:1px solid ' + border,
+        'border-radius:6px',
+        'box-sizing:border-box',
+        'pointer-events:none',
+      ].join(';');
+
+      if (label) {
+        var lbl = document.createElement('span');
+        lbl.style.cssText = [
+          'position:absolute',
+          'top:6px',
+          'left:10px',
+          'font-family:"JetBrains Mono",monospace',
+          'font-size:9px',
+          'letter-spacing:.1em',
+          'text-transform:uppercase',
+          'color:' + labelColor,
+          'white-space:nowrap',
+        ].join(';');
+        lbl.textContent = label;
+        el.appendChild(lbl);
+      }
+
+      container.appendChild(el);
+      return { el: el, destroy: function() { if (el.parentNode) el.parentNode.removeChild(el); } };
+    }
+  };
+
+  // ── WorkLane ──
+  // V26: horizontal accountability lane for relay scenes.
+  // Returns a flex row that slots into a lane-based layout.
+  var WorkLane = {
+    create: function(container, opts) {
+      opts = opts || {};
+      var label = opts.label || '';
+      var color = opts.color || 'rgba(255,255,255,0.15)';
+      var bg    = opts.bg    || 'rgba(255,255,255,0.02)';
+
+      var el = document.createElement('div');
+      el.setAttribute('data-visual-object', 'work-lane');
+      el.style.cssText = [
+        'display:flex',
+        'align-items:center',
+        'flex:1',
+        'min-height:0',
+        'border-bottom:1px dashed ' + color,
+        'background:' + bg,
+        'position:relative',
+      ].join(';');
+
+      if (label) {
+        var lbl = document.createElement('div');
+        lbl.style.cssText = [
+          'flex-shrink:0',
+          'width:140px',
+          'padding:0 10px 0 14px',
+          'font-family:"Space Grotesk",sans-serif',
+          'font-size:14px',
+          'font-weight:600',
+          'color:' + color,
+          'line-height:1.3',
+        ].join(';');
+        lbl.textContent = label;
+        el.appendChild(lbl);
+      }
+
+      container.appendChild(el);
+      return { el: el, destroy: function() { if (el.parentNode) el.parentNode.removeChild(el); } };
+    }
+  };
+
+  // ── MetricStrip ──
+  // V26: slim horizontal gauge for one metric channel. Not a card.
+  // Use inside evidence test rig or cost waterfall compositions.
+  var MetricStrip = {
+    create: function(container, opts) {
+      opts = opts || {};
+      var label  = opts.label  || '';
+      var color  = opts.color  || '#58C994';
+      var value  = opts.value  !== undefined ? opts.value  : 0;    // 0-100
+      var unit   = opts.unit   || '';
+
+      var el = document.createElement('div');
+      el.setAttribute('data-visual-object', 'metric-strip');
+      el.style.cssText = 'display:flex;align-items:center;gap:10px;height:28px;';
+
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'flex-shrink:0;width:90px;font-size:11px;font-family:"Space Grotesk",sans-serif;color:rgba(255,255,255,.5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      lbl.textContent = label;
+
+      var track = document.createElement('div');
+      track.style.cssText = 'flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;position:relative;overflow:hidden;';
+
+      var fill = document.createElement('div');
+      fill.style.cssText = 'position:absolute;left:0;top:0;height:100%;width:0%;background:' + color + ';border-radius:2px;transition:width 600ms ease;';
+      track.appendChild(fill);
+
+      var valEl = document.createElement('div');
+      valEl.style.cssText = 'flex-shrink:0;width:50px;font-size:11px;font-family:"JetBrains Mono",monospace;color:' + color + ';text-align:right;';
+      valEl.textContent = 'NOT YET';
+
+      el.appendChild(lbl);
+      el.appendChild(track);
+      el.appendChild(valEl);
+      container.appendChild(el);
+
+      function setValue(v, displayText) {
+        fill.style.width = Math.max(0, Math.min(100, v)) + '%';
+        valEl.textContent = displayText !== undefined ? displayText : (Math.round(v) + (unit ? ' ' + unit : ''));
+        valEl.style.color = color;
+      }
+
+      return {
+        el: el,
+        setValue: setValue,
+        destroy: function() { if (el.parentNode) el.parentNode.removeChild(el); }
+      };
+    }
+  };
+
   window.VisualGrammar = {
     Signal:          Signal,
     ContextNode:     ContextNode,
@@ -496,6 +644,9 @@
     EvidenceRecord:  EvidenceRecord,
     ObligationToken: ObligationToken,
     ReuseMarker:     ReuseMarker,
+    SystemField:     SystemField,
+    WorkLane:        WorkLane,
+    MetricStrip:     MetricStrip,
   };
 
 }());
