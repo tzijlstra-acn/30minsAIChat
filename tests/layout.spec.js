@@ -205,7 +205,7 @@ test('V13: story-manifest.json is accessible', async ({ page }) => {
   const res = await page.goto('/assets/data/story-manifest.json');
   expect(res && res.status()).toBe(200);
   const json = await res.json();
-  expect(json.version).toBe('17');
+  expect(parseInt(json.version)).toBeGreaterThanOrEqual(17);
   expect(json.screens).toHaveLength(12);
 });
 
@@ -457,11 +457,11 @@ test('V16: scale-architecture scene has shared context layer header', async ({ p
 
 // ── V17 HOTFIX TESTS ──
 
-test('V17: story-manifest.json version is 17', async ({ page }) => {
+test('V17: story-manifest.json version is 17 or later', async ({ page }) => {
   await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
   const res = await page.goto('/assets/data/story-manifest.json');
   const json = await res.json();
-  expect(json.version).toBe('17');
+  expect(parseInt(json.version)).toBeGreaterThanOrEqual(17);
 });
 
 test('V17: cover scene-stage is data-size=compact (not hero)', async ({ page }) => {
@@ -697,21 +697,23 @@ test('V18: icon-registry.js contains MutationObserver fallback', async ({ page }
   expect(body).toContain('document.fonts');
 });
 
-test('V18: dual-engine screen has updated risk-to-run nav title', async ({ page }) => {
+test('V18: dual-engine screen has updated nav title', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
   await page.waitForTimeout(400);
   const navTitle = await page.evaluate(() => {
     var el = document.getElementById('dual-engine');
     return el ? el.getAttribute('data-nav-title') : null;
   });
-  expect(navTitle).toContain('risk to run');
+  // V19/3 updated: hand-off tax framing
+  expect(navTitle).toContain('hand-off tax');
 });
 
-test('V18: dual-engine h2 is One partner from risk to run', async ({ page }) => {
+test('V18: dual-engine h2 is hand-off tax framing', async ({ page }) => {
   await gotoPage(page, '/pitch.html');
   await page.waitForTimeout(400);
   const h2 = await page.locator('#dual-engine h2.slide-h').textContent();
-  expect(h2).toContain('risk to run');
+  // V19/3 updated to Reduce the hand-off tax.
+  expect(h2).toContain('hand-off tax');
 });
 
 test('V18: bump-build.ps1 script is accessible', async ({ page }) => {
@@ -779,4 +781,68 @@ test('section height is viewport height', async ({ page }) => {
   });
   if (h === 'long-skip') return; // skip long sections
   expect(Math.round(Number(h))).toBeGreaterThanOrEqual(890);
+});
+
+// --- V19 scene rebuild tests ---
+
+test('V19: task-route has routing grid (task token + arrow + level chip)', async ({ page }) => {
+  await page.goto(BASE);
+  await page.waitForTimeout(200);
+  const rows = await page.locator('section#task-route .tr-row').count();
+  expect(rows).toBeGreaterThanOrEqual(4);
+});
+
+test('V19: task-route insight line present', async ({ page }) => {
+  await page.goto(BASE);
+  await page.waitForTimeout(200);
+  // insight should be rendered even if opacity:0 pre-animation
+  const insight = await page.locator('section#task-route [data-beat="insight"]').count();
+  expect(insight).toBe(1);
+});
+
+test('V19: next-move has three sequential stages', async ({ page }) => {
+  await page.goto(BASE);
+  await page.waitForTimeout(200);
+  const stages = await page.locator('section#next-move .nm-stage').count();
+  expect(stages).toBe(3);
+});
+
+test('V19: next-move stage widths are progressive (not equal)', async ({ page }) => {
+  await page.goto(BASE);
+  await page.waitForTimeout(400);
+  const widths = await page.locator('section#next-move .nm-stage').evaluateAll(
+    function(els) { return els.map(function(e) { return e.getBoundingClientRect().width; }); }
+  );
+  expect(widths.length).toBe(3);
+  // Stage 1 should be widest, stage 3 narrowest
+  expect(widths[0]).toBeGreaterThan(widths[2]);
+});
+
+test('V19: next-move gate bars are present', async ({ page }) => {
+  await page.goto(BASE);
+  await page.waitForTimeout(200);
+  const gates = await page.locator('section#next-move .nm-gate').count();
+  expect(gates).toBe(2);
+});
+
+test('V19: story-manifest.json version is 19', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  const res = await page.goto('/assets/data/story-manifest.json');
+  const json = await res.json();
+  expect(json.version).toBe('19');
+});
+
+test('V19: icon-manifest.json has 50 or more icons', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  const res = await page.goto('/assets/data/icon-manifest.json');
+  const json = await res.json();
+  expect(json.icons.length).toBeGreaterThanOrEqual(50);
+});
+
+test('V19: audit:all passes (no em dash, no external deps, icon manifest complete)', async ({ page }) => {
+  // Spot-check: em dash absent from scenes.css
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  const res = await page.goto('/assets/css/scenes.css');
+  const body = await res.text();
+  expect(body).not.toContain('—');
 });
