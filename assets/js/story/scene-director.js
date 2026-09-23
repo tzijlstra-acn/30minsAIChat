@@ -1,10 +1,11 @@
-// ── SCENE DIRECTOR -- V25 ──
+// ── SCENE DIRECTOR -- V26 ──
 // Manages deterministic scene playback for each core screen.
 // One scene plays per screen. Scenes are loaded on demand and cancelled on navigation.
-// V25 contract: play, pause, resume, seek, finish, resize, destroy, renderStatic, getAccessibleSummary.
+// V26 contract: mount (= factory call), play, pause, resume, seek, finish, resize,
+//               destroy, renderStatic, renderError, getAccessibleSummary.
 // All are optional except play/finish/destroy. SceneDirector calls only what exists.
-// V25 states: loading, ready, playing, paused, complete, error.
-// On error: reveal data-scene-fallback SVG and log diagnostic. Never blank.
+// V26 states: loading, ready, playing, paused, complete, error.
+// On error: call renderError if present, else renderStatic, then reveal data-scene-fallback. Never blank.
 
 var SceneDirector = (function() {
   var _scenes = {};        // registered scene factories: id -> createScene
@@ -127,13 +128,15 @@ var SceneDirector = (function() {
         } catch (e) {
           console.error('[scene:' + manifestEntry.scene + '] play error', e);
           _setState('error');
-          _showFallback(container, manifestEntry.scene);
-          if (typeof instance.renderFallback === 'function') {
+          if (typeof instance.renderError === 'function') {
+            try { instance.renderError(e); } catch(_) {}
+          } else if (typeof instance.renderFallback === 'function') {
             try { instance.renderFallback(e); } catch(_) {}
           } else if (typeof instance.renderStatic === 'function') {
             var bounds = container.getBoundingClientRect();
             try { instance.renderStatic(bounds); } catch(_) {}
           }
+          _showFallback(container, manifestEntry.scene);
         }
       });
     });
@@ -193,9 +196,10 @@ var SceneDirector = (function() {
 }());
 
 // ── BASE SCENE HELPER ──
-// V25 lifecycle contract: play, pause, resume, seek, finish, resize, destroy,
-// renderFallback, renderStatic, getAccessibleSummary.
+// V26 lifecycle contract: play, pause, resume, seek, finish, resize, destroy,
+// renderError, renderStatic, getAccessibleSummary.
 // All are optional except play/finish/destroy -- SceneDirector calls only what exists.
+// mount() is implicit: the factory call itself is mount. renderError(err) replaces renderFallback.
 function createTimeline(steps) {
   // steps: array of { delay: ms, run: function }
   var timers = [];
@@ -252,18 +256,19 @@ function createTimeline(steps) {
     // Default resize: noop. Scenes that need geometry recalculation override this.
   }
 
-  function renderFallback() {
-    // Default: noop. Scenes override to show a designed final state on error.
+  function renderError() {
+    // V26: called on play/init error. Default: finish() to show best available final state.
+    try { finish(); } catch(_) {}
   }
 
   function renderStatic(bounds) {
-    // V25: same as finish() by default; scenes override for bounds-aware static rendering.
+    // V26: same as finish() by default; scenes override for bounds-aware static rendering.
     finish();
     void bounds;
   }
 
   function getAccessibleSummary() {
-    // V25: return a brief text description of the scene's final state for screen readers.
+    // V26: return a brief text description of the scene's final state for screen readers.
     return null;
   }
 
@@ -275,7 +280,7 @@ function createTimeline(steps) {
   return {
     play: play, pause: pause, resume: resume, seek: seek,
     reset: reset, finish: finish, resize: resize,
-    renderFallback: renderFallback, renderStatic: renderStatic,
+    renderError: renderError, renderStatic: renderStatic,
     getAccessibleSummary: getAccessibleSummary, destroy: destroy
   };
 }
