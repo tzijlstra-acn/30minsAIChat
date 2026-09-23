@@ -356,7 +356,7 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
   function showAll() {
     if (!_root || !_svg) return;
     _root.style.transition = 'none';
-    _root.style.transform  = 'scale(0.7)';
+    _root.style.transform  = 'scale(0.9)';
 
     ['proof-layer', 'prod-layer', 'ent-layer', 'fallback-chip', 'reuse-badge']
       .forEach(function(id) {
@@ -437,9 +437,9 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
       }
     }},
 
-    // Beat 9 (5100ms): zoom-out 2 -- scale 1.0 -> 0.7
+    // Beat 9 (5100ms): slight pull-back to show enterprise frame border
     { delay: 5100, run: function() {
-      zoomTo(0.7);
+      zoomTo(0.9);
     }},
 
     // Beat 10 (5800ms): ENTERPRISE frame fades in, spine draws left-to-right

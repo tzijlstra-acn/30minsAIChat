@@ -60,7 +60,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
     root.style.cssText = 'width:100%;height:100%;position:relative;';
 
     svg = svgEl('svg', {
-      viewBox: '0 0 1200 500',
+      viewBox: '0 0 1200 560',
       preserveAspectRatio: 'xMidYMid meet',
       style: 'width:100%;height:100%;display:block;'
     });
@@ -241,7 +241,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
     // Waste summary
     var wasteEl = svgEl('text', {
       id: 'de-waste',
-      x: 600, y: 362,
+      x: 600, y: 320,
       'font-family': 'JetBrains Mono, monospace',
       'font-size': '10',
       fill: AMBER,
@@ -286,7 +286,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
 
     var stripLblEl = svgEl('text', {
       id: 'de-strip-lbl',
-      x: 10, y: 356,
+      x: 10, y: 358,
       'font-family': 'JetBrains Mono, monospace',
       'font-size': '9',
       'letter-spacing': '0.08em',
@@ -316,7 +316,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       }));
 
       var nlbl = svgEl('text', {
-        x: nx, y: SPINE_Y + 22,
+        x: nx, y: SPINE_Y + 28,
         'font-family': 'Space Grotesk, sans-serif',
         'font-size': '12',
         'font-weight': '700',
@@ -427,7 +427,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
 
     proofDefs.forEach(function(proof) {
       var chk = svgEl('text', {
-        x: proof.px, y: 440,
+        x: proof.px, y: 482,
         'font-family': 'Inter, sans-serif',
         'font-size': '16',
         'font-weight': '700',
@@ -437,7 +437,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       proofsG.appendChild(chk);
 
       var ptxt = svgEl('text', {
-        x: proof.px + 22, y: 440,
+        x: proof.px + 22, y: 482,
         'font-family': 'Space Grotesk, sans-serif',
         'font-size': '14',
         'font-weight': '600',
@@ -450,7 +450,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
     // ── Preserved context row (V21) ───────────────────────────────────────
     var preservedG = svgEl('g', { id: 'de-preserved', opacity: '0' });
     var preservedLbl = svgEl('text', {
-      x: 600, y: 408,
+      x: 600, y: 436,
       'font-family': 'JetBrains Mono, monospace',
       'font-size': '9',
       'letter-spacing': '0.1em',
@@ -460,7 +460,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
     preservedLbl.textContent = 'PRESERVED THROUGH ALL STAGES';
     preservedG.appendChild(preservedLbl);
     var preservedItems = svgEl('text', {
-      x: 600, y: 425,
+      x: 600, y: 454,
       'font-family': 'JetBrains Mono, monospace',
       'font-size': '11',
       fill: GREEN,
@@ -476,7 +476,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
     // Supporting message
     var msgEl = svgEl('text', {
       id: 'de-msg',
-      x: 600, y: 475,
+      x: 600, y: 536,
       'font-family': 'Inter, sans-serif',
       'font-size': '12',
       fill: 'rgba(255,255,255,0.4)',
