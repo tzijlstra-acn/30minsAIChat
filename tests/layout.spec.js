@@ -1945,3 +1945,22 @@ test('V26/9: visual-grammar.js has SystemField, WorkLane, and MetricStrip', asyn
   expect(body).toContain('WorkLane');
   expect(body).toContain('MetricStrip');
 });
+
+// ── V26/10 public deployment smoke test and build stamp ──
+
+test('V26/10: pitch.html build stamp updated to v26/68f790f', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  await page.goto('/pitch.html');
+  const buildRelease = await page.evaluate(() => window.NFR_BUILD && window.NFR_BUILD.release);
+  const buildCommit  = await page.evaluate(() => window.NFR_BUILD && window.NFR_BUILD.commit);
+  expect(buildRelease).toBe('v26');
+  expect(buildCommit).toBe('68f790f');
+});
+
+test('V26/10: pitch.html asset ?v= fingerprints all match build commit', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  // All asset fingerprints should use the v26/10 commit SHA
+  expect(body).toContain('?v=68f790f');
+  expect(body).not.toContain('?v=afa82a4');
+});
