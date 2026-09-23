@@ -10,7 +10,13 @@
     "lint-copy": "python scripts/lint-copy.py",
     "check-emdash": "python scripts/check-emdash.py",
     "build": "pwsh -File scripts/bump-build.ps1",
-    "build:dry": "pwsh -File scripts/bump-build.ps1 --DryRun"
+    "build:dry": "pwsh -File scripts/bump-build.ps1 --DryRun",
+    "audit:story": "node scripts/audit-story.js",
+    "audit:icons": "node scripts/audit-icons.js",
+    "audit:motion": "node scripts/audit-motion.js",
+    "audit:offline": "node scripts/audit-offline.js",
+    "audit:claims": "python scripts/lint-copy.py",
+    "audit:all": "node scripts/audit-all.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0"
