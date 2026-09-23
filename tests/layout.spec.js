@@ -1659,3 +1659,92 @@ test('V25/10: no console errors on full pitch.html load at 1440x900', async ({ p
   });
   expect(critical, 'Console errors: ' + critical.join('; ')).toHaveLength(0);
 });
+
+// ── V26/1 build fingerprint and scene lifecycle ──
+
+test('V26/1: NFR_BUILD release is v26', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  const release = await page.evaluate(() => typeof window.NFR_BUILD !== 'undefined' ? window.NFR_BUILD.release : null);
+  expect(release).toBe('v26');
+});
+
+test('V26/1: story-manifest.json version is 26', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const res = await page.goto('/assets/data/story-manifest.json');
+  const json = await res.json();
+  expect(parseInt(json.version)).toBe(26);
+});
+
+test('V26/1: scene-director.js exposes renderError in createTimeline', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scene-director.js');
+  const body = await res.text();
+  expect(body).toContain('function renderError');
+  expect(body).toContain('renderError: renderError');
+});
+
+// ── V26/2 visual primitives and composition linter ──
+
+test('V26/2: visual-grammar.js exposes SystemField, WorkLane, MetricStrip', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/visual-grammar.js');
+  const body = await res.text();
+  expect(body).toContain('SystemField');
+  expect(body).toContain('WorkLane');
+  expect(body).toContain('MetricStrip');
+});
+
+test('V26/2: composition-linter.js is accessible and exports CompositionLinter', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/composition-linter.js');
+  expect(res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('CompositionLinter');
+  expect(body).toContain('?debug=composition');
+  expect(body).toContain('FAIL_MAX_SHAPES');
+});
+
+// ── V26/3 card reduction: screens 01-03 ──
+
+test('V26/3: task-route.js is Work Pattern Scanner with 5 DIMS', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/task-route.js');
+  const body = await res.text();
+  expect(body).toContain('WORK PATTERN SCANNER');
+  expect(body).toContain('Rule stability');
+  expect(body).toContain('Input structure');
+  expect(body).toContain('Ambiguity');
+  expect(body).toContain('Action complexity');
+  expect(body).toContain('Control sensitivity');
+});
+
+test('V26/3: task-route.js cycles through 4 examples including Regulation Coverage', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/task-route.js');
+  const body = await res.text();
+  expect(body).toContain('REGULATION COVERAGE');
+  expect(body).toContain('Screen 04 example');
+  expect(body).toContain('OF 04');
+});
+
+test('V26/3: task-route.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/task-route.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('Work Pattern Scanner');
+});
+
+test('V26/3: task-route.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/task-route.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V26/3: task-route.js has no em-dash', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/task-route.js');
+  const body = await res.text();
+  expect(body).not.toContain('—');
+});
+
+test('V26/3: ai-stack-build.js terrain layers have no card border-radius', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/ai-stack-build.js');
+  const body = await res.text();
+  expect(body).toContain('border-radius:0');
+  expect(body).not.toContain('border-radius:5px 5px 0 0');
+});

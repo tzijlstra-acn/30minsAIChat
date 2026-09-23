@@ -1,7 +1,7 @@
 // Scene: ai-stack-build (Screen 02 -- WHAT AI IS)
-// V19 Viewport Wow System -- Wow 1: The AI stack becomes a terrain.
-// Five technology terraces with CSS perspective + box-shadow front-face illusion.
-// Layers build bottom-up (300ms apart), rails follow, tokens table, implication.
+// V26: Continuous AI terrain. Five strata share edges and appear as one system.
+// Rails on both sides mark the cross-cutting accountability and control boundaries.
+// Task tokens show where real work routes. Implication appears last.
 SceneDirector.register('ai-stack-build', function(container, manifest, reduced) {
 
   // Layer definitions.
@@ -160,7 +160,8 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       // Open bottom border simulates the terrace shelf edge.
       // box-shadow beneath each layer creates the "front face" depth illusion
       // that becomes visible once the parent perspective rotateX tilts the terrain.
-      el.style.cssText = 'width:' + ld.w + '%;flex-shrink:0;border-radius:5px 5px 0 0;'
+      // Terrain stratum -- shared edges, no border-radius (strata look like terrain, not cards)
+      el.style.cssText = 'width:' + ld.w + '%;flex-shrink:0;border-radius:0;'
         + 'padding:9px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;'
         + 'background:' + ld.bg + ';'
         + 'border-top:1.5px solid ' + ld.bc + ';'

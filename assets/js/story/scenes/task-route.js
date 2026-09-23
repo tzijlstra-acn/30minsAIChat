@@ -1,291 +1,261 @@
-// Scene: task-route (Screen 03)
-// V19: Automatic decision tree -- 4 tasks route to least-complex AI pattern.
+// Scene: task-route (Screen 03 -- WHAT AI IS FOR THIS TASK)
+// V26: Work Pattern Scanner. One task enters at a time. Five dimensions illuminate.
+// A fingerprint maps to the AI terrain. Four examples cycle sequentially.
+// Final state locks on the Regulation Coverage example, transitioning into Screen 04.
+// Constraints: no em-dash, no equal-card grid, no border-radius cards. No fabricated data.
 SceneDirector.register('task-route', function(container, manifest, reduced) {
 
+  var DIMS = [
+    { id: 'rule',    label: 'Rule stability',       color: '#55C7E8' },
+    { id: 'input',   label: 'Input structure',       color: '#55C7E8' },
+    { id: 'ambig',   label: 'Ambiguity',             color: '#B44CFF' },
+    { id: 'action',  label: 'Action complexity',     color: '#F3B34C' },
+    { id: 'control', label: 'Control sensitivity',   color: '#58C994' }
+  ];
+
+  var EXAMPLES = [
+    {
+      label: 'Check a known threshold',
+      sub: null,
+      dims: { rule: 90, input: 85, ambig: 10, action: 15, control: 40 },
+      layer: 0,
+      layerColor: '#55C7E8'
+    },
+    {
+      label: 'Detect an unusual pattern',
+      sub: null,
+      dims: { rule: 55, input: 50, ambig: 45, action: 30, control: 35 },
+      layer: 2,
+      layerColor: '#55C7E8'
+    },
+    {
+      label: 'Draft a policy-gap rationale',
+      sub: null,
+      dims: { rule: 20, input: 25, ambig: 80, action: 55, control: 70 },
+      layer: 3,
+      layerColor: '#B44CFF'
+    },
+    {
+      label: 'REGULATION COVERAGE',
+      sub: 'Screen 04 example',
+      dims: { rule: 30, input: 40, ambig: 70, action: 80, control: 90 },
+      layer: 4,
+      layerColor: '#F0758A'
+    }
+  ];
+
+  var LAYERS = [
+    { label: 'Rules and workflow',    color: '#55C7E8' },
+    { label: 'RPA and orchestration', color: '#55C7E8' },
+    { label: 'Analytics and ML',      color: '#55C7E8' },
+    { label: 'Generative AI',         color: '#B44CFF' },
+    { label: 'Agents',                color: '#F0758A' }
+  ];
+
   var _timers = [];
+  var _barEls   = {};
+  var _levelEls = {};
+  var _layerEls = [];
+  var _taskLbl  = null;
+  var _taskSub  = null;
+  var _taskIdx  = null;
 
-  // Task pills: left column
-  var TASKS = [
-    { line1: 'Check a known',      line2: 'threshold',      color: '#55C7E8', ty: 18  },
-    { line1: 'Detect an unusual',  line2: 'pattern',        color: '#55C7E8', ty: 100 },
-    { line1: 'Draft a policy-gap', line2: 'rationale',      color: '#B44CFF', ty: 182 },
-    { line1: 'Coordinate a',       line2: 'multi-step case', color: '#F0758A', ty: 255 }
-  ];
-
-  // Pattern nodes: right column (x=480)
-  var PATTERNS = [
-    { label: 'Rules and workflow', color: '#55C7E8', bg: 'rgba(85,199,232,.08)',  py: 18,  role: 'Own exception policy',     roleAmber: false },
-    { label: 'Analytics and ML',  color: '#55C7E8', bg: 'rgba(85,199,232,.08)',  py: 118, role: 'Challenge materiality',    roleAmber: false },
-    { label: 'Generative AI',     color: '#B44CFF', bg: 'rgba(180,76,255,.10)',  py: 195, role: 'Review and approve',       roleAmber: false },
-    { label: 'Agents',            color: '#F0758A', bg: 'rgba(240,117,138,.12)', py: 268, role: 'Control authority limits', roleAmber: true  }
-  ];
-
-  // Arrow paths: right edge of task pill (x=200) to left edge of pattern node (x=480)
-  // Center y of each task: ty+22; center y of each pattern: py+22
-  var ARROW_PATHS = [
-    'M 200 40  C 340 40  340 40  480 40',
-    'M 200 122 C 340 122 340 140 480 140',
-    'M 200 204 C 340 204 340 217 480 217',
-    'M 200 277 C 340 277 340 290 480 290'
-  ];
-
-  var ARROW_COLORS  = ['#55C7E8', '#55C7E8', '#B44CFF', '#F0758A'];
-  var MARKER_IDS    = ['ar-cyan',  'ar-cyan',  'ar-accent', 'ar-pink'];
-
-  var _svg   = null;
-  var _table = null;
-
-  function makeMarker(id, color) {
-    var m = svgEl('marker', { id: id, markerWidth: '8', markerHeight: '8', refX: '6', refY: '3.5', orient: 'auto' });
-    var p = svgEl('polygon', { points: '0 0, 7 3.5, 0 7', fill: color });
-    m.appendChild(p);
-    return m;
+  function _t(fn, delay) {
+    var id = setTimeout(fn, delay);
+    _timers.push(id);
+    return id;
   }
 
-  function makePillText(g, line1, line2, cx, ty, fill) {
-    var t1 = svgEl('text', {
-      x: cx, y: ty + 17,
-      'text-anchor': 'middle',
-      'dominant-baseline': 'auto',
-      'font-family': 'Space Grotesk, sans-serif',
-      'font-size': '12',
-      'font-weight': '700',
-      fill: fill
-    });
-    t1.textContent = line1;
-    g.appendChild(t1);
-    if (line2) {
-      var t2 = svgEl('text', {
-        x: cx, y: ty + 32,
-        'text-anchor': 'middle',
-        'dominant-baseline': 'auto',
-        'font-family': 'Space Grotesk, sans-serif',
-        'font-size': '12',
-        'font-weight': '700',
-        fill: fill
-      });
-      t2.textContent = line2;
-      g.appendChild(t2);
-    }
+  function _hexToRgb(hex) {
+    return parseInt(hex.slice(1,3),16) + ',' + parseInt(hex.slice(3,5),16) + ',' + parseInt(hex.slice(5,7),16);
   }
 
   function build() {
     container.innerHTML = '';
+    _barEls = {}; _levelEls = {}; _layerEls = [];
+    _taskLbl = null; _taskSub = null; _taskIdx = null;
 
     var root = document.createElement('div');
     root.className = 'scene-root';
-    root.style.cssText = 'width:100%;height:100%;display:grid;grid-template-rows:1fr auto;gap:12px';
+    root.style.cssText = 'display:flex;flex-direction:column;height:100%;gap:0;';
 
-    // ── SVG routing tree ──
-    var svgWrap = document.createElement('div');
-    svgWrap.style.cssText = 'width:100%;height:100%;min-height:0;overflow:hidden';
+    // Header
+    var hdr = document.createElement('div');
+    hdr.id = 'tr-header';
+    hdr.style.cssText = 'display:flex;align-items:center;gap:12px;padding:6px 0 5px;flex-shrink:0;opacity:0;transition:opacity .4s;';
 
-    _svg = svgEl('svg', {
-      viewBox: '0 0 1120 320',
-      preserveAspectRatio: 'xMidYMid meet',
-      style: 'width:100%;height:100%;display:block'
+    var hdrLabel = document.createElement('span');
+    hdrLabel.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.25);white-space:nowrap;';
+    hdrLabel.textContent = 'WORK PATTERN SCANNER';
+    hdr.appendChild(hdrLabel);
+
+    var hdrSep = document.createElement('div');
+    hdrSep.style.cssText = 'flex:1;height:1px;background:rgba(255,255,255,.06);';
+    hdr.appendChild(hdrSep);
+    root.appendChild(hdr);
+
+    // Main 3-column area
+    var main = document.createElement('div');
+    main.id = 'tr-main';
+    main.style.cssText = 'flex:1;display:flex;flex-direction:row;gap:0;min-height:0;opacity:0;transition:opacity .4s;';
+
+    // Left: current task display
+    var leftPanel = document.createElement('div');
+    leftPanel.style.cssText = 'flex-shrink:0;width:210px;display:flex;flex-direction:column;justify-content:center;padding:0 22px 0 0;border-right:1px dashed rgba(255,255,255,.06);';
+
+    _taskIdx = document.createElement('div');
+    _taskIdx.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-bottom:10px;';
+    _taskIdx.textContent = '01 OF 04';
+    leftPanel.appendChild(_taskIdx);
+
+    _taskLbl = document.createElement('div');
+    _taskLbl.style.cssText = 'font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:var(--text-1);line-height:1.3;margin-bottom:6px;transition:color .3s;';
+    _taskLbl.textContent = EXAMPLES[0].label;
+    leftPanel.appendChild(_taskLbl);
+
+    _taskSub = document.createElement('div');
+    _taskSub.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.08em;color:rgba(255,255,255,.3);';
+    _taskSub.textContent = '';
+    leftPanel.appendChild(_taskSub);
+    main.appendChild(leftPanel);
+
+    // Center: 5 dimension bars
+    var centerPanel = document.createElement('div');
+    centerPanel.style.cssText = 'flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:0 28px;';
+
+    DIMS.forEach(function(dim) {
+      var row = document.createElement('div');
+      row.className = 'tr-row';
+      row.style.cssText = 'display:flex;align-items:center;gap:12px;height:24px;';
+
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'flex-shrink:0;width:130px;font-family:"Space Grotesk",sans-serif;font-size:14px;color:rgba(255,255,255,.5);line-height:1;';
+      lbl.textContent = dim.label;
+
+      var track = document.createElement('div');
+      track.style.cssText = 'flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;position:relative;overflow:hidden;';
+
+      var fill = document.createElement('div');
+      fill.style.cssText = 'position:absolute;left:0;top:0;height:100%;width:0%;background:' + dim.color + ';border-radius:2px;transition:width 550ms cubic-bezier(.16,1,.3,1);';
+      track.appendChild(fill);
+      _barEls[dim.id] = fill;
+
+      var levEl = document.createElement('div');
+      levEl.style.cssText = 'flex-shrink:0;width:36px;font-family:"JetBrains Mono",monospace;font-size:10px;color:rgba(255,255,255,.3);text-align:right;';
+      levEl.textContent = '--';
+      _levelEls[dim.id] = levEl;
+
+      row.appendChild(lbl);
+      row.appendChild(track);
+      row.appendChild(levEl);
+      centerPanel.appendChild(row);
     });
+    main.appendChild(centerPanel);
 
-    // Defs: arrowhead markers
-    var defs = svgEl('defs');
-    defs.appendChild(makeMarker('ar-cyan',   '#55C7E8'));
-    defs.appendChild(makeMarker('ar-accent', '#B44CFF'));
-    defs.appendChild(makeMarker('ar-pink',   '#F0758A'));
-    _svg.appendChild(defs);
+    // Right: terrain map
+    var rightPanel = document.createElement('div');
+    rightPanel.style.cssText = 'flex-shrink:0;width:172px;display:flex;flex-direction:column;justify-content:center;gap:0;padding:0 0 0 24px;border-left:1px dashed rgba(255,255,255,.06);';
 
-    // Column header row
-    function hdr(text, x) {
-      var t = svgEl('text', {
-        x: x, y: '10',
-        'font-family': 'JetBrains Mono, monospace',
-        'font-size': '9',
-        'letter-spacing': '0.12em',
-        fill: 'var(--text-3)',
-        'text-anchor': 'start'
-      });
-      t.textContent = text;
-      return t;
-    }
-    _svg.appendChild(hdr('TASK', '20'));
-    _svg.appendChild(hdr('AI PATTERN', '480'));
-    _svg.appendChild(hdr('HUMAN ROLE', '685'));
+    var mapLabel = document.createElement('div');
+    mapLabel.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:8px;';
+    mapLabel.textContent = 'MAPPED TO';
+    rightPanel.appendChild(mapLabel);
 
-    // Task pills group
-    var taskG = svgEl('g', { id: 'tr-tasks', opacity: '0', style: 'transition:opacity 400ms ease' });
-    TASKS.forEach(function(task) {
-      var g = svgEl('g');
-      g.appendChild(svgEl('rect', {
-        x: '20', y: task.ty, width: '180', height: '44', rx: '8',
-        fill: 'var(--surface-1)', stroke: task.color, 'stroke-width': '2'
-      }));
-      makePillText(g, task.line1, task.line2, 110, task.ty, 'var(--text-1)');
-      taskG.appendChild(g);
+    LAYERS.forEach(function(layer, li) {
+      var el = document.createElement('div');
+      el.style.cssText = 'padding:7px 10px;font-family:"Space Grotesk",sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,.2);border-left:2px solid rgba(255,255,255,.06);margin-bottom:3px;transition:color .3s,border-color .3s,background .3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      el.textContent = layer.label;
+      _layerEls.push(el);
+      rightPanel.appendChild(el);
     });
-    _svg.appendChild(taskG);
+    main.appendChild(rightPanel);
+    root.appendChild(main);
 
-    // Arrows (one per task, hidden initially)
-    ARROW_PATHS.forEach(function(d, i) {
-      _svg.appendChild(svgEl('path', {
-        id: 'tr-arrow-' + i,
-        d: d,
-        stroke: ARROW_COLORS[i],
-        'stroke-width': '2',
-        fill: 'none',
-        'marker-end': 'url(#' + MARKER_IDS[i] + ')',
-        opacity: '0',
-        style: 'stroke-dasharray:400;stroke-dashoffset:400'
-      }));
-    });
-
-    // Pattern nodes (hidden initially)
-    PATTERNS.forEach(function(pat, i) {
-      var g = svgEl('g', { id: 'tr-pat-' + i, opacity: '0', style: 'transition:opacity 300ms ease' });
-      g.appendChild(svgEl('rect', {
-        x: '480', y: pat.py, width: '180', height: '44', rx: '8',
-        fill: pat.bg, stroke: pat.color, 'stroke-width': '2'
-      }));
-      var t = svgEl('text', {
-        x: '570', y: pat.py + 26,
-        'text-anchor': 'middle',
-        'dominant-baseline': 'auto',
-        'font-family': 'Space Grotesk, sans-serif',
-        'font-size': '13',
-        'font-weight': '700',
-        fill: pat.color
-      });
-      t.textContent = pat.label;
-      g.appendChild(t);
-      _svg.appendChild(g);
-    });
-
-    // Human role labels group (hidden initially)
-    var roleG = svgEl('g', { id: 'tr-roles', opacity: '0', style: 'transition:opacity 400ms ease' });
-    PATTERNS.forEach(function(pat) {
-      var t = svgEl('text', {
-        x: '685', y: pat.py + 26,
-        'font-family': 'Space Grotesk, sans-serif',
-        'font-size': '12',
-        fill: pat.roleAmber ? 'var(--amber)' : 'var(--text-2)'
-      });
-      t.textContent = pat.role;
-      roleG.appendChild(t);
-    });
-    _svg.appendChild(roleG);
-
-    svgWrap.appendChild(_svg);
-    root.appendChild(svgWrap);
-
-    // ── Comparison table ──
-    _table = document.createElement('div');
-    _table.style.cssText = 'opacity:0;transition:opacity 400ms ease;flex-shrink:0';
-
-    var tbl = document.createElement('table');
-    tbl.style.cssText = 'border-collapse:collapse;width:100%';
-
-    var thead = document.createElement('thead');
-    var hRow = document.createElement('tr');
-    ['Task', 'AI pattern', 'Human role'].forEach(function(h) {
-      var th = document.createElement('th');
-      th.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:9px;'
-        + 'text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);'
-        + 'text-align:left;padding:4px 10px;border:1px solid var(--border-1)';
-      th.textContent = h;
-      hRow.appendChild(th);
-    });
-    thead.appendChild(hRow);
-    tbl.appendChild(thead);
-
-    var tbody = document.createElement('tbody');
-    var tblRows = [
-      ['Known threshold',  'Rules',          'Own exception policy',     false],
-      ['Unusual pattern',  'Analytics ML',   'Challenge materiality',    false],
-      ['Document draft',   'Generative AI',  'Review and approve',       true ],
-      ['Multi-step case',  'Agents',         'Control authority limits',  true ]
-    ];
-    tblRows.forEach(function(r) {
-      var tr = document.createElement('tr');
-      [0, 1, 2].forEach(function(ci) {
-        var td = document.createElement('td');
-        td.style.cssText = 'font-size:13px;padding:4px 10px;border:1px solid var(--border-1);color:'
-          + (ci === 2 && r[3] ? 'var(--amber)' : 'var(--text-2)');
-        td.textContent = r[ci];
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-    tbl.appendChild(tbody);
-    _table.appendChild(tbl);
-    root.appendChild(_table);
+    // Insight line
+    var insight = document.createElement('div');
+    insight.setAttribute('data-beat', 'insight');
+    insight.style.cssText = 'flex-shrink:0;padding:6px 0 2px;font-family:"Space Grotesk",sans-serif;font-size:14px;color:rgba(255,255,255,.35);opacity:0;transition:opacity .4s;line-height:1.4;';
+    insight.textContent = 'Task complexity determines which AI layer applies. More constrained tasks with clear rules sit lower in the terrain.';
+    root.appendChild(insight);
 
     container.appendChild(root);
   }
 
-  function drawArrow(i) {
-    if (!_svg) return;
-    var path = _svg.querySelector('#tr-arrow-' + i);
-    if (!path) return;
-    var len;
-    try { len = path.getTotalLength(); } catch (e) { len = 300; }
-    path.style.opacity = '1';
-    path.style.transition = 'none';
-    path.style.strokeDasharray = len;
-    path.style.strokeDashoffset = len;
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        path.style.transition = 'stroke-dashoffset 450ms ease';
-        path.style.strokeDashoffset = '0';
-      });
+  function _setExample(idx) {
+    var ex = EXAMPLES[idx];
+    _taskIdx.textContent = '0' + (idx + 1) + ' OF 04';
+    _taskLbl.style.color = ex.layerColor;
+    _taskLbl.textContent = ex.label;
+    _taskSub.textContent = ex.sub || '';
+
+    DIMS.forEach(function(dim) {
+      var val = ex.dims[dim.id];
+      _barEls[dim.id].style.width = val + '%';
+      _levelEls[dim.id].textContent = val >= 70 ? 'HIGH' : val >= 40 ? 'MED' : 'LOW';
+    });
+
+    _layerEls.forEach(function(el, li) {
+      var active = li === ex.layer;
+      el.style.color = active ? LAYERS[li].color : 'rgba(255,255,255,.2)';
+      el.style.borderColor = active ? LAYERS[li].color : 'rgba(255,255,255,.06)';
+      el.style.background = active ? 'rgba(' + _hexToRgb(LAYERS[li].color) + ',.07)' : 'transparent';
     });
   }
 
-  function showEl(id) {
-    if (!_svg) return;
-    var el = _svg.querySelector('#' + id);
+  function _show(id) {
+    var el = container.querySelector('#' + id);
     if (el) el.style.opacity = '1';
   }
 
-  function showTaskPills() {
-    var g = _svg && _svg.querySelector('#tr-tasks');
-    if (g) g.style.opacity = '1';
+  function showAll() {
+    _show('tr-header');
+    _show('tr-main');
+    var insight = container.querySelector('[data-beat="insight"]');
+    if (insight) insight.style.opacity = '1';
+    _setExample(EXAMPLES.length - 1);
   }
 
   var steps = [
-    { delay: 100,  run: showTaskPills },
-    { delay: 400,  run: function() { drawArrow(0); showEl('tr-pat-0'); } },
-    { delay: 900,  run: function() { drawArrow(1); showEl('tr-pat-1'); } },
-    { delay: 1400, run: function() { drawArrow(2); showEl('tr-pat-2'); } },
-    { delay: 1900, run: function() { drawArrow(3); showEl('tr-pat-3'); } },
-    { delay: 2600, run: function() { showEl('tr-roles'); } },
-    { delay: 3400, run: function() { if (_table) _table.style.opacity = '1'; } }
+    { delay: 200,  run: function() { _show('tr-header'); }},
+    { delay: 500,  run: function() { _show('tr-main'); }},
+    { delay: 800,  run: function() { _setExample(0); }},
+    { delay: 3000, run: function() { _setExample(1); }},
+    { delay: 5200, run: function() { _setExample(2); }},
+    { delay: 7400, run: function() { _setExample(3); }},
+    { delay: 9000, run: function() {
+      var insight = container.querySelector('[data-beat="insight"]');
+      if (insight) insight.style.opacity = '1';
+      _t(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 500);
+    }}
   ];
 
   var tl = createTimeline(steps);
 
-  function finishAll() {
-    build();
-    showTaskPills();
-    for (var i = 0; i < 4; i++) {
-      var path = _svg && _svg.querySelector('#tr-arrow-' + i);
-      if (path) {
-        path.style.transition = 'none';
-        path.style.strokeDashoffset = '0';
-        path.style.opacity = '1';
-      }
-      showEl('tr-pat-' + i);
-    }
-    showEl('tr-roles');
-    if (_table) _table.style.opacity = '1';
-  }
-
   return {
-    play:   function() { build(); tl.play(); },
+    play: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      if (reduced) { showAll(); } else { tl.play(); }
+    },
     pause:  tl.pause,
     resume: tl.resume,
-    reset:  function() { build(); tl.reset(); },
-    finish: finishAll,
+    reset: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      tl.reset();
+    },
+    finish: function() {
+      _timers.forEach(clearTimeout); _timers = [];
+      build();
+      showAll();
+    },
+    getAccessibleSummary: function() {
+      return 'A Work Pattern Scanner cycles through four task examples. Five dimensions -- Rule stability, Input structure, Ambiguity, Action complexity, and Control sensitivity -- illuminate as bars. Each task maps to an AI terrain layer. The final example, Regulation Coverage, maps to the Agents layer.';
+    },
     destroy: function() {
-      _timers.forEach(clearTimeout);
-      _timers = [];
+      _timers.forEach(clearTimeout); _timers = [];
       container.innerHTML = '';
       tl.destroy();
     }
