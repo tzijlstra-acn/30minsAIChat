@@ -1,7 +1,7 @@
-// Scene: unit-economics (Screen 09 -- Live cost telemetry)
-// V19: one case moves through a cost path. A meter accumulates generic cost units.
-// Design controls activate one by one, reducing the meter with explanations.
-// Generic units only. No client data. No validated percentages.
+// Scene: unit-economics (Screen 09)
+// V26: Cost waterfall. Stations are one connected strip -- not equal boxes.
+// Design controls are rows inside one panel -- not equal cards.
+// Generic cost units only. No client data. No validated percentages.
 SceneDirector.register('unit-economics', function(container, manifest, reduced) {
 
   var stations = [
@@ -14,23 +14,23 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
   ];
 
   var controls = [
-    { id: 'preprocess', label: 'Deterministic preprocessing', tradeoff: null,                     meter: 80 },
-    { id: 'routing',    label: 'Model routing',               tradeoff: null,                     meter: 68 },
-    { id: 'cache',      label: 'Cached context',              tradeoff: null,                     meter: 56 },
-    { id: 'bounded',    label: 'Bounded retries',             tradeoff: null,                     meter: 46 },
-    { id: 'exception',  label: 'Exception-based review',      tradeoff: 'Quality: sampling only', meter: 38 },
-    { id: 'shared',     label: 'Shared services',             tradeoff: null,                     meter: 30 }
+    { id: 'preprocess', label: 'Deterministic preprocessing', meter: 80 },
+    { id: 'routing',    label: 'Model routing',               meter: 68 },
+    { id: 'cache',      label: 'Cached context',              meter: 56 },
+    { id: 'bounded',    label: 'Bounded retries',             meter: 46 },
+    { id: 'exception',  label: 'Exception-based review',      meter: 38, tradeoff: 'Quality: sampling only' },
+    { id: 'shared',     label: 'Shared services',             meter: 30 }
   ];
 
-  var _timers   = [];
+  var _timers    = [];
   var _meterFill  = null;
   var _levelLabel = null;
   var _tradeoffEl = null;
-  var _cardEls    = {};
+  var _rowEls     = {};
 
   function build() {
     container.innerHTML = '';
-    _cardEls    = {};
+    _rowEls     = {};
     _meterFill  = null;
     _levelLabel = null;
     _tradeoffEl = null;
@@ -39,17 +39,18 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     root.className = 'scene-root';
     root.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;gap:10px;padding:8px 0;';
 
-    // ── Section 1: Cost path stations ──────────────────────────────
-    var stRow = document.createElement('div');
-    stRow.id = 'ue-stations';
-    stRow.style.cssText = 'display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap;'
-      + 'gap:4px;flex-shrink:0;opacity:0;transition:opacity 400ms ease;overflow:hidden;';
+    // ── Section 1: Cost station strip (one connected element, not 6 equal boxes) ──
+    // V26 box rule: this strip is one system boundary showing cost decomposition.
+    var stStrip = document.createElement('div');
+    stStrip.id = 'ue-stations';
+    stStrip.style.cssText = 'display:flex;flex-direction:row;align-items:stretch;flex-shrink:0;'
+      + 'border:1px solid var(--border-1);border-radius:4px;overflow:hidden;'
+      + 'opacity:0;transition:opacity 400ms ease;';
 
     stations.forEach(function(st, i) {
-      var box = document.createElement('div');
-      box.style.cssText = 'display:flex;flex-direction:column;gap:2px;padding:5px 7px;'
-        + 'background:var(--surface-1);border-radius:6px;border:1px solid var(--border-1);'
-        + 'min-width:0;flex:1;overflow:hidden;';
+      var seg = document.createElement('div');
+      seg.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:2px;padding:7px 9px;min-width:0;'
+        + (i > 0 ? 'border-left:1px solid var(--border-1);' : '');
 
       var lbl = document.createElement('div');
       lbl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;'
@@ -57,38 +58,27 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       lbl.textContent = st.label;
 
       var sub = document.createElement('div');
-      sub.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;'
-        + 'color:var(--text-3);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      sub.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:10px;'
+        + 'color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
       sub.textContent = st.sublabel;
 
-      box.appendChild(lbl);
-      box.appendChild(sub);
-      stRow.appendChild(box);
-
-      if (i < stations.length - 1) {
-        var plus = document.createElement('div');
-        plus.style.cssText = 'font-size:16px;font-weight:700;color:var(--text-3);flex-shrink:0;padding:0 2px;';
-        plus.textContent = '+';
-        stRow.appendChild(plus);
-      }
+      seg.appendChild(lbl);
+      seg.appendChild(sub);
+      stStrip.appendChild(seg);
     });
 
-    var eq = document.createElement('div');
-    eq.style.cssText = 'font-size:16px;font-weight:700;color:var(--text-3);flex-shrink:0;padding:0 4px;';
-    eq.textContent = '=';
-    stRow.appendChild(eq);
-
-    var totalBox = document.createElement('div');
-    totalBox.style.cssText = 'display:flex;flex-direction:column;justify-content:center;padding:5px 10px;'
-      + 'background:var(--surface-1);border-radius:6px;border:2px solid var(--cyan);flex-shrink:0;';
+    // Total indicator as a distinct segment with accent left-border
+    var totalSeg = document.createElement('div');
+    totalSeg.style.cssText = 'flex-shrink:0;display:flex;flex-direction:column;justify-content:center;'
+      + 'padding:7px 12px;border-left:2px solid var(--cyan);';
     var totalLbl = document.createElement('div');
     totalLbl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;'
-      + 'color:var(--cyan);line-height:1.2;white-space:nowrap;';
-    totalLbl.textContent = 'Cost per successful case';
-    totalBox.appendChild(totalLbl);
-    stRow.appendChild(totalBox);
+      + 'color:var(--cyan);white-space:nowrap;';
+    totalLbl.textContent = 'Cost per case';
+    totalSeg.appendChild(totalLbl);
+    stStrip.appendChild(totalSeg);
 
-    root.appendChild(stRow);
+    root.appendChild(stStrip);
 
     // ── Section 2: Cost meter ──────────────────────────────────────
     var meterSec = document.createElement('div');
@@ -127,48 +117,58 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
 
     root.appendChild(meterSec);
 
-    // ── Section 3: Design controls ─────────────────────────────────
-    var compSec = document.createElement('div');
-    compSec.id = 'ue-controls';
-    compSec.style.cssText = 'display:flex;flex-direction:column;gap:6px;flex:1;min-height:0;opacity:0;transition:opacity 400ms ease;';
+    // ── Section 3: Design controls panel (one panel, rows inside, not 6 equal cards) ──
+    // V26 box rule: this panel is one system boundary for the control levers.
+    var ctrlWrap = document.createElement('div');
+    ctrlWrap.style.cssText = 'display:flex;flex-direction:column;flex:1;min-height:0;';
 
-    var compTitle = document.createElement('div');
-    compTitle.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);flex-shrink:0;';
-    compTitle.textContent = 'Design controls';
-    compSec.appendChild(compTitle);
+    var ctrlPanel = document.createElement('div');
+    ctrlPanel.id = 'ue-controls';
+    ctrlPanel.style.cssText = 'display:flex;flex-direction:column;flex:1;min-height:0;'
+      + 'border:1px solid var(--border-1);border-radius:4px;overflow:hidden;'
+      + 'opacity:0;transition:opacity 400ms ease;';
 
-    var cardsWrap = document.createElement('div');
-    cardsWrap.style.cssText = 'display:flex;flex-direction:column;gap:5px;flex:1;';
+    var panelHdr = document.createElement('div');
+    panelHdr.style.cssText = 'padding:6px 12px;border-bottom:1px solid var(--border-1);flex-shrink:0;';
+    var panelHdrLbl = document.createElement('div');
+    panelHdrLbl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
+      + 'letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);';
+    panelHdrLbl.textContent = 'DESIGN CONTROLS';
+    panelHdr.appendChild(panelHdrLbl);
+    ctrlPanel.appendChild(panelHdr);
 
-    controls.forEach(function(ctrl) {
-      var card = document.createElement('div');
-      card.style.cssText = 'border-radius:8px;padding:9px 14px;display:flex;align-items:center;gap:12px;'
-        + 'background:var(--surface-1);border:1px solid var(--border-1);opacity:.5;'
-        + 'transition:background 400ms ease,border-color 400ms ease,opacity 400ms ease;';
+    controls.forEach(function(ctrl, i) {
+      var row = document.createElement('div');
+      row.id = 'ctrl-row-' + ctrl.id;
+      row.style.cssText = 'flex:1;display:flex;align-items:center;gap:12px;padding:0 12px;'
+        + (i > 0 ? 'border-top:1px solid var(--border-1);' : '')
+        + 'opacity:0.35;transition:background 400ms ease,opacity 400ms ease;';
 
-      var cardLbl = document.createElement('div');
-      cardLbl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;color:var(--text-1);flex:1;';
-      cardLbl.textContent = ctrl.label;
+      var rowLbl = document.createElement('div');
+      rowLbl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;'
+        + 'font-weight:700;color:var(--text-1);flex:1;';
+      rowLbl.textContent = ctrl.label;
 
-      var pill = document.createElement('div');
-      pill.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--green);'
-        + 'background:rgba(88,201,148,.1);border-radius:4px;padding:2px 8px;flex-shrink:0;';
-      pill.textContent = '-';
+      var rowState = document.createElement('div');
+      rowState.id = 'ctrl-state-' + ctrl.id;
+      rowState.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;'
+        + 'color:var(--text-3);flex-shrink:0;transition:color 300ms ease;';
+      rowState.textContent = '--';
 
-      card.appendChild(cardLbl);
-      card.appendChild(pill);
-      cardsWrap.appendChild(card);
-      _cardEls[ctrl.id] = card;
+      row.appendChild(rowLbl);
+      row.appendChild(rowState);
+      ctrlPanel.appendChild(row);
+      _rowEls[ctrl.id] = row;
     });
 
-    compSec.appendChild(cardsWrap);
+    ctrlWrap.appendChild(ctrlPanel);
 
     _tradeoffEl = document.createElement('div');
     _tradeoffEl.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:11px;color:var(--text-3);'
       + 'padding:2px 0;opacity:0;transition:opacity 300ms ease;flex-shrink:0;min-height:16px;';
-    compSec.appendChild(_tradeoffEl);
+    ctrlWrap.appendChild(_tradeoffEl);
 
-    root.appendChild(compSec);
+    root.appendChild(ctrlWrap);
     container.appendChild(root);
   }
 
@@ -182,13 +182,17 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     _levelLabel.style.color = color;
   }
 
-  function activateCard(id) {
-    var card = _cardEls[id];
-    if (!card) return;
-    card.style.background    = 'rgba(88,201,148,.08)';
-    card.style.borderColor   = 'var(--green)';
-    card.style.opacity       = '1';
+  function activateRow(id) {
+    var row = _rowEls[id];
+    if (!row) return;
+    row.style.background = 'rgba(88,201,148,0.08)';
+    row.style.opacity = '1';
+    var state = container.querySelector('#ctrl-state-' + id);
+    if (state) { state.style.color = 'var(--green)'; state.textContent = 'ACTIVE'; }
   }
+
+  // Back-compat alias used in timeline steps
+  function activateCard(id) { activateRow(id); }
 
   function showTradeoff(text) {
     if (!_tradeoffEl) return;
@@ -201,22 +205,22 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
   }
 
   function showFinal() {
-    var stRow    = container.querySelector('#ue-stations');
+    var stStrip  = container.querySelector('#ue-stations');
     var meterSec = container.querySelector('#ue-meter');
-    var compSec  = container.querySelector('#ue-controls');
-    if (stRow)    stRow.style.opacity    = '1';
-    if (meterSec) meterSec.style.opacity = '1';
-    if (compSec)  compSec.style.opacity  = '1';
+    var ctrlPanel = container.querySelector('#ue-controls');
+    if (stStrip)   stStrip.style.opacity   = '1';
+    if (meterSec)  meterSec.style.opacity  = '1';
+    if (ctrlPanel) ctrlPanel.style.opacity = '1';
     if (_meterFill) {
       _meterFill.style.transition = 'none';
       _meterFill.style.width      = '30%';
     }
     setLevel('LOWER', 'var(--green)');
-    controls.forEach(function(ctrl) { activateCard(ctrl.id); });
+    controls.forEach(function(ctrl) { activateRow(ctrl.id); });
   }
 
   var steps = [
-    // 200ms: stations row appears
+    // 200ms: station strip appears
     { delay: 200, run: function() {
       var el = container.querySelector('#ue-stations');
       if (el) el.style.opacity = '1';
@@ -230,7 +234,7 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       setLevel('HIGH', 'var(--pink)');
     }},
 
-    // 1400ms: comparison area appears, all 6 cards inactive
+    // 1400ms: controls panel appears, all 6 rows inactive
     { delay: 1400, run: function() {
       var el = container.querySelector('#ue-controls');
       if (el) el.style.opacity = '1';
@@ -270,18 +274,20 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
 
   return {
     play: function() {
+      _timers.forEach(clearTimeout); _timers = [];
       build();
+      if (reduced) { showFinal(); return; }
       tl.play();
     },
     pause:  tl.pause,
     resume: tl.resume,
-    reset:  function() {
-      _timers.forEach(function(id) { clearTimeout(id); });
-      _timers = [];
+    reset: function() {
+      _timers.forEach(clearTimeout); _timers = [];
       build();
       tl.reset();
     },
     finish: function() {
+      _timers.forEach(clearTimeout); _timers = [];
       build();
       showFinal();
     },
@@ -289,8 +295,7 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       return 'Six cost stations are shown: Data and context, Model reasoning, Orchestration, Retries, Human review, and Platform assurance. Six design controls activate one by one, each reducing the cost meter. The meter ends at LOWER. One control notes a quality trade-off. No client data, no validated percentages.';
     },
     destroy: function() {
-      _timers.forEach(function(id) { clearTimeout(id); });
-      _timers = [];
+      _timers.forEach(clearTimeout); _timers = [];
       container.innerHTML = '';
       tl.destroy();
     }

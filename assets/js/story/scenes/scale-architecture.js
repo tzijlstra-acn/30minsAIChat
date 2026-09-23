@@ -1,6 +1,6 @@
-// Scene: scale-architecture (Screen 08 - HOW TO SCALE)
-// V19: Wow 4 -- Proof zooms into production and enterprise reuse.
-// Semantic zoom via CSS scale() on the scene root reveals three concentric layers.
+// Scene: scale-architecture (Screen 08)
+// V26: Semantic zoom. Proof context zooms outward into production and enterprise reuse.
+// Three concentric system fields, not cards: proof boundary, production ring, enterprise frame.
 SceneDirector.register('scale-architecture', function(container, manifest, reduced) {
 
   var _timers   = [];
@@ -247,10 +247,10 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
     var g = svgEl('g', { id: 'proof-layer' });
     g.style.opacity = '0';
 
-    // Box (dashed border)
+    // Proof system field: transparent fill + dashed boundary -- not a card
     g.appendChild(svgEl('rect', {
-      x: 400, y: 140, width: 400, height: 280, rx: 10,
-      fill: C_S1, stroke: C_CYAN, 'stroke-width': 1.5, 'stroke-dasharray': '6 3'
+      x: 400, y: 140, width: 400, height: 280, rx: 3,
+      fill: 'rgba(77,217,224,0.04)', stroke: C_CYAN, 'stroke-width': 1.5, 'stroke-dasharray': '6 3'
     }));
 
     // PROOF label
@@ -473,6 +473,7 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
     play: function() {
       _cleanup();
       build();
+      if (reduced) { showAll(); return; }
       _tl = createTimeline(STEPS);
       _tl.play();
     },

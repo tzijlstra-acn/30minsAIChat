@@ -1802,3 +1802,39 @@ test('V26/5: proof-loop.js gate is one human approval element (not 4 equal chips
   // Options are internal dividers, not separate border-radius chips
   expect(body).toContain('border-left:1px solid rgba(88,201,148,0.2)');
 });
+
+// ── V26/6 semantic zoom and cost waterfall ──
+
+test('V26/6: scale-architecture.js comment updated to V26', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/scale-architecture.js');
+  const body = await res.text();
+  expect(body).toContain('V26');
+  expect(body).toContain('system fields');
+});
+
+test('V26/6: scale-architecture.js proof rect uses transparent fill (not opaque card)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/scale-architecture.js');
+  const body = await res.text();
+  expect(body).toContain('rgba(77,217,224,0.04)');
+  expect(body).not.toContain("fill: C_S1, stroke: C_CYAN");
+});
+
+test('V26/6: unit-economics.js station strip is one connected element (not 6 equal boxes)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
+  const body = await res.text();
+  // Strip uses internal dividers not separate border-radius boxes
+  expect(body).toContain('border-left:1px solid var(--border-1)');
+  // Must NOT use the old per-station box border-radius style
+  expect(body).not.toContain("'border-radius:6px;border:1px solid var(--border-1)'");
+});
+
+test('V26/6: unit-economics.js controls are rows inside one panel (not 6 equal cards)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
+  const body = await res.text();
+  // Panel header identifies the design controls container
+  expect(body).toContain('DESIGN CONTROLS');
+  // Control rows use internal top-border dividers
+  expect(body).toContain('border-top:1px solid var(--border-1)');
+  // Must NOT use the old card border-radius
+  expect(body).not.toContain("border-radius:8px;padding:9px 14px");
+});
