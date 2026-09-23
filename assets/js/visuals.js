@@ -1995,17 +1995,22 @@ var REF_GROUPS=[
 function renderRefRoom(sec){
   // Remove section padding so atlas fills edge-to-edge
   sec.style.padding='0';
+  // Dismiss loading hint once atlas renders
+  var hint=sec.querySelector('#ea-loading-hint');
   if(window.EvidenceAtlas){
     var inner=sec.querySelector('.inner')||sec;
     // Override .inner constraints so it grows to fill the flex-column section
     inner.style.cssText='padding:0;flex:1;min-height:0;display:flex;flex-direction:column;max-width:none;margin:0;width:100%;box-sizing:border-box;';
+    if(hint) hint.style.display='none';
     window.EvidenceAtlas.init(inner);
   } else {
-    // Fallback if atlas failed to load
-    var fb=document.createElement('div');
-    fb.style.cssText='padding:48px;font-family:"Space Grotesk",sans-serif;font-size:16px;color:#A4A9B7;';
-    fb.textContent='Evidence Atlas is loading...';
-    sec.appendChild(fb);
+    // Static fallback when evidence-atlas.js failed to load
+    if(hint) {
+      hint.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;pointer-events:none;';
+      hint.removeAttribute('aria-hidden');
+      hint.innerHTML='<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3);text-transform:uppercase;">Evidence Atlas</span>'
+        +'<span style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;color:rgba(255,255,255,.2);">Risk map &nbsp;|&nbsp; Solutions &nbsp;|&nbsp; Process theatre &nbsp;|&nbsp; Architecture &nbsp;|&nbsp; Method</span>';
+    }
     console.error('[renderRefRoom] window.EvidenceAtlas is not defined -- check evidence-atlas.js loaded without errors');
   }
 }

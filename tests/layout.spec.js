@@ -1519,3 +1519,34 @@ test('V25/7: next-move.js exposes getAccessibleSummary', async ({ page }) => {
   expect(body).toContain('getAccessibleSummary');
   expect(body).toContain('Frame the evidence');
 });
+
+// ── V25/8 Evidence Atlas and reference consolidation ──
+
+test('V25/8: visuals.js hides ea-loading-hint after atlas init', async ({ page }) => {
+  const res = await page.goto('/assets/js/visuals.js');
+  const body = await res.text();
+  expect(body).toContain('ea-loading-hint');
+  expect(body).toContain('display');
+  // hint.style.display='none' must be present to dismiss the loading hint
+  expect(body).toContain("hint.style.display='none'");
+});
+
+test('V25/8: visuals.js fallback lists all 5 Evidence Atlas views', async ({ page }) => {
+  const res = await page.goto('/assets/js/visuals.js');
+  const body = await res.text();
+  expect(body).toContain('Risk map');
+  expect(body).toContain('Solutions');
+  expect(body).toContain('Process theatre');
+  expect(body).toContain('Architecture');
+  expect(body).toContain('Method');
+});
+
+test('V25/8: evidence-atlas.js exposes all 5 switchView targets', async ({ page }) => {
+  const res = await page.goto('/assets/js/evidence-atlas.js');
+  const body = await res.text();
+  expect(body).toContain("'map'");
+  expect(body).toContain("'constellation'");
+  expect(body).toContain("'theatre'");
+  expect(body).toContain("'architecture'");
+  expect(body).toContain("'method'");
+});
