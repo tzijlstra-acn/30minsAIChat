@@ -1,17 +1,29 @@
-// ── SCENE DIRECTOR ──
+// ── SCENE DIRECTOR -- V25 ──
 // Manages deterministic scene playback for each core screen.
 // One scene plays per screen. Scenes are loaded on demand and cancelled on navigation.
-// Contract: every scene module exports createScene(container, manifest, reducedMotion)
-// returning { play(), pause(), resume(), reset(), finish(), destroy() }.
+// V25 contract: play, pause, resume, seek, finish, resize, destroy, renderStatic, getAccessibleSummary.
+// All are optional except play/finish/destroy. SceneDirector calls only what exists.
+// V25 states: loading, ready, playing, paused, complete, error.
+// On error: reveal data-scene-fallback SVG and log diagnostic. Never blank.
 
 var SceneDirector = (function() {
   var _scenes = {};        // registered scene factories: id -> createScene
-  var _current = null;     // { sceneId, instance, manifest }
+  var _current = null;     // { sceneId, instance, manifest, state }
   var _reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var _paused = false;
 
   window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function(e) {
     _reduced = e.matches;
+  });
+
+  // Pause/resume on visibility change (no background animation on inactive tabs)
+  document.addEventListener('visibilitychange', function() {
+    if (!_current) return;
+    if (document.hidden) {
+      if (!_paused) { try { _current.instance.pause(); } catch(e) {} }
+    } else {
+      if (!_paused) { try { _current.instance.resume(); } catch(e) {} }
+    }
   });
 
   function register(sceneId, createFn) {
@@ -56,6 +68,25 @@ var SceneDirector = (function() {
     _resizeObserver.observe(container);
   }
 
+  function _setState(state) {
+    if (!_current) return;
+    _current.state = state;
+  }
+
+  function _injectAccessibleSummary(container, instance) {
+    var existing = container.querySelector('.scene-accessible-summary');
+    if (existing) existing.remove();
+    if (!instance || typeof instance.getAccessibleSummary !== 'function') return;
+    var summary;
+    try { summary = instance.getAccessibleSummary(); } catch(e) { return; }
+    if (!summary) return;
+    var div = document.createElement('div');
+    div.className = 'scene-accessible-summary';
+    div.setAttribute('aria-live', 'polite');
+    div.textContent = summary;
+    container.appendChild(div);
+  }
+
   function enter(sectionEl, manifestEntry) {
     cancel();
     if (!manifestEntry || !manifestEntry.scene) return;
@@ -76,24 +107,32 @@ var SceneDirector = (function() {
       }
       return;
     }
-    _current = { sceneId: manifestEntry.scene, instance: instance, manifest: manifestEntry };
+    _current = { sceneId: manifestEntry.scene, instance: instance, manifest: manifestEntry, state: 'loading' };
     _paused = false;
     _attachResizeObserver(container, instance);
+    _injectAccessibleSummary(container, instance);
     var readyPromise = document.fonts ? document.fonts.ready : Promise.resolve();
     readyPromise.then(function() {
       if (!_current || _current.instance !== instance) return;
+      _setState('ready');
       requestAnimationFrame(function() {
         try {
           if (_reduced) {
+            _setState('complete');
             instance.finish();
           } else {
+            _setState('playing');
             instance.play();
           }
         } catch (e) {
           console.error('[scene:' + manifestEntry.scene + '] play error', e);
+          _setState('error');
           _showFallback(container, manifestEntry.scene);
           if (typeof instance.renderFallback === 'function') {
             try { instance.renderFallback(e); } catch(_) {}
+          } else if (typeof instance.renderStatic === 'function') {
+            var bounds = container.getBoundingClientRect();
+            try { instance.renderStatic(bounds); } catch(_) {}
           }
         }
       });
@@ -144,11 +183,18 @@ var SceneDirector = (function() {
 
   function hasScene(id) { return !!_scenes[id]; }
 
-  return { register: register, enter: enter, cancel: cancel, replay: replay, togglePause: togglePause, finish: finish, hasScene: hasScene };
+  function getState() { return _current ? _current.state : null; }
+
+  return {
+    register: register, enter: enter, cancel: cancel,
+    replay: replay, togglePause: togglePause, finish: finish,
+    hasScene: hasScene, getState: getState
+  };
 }());
 
 // ── BASE SCENE HELPER ──
-// V23 lifecycle contract: mount, play, pause, resume, seek, finish, resize, destroy, renderFallback.
+// V25 lifecycle contract: play, pause, resume, seek, finish, resize, destroy,
+// renderFallback, renderStatic, getAccessibleSummary.
 // All are optional except play/finish/destroy -- SceneDirector calls only what exists.
 function createTimeline(steps) {
   // steps: array of { delay: ms, run: function }
@@ -207,7 +253,18 @@ function createTimeline(steps) {
   }
 
   function renderFallback() {
-    // Default renderFallback: noop. Scenes override to show a designed final state.
+    // Default: noop. Scenes override to show a designed final state on error.
+  }
+
+  function renderStatic(bounds) {
+    // V25: same as finish() by default; scenes override for bounds-aware static rendering.
+    finish();
+    void bounds;
+  }
+
+  function getAccessibleSummary() {
+    // V25: return a brief text description of the scene's final state for screen readers.
+    return null;
   }
 
   function destroy() {
@@ -218,7 +275,8 @@ function createTimeline(steps) {
   return {
     play: play, pause: pause, resume: resume, seek: seek,
     reset: reset, finish: finish, resize: resize,
-    renderFallback: renderFallback, destroy: destroy
+    renderFallback: renderFallback, renderStatic: renderStatic,
+    getAccessibleSummary: getAccessibleSummary, destroy: destroy
   };
 }
 

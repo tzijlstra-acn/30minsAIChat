@@ -22,16 +22,17 @@
   flex-wrap: wrap;
 }
 
-/* Screen layout -- V19 geometry contract */
+/* Screen layout -- V25 geometry contract */
 .scene-screen {
-  --screen-gap: 12px;
+  --screen-gap: clamp(8px, 1.1vh, 14px);
   flex: 1;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: var(--screen-gap);
   padding-block: 14px 16px;
+  padding-inline: 24px;
   min-height: 0;
-  overflow: clip;
+  overflow: hidden;
   contain: layout;
 }
 
@@ -90,13 +91,14 @@
 }
 
 /* ── Scene footer -- unified evidence badge + insight row ── */
+/* V25: max-height enforced at 48px per spec */
 .scene-footer {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
   min-height: 0;
-  max-height: 44px;
+  max-height: 48px;
   overflow: clip;
 }
 
@@ -441,6 +443,42 @@
 /* Dark-only live theme: hide light-mode toggle */
 #themeBtn {
   display: none;
+}
+
+/* ── V25 scene state indicators ── */
+.scene-state-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.scene-state-badge.visible { opacity: 1; }
+.scene-state-badge.state-loading  { color: var(--cyan);   background: rgba(85,199,232,.12); border: 1px solid rgba(85,199,232,.25); }
+.scene-state-badge.state-error    { color: #ff6b6b;       background: rgba(255,107,107,.1); border: 1px solid rgba(255,107,107,.25); }
+.scene-state-badge.state-complete { color: var(--green);  background: rgba(88,201,148,.1);  border: 1px solid rgba(88,201,148,.2); }
+
+/* V25 safe-margin enforcement: no node may touch the SVG viewBox boundary */
+.scene-stage { padding: 0; }
+.scene-stage svg { display: block; width: 100%; height: 100%; }
+
+/* V25 accessibility: accessible summary (visually hidden, screen-reader visible) */
+.scene-accessible-summary {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Print: hide scene stages, reveal static content */

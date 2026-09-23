@@ -1280,3 +1280,43 @@ test('V25: reference section labels do not contain Locate the Value or Prove Saf
   expect(body).not.toContain('Locate the Value');
   expect(body).not.toContain('Prove Safely');
 });
+
+test('V25: scene-director has visibility-change listener for background pause', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scene-director.js');
+  const body = await res.text();
+  expect(body).toContain('visibilitychange');
+  expect(body).toContain('document.hidden');
+});
+
+test('V25: createTimeline exposes renderStatic and getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scene-director.js');
+  const body = await res.text();
+  expect(body).toContain('function renderStatic');
+  expect(body).toContain('function getAccessibleSummary');
+});
+
+test('V25: SceneDirector exposes getState method', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scene-director.js');
+  const body = await res.text();
+  expect(body).toContain('function getState');
+  expect(body).toContain('getState: getState');
+});
+
+test('V25: scenes.css scene-accessible-summary class exists', async ({ page }) => {
+  const res = await page.goto('/assets/css/scenes.css');
+  const body = await res.text();
+  expect(body).toContain('.scene-accessible-summary');
+  expect(body).toContain('clip: rect');
+});
+
+test('V25: scenes.css footer max-height is 48px', async ({ page }) => {
+  const res = await page.goto('/assets/css/scenes.css');
+  const body = await res.text();
+  expect(body).toContain('max-height: 48px');
+});
+
+test('V25: scene-screen has clamp gap in scenes.css', async ({ page }) => {
+  const res = await page.goto('/assets/css/scenes.css');
+  const body = await res.text();
+  expect(body).toContain('clamp(8px, 1.1vh, 14px)');
+});
