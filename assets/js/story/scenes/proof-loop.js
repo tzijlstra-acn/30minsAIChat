@@ -1,6 +1,7 @@
 // Scene: proof-loop (Screen 07)
-// V26: Evidence test rig. Five stages run as one connected pipeline strip -- not equal cards.
-// Five evidence tracks fill as MetricStrips. Gate appears as one human approval element.
+// V26: Evidence test rig. Five stages run as one connected pipeline strip.
+// Five evidence tracks fill as MetricStrips. Gate is a human approval element --
+// displayed alongside the tracks so the decision context is always visible.
 // No fictional results. No preselected outcome.
 SceneDirector.register('proof-loop', function(container, manifest, reduced) {
 
@@ -23,10 +24,22 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
   ];
 
   var gateOptions = [
-    'Stop and review',
-    'Refine approach',
-    'Repeat proof',
-    'Controlled scale'
+    {
+      label: 'Stop and review',
+      sub:   'Evidence does not support continuation. Pause and investigate the gap.'
+    },
+    {
+      label: 'Refine approach',
+      sub:   'Sufficient signal but model or process needs adjustment before re-running.'
+    },
+    {
+      label: 'Repeat proof',
+      sub:   'Promising result but sample or scope is insufficient. Run again with more data.'
+    },
+    {
+      label: 'Controlled scale',
+      sub:   'Evidence supports expansion to wider scope under defined governance conditions.'
+    }
   ];
 
   // ── DOM construction ──────────────────────────────────────────────────────
@@ -38,8 +51,7 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
     root.className = 'scene-root';
     root.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;gap:12px;padding:8px 0;';
 
-    // -- Process pipeline: one connected strip, not 5 equal cards -------------
-    // V26 box rule: this strip is one system boundary, not multiple cards.
+    // -- Process pipeline: one connected strip --------------------------------
     var pipeWrap = document.createElement('div');
     pipeWrap.id = 'pf-flow-row';
     pipeWrap.style.cssText = 'display:flex;flex-direction:row;height:46px;flex-shrink:0;'
@@ -61,7 +73,6 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
       labelEl.textContent = node.label;
       stepEl.appendChild(labelEl);
 
-      // Obligation token: small colored dot beneath the label
       var token = document.createElement('div');
       token.id = 'pf-token-' + node.id;
       token.style.cssText = 'width:8px;height:8px;border-radius:4px;background:#7C4DFF;'
@@ -73,23 +84,33 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
 
     root.appendChild(pipeWrap);
 
-    // -- Evidence tracks: MetricStrip-style rows ----------------------------
+    // -- Body row: tracks (left) + gate (right) side by side ------------------
+    var bodyRow = document.createElement('div');
+    bodyRow.style.cssText = 'display:flex;flex-direction:row;gap:0;flex:1;min-height:0;';
+
+    // Left: evidence tracks
     var tracksSection = document.createElement('div');
-    tracksSection.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
+    tracksSection.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:8px;padding-right:18px;';
+
+    var tracksHeading = document.createElement('div');
+    tracksHeading.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
+      + 'letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:2px;';
+    tracksHeading.textContent = 'EVIDENCE COLLECTED';
+    tracksSection.appendChild(tracksHeading);
 
     tracks.forEach(function(track) {
       var row = document.createElement('div');
       row.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:10px;';
 
       var labelEl = document.createElement('div');
-      labelEl.style.cssText = 'width:120px;font-family:\'Space Grotesk\',sans-serif;'
+      labelEl.style.cssText = 'width:92px;font-family:\'Space Grotesk\',sans-serif;'
         + 'font-size:14px;font-weight:700;color:' + track.color + ';flex-shrink:0;';
       labelEl.textContent = track.label;
       row.appendChild(labelEl);
 
       var barWrap = document.createElement('div');
       barWrap.style.cssText = 'flex:1;background:var(--surface-2);border-radius:4px;'
-        + 'height:32px;position:relative;overflow:hidden;';
+        + 'height:30px;position:relative;overflow:hidden;';
 
       var placeholder = document.createElement('div');
       placeholder.id = 'pf-placeholder-' + track.id;
@@ -118,39 +139,74 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
       tracksSection.appendChild(row);
     });
 
-    root.appendChild(tracksSection);
+    bodyRow.appendChild(tracksSection);
 
-    // -- Decision gate: one human approval element, not 4 equal chips --------
-    // V26 box rule: a human approval gate is a permitted visual object.
+    // Right: gate section -- always visible alongside the tracks
     var gateWrap = document.createElement('div');
-    gateWrap.style.cssText = 'flex-shrink:0;display:flex;flex-direction:column;gap:8px;';
+    gateWrap.style.cssText = 'flex:0 0 270px;display:flex;flex-direction:column;gap:10px;'
+      + 'padding-left:18px;border-left:1px solid var(--border-1);';
+
+    // Gate header
+    var gateHeaderWrap = document.createElement('div');
+    gateHeaderWrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity 500ms ease;';
+    gateHeaderWrap.id = 'pf-gate-header';
+
+    var gateIconRow = document.createElement('div');
+    gateIconRow.style.cssText = 'display:flex;align-items:center;gap:8px;';
+
+    var gateIcon = document.createElement('div');
+    gateIcon.style.cssText = 'width:32px;height:32px;border-radius:7px;background:rgba(88,201,148,.12);'
+      + 'border:1px solid rgba(88,201,148,.30);display:flex;align-items:center;justify-content:center;flex-shrink:0;';
+    gateIcon.innerHTML = '<i class="ti ti-user-check" style="font-size:17px;color:var(--green)"></i>';
 
     var gateLabel = document.createElement('div');
     gateLabel.id = 'pf-gate-label';
     gateLabel.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
-      + 'letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);'
-      + 'opacity:0;transition:opacity 400ms ease;';
-    gateLabel.textContent = 'EVIDENCE GATE -- NO OUTCOME PRESELECTED';
-    gateWrap.appendChild(gateLabel);
+      + 'letter-spacing:.12em;text-transform:uppercase;color:var(--green);line-height:1.2;';
+    gateLabel.innerHTML = 'EVIDENCE GATE<br><span style="color:var(--text-3);font-size:8px;letter-spacing:.06em">HUMAN DECISION POINT</span>';
 
-    // Single gate element with internal dividers between options
-    var gateEl = document.createElement('div');
-    gateEl.id = 'pf-gate-chips';
-    gateEl.style.cssText = 'display:flex;flex-direction:row;'
-      + 'border:1px solid var(--green);border-radius:3px;overflow:hidden;'
-      + 'background:rgba(88,201,148,0.05);opacity:0;transition:opacity 400ms ease;';
+    gateIconRow.appendChild(gateIcon);
+    gateIconRow.appendChild(gateLabel);
+    gateHeaderWrap.appendChild(gateIconRow);
+
+    var gateSub = document.createElement('div');
+    gateSub.style.cssText = 'font-size:12px;color:var(--text-2);line-height:1.5;'
+      + 'border-left:2px solid rgba(88,201,148,.30);padding-left:8px;';
+    gateSub.textContent = 'Once the evidence above is assembled, a decision-maker reviews each dimension and selects the next move. The AI does not determine the outcome.';
+    gateHeaderWrap.appendChild(gateSub);
+
+    gateWrap.appendChild(gateHeaderWrap);
+
+    // Gate options
+    var gateOptions_el = document.createElement('div');
+    gateOptions_el.id = 'pf-gate-chips';
+    gateOptions_el.style.cssText = 'display:flex;flex-direction:column;gap:6px;'
+      + 'opacity:0;transition:opacity 500ms ease;';
 
     gateOptions.forEach(function(opt, i) {
       var item = document.createElement('div');
-      item.style.cssText = 'flex:1;padding:9px 12px;font-family:\'Space Grotesk\',sans-serif;'
-        + 'font-size:14px;font-weight:500;color:var(--text-2);text-align:center;'
-        + (i > 0 ? 'border-left:1px solid rgba(88,201,148,0.2);' : '');
-      item.textContent = opt;
-      gateEl.appendChild(item);
+      item.style.cssText = 'padding:8px 10px;border-radius:5px;'
+        + 'border:1px solid rgba(88,201,148,0.22);background:rgba(88,201,148,0.04);';
+
+      var itemLabel = document.createElement('div');
+      itemLabel.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;'
+        + 'font-weight:700;color:var(--text-1);margin-bottom:2px;';
+      itemLabel.textContent = opt.label;
+
+      var itemSub = document.createElement('div');
+      itemSub.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:10px;'
+        + 'color:var(--text-3);line-height:1.4;';
+      itemSub.textContent = opt.sub;
+
+      item.appendChild(itemLabel);
+      item.appendChild(itemSub);
+      gateOptions_el.appendChild(item);
     });
 
-    gateWrap.appendChild(gateEl);
-    root.appendChild(gateWrap);
+    gateWrap.appendChild(gateOptions_el);
+
+    bodyRow.appendChild(gateWrap);
+    root.appendChild(bodyRow);
 
     container.appendChild(root);
   }
@@ -204,8 +260,8 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
       if (evidenceEl) { evidenceEl.style.transition = 'none'; evidenceEl.style.opacity = '1'; }
     });
 
-    var gateLabel = container.querySelector('#pf-gate-label');
-    if (gateLabel) { gateLabel.style.transition = 'none'; gateLabel.style.opacity = '1'; }
+    var gateHeader = container.querySelector('#pf-gate-header');
+    if (gateHeader) { gateHeader.style.transition = 'none'; gateHeader.style.opacity = '1'; }
     var chipsRow = container.querySelector('#pf-gate-chips');
     if (chipsRow) { chipsRow.style.transition = 'none'; chipsRow.style.opacity = '1'; }
   }
@@ -213,7 +269,7 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
   // ── Timeline steps ────────────────────────────────────────────────────────
 
   var steps = [
-    // 1. 200ms: process pipeline appears
+    // 1. 200ms: pipeline appears
     { delay: 200, run: function() {
       var el = container.querySelector('#pf-flow-row');
       if (el) el.style.opacity = '1';
@@ -222,31 +278,31 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
     { delay: 600, run: function() {
       highlightNode('baseline', '#4A5064', 'var(--text-2)');
     }},
-    // 3. 1000ms: token appears at Baseline
+    // 3. 1000ms: token at Baseline
     { delay: 1000, run: function() {
       placeToken('baseline');
     }},
-    // 4. 1400ms: Run activates; token moves
+    // 4. 1400ms: Run activates
     { delay: 1400, run: function() {
       highlightNode('run', '#B44CFF', 'var(--accent)');
       placeToken('run');
     }},
-    // 5. 1800ms: Compare activates; token moves
+    // 5. 1800ms: Compare activates
     { delay: 1800, run: function() {
       highlightNode('compare', '#B44CFF', 'var(--accent)');
       placeToken('compare');
     }},
-    // 6. 2200ms: Challenge activates; token moves
+    // 6. 2200ms: Challenge activates
     { delay: 2200, run: function() {
       highlightNode('challenge', '#F3B34C', 'var(--amber)');
       placeToken('challenge');
     }},
-    // 7. 2600ms: Decide activates; gate label appears
+    // 7. 2600ms: Decide activates; gate header appears alongside
     { delay: 2600, run: function() {
       highlightNode('decide', '#58C994', 'var(--green)');
       placeToken('decide');
-      var gl = container.querySelector('#pf-gate-label');
-      if (gl) gl.style.opacity = '1';
+      var gh = container.querySelector('#pf-gate-header');
+      if (gh) gh.style.opacity = '1';
     }},
     // 8. 3200ms: Speed fills
     { delay: 3200, run: function() { fillTrack('speed'); }},
@@ -256,15 +312,17 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
     { delay: 4400, run: function() { fillTrack('control'); }},
     // 11. 5000ms: Adoption fills
     { delay: 5000, run: function() { fillTrack('adoption'); }},
-    // 12. 5600ms: Economics fills
-    { delay: 5600, run: function() { fillTrack('economics'); }},
-    // 13. 6200ms: gate appears + complete
-    { delay: 6200, run: function() {
+    // 12. 5600ms: Economics fills; gate options appear
+    { delay: 5600, run: function() {
+      fillTrack('economics');
       var el = container.querySelector('#pf-gate-chips');
       if (el) el.style.opacity = '1';
+    }},
+    // 13. 6400ms: complete
+    { delay: 6400, run: function() {
       _timers.push(setTimeout(function() {
         container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
-      }, 500));
+      }, 400));
     }}
   ];
 
@@ -292,7 +350,7 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
       showFinalFrame();
     },
     getAccessibleSummary: function() {
-      return 'A proof pipeline runs an obligation through five stages: Baseline, Run, Compare, Challenge, and Decide. Five evidence tracks -- Speed, Quality, Control, Adoption, and Economics -- fill progressively. A human approval gate presents four options with no outcome preselected.';
+      return 'A proof pipeline runs an obligation through five stages: Baseline, Run, Compare, Challenge, and Decide. Five evidence tracks fill progressively. An evidence gate presents four human-selected paths -- Stop and review, Refine approach, Repeat proof, or Controlled scale -- with no outcome preselected. A human decision-maker reviews the evidence and chooses.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout); _timers = [];
