@@ -632,3 +632,98 @@ test('V17/4: proof-loop Decide step uses ti-scale icon', async ({ page }) => {
   expect(body).toContain('ti-scale');
   expect(body).not.toContain('ti-gate');
 });
+
+// ── V18 VISUAL EXCELLENCE AUDIT ──
+
+test('V18: all 12 core scene containers have static fallback SVG', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const result = await page.evaluate(() => {
+    var containers = Array.from(document.querySelectorAll('section[data-route="core"] [data-scene-container]'));
+    var missing = containers.filter(function(c) {
+      return !c.querySelector('[data-scene-fallback]');
+    });
+    return { total: containers.length, missing: missing.map(function(c) {
+      var sec = c.closest('section');
+      return sec ? sec.id : 'unknown';
+    })};
+  });
+  expect(result.total, 'Expected 12 scene containers').toBe(12);
+  expect(result.missing, 'Containers missing static fallback SVG').toHaveLength(0);
+});
+
+test('V18: static fallback SVGs have correct viewBox and preserveAspectRatio', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const bad = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll('[data-scene-fallback]')).filter(function(svg) {
+      return !svg.getAttribute('viewBox') || svg.getAttribute('preserveAspectRatio') !== 'xMidYMid meet';
+    }).map(function(svg) {
+      var sec = svg.closest('section');
+      return sec ? sec.id : 'fallback-no-section';
+    });
+  });
+  expect(bad, 'Fallback SVGs missing viewBox or preserveAspectRatio').toHaveLength(0);
+});
+
+test('V18: scene-director.js contains _showFallback function', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const res = await page.goto('/assets/js/story/scene-director.js');
+  const body = await res.text();
+  expect(body).toContain('_showFallback');
+  expect(body).toContain('data-scene-fallback');
+});
+
+test('V18: NFRIcons has audit method and is initialised', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(1200);
+  const result = await page.evaluate(() => ({
+    defined: typeof NFRIcons !== 'undefined',
+    hasAudit: typeof NFRIcons !== 'undefined' && typeof NFRIcons.audit === 'function',
+    ready: typeof NFRIcons !== 'undefined' && NFRIcons._ready === true
+  }));
+  expect(result.defined, 'NFRIcons not defined').toBe(true);
+  expect(result.hasAudit, 'NFRIcons.audit not a function').toBe(true);
+  expect(result.ready, 'NFRIcons._ready not true').toBe(true);
+});
+
+test('V18: icon-registry.js contains MutationObserver fallback', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const res = await page.goto('/assets/js/icon-registry.js');
+  const body = await res.text();
+  expect(body).toContain('MutationObserver');
+  expect(body).toContain('data-icon-fallback');
+  expect(body).toContain('document.fonts');
+});
+
+test('V18: dual-engine screen has updated risk-to-run nav title', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const navTitle = await page.evaluate(() => {
+    var el = document.getElementById('dual-engine');
+    return el ? el.getAttribute('data-nav-title') : null;
+  });
+  expect(navTitle).toContain('risk to run');
+});
+
+test('V18: dual-engine h2 is One partner from risk to run', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const h2 = await page.locator('#dual-engine h2.slide-h').textContent();
+  expect(h2).toContain('risk to run');
+});
+
+test('V18: bump-build.ps1 script is accessible', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const res = await page.goto('/scripts/bump-build.ps1');
+  expect(res && res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('nfr-build');
+});
+
+test('V18: build fingerprint is v17 or v18', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  const content = await page.locator('meta[name="nfr-build"]').getAttribute('content');
+  expect(content).toMatch(/^v1[78]-[0-9a-f]{7}$/);
+});
