@@ -1838,3 +1838,23 @@ test('V26/6: unit-economics.js controls are rows inside one panel (not 6 equal c
   // Must NOT use the old card border-radius
   expect(body).not.toContain("border-radius:8px;padding:9px 14px");
 });
+
+// ── V26/7 hand-off tax and decision runway ──
+
+test('V26/7: dual-engine.js has local svgEl definition inside scene closure', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/dual-engine.js');
+  const body = await res.text();
+  // V26: svgEl must be defined locally in each scene closure
+  expect(body).toContain('function svgEl(');
+  expect(body).toContain('V26');
+});
+
+test('V26/7: next-move.js has V26 comment and artefact panel (not 4 equal cards)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/next-move.js');
+  const body = await res.text();
+  expect(body).toContain('V26');
+  // One panel with internal dividers
+  expect(body).toContain('border-left:1px solid rgba(88,201,148,0.18)');
+  // Must NOT use the old 4-card style (separate border-radius boxes)
+  expect(body).not.toContain("border-radius:6px;\\n        + 'padding:8px 10px");
+});

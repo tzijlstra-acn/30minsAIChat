@@ -1,6 +1,17 @@
-// Scene: dual-engine (Wow 5 -- Accenture removes the hand-off tax)
-// V19: Fragmented islands -> delivery spine -> integrated route -> proof points
+// Scene: dual-engine (Screen 10)
+// V26: Hand-off tax demonstration. Fragmented islands reveal the cost of context loss
+// at each boundary. Integrated system fields and a delivery spine show the continuous route.
 SceneDirector.register('dual-engine', function(container, manifest, reduced) {
+
+  // V26: svgEl must be defined locally inside each scene closure
+  function svgEl(tag, attrs) {
+    var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    if (attrs) Object.keys(attrs).forEach(function(k) {
+      if (k === 'style') { e.style.cssText = attrs[k]; }
+      else { e.setAttribute(k, attrs[k]); }
+    });
+    return e;
+  }
 
   var _timers = [];
   var _rafIds = [];
@@ -671,6 +682,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
     play: function() {
       _clearAll();
       build();
+      if (reduced) { _alive = true; applyFinalState(); return; }
       tl.play();
     },
     pause:  function() { tl.pause(); },

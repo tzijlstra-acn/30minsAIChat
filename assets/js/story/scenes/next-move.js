@@ -1,3 +1,6 @@
+// Scene: next-move (Screen 11)
+// V26: Decision runway. Three gates, four work lanes. Artefact footer is one panel,
+// not 4 equal cards. V26 box rule: the panel is one evidence output boundary.
 SceneDirector.register('next-move', function(container, manifest, reduced) {
   var AMBER  = '#F3B34C';
   var ACCENT = '#B44CFF';
@@ -58,7 +61,7 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
 
   function stamp(id) {
     var el = q(id);
-    if (el) { el.style.opacity = '1'; el.style.transform = 'scale(1)'; }
+    if (el) el.style.opacity = '1';
   }
 
   // Reveal all 4 pills for one gate column, staggered by 100ms each
@@ -178,27 +181,32 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
 
     root.appendChild(runway);
 
-    // ── ARTEFACTS FOOTER ──
+    // ── ARTEFACTS FOOTER: one evidence output panel, not 4 equal cards ──
+    // V26 box rule: one panel = one evidence record boundary. Items share dividers.
     var footer = document.createElement('div');
     footer.id = 'nm-footer';
-    footer.style.cssText = 'flex-shrink:0;height:100px;display:flex;flex-direction:row;'
-      + 'gap:8px;padding:8px 14px;opacity:0;transition:opacity .4s;box-sizing:border-box;';
+    footer.style.cssText = 'flex-shrink:0;padding:8px 14px;opacity:0;transition:opacity .4s;box-sizing:border-box;';
+
+    var artPanel = document.createElement('div');
+    artPanel.style.cssText = 'display:flex;flex-direction:row;height:80px;'
+      + 'border:1px solid rgba(88,201,148,0.4);border-radius:4px;overflow:hidden;';
 
     ARTEFACTS.forEach(function(a, ai) {
-      var box = document.createElement('div');
-      box.id = 'nm-art-' + ai;
-      box.style.cssText = 'flex:1;border:1.5px solid ' + a.color + ';border-radius:6px;'
-        + 'padding:8px 10px;display:flex;flex-direction:column;justify-content:center;gap:4px;'
-        + 'background:' + rgba(a.color, 0.06) + ';'
-        + 'opacity:0;transform:scale(0);'
-        + 'transition:opacity .3s,transform .35s cubic-bezier(.34,1.56,.64,1);';
-      box.innerHTML =
-        '<i class="ti ' + a.icon + '" style="color:' + a.color + ';font-size:16px;"></i>'
+      var item = document.createElement('div');
+      item.id = 'nm-art-' + ai;
+      item.style.cssText = 'flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px;'
+        + 'padding:8px 12px;'
+        + (ai > 0 ? 'border-left:1px solid rgba(88,201,148,0.18);' : '')
+        + 'background:' + rgba(a.color, 0.04) + ';'
+        + 'opacity:0;transition:opacity .3s;';
+      item.innerHTML =
+        '<i class="ti ' + a.icon + '" style="color:' + a.color + ';font-size:15px;"></i>'
         + '<div style="font-size:14px;font-weight:700;font-family:\'Space Grotesk\',sans-serif;'
         + 'color:' + a.color + ';line-height:1.3">' + a.label + '</div>';
-      footer.appendChild(box);
+      artPanel.appendChild(item);
     });
 
+    footer.appendChild(artPanel);
     root.appendChild(footer);
     container.appendChild(root);
   }
