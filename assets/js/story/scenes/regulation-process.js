@@ -4,7 +4,7 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
 
   var _timers = [];
 
-  var W = 1200, H = 520;
+  var W = 1240, H = 520;
   var CY = 60, CH = 340, CW = 200;
   var CXS = [20, 265, 510, 755, 1000];
   var ARR_Y = CY + CH / 2; // 230

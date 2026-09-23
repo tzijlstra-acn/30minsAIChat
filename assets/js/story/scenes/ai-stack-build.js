@@ -80,13 +80,13 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
 
     // 3-column grid: left-rail | center | right-rail
     var grid = document.createElement('div');
-    grid.style.cssText = 'display:grid;grid-template-columns:56px 1fr 56px;flex:1;min-height:0;';
+    grid.style.cssText = 'display:flex;flex-direction:row;flex:1;min-height:0;';
 
     // ── LEFT RAIL: Human accountability ──────────────────────────────────────
     var lRail = document.createElement('div');
     lRail.className = 'scene-node';
     lRail.dataset.beat = 'rail-left';
-    lRail.style.cssText = 'display:flex;align-items:stretch;opacity:0;transition:opacity .6s ease;';
+    lRail.style.cssText = 'flex-shrink:0;width:56px;display:flex;align-items:stretch;opacity:0;transition:opacity .6s ease;';
 
     var lBar = document.createElement('div');
     lBar.style.cssText = 'width:100%;display:flex;align-items:center;justify-content:center;'
@@ -94,7 +94,7 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
 
     var lTxt = document.createElement('div');
     lTxt.style.cssText = 'writing-mode:vertical-rl;transform:rotate(180deg);'
-      + 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.14em;'
+      + 'font-family:\'JetBrains Mono\',monospace;font-size:12px;letter-spacing:.10em;'
       + 'text-transform:uppercase;color:var(--green);';
     lTxt.textContent = 'Human accountability';
 
@@ -104,7 +104,7 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
 
     // ── CENTER COLUMN: terrain + token table ─────────────────────────────────
     var center = document.createElement('div');
-    center.style.cssText = 'display:flex;flex-direction:column;min-height:0;';
+    center.style.cssText = 'flex:1;display:flex;flex-direction:column;min-height:0;';
 
     // Terrain perspective wrapper.
     // perspective applied HERE -- not on the whole scene-root -- so text in
@@ -127,7 +127,7 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       + 'transition:opacity .45s ease-out,transform .45s cubic-bezier(.16,1,.3,1);';
 
     var fBadge = document.createElement('span');
-    fBadge.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
+    fBadge.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;'
       + 'letter-spacing:.12em;text-transform:uppercase;color:rgba(85,199,232,.52);flex-shrink:0;';
     fBadge.textContent = 'Foundation';
     foundation.appendChild(fBadge);
@@ -176,7 +176,7 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       lbl.textContent = ld.label;
 
       var tag = document.createElement('span');
-      tag.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8px;'
+      tag.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;'
         + 'letter-spacing:.1em;color:' + ld.tc + ';white-space:nowrap;flex-shrink:0;';
       tag.textContent = ld.tag;
 
@@ -216,14 +216,13 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       tokensWrap.appendChild(tok);
     });
 
-    center.appendChild(tokensWrap);
     grid.appendChild(center);
 
     // ── RIGHT RAIL: Security, control and evidence ────────────────────────────
     var rRail = document.createElement('div');
     rRail.className = 'scene-node';
     rRail.dataset.beat = 'rail-right';
-    rRail.style.cssText = 'display:flex;align-items:stretch;opacity:0;transition:opacity .6s ease;';
+    rRail.style.cssText = 'flex-shrink:0;width:56px;display:flex;align-items:stretch;opacity:0;transition:opacity .6s ease;';
 
     var rBar = document.createElement('div');
     rBar.style.cssText = 'width:100%;display:flex;align-items:center;justify-content:center;'
@@ -231,7 +230,7 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
 
     var rTxt = document.createElement('div');
     rTxt.style.cssText = 'writing-mode:vertical-rl;'
-      + 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.14em;'
+      + 'font-family:\'JetBrains Mono\',monospace;font-size:12px;letter-spacing:.10em;'
       + 'text-transform:uppercase;color:var(--cyan);';
     rTxt.textContent = 'Security, control and evidence';
 
@@ -240,6 +239,7 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
     grid.appendChild(rRail);
 
     root.appendChild(grid);
+    root.appendChild(tokensWrap);
 
     // ── IMPLICATION text ──────────────────────────────────────────────────────
     var impl = document.createElement('div');

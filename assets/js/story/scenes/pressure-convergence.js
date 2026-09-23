@@ -53,10 +53,15 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     defs.appendChild(makeMarker('arrow-cyan',   C_CYAN));
     svg.appendChild(defs);
 
-    // ── Stream labels (left side) ──
-    // Stream 1 -- obligation (y=80)
+    // ── Stream labels (left section x=30..250, arrows start at x=270) ──
+    // Each stream occupies a clear vertical band; labels end before arrow start.
+    // Stream 1 band: y=20..130  label=y55/73  arrow y=110
+    // Stream 2 band: y=165..285 label=y185/203 arrow y=225
+    // Stream 3 band: y=320..440 label=y335/353 arrow y=385
+
+    // Stream 1 -- obligation
     var lbl1 = svgEl('text', {
-      x: '30', y: '68',
+      x: '30', y: '55',
       fill: C_PINK,
       'font-family': "'Space Grotesk',sans-serif",
       'font-size': '15',
@@ -68,7 +73,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     svg.appendChild(lbl1);
 
     var sub1 = svgEl('text', {
-      x: '30', y: '84',
+      x: '30', y: '73',
       fill: C_PINK,
       'font-family': "'Space Grotesk',sans-serif",
       'font-size': '12',
@@ -79,9 +84,9 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     sub1.id = 'pc-sub1';
     svg.appendChild(sub1);
 
-    // Stream 2 -- cost (y=220)
+    // Stream 2 -- cost
     var lbl2 = svgEl('text', {
-      x: '30', y: '208',
+      x: '30', y: '185',
       fill: C_AMBER,
       'font-family': "'Space Grotesk',sans-serif",
       'font-size': '15',
@@ -93,7 +98,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     svg.appendChild(lbl2);
 
     var sub2 = svgEl('text', {
-      x: '30', y: '224',
+      x: '30', y: '203',
       fill: C_AMBER,
       'font-family': "'Space Grotesk',sans-serif",
       'font-size': '12',
@@ -104,9 +109,9 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     sub2.id = 'pc-sub2';
     svg.appendChild(sub2);
 
-    // Stream 3 -- AI (y=360)
+    // Stream 3 -- AI
     var lbl3 = svgEl('text', {
-      x: '30', y: '348',
+      x: '30', y: '335',
       fill: C_PURPLE,
       'font-family': "'Space Grotesk',sans-serif",
       'font-size': '15',
@@ -118,7 +123,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     svg.appendChild(lbl3);
 
     var sub3 = svgEl('text', {
-      x: '30', y: '364',
+      x: '30', y: '353',
       fill: C_PURPLE,
       'font-family': "'Space Grotesk',sans-serif",
       'font-size': '12',
@@ -129,10 +134,11 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     sub3.id = 'pc-sub3';
     svg.appendChild(sub3);
 
-    // ── Flow arrows (stream paths) ──
-    // Stream 1: y=100 straight line to bottleneck left edge x=500
+    // ── Flow arrows -- start at x=270, clear of all label text ──
+    // Bottleneck left edge: x=500
+    // Stream 1: straight line at y=110
     var path1 = svgEl('path', {
-      d: 'M 180 100 L 500 100',
+      d: 'M 270 110 L 498 110',
       stroke: C_PINK,
       'stroke-width': '2.5',
       'stroke-dasharray': '6 4',
@@ -143,9 +149,9 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     path1.id = 'pc-path1';
     svg.appendChild(path1);
 
-    // Stream 2: y=220 curve toward bottleneck centre
+    // Stream 2: straight line at y=225 (centre of bottleneck)
     var path2 = svgEl('path', {
-      d: 'M 180 220 C 340 220 440 220 500 220',
+      d: 'M 270 225 L 498 225',
       stroke: C_AMBER,
       'stroke-width': '2.5',
       fill: 'none',
@@ -155,9 +161,9 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     path2.id = 'pc-path2';
     svg.appendChild(path2);
 
-    // Stream 3: y=360 curve upward toward bottleneck
+    // Stream 3: curves upward from y=385 to bottleneck bottom at y=295
     var path3 = svgEl('path', {
-      d: 'M 180 360 C 340 360 440 260 500 240',
+      d: 'M 270 385 C 380 385 440 295 498 295',
       stroke: C_PURPLE,
       'stroke-width': '2.5',
       fill: 'none',
@@ -171,8 +177,8 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     var bottleneckG = svgEl('g', { opacity: '0', id: 'pc-bottleneck' });
 
     var bnRect = svgEl('rect', {
-      x: '500', y: '160',
-      width: '140', height: '130',
+      x: '500', y: '95',
+      width: '140', height: '215',
       rx: '10',
       fill: C_DARK,
       stroke: C_BORDER,
@@ -181,7 +187,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     bottleneckG.appendChild(bnRect);
 
     var bnTitle1 = svgEl('text', {
-      x: '570', y: '184',
+      x: '570', y: '125',
       'text-anchor': 'middle',
       fill: 'var(--text-1,#F0F0F0)',
       'font-family': "'Space Grotesk',sans-serif",
@@ -192,7 +198,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     bottleneckG.appendChild(bnTitle1);
 
     var bnTitle2 = svgEl('text', {
-      x: '570', y: '200',
+      x: '570', y: '141',
       'text-anchor': 'middle',
       fill: 'var(--text-1,#F0F0F0)',
       'font-family': "'Space Grotesk',sans-serif",
@@ -205,16 +211,16 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     svg.appendChild(bottleneckG);
 
     // ── Queue tokens (inside bottleneck) ──
-    var token1 = svgEl('rect', { x: '516', y: '214', width: '32', height: '18', rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER, 'stroke-width': '1', opacity: '0', id: 'pc-tok1' });
-    var token2 = svgEl('rect', { x: '516', y: '236', width: '32', height: '18', rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER, 'stroke-width': '1', opacity: '0', id: 'pc-tok2' });
-    var token3 = svgEl('rect', { x: '516', y: '258', width: '32', height: '18', rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER, 'stroke-width': '1', opacity: '0', id: 'pc-tok3' });
+    var token1 = svgEl('rect', { x: '516', y: '168', width: '32', height: '18', rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER, 'stroke-width': '1', opacity: '0', id: 'pc-tok1' });
+    var token2 = svgEl('rect', { x: '516', y: '192', width: '32', height: '18', rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER, 'stroke-width': '1', opacity: '0', id: 'pc-tok2' });
+    var token3 = svgEl('rect', { x: '516', y: '216', width: '32', height: '18', rx: '4', fill: 'rgba(255,255,255,0.12)', stroke: C_BORDER, 'stroke-width': '1', opacity: '0', id: 'pc-tok3' });
     svg.appendChild(token1);
     svg.appendChild(token2);
     svg.appendChild(token3);
 
     // Queue label
     var queueLbl = svgEl('text', {
-      x: '556', y: '226',
+      x: '556', y: '200',
       fill: 'var(--text-2,rgba(240,240,240,0.55))',
       'font-family': "'Space Grotesk',sans-serif",
       'font-size': '11',
@@ -227,7 +233,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     // ── Hand-off cost badge ──
     var badgeG = svgEl('g', { opacity: '0', id: 'pc-badge' });
     var badgeRect = svgEl('rect', {
-      x: '506', y: '286',
+      x: '506', y: '268',
       width: '128', height: '22',
       rx: '4',
       fill: 'rgba(243,179,76,0.18)',
@@ -236,7 +242,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     });
     badgeG.appendChild(badgeRect);
     var badgeTxt = svgEl('text', {
-      x: '570', y: '301',
+      x: '570', y: '283',
       'text-anchor': 'middle',
       fill: C_AMBER,
       'font-family': "'JetBrains Mono',monospace",
@@ -250,7 +256,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
 
     // ── Output arrow (bottleneck -> evidence-led) ──
     var outPath = svgEl('path', {
-      d: 'M 640 225 L 890 225',
+      d: 'M 640 202 L 890 202',
       stroke: C_CYAN,
       'stroke-width': '3',
       fill: 'none',
@@ -262,7 +268,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
 
     // Output label
     var outLbl1 = svgEl('text', {
-      x: '900', y: '210',
+      x: '900', y: '190',
       fill: C_CYAN,
       'font-family': "'Space Grotesk',sans-serif",
       'font-size': '15',
@@ -274,7 +280,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     svg.appendChild(outLbl1);
 
     var outLbl2 = svgEl('text', {
-      x: '900', y: '228',
+      x: '900', y: '210',
       fill: C_CYAN,
       'font-family': "'Space Grotesk',sans-serif",
       'font-size': '15',
@@ -323,7 +329,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
   function scaleIn(id) {
     var el = container.querySelector('#' + id);
     if (!el) return;
-    el.style.transformOrigin = '570px 225px';
+    el.style.transformOrigin = '570px 202px';
     el.style.transform = 'scale(0)';
     el.setAttribute('opacity', '1');
     el.style.transition = 'transform 400ms cubic-bezier(0.34,1.56,0.64,1)';
