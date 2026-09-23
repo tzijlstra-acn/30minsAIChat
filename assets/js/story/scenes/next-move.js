@@ -222,7 +222,12 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
     { delay: 4200, run: function() { stamp('nm-art-0'); }},
     { delay: 4600, run: function() { stamp('nm-art-1'); }},
     { delay: 5000, run: function() { stamp('nm-art-2'); }},
-    { delay: 5400, run: function() { stamp('nm-art-3'); }}
+    { delay: 5400, run: function() {
+      stamp('nm-art-3');
+      _timers.push(setTimeout(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 500));
+    }}
   ];
 
   var tl = createTimeline(steps);
@@ -244,6 +249,9 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
       _timers.forEach(clearTimeout); _timers = [];
       build();
       showAll();
+    },
+    getAccessibleSummary: function() {
+      return 'Three decision gates -- Frame the evidence, Prove on real work, Decide the next move -- are shown as a runway with four work lanes. Each gate contains work items across business, process, data and people dimensions. Four artefacts stamp in at the end: proof contract, architecture view, economics view, and next-step recommendation.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout); _timers = [];

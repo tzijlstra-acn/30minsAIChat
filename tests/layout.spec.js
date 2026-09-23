@@ -1491,3 +1491,31 @@ test('V25/6: unit-economics.js exposes getAccessibleSummary', async ({ page }) =
   expect(body).toContain('getAccessibleSummary');
   expect(body).toContain('no validated percentages');
 });
+
+// ── V25/7 scene additions: dual-engine, next-move ──
+
+test('V25/7: dual-engine.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/dual-engine.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/7: dual-engine.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/dual-engine.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('hand-off cost');
+});
+
+test('V25/7: next-move.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/next-move.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/7: next-move.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/next-move.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('Frame the evidence');
+});

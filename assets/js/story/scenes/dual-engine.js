@@ -643,13 +643,16 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       tweenX(tok2, 80, 1036, 248, 2200, null);
     }},
 
-    // Beat 9: Proof outcomes and supporting message appear
+    // Beat 9: Proof outcomes and supporting message appear + complete
     { delay: 10100, run: function() {
       var proofs = $id('de-proofs'), msg = $id('de-msg');
       if (proofs) proofs.setAttribute('opacity', '1');
       if (msg)    msg.setAttribute('opacity', '1');
       var preserved = $id('de-preserved');
       if (preserved) preserved.setAttribute('opacity', '1');
+      later(800, function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      });
     }}
   ];
 
@@ -683,6 +686,9 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       build();
       _alive = true;
       applyFinalState();
+    },
+    getAccessibleSummary: function() {
+      return 'Two acts: an obligation token crosses fragmented delivery islands, accumulating hand-off cost at each gap. The islands give way to a continuous delivery spine. The integrated token travels the full path without dimming. Three proof outcomes appear: faster evidence, lower avoidable effort, more value retained through reuse.';
     },
     destroy: function() {
       _clearAll();
