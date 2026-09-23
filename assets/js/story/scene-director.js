@@ -19,14 +19,18 @@ var SceneDirector = (function() {
   }
 
   function _showFallback(container, sceneId) {
-    // Preserve existing fallback content; surface a debug label if ?debug=1
-    var isDebug = window.location.search.indexOf('debug=1') !== -1;
-    if (isDebug) {
+    // Reveal pre-rendered data-scene-fallback SVG if present
+    var fb = container.querySelector('[data-scene-fallback]');
+    if (fb) {
+      fb.removeAttribute('hidden');
+      fb.style.display = 'block';
+      return;
+    }
+    if (window.location.search.indexOf('debug=1') !== -1) {
       var lbl = document.createElement('div');
-      lbl.style.cssText = 'position:absolute;top:4px;right:6px;font-family:JetBrains Mono,monospace;'
-        + 'font-size:9px;letter-spacing:.08em;color:var(--pink,#F0758A);pointer-events:none;z-index:9';
+      lbl.style.cssText = 'position:absolute;top:4px;right:4px;font-size:11px;'
+        + 'color:#ff6b6b;background:rgba(0,0,0,.7);padding:2px 6px;border-radius:3px;z-index:999;';
       lbl.textContent = 'scene-error: ' + sceneId;
-      container.style.position = 'relative';
       container.appendChild(lbl);
     }
   }

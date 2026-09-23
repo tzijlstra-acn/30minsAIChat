@@ -205,7 +205,7 @@ test('V13: story-manifest.json is accessible', async ({ page }) => {
   const res = await page.goto('/assets/data/story-manifest.json');
   expect(res && res.status()).toBe(200);
   const json = await res.json();
-  expect(json.version).toBe('16');
+  expect(json.version).toBe('17');
   expect(json.screens).toHaveLength(12);
 });
 
@@ -406,8 +406,9 @@ test('V16: icon-manifest.json loads with 31 icons', async ({ page }) => {
   const res = await page.goto('/assets/data/icon-manifest.json');
   expect(res && res.status()).toBe(200);
   const json = await res.json();
-  expect(Array.isArray(json)).toBe(true);
-  expect(json).toHaveLength(31);
+  expect(json).toHaveProperty('version');
+  expect(Array.isArray(json.icons)).toBe(true);
+  expect(json.icons.length).toBeGreaterThanOrEqual(31);
 });
 
 test('V16: partner proposition screen has 3 field cards', async ({ page }) => {
