@@ -1,6 +1,6 @@
-// Scene: work-role-shift (Screen 06) -- V23 three-lane redesign
-// Three synchronised lanes: AI execution | Human judgement | Evidence and accountability.
-// A continuous accountability line runs under all tasks -- always terminates at the named owner.
+// Scene: work-role-shift (Screen 06)
+// V26: Accountability relay. Three lanes (AI execution | Human judgement | Evidence) run in
+// parallel. A continuous accountability spine terminates at the named owner every time.
 // Source: RCSA Agent / Regulation Coverage -- ILLUSTRATIVE TASK SHIFT -- NOT A HEADCOUNT FORECAST
 
 SceneDirector.register('work-role-shift', function(container, manifest, reduced) {
@@ -89,6 +89,11 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
                          + 'padding:6px 0 6px;border-bottom:2px solid var(--border-1);'
                          + 'opacity:0;transition:opacity 300ms ease;';
 
+    // Spacer matching task-label column
+    var hdrSpacer = document.createElement('div');
+    hdrSpacer.style.cssText = 'flex:0 0 calc(33.33% + 2px);padding:0 8px;';
+    hdrRow.appendChild(hdrSpacer);
+
     var laneHdrs = [
       { label: 'AI and agent execution', color: ACCENT, flex: '1' },
       { label: 'Human judgement',        color: AMBER,  flex: '1' },
@@ -116,7 +121,7 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
                         + 'opacity:0;transform:translateY(8px);'
                         + 'transition:opacity 300ms ease,transform 300ms ease;';
 
-      // Row label line
+      // Row label + lane cells
       var lblRow = document.createElement('div');
       lblRow.style.cssText = 'display:flex;flex-direction:row;align-items:center;'
                            + 'padding:6px 0 4px;';
@@ -128,11 +133,8 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
       taskLabel.textContent = task.label;
       lblRow.appendChild(taskLabel);
 
-      // AI lane
       lblRow.appendChild(makeCell(task.ai, '1'));
-      // Human lane
       lblRow.appendChild(makeCell(task.human, '1'));
-      // Evidence lane
       lblRow.appendChild(makeCell(task.evidence, '1.1'));
 
       row.appendChild(lblRow);
@@ -141,7 +143,7 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
 
     root.appendChild(taskGrid);
 
-    // Accountability line (always visible under all tasks)
+    // Accountability spine -- always terminates at named owner
     var acctLine = document.createElement('div');
     acctLine.dataset.beat = 'acct-line';
     acctLine.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:10px;'
@@ -213,7 +215,9 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
   // ── public interface ──────────────────────────────────────────────────────
   return {
     play: function() {
+      _timers.forEach(clearTimeout); _timers = [];
       build();
+      if (reduced) { showAll(); return; }
       tl.play();
     },
     pause:  tl.pause,

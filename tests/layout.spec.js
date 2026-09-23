@@ -1767,3 +1767,38 @@ test('V26/4: transformation-system.js field labels are corner-positioned (not ce
   expect(body).toContain("'text-anchor': 'start'");
   expect(body).toContain('f.x + 10');
 });
+
+// ── V26/5 accountability relay and evidence test rig ──
+
+test('V26/5: work-role-shift.js comment updated to V26', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/work-role-shift.js');
+  const body = await res.text();
+  expect(body).toContain('V26');
+  expect(body).toContain('Accountability relay');
+});
+
+test('V26/5: work-role-shift.js play() clears timers before build', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/work-role-shift.js');
+  const body = await res.text();
+  // play() must clear _timers before build() (timer safety)
+  expect(body).toContain('_timers.forEach(clearTimeout); _timers = [];\n      build()');
+});
+
+test('V26/5: proof-loop.js uses connected pipeline strip (not 5 equal cards)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
+  const body = await res.text();
+  // Pipeline strip: one container div, steps separated by internal dividers
+  expect(body).toContain('pf-flow-row');
+  // Must NOT use per-node border-radius card style (no individual card padding)
+  expect(body).not.toContain("'border-radius:8px'");
+  expect(body).not.toContain('border-radius:8px');
+});
+
+test('V26/5: proof-loop.js gate is one human approval element (not 4 equal chips)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
+  const body = await res.text();
+  // Gate uses border:1px solid var(--green) on one container
+  expect(body).toContain('border:1px solid var(--green)');
+  // Options are internal dividers, not separate border-radius chips
+  expect(body).toContain('border-left:1px solid rgba(88,201,148,0.2)');
+});
