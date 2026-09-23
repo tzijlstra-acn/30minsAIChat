@@ -7,9 +7,9 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
   var processSteps = [
     { id: 'baseline', label: 'Baseline',  icon: 'ti-clipboard-data', note: 'Record the current process performance' },
     { id: 'run',      label: 'Run',       icon: 'ti-player-play',    note: 'Process OBL-27 through the AI path'   },
-    { id: 'compare',  label: 'Compare',   icon: 'ti-git-diff',       note: 'Compare AI output to analyst sample'  },
+    { id: 'compare',  label: 'Compare',   icon: 'ti-git-compare',    note: 'Compare AI output to analyst sample'  },
     { id: 'challenge',label: 'Challenge', icon: 'ti-user-check',     note: 'Analyst reviews and challenges draft' },
-    { id: 'decide',   label: 'Decide',    icon: 'ti-gate',           note: 'Sufficient evidence to continue?'     }
+    { id: 'decide',   label: 'Decide',    icon: 'ti-scale',          note: 'Sufficient evidence to continue?'     }
   ];
 
   var tracks = [
