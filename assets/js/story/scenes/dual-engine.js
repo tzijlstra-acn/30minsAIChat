@@ -299,7 +299,8 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
 
     var stripLblEl = svgEl('text', {
       id: 'de-strip-lbl',
-      x: 10, y: 358,
+      x: 600, y: 397,
+      'text-anchor': 'middle',
       'font-family': 'JetBrains Mono, monospace',
       'font-size': '9',
       'letter-spacing': '0.08em',

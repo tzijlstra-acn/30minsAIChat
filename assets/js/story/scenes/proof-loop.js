@@ -75,7 +75,7 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
 
     // -- Evidence tracks: MetricStrip-style rows ----------------------------
     var tracksSection = document.createElement('div');
-    tracksSection.style.cssText = 'display:flex;flex-direction:column;gap:8px;flex:1;';
+    tracksSection.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
 
     tracks.forEach(function(track) {
       var row = document.createElement('div');

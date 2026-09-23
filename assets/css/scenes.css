@@ -18,9 +18,10 @@
   gap: 10px;
   min-height: 0;
   flex-shrink: 0;
-  margin-bottom: 2px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
 }
+.screen-hdr-row .sec-tag { margin-bottom: 0; }
 
 /* Screen layout -- V25 geometry contract */
 .scene-screen {
