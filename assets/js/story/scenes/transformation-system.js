@@ -96,7 +96,7 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       fill: 'var(--text-2,#A4A9B7)', 'font-size': '13',
       'font-family': 'Space Grotesk,sans-serif'
     });
-    cSub.textContent = 'One obligation — nine connected objects';
+    cSub.textContent = 'One obligation -- nine connected objects';
     centreG.appendChild(cSub);
     var cBadge = svgEl('text', {
       x: cx + cw / 2, y: cy + 94,
@@ -104,7 +104,7 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       fill: 'var(--text-3,#71758A)', 'font-size': '10',
       'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1.5'
     });
-    cBadge.textContent = 'OBL-27 — ILLUSTRATIVE';
+    cBadge.textContent = 'OBL-27 -- ILLUSTRATIVE';
     centreG.appendChild(cBadge);
     svg.appendChild(centreG);
 
@@ -147,7 +147,7 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       fill: '#55C7E8', 'font-size': '11',
       'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1'
     });
-    reuseT.textContent = 'A second use case enters the same graph — regulation, policy and control nodes already exist';
+    reuseT.textContent = 'A second use case enters the same graph -- regulation, policy and control nodes already exist';
     reuseG.appendChild(reuseT);
     svg.appendChild(reuseG);
 
@@ -188,7 +188,7 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       fill: '#B44CFF', 'font-size': '12', 'font-weight': '700',
       'font-family': 'Space Grotesk,sans-serif'
     });
-    panelTitle.textContent = 'OBL-27 — nine connected objects';
+    panelTitle.textContent = 'OBL-27 -- nine connected objects';
     graphG.appendChild(panelTitle);
 
     // Grid layout driven by row/col from JSON (cols 0-3, rows 0-2)
