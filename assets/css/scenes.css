@@ -9,7 +9,7 @@
    Dense grids:   12px ok for supporting cell text in a labelled table
 */
 
-/* Screen layout — V17 geometry contract */
+/* Screen layout -- V17 geometry contract */
 .scene-screen {
   --screen-gap: 12px;
   flex: 1;

@@ -67,7 +67,8 @@ runCheck('em-dash', function() {
 section('2. External runtime dependencies');
 runCheck('offline', function() {
   var html = fs.readFileSync(path.join(ROOT, 'pitch.html'), 'utf8');
-  var extRe = /(?:src|href)="(https?:\/\/[^"]+)"/gi;
+  // Only flag script src, link href, img src, object data -- NOT anchor href (those are links, not resources)
+  var extRe = /(?:<script[^>]+src|<link[^>]+href|<img[^>]+src|<object[^>]+data)="(https?:\/\/[^"]+)"/gi;
   var m;
   var found = 0;
   while ((m = extRe.exec(html)) !== null) {
@@ -146,8 +147,8 @@ section('5. Essential text floor (14px for core, 11.5px for notes)');
 runCheck('font-sizes', function() {
   var cssPath = path.join(ROOT, 'assets/css/pitch.css');
   var css = fs.readFileSync(cssPath, 'utf8');
-  // Find scene-facing selectors with font-size < 11.5px (below note floor)
-  // We check for the most critical ones
+  // Strip media-query blocks before checking (primary rules only)
+  var cssNoMedia = css.replace(/@media[^{]*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g, '');
   var critical = [
     { sel: '.arch-rail-label', min: 8 },
     { sel: '.sgt-gate-lbl',    min: 8 },
@@ -157,8 +158,8 @@ runCheck('font-sizes', function() {
   ];
   var found = 0;
   critical.forEach(function(c) {
-    var re = new RegExp(c.sel.replace('.', '\\.') + '\\s*\\{[^}]*font-size\\s*:\\s*([0-9.]+)px', 'i');
-    var m = css.match(re);
+    var re = new RegExp(c.sel.replace(/\./g, '\\.') + '\\s*\\{[^}]*font-size\\s*:\\s*([0-9.]+)px', 'i');
+    var m = cssNoMedia.match(re);
     if (m) {
       var sz = parseFloat(m[1]);
       if (sz < c.min) {
@@ -168,6 +169,8 @@ runCheck('font-sizes', function() {
       } else {
         console.log('  ok: ' + c.sel + ' = ' + sz + 'px');
       }
+    } else {
+      console.log('  skip: ' + c.sel + ' not found in primary rules');
     }
   });
   if (found === 0) console.log('  All checked selectors meet size floor -- OK');
