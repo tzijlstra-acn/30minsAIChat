@@ -1,200 +1,262 @@
 // Scene: regulation-process (Screen 04 - WHERE IT APPLIES)
-// 4-lane process flow for Regulation Coverage -- Art. 7(3) obligation travels stage by stage.
-// Animation: obligation pill enters top, then stage columns light up one by one.
-// Design: stage header 12px, lane labels 14px, cell text 12px, human gates in green.
+// V15 overhaul: 5-beat cinematic executive flow replacing the 28-cell process grid.
+// source -> structure -> match -> challenge -> evidence
+// One obligation token (OBL-27) transforms as it moves through the flow.
 SceneDirector.register('regulation-process', function(container, manifest, reduced) {
 
-  var OBLIGATION = 'Art. 7(3): Coverage mapping';
-
-  var lanes = [
-    { id: 'work',       label: 'Work & Decisions',  color: 'var(--text-2)'  },
-    { id: 'data',       label: 'Data & Objects',     color: 'var(--cyan)'    },
-    { id: 'automation', label: 'AI & Automation',    color: 'var(--accent)'  },
-    { id: 'human',      label: 'Human & Control',    color: 'var(--green)'   }
-  ];
-
-  var stages = [
+  var beats = [
     {
-      id: 's1', label: 'Receive',
-      work:       'Receive regulation document',
-      data:       'Source document ingested',
-      automation: 'Classification agent',
-      human:      'Source validation gate'
+      id: 'source',
+      label: 'SOURCE',
+      sub: 'Regulatory text',
+      lane: 'Data',
+      laneColor: 'var(--cyan)',
+      color: 'var(--cyan)',
+      icon: 'ti-file-text',
+      hint: 'Document ingested'
     },
     {
-      id: 's2', label: 'Structure',
-      work:       'Extract obligation elements',
-      data:       'Obligation objects created',
-      automation: 'Extraction agent',
-      human:      null
+      id: 'structure',
+      label: 'STRUCTURE',
+      sub: 'Obligation record',
+      lane: 'AI',
+      laneColor: 'var(--accent)',
+      color: 'var(--accent)',
+      icon: 'ti-database',
+      hint: 'Elements extracted'
     },
     {
-      id: 's3', label: 'Match policies',
-      work:       'Map to policy coverage',
-      data:       'Policy records linked',
-      automation: 'Semantic matching agent',
-      human:      null
+      id: 'match',
+      label: 'MATCH',
+      sub: 'Policy and control',
+      lane: 'AI',
+      laneColor: 'var(--accent)',
+      color: 'var(--accent)',
+      icon: 'ti-sitemap',
+      hint: 'Coverage assessed'
     },
     {
-      id: 's4', label: 'Match controls',
-      work:       'Map to control library',
-      data:       'Control records linked',
-      automation: 'Gap analysis',
-      human:      null
+      id: 'challenge',
+      label: 'CHALLENGE',
+      sub: 'Gap and review',
+      lane: 'Human',
+      laneColor: 'var(--amber)',
+      color: 'var(--amber)',
+      icon: 'ti-user-check',
+      hint: 'Analyst challenge gate',
+      isGate: true
     },
     {
-      id: 's5', label: 'Assess gaps',
-      work:       'Identify gaps and redundancies',
-      data:       'Gap report generated',
-      automation: 'Draft recommendation',
-      human:      'Analyst challenge gate'
-    },
-    {
-      id: 's6', label: 'Approve',
-      work:       'Challenge assessment, approve',
-      data:       'Approval decision recorded',
-      automation: null,
-      human:      'Named approval gate'
-    },
-    {
-      id: 's7', label: 'Evidence',
-      work:       'Create evidence trail',
-      data:       'Evidence package created',
-      automation: 'Evidence packaging',
-      human:      'Ownership recorded'
+      id: 'evidence',
+      label: 'EVIDENCE',
+      sub: 'Approved action record',
+      lane: 'Evidence',
+      laneColor: 'var(--green)',
+      color: 'var(--green)',
+      icon: 'ti-certificate',
+      hint: 'Traceable and approved'
     }
   ];
 
-  var humanGates = ['s1', 's5', 's6'];
-
-  // Status labels that update on the obligation pill as stages progress
-  var stageStatus = {
-    s1: { text: 'Received',    cls: 's-extracting' },
-    s2: { text: 'Structuring', cls: 's-extracting' },
-    s3: { text: 'Matching',    cls: 's-mapping'    },
-    s4: { text: 'Mapping',     cls: 's-mapping'    },
-    s5: { text: 'Under review', cls: 's-reviewed'  },
-    s6: { text: 'Approved',    cls: 's-approved'   },
-    s7: { text: 'Evidenced',   cls: 's-evidenced'  }
-  };
-
-  function getCell(stage, laneId) { return stage[laneId] || null; }
+  var tokenFields = [
+    { key: 'ID',        val: 'OBL-27'              },
+    { key: 'Actor',     val: 'Control owner'        },
+    { key: 'Action',    val: 'Review access rights' },
+    { key: 'Condition', val: 'Critical systems'     },
+    { key: 'Frequency', val: 'Quarterly'            }
+  ];
 
   function build() {
     container.innerHTML = '';
-    var outer = document.createElement('div');
-    outer.style.cssText = 'display:flex;flex-direction:column;gap:8px;height:100%;padding:12px 16px;';
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;height:100%;padding:10px 16px;';
 
-    // ── Obligation tracker row ──
-    var tracker = document.createElement('div');
-    tracker.style.cssText = 'display:flex;align-items:center;gap:10px;flex-shrink:0;';
+    // ── Obligation token area ──
+    var tokenWrap = document.createElement('div');
+    tokenWrap.className = 'scene-node';
+    tokenWrap.dataset.tokenWrap = '1';
+    tokenWrap.style.cssText = 'flex-shrink:0;background:var(--surface-2);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px;transition:border-color 600ms,background 600ms;';
 
-    var trackerDot = document.createElement('div');
-    trackerDot.style.cssText = 'width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;';
-    tracker.appendChild(trackerDot);
+    // Raw text phase
+    var rawDiv = document.createElement('div');
+    rawDiv.dataset.phase = 'raw';
+    rawDiv.style.cssText = 'display:flex;align-items:center;gap:10px;';
+    rawDiv.innerHTML =
+      '<i class="ti ti-file-description" style="font-size:20px;color:var(--cyan);flex-shrink:0"></i>'
+      + '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);line-height:1.5">'
+      + '&ldquo;Art.&nbsp;7(3): Each institution shall assess coverage of obligations mapped to internal controls on a quarterly basis&hellip;&rdquo;'
+      + '</span>';
+    tokenWrap.appendChild(rawDiv);
 
-    var trackerTag = document.createElement('div');
-    trackerTag.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);white-space:nowrap;';
-    trackerTag.textContent = 'Obligation';
-    tracker.appendChild(trackerTag);
+    // Structured phase
+    var structDiv = document.createElement('div');
+    structDiv.dataset.phase = 'structured';
+    structDiv.style.cssText = 'display:none;align-items:center;gap:14px;flex-wrap:wrap;';
 
-    var trackerText = document.createElement('div');
-    trackerText.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:600;color:var(--text-1);';
-    trackerText.textContent = OBLIGATION;
-    tracker.appendChild(trackerText);
-
-    var trackerStatus = document.createElement('div');
-    trackerStatus.id = 'oblig-status';
-    trackerStatus.style.cssText = 'margin-left:auto;font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:3px;opacity:0;transition:opacity 300ms ease;';
-    tracker.appendChild(trackerStatus);
-
-    outer.appendChild(tracker);
-
-    // ── Stage grid ──
-    var table = document.createElement('div');
-    table.style.cssText = 'display:grid;grid-template-columns:100px repeat(' + stages.length + ',1fr);gap:3px;flex:1;min-height:0;font-family:\'JetBrains Mono\',monospace;';
-
-    // Header row: corner + stage labels
-    var corner = document.createElement('div');
-    corner.style.cssText = 'padding:4px;';
-    table.appendChild(corner);
-
-    stages.forEach(function(s) {
-      var hdr = document.createElement('div');
-      hdr.style.cssText = 'font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:4px 6px;border-bottom:1px solid var(--border-1);text-align:center;font-weight:600;';
-      hdr.textContent = s.label;
-      table.appendChild(hdr);
+    tokenFields.forEach(function(f, i) {
+      var field = document.createElement('div');
+      if (i === 0) {
+        field.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:12px;letter-spacing:.1em;font-weight:700;color:var(--accent);padding:3px 10px;background:rgba(180,76,255,.1);border:1px solid var(--accent);border-radius:4px;flex-shrink:0;';
+        field.textContent = f.val;
+      } else {
+        field.style.cssText = 'display:flex;flex-direction:column;gap:1px;';
+        field.innerHTML = '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)">' + f.key + '</span>'
+          + '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1)">' + f.val + '</span>';
+      }
+      structDiv.appendChild(field);
     });
+    tokenWrap.appendChild(structDiv);
+    wrap.appendChild(tokenWrap);
 
-    // Lane rows
-    lanes.forEach(function(lane) {
-      // Lane label cell
-      var laneLabel = document.createElement('div');
-      laneLabel.style.cssText = 'display:flex;align-items:center;justify-content:flex-end;padding-right:8px;';
+    // ── Flow spine ──
+    var spine = document.createElement('div');
+    spine.style.cssText = 'display:flex;align-items:stretch;gap:0;flex:1;min-height:0;';
 
-      var laneLabelInner = document.createElement('div');
-      laneLabelInner.style.cssText = 'font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:' + lane.color + ';font-weight:600;writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);';
-      laneLabelInner.textContent = lane.label;
-      laneLabel.appendChild(laneLabelInner);
-      table.appendChild(laneLabel);
+    beats.forEach(function(beat, i) {
+      // Node card
+      var node = document.createElement('div');
+      node.className = 'scene-node';
+      node.dataset.beat = 'beat-' + beat.id;
+      node.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px 10px;'
+        + 'background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;'
+        + 'min-width:0;text-align:center;position:relative;transition:border-color 400ms ease,background 400ms ease;';
 
-      // Stage cells for this lane
-      stages.forEach(function(stage) {
-        var content = getCell(stage, lane.id);
-        var isHumanGate = lane.id === 'human' && humanGates.indexOf(stage.id) > -1;
-        var cell = document.createElement('div');
-        cell.className = 'process-lane-cell';
-        cell.dataset.stageId = stage.id;
-        cell.dataset.laneId = lane.id;
+      if (beat.isGate) {
+        var gateMark = document.createElement('div');
+        gateMark.style.cssText = 'position:absolute;top:-9px;left:50%;transform:translateX(-50%);'
+          + 'font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;'
+          + 'color:var(--amber);background:var(--surface-1);padding:0 6px;border:1px solid var(--amber);border-radius:3px;white-space:nowrap;';
+        gateMark.textContent = 'Human gate';
+        node.appendChild(gateMark);
+      }
 
-        var baseStyle = 'border-radius:5px;padding:5px 7px;font-size:11px;line-height:1.3;min-height:0;display:flex;align-items:flex-start;';
-        if (content) {
-          var bgColor = 'var(--surface-1)';
-          var borderColor = isHumanGate ? 'var(--green)' : 'var(--border-1)';
-          var textColor = isHumanGate ? 'var(--green)'
-            : (lane.id === 'automation' ? 'var(--accent)' : 'var(--text-2)');
-          cell.style.cssText = baseStyle + 'background:' + bgColor + ';border:1px solid ' + borderColor + ';color:' + textColor + ';' + (isHumanGate ? 'font-weight:600;' : '');
+      var ico = document.createElement('div');
+      ico.style.cssText = 'font-size:24px;color:' + beat.color + ';margin-top:' + (beat.isGate ? '4px' : '0') + ';';
+      ico.innerHTML = '<i class="ti ' + beat.icon + '"></i>';
+      node.appendChild(ico);
 
-          // Human gate: prefix with diamond
-          if (isHumanGate) {
-            cell.innerHTML = '<span style="margin-right:5px;font-size:13px">&#9674;</span>' + content;
-          } else {
-            cell.textContent = content;
-          }
-        } else {
-          cell.style.cssText = baseStyle + 'background:transparent;';
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.14em;font-weight:700;color:' + beat.color + ';';
+      lbl.textContent = beat.label;
+      node.appendChild(lbl);
+
+      var sub = document.createElement('div');
+      sub.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);line-height:1.2;';
+      sub.textContent = beat.sub;
+      node.appendChild(sub);
+
+      var hint = document.createElement('div');
+      hint.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:11px;color:var(--text-3);line-height:1.3;margin-top:auto;';
+      hint.textContent = beat.hint;
+      node.appendChild(hint);
+
+      var badge = document.createElement('div');
+      badge.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;'
+        + 'color:' + beat.laneColor + ';border:1px solid ' + beat.laneColor + ';border-radius:3px;padding:2px 6px;opacity:.6;';
+      badge.textContent = beat.lane;
+      node.appendChild(badge);
+
+      spine.appendChild(node);
+
+      if (i < beats.length - 1) {
+        var connWrap = document.createElement('div');
+        connWrap.style.cssText = 'flex-shrink:0;width:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;';
+
+        var arr = document.createElement('div');
+        arr.className = 'scene-node';
+        arr.dataset.beat = 'arr-' + i;
+        arr.style.cssText = 'font-size:16px;color:var(--border-2);';
+        arr.textContent = '→';
+        connWrap.appendChild(arr);
+
+        // Gap indicator appears between MATCH and CHALLENGE
+        if (i === 2) {
+          var gapPin = document.createElement('div');
+          gapPin.className = 'scene-node';
+          gapPin.dataset.beat = 'gap-pin';
+          gapPin.style.cssText = 'position:absolute;top:8px;font-family:\'JetBrains Mono\',monospace;font-size:8px;'
+            + 'letter-spacing:.08em;text-transform:uppercase;color:var(--pink);background:rgba(240,117,138,.1);'
+            + 'border:1px solid var(--pink);border-radius:3px;padding:1px 5px;white-space:nowrap;';
+          gapPin.textContent = 'Gap';
+          connWrap.appendChild(gapPin);
         }
 
-        table.appendChild(cell);
-      });
+        spine.appendChild(connWrap);
+      }
     });
 
-    outer.appendChild(table);
-    container.appendChild(outer);
+    wrap.appendChild(spine);
+    container.appendChild(wrap);
   }
 
-  function updateStatus(stageId) {
-    var statusEl = container.querySelector('#oblig-status');
-    if (!statusEl) return;
-    var s = stageStatus[stageId];
-    if (!s) return;
-    // Remove all status classes
-    statusEl.className = '';
-    statusEl.classList.add('obligation-token-status', s.cls);
-    statusEl.textContent = s.text;
-    statusEl.style.opacity = '1';
-  }
-
-  var steps = stages.map(function(stage, i) {
-    return {
-      delay: 500 + i * 1100,
-      run: function() {
-        var cells = container.querySelectorAll('[data-stage-id="' + stage.id + '"]');
-        cells.forEach(function(c) { c.classList.add('visible'); });
-        updateStatus(stage.id);
+  function activateNode(beatId) {
+    beats.forEach(function(b) {
+      var n = container.querySelector('[data-beat="beat-' + b.id + '"]');
+      if (!n) return;
+      if (b.id === beatId) {
+        n.style.borderColor = b.color;
+        n.style.background = 'rgba(0,0,0,.12)';
       }
-    };
-  });
+    });
+  }
+
+  function showStructured() {
+    var rawDiv = container.querySelector('[data-phase="raw"]');
+    var structDiv = container.querySelector('[data-phase="structured"]');
+    if (rawDiv) rawDiv.style.display = 'none';
+    if (structDiv) structDiv.style.display = 'flex';
+  }
+
+  var steps = [
+    { delay: 300, run: function() {
+      var tw = container.querySelector('[data-token-wrap]');
+      if (tw) tw.classList.add('visible');
+      var n = container.querySelector('[data-beat="beat-source"]');
+      if (n) n.classList.add('visible');
+      activateNode('source');
+    }},
+    { delay: 1000, run: function() {
+      var a = container.querySelector('[data-beat="arr-0"]');
+      if (a) a.classList.add('visible');
+      showStructured();
+      var n = container.querySelector('[data-beat="beat-structure"]');
+      if (n) n.classList.add('visible');
+      activateNode('structure');
+    }},
+    { delay: 2000, run: function() {
+      var a = container.querySelector('[data-beat="arr-1"]');
+      if (a) a.classList.add('visible');
+      var n = container.querySelector('[data-beat="beat-match"]');
+      if (n) n.classList.add('visible');
+      activateNode('match');
+    }},
+    { delay: 3200, run: function() {
+      var g = container.querySelector('[data-beat="gap-pin"]');
+      if (g) g.classList.add('visible');
+      var a = container.querySelector('[data-beat="arr-2"]');
+      if (a) a.classList.add('visible');
+    }},
+    { delay: 4000, run: function() {
+      var n = container.querySelector('[data-beat="beat-challenge"]');
+      if (n) n.classList.add('visible');
+      activateNode('challenge');
+    }},
+    { delay: 5200, run: function() {
+      var a = container.querySelector('[data-beat="arr-3"]');
+      if (a) a.classList.add('visible');
+      var n = container.querySelector('[data-beat="beat-evidence"]');
+      if (n) {
+        n.classList.add('visible');
+        n.style.borderColor = 'var(--green)';
+        n.style.background = 'rgba(88,201,148,.07)';
+      }
+      var tw = container.querySelector('[data-token-wrap]');
+      if (tw) {
+        tw.style.borderColor = 'var(--green)';
+        tw.style.background = 'rgba(88,201,148,.06)';
+      }
+    }}
+  ];
 
   var tl = createTimeline(steps);
 
@@ -205,8 +267,19 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
     reset:   function() { build(); tl.reset(); },
     finish:  function() {
       build();
-      container.querySelectorAll('.process-lane-cell').forEach(function(c) { c.classList.add('visible'); });
-      updateStatus('s7');
+      container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
+      showStructured();
+      beats.forEach(function(b) { activateNode(b.id); });
+      var evNode = container.querySelector('[data-beat="beat-evidence"]');
+      if (evNode) {
+        evNode.style.borderColor = 'var(--green)';
+        evNode.style.background = 'rgba(88,201,148,.07)';
+      }
+      var tw = container.querySelector('[data-token-wrap]');
+      if (tw) {
+        tw.style.borderColor = 'var(--green)';
+        tw.style.background = 'rgba(88,201,148,.06)';
+      }
     },
     destroy: function() { container.innerHTML = ''; tl.destroy(); }
   };
