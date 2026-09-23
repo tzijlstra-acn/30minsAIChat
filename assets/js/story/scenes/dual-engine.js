@@ -198,6 +198,46 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
 
     svg.appendChild(gapG);
 
+    // ── Gap 1 hand-off cost items (V21) ───────────────────────────────────
+    var gap1CostsG = svgEl('g', { id: 'de-gap1-costs', opacity: '0' });
+    [
+      { y: 218, text: '· Context rebuilt' },
+      { y: 236, text: '· Req. translated' },
+      { y: 254, text: '· Evidence rebuilt' },
+      { y: 272, text: '· Ownership changed' },
+      { y: 290, text: '· Cost assumptions' }
+    ].forEach(function(item) {
+      var t = svgEl('text', {
+        x: 355, y: item.y,
+        'font-family': 'JetBrains Mono, monospace',
+        'font-size': '9',
+        fill: AMBER
+      });
+      t.textContent = item.text;
+      gap1CostsG.appendChild(t);
+    });
+    svg.appendChild(gap1CostsG);
+
+    // ── Gap 2 hand-off cost items (V21) ───────────────────────────────────
+    var gap2CostsG = svgEl('g', { id: 'de-gap2-costs', opacity: '0' });
+    [
+      { y: 218, text: '· Context rebuilt' },
+      { y: 236, text: '· Req. translated' },
+      { y: 254, text: '· Evidence rebuilt' },
+      { y: 272, text: '· Ownership changed' },
+      { y: 290, text: '· Cost assumptions' }
+    ].forEach(function(item) {
+      var t = svgEl('text', {
+        x: 765, y: item.y,
+        'font-family': 'JetBrains Mono, monospace',
+        'font-size': '9',
+        fill: AMBER
+      });
+      t.textContent = item.text;
+      gap2CostsG.appendChild(t);
+    });
+    svg.appendChild(gap2CostsG);
+
     // Waste summary
     var wasteEl = svgEl('text', {
       id: 'de-waste',
@@ -407,6 +447,30 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       proofsG.appendChild(ptxt);
     });
 
+    // ── Preserved context row (V21) ───────────────────────────────────────
+    var preservedG = svgEl('g', { id: 'de-preserved', opacity: '0' });
+    var preservedLbl = svgEl('text', {
+      x: 600, y: 408,
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': '9',
+      'letter-spacing': '0.1em',
+      fill: GREEN,
+      'text-anchor': 'middle'
+    });
+    preservedLbl.textContent = 'PRESERVED THROUGH ALL STAGES';
+    preservedG.appendChild(preservedLbl);
+    var preservedItems = svgEl('text', {
+      x: 600, y: 425,
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': '11',
+      fill: GREEN,
+      opacity: '0.7',
+      'text-anchor': 'middle'
+    });
+    preservedItems.textContent = 'Source context  ·  Decision rights  ·  Technical lineage  ·  Control evidence  ·  Unit economics';
+    preservedG.appendChild(preservedItems);
+    svg.appendChild(preservedG);
+
     svg.appendChild(proofsG);
 
     // Supporting message
@@ -439,6 +503,8 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       var g1l = $id('de-gap1-line'), g1t = $id('de-gap1-lbl');
       if (g1l) g1l.setAttribute('opacity', '1');
       if (g1t) g1t.setAttribute('opacity', '1');
+      var g1c = $id('de-gap1-costs');
+      if (g1c) g1c.setAttribute('opacity', '1');
 
       // Cross gap 1: x 240 -> 458, enter island 1
       later(480, function() {
@@ -453,6 +519,8 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
               var g2l = $id('de-gap2-line'), g2t = $id('de-gap2-lbl');
               if (g2l) g2l.setAttribute('opacity', '1');
               if (g2t) g2t.setAttribute('opacity', '1');
+              var g2c = $id('de-gap2-costs');
+              if (g2c) g2c.setAttribute('opacity', '1');
 
               // Cross gap 2: x 654 -> 868, enter island 2
               later(480, function() {
@@ -475,7 +543,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
   // Apply full final state (for finish / reduced motion)
   function applyFinalState() {
     // Hide Act 1 elements
-    ['de-islands', 'de-token', 'de-waste'].forEach(function(id) {
+    ['de-islands', 'de-token', 'de-waste', 'de-gap1-costs', 'de-gap2-costs'].forEach(function(id) {
       var el = $id(id);
       if (el) el.setAttribute('opacity', '0');
     });
@@ -512,6 +580,9 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
     var proofs = $id('de-proofs'), msg = $id('de-msg');
     if (proofs) proofs.setAttribute('opacity', '1');
     if (msg)    msg.setAttribute('opacity', '1');
+
+    var preserved = $id('de-preserved');
+    if (preserved) preserved.setAttribute('opacity', '1');
   }
 
   // Timeline steps
@@ -577,6 +648,8 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       var proofs = $id('de-proofs'), msg = $id('de-msg');
       if (proofs) proofs.setAttribute('opacity', '1');
       if (msg)    msg.setAttribute('opacity', '1');
+      var preserved = $id('de-preserved');
+      if (preserved) preserved.setAttribute('opacity', '1');
     }}
   ];
 
