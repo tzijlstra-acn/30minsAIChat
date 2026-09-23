@@ -8,7 +8,9 @@
     "test:layout": "playwright test tests/layout.spec.js",
     "serve": "python -m http.server 8080",
     "lint-copy": "python scripts/lint-copy.py",
-    "check-emdash": "python scripts/check-emdash.py"
+    "check-emdash": "python scripts/check-emdash.py",
+    "build": "pwsh -File scripts/bump-build.ps1",
+    "build:dry": "pwsh -File scripts/bump-build.ps1 --DryRun"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0"
