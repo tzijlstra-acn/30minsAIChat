@@ -1,62 +1,77 @@
-// Scene: work-role-shift (Screen 06)
-// V19: RCSA-style process showing task shift from human execution to AI/agent execution.
-// Two-column layout: AI and agent execution (left) | Human judgement (right).
-// Source-backed framing: COVERAGE MAPPING -- ILLUSTRATIVE TASK SHIFT -- NOT A HEADCOUNT FORECAST
+// Scene: work-role-shift (Screen 06) -- V23 three-lane redesign
+// Three synchronised lanes: AI execution | Human judgement | Evidence and accountability.
+// A continuous accountability line runs under all tasks -- always terminates at the named owner.
+// Source: RCSA Agent / Regulation Coverage -- ILLUSTRATIVE TASK SHIFT -- NOT A HEADCOUNT FORECAST
 
 SceneDirector.register('work-role-shift', function(container, manifest, reduced) {
 
+  var _timers = [];
   var ACCENT = '#B44CFF';
   var AMBER  = '#F3B34C';
-  var GREEN  = '#3EC97F';
+  var GREEN  = '#58C994';
+  var CYAN   = '#55C7E8';
 
-  var tasks = [
+  // Five RCSA-style tasks with three-lane assignments
+  var TASKS = [
     {
       label:     'Extract obligations from source',
-      aiPill:    { text: 'AI extraction',    type: 'accent' },
-      humanPill: null
+      ai:        { text: 'AI extraction',    color: ACCENT },
+      human:     null,
+      evidence:  { text: 'Structured record', color: CYAN }
     },
     {
       label:     'Match to policies and controls',
-      aiPill:    { text: 'AI pattern match', type: 'accent' },
-      humanPill: null
+      ai:        { text: 'AI pattern match', color: ACCENT },
+      human:     null,
+      evidence:  { text: 'Match log created', color: CYAN }
     },
     {
-      label:     'Identify gaps',
-      aiPill:    { text: 'AI gap analysis',  type: 'accent' },
-      humanPill: { text: 'CHALLENGE GAP',     final: false }
+      label:     'Identify gaps and draft rationale',
+      ai:        { text: 'AI gap analysis',  color: ACCENT },
+      human:     { text: 'Challenge',        color: AMBER },
+      evidence:  { text: 'Challenge recorded', color: AMBER }
     },
     {
-      label:     'Draft assessment',
-      aiPill:    { text: 'GenAI draft',      type: 'accent' },
-      humanPill: { text: 'REVIEW AND ADJUST', final: false }
+      label:     'Assemble control evidence',
+      ai:        { text: 'Agent assembles',  color: ACCENT },
+      human:     { text: 'Review and adjust', color: AMBER },
+      evidence:  { text: 'Control evidence',  color: GREEN }
     },
     {
-      label:     'Record evidence',
-      aiPill:    { text: 'Agent records',    type: 'green' },
-      humanPill: { text: 'FINAL APPROVAL',   final: true }
+      label:     'Final approval and sign-off',
+      ai:        null,
+      human:     { text: 'Risk owner approves', color: AMBER, final: true },
+      evidence:  { text: 'Provenance complete',  color: GREEN, final: true }
     }
   ];
 
-  var _timers = [];
-
   // ── pill factory ──────────────────────────────────────────────────────────
-  function makePill(text, type) {
+  function makePill(text, color, isFinal) {
     var span = document.createElement('span');
-    var base = 'border-radius:4px;padding:3px 8px;font-family:\'JetBrains Mono\',monospace;'
-             + 'font-size:11px;white-space:nowrap;flex-shrink:0;line-height:1.4;';
-    if (type === 'accent') {
-      span.style.cssText = base
-        + 'background:rgba(180,76,255,.1);border:1px solid ' + ACCENT + ';color:' + ACCENT + ';';
-    } else if (type === 'green') {
-      span.style.cssText = base
-        + 'background:rgba(62,201,127,.1);border:1px solid ' + GREEN + ';color:' + GREEN + ';';
-    } else {
-      // amber gate
-      span.style.cssText = base
-        + 'background:rgba(243,179,76,.1);border:1px solid ' + AMBER + ';color:' + AMBER + ';font-weight:700;';
-    }
+    var c = color || ACCENT;
+    span.style.cssText = 'display:inline-flex;align-items:center;padding:3px 9px;border-radius:4px;'
+      + 'font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.04em;'
+      + 'white-space:nowrap;flex-shrink:0;line-height:1.4;'
+      + 'background:' + c + '18;border:1px solid ' + c + ';color:' + c + ';'
+      + (isFinal ? 'font-weight:700;' : '');
     span.textContent = text;
     return span;
+  }
+
+  // ── cell factory ─────────────────────────────────────────────────────────
+  function makeCell(laneConfig, flex) {
+    var cell = document.createElement('div');
+    cell.style.cssText = 'flex:' + (flex || '1') + ';display:flex;align-items:center;gap:6px;'
+                       + 'min-width:0;padding:0 8px;';
+    if (laneConfig) {
+      cell.appendChild(makePill(laneConfig.text, laneConfig.color, laneConfig.final));
+    } else {
+      var dash = document.createElement('span');
+      dash.style.cssText = 'font-size:13px;color:var(--border-2);user-select:none;';
+      dash.textContent = '--';
+      cell.appendChild(dash);
+    }
+    return cell;
   }
 
   // ── DOM builder ───────────────────────────────────────────────────────────
@@ -65,89 +80,89 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
 
     var root = document.createElement('div');
     root.className = 'scene-root';
-    root.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;gap:8px;padding:4px 0;';
+    root.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;gap:0;';
 
-    // Process label -- always visible reference metadata
-    var procLabel = document.createElement('div');
-    procLabel.style.cssText = 'flex-shrink:0;font-family:\'JetBrains Mono\',monospace;font-size:10px;'
-                            + 'letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);';
-    procLabel.textContent = 'COVERAGE MAPPING -- ILLUSTRATIVE TASK SHIFT -- NOT A HEADCOUNT FORECAST';
-    root.appendChild(procLabel);
-
-    // Grid (flex column, fills remaining height)
-    var grid = document.createElement('div');
-    grid.style.cssText = 'flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;';
-
-    // Column header row
+    // Lane header row
     var hdrRow = document.createElement('div');
-    hdrRow.className = 'scene-node';
     hdrRow.dataset.beat = 'col-hdrs';
-    hdrRow.style.cssText = 'display:flex;flex-direction:row;gap:16px;padding-bottom:8px;'
-                         + 'border-bottom:2px solid var(--border-1);margin-bottom:2px;flex-shrink:0;';
+    hdrRow.style.cssText = 'display:flex;flex-direction:row;flex-shrink:0;'
+                         + 'padding:6px 0 6px;border-bottom:2px solid var(--border-1);'
+                         + 'opacity:0;transition:opacity 300ms ease;';
 
-    var leftHdr = document.createElement('div');
-    leftHdr.style.cssText = 'flex:0 0 45%;font-size:12px;font-weight:700;color:' + ACCENT + ';';
-    leftHdr.textContent = 'AI and agent execution';
-    hdrRow.appendChild(leftHdr);
+    var laneHdrs = [
+      { label: 'AI and agent execution', color: ACCENT, flex: '1' },
+      { label: 'Human judgement',        color: AMBER,  flex: '1' },
+      { label: 'Evidence and accountability', color: GREEN, flex: '1.1' }
+    ];
 
-    var rightHdr = document.createElement('div');
-    rightHdr.style.cssText = 'flex:0 0 55%;font-size:12px;font-weight:700;color:' + AMBER + ';';
-    rightHdr.textContent = 'Human judgement';
-    hdrRow.appendChild(rightHdr);
+    laneHdrs.forEach(function(h) {
+      var div = document.createElement('div');
+      div.style.cssText = 'flex:' + h.flex + ';padding:0 8px;font-family:\'Space Grotesk\',sans-serif;'
+                        + 'font-size:12px;font-weight:700;color:' + h.color + ';';
+      div.textContent = h.label;
+      hdrRow.appendChild(div);
+    });
+    root.appendChild(hdrRow);
 
-    grid.appendChild(hdrRow);
+    // Task rows (flex:1, share remaining height evenly)
+    var taskGrid = document.createElement('div');
+    taskGrid.style.cssText = 'display:flex;flex-direction:column;flex:1;min-height:0;';
 
-    // Task rows
-    tasks.forEach(function(task, i) {
+    TASKS.forEach(function(task, i) {
       var row = document.createElement('div');
       row.dataset.beat = 'task-row-' + i;
-      row.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:16px;'
-                        + 'padding:8px 0;border-bottom:1px solid var(--border-1);flex-shrink:0;'
-                        + 'opacity:0;transform:translateY(12px);'
-                        + 'transition:opacity 350ms ease,transform 350ms ease;';
+      row.style.cssText = 'display:flex;flex-direction:column;flex:1;min-height:0;'
+                        + 'border-bottom:1px solid var(--border-1);justify-content:center;'
+                        + 'opacity:0;transform:translateY(8px);'
+                        + 'transition:opacity 300ms ease,transform 300ms ease;';
 
-      // Left cell (45%): task label + AI pill
-      var leftCell = document.createElement('div');
-      leftCell.style.cssText = 'flex:0 0 45%;display:flex;align-items:center;gap:8px;';
+      // Row label line
+      var lblRow = document.createElement('div');
+      lblRow.style.cssText = 'display:flex;flex-direction:row;align-items:center;'
+                           + 'padding:6px 0 4px;';
 
-      var taskLabel = document.createElement('span');
-      taskLabel.style.cssText = 'font-size:14px;color:var(--text-1);flex:1;line-height:1.3;';
+      var taskLabel = document.createElement('div');
+      taskLabel.style.cssText = 'flex:0 0 calc(33.33% + 2px);padding:0 8px;font-size:13px;'
+                              + 'color:var(--text-1);line-height:1.3;font-weight:600;'
+                              + 'font-family:\'Space Grotesk\',sans-serif;';
       taskLabel.textContent = task.label;
-      leftCell.appendChild(taskLabel);
-      leftCell.appendChild(makePill(task.aiPill.text, task.aiPill.type));
-      row.appendChild(leftCell);
+      lblRow.appendChild(taskLabel);
 
-      // Right cell (55%): human gate pill or placeholder
-      var rightCell = document.createElement('div');
-      rightCell.style.cssText = 'flex:0 0 55%;display:flex;align-items:center;';
+      // AI lane
+      lblRow.appendChild(makeCell(task.ai, '1'));
+      // Human lane
+      lblRow.appendChild(makeCell(task.human, '1'));
+      // Evidence lane
+      lblRow.appendChild(makeCell(task.evidence, '1.1'));
 
-      if (task.humanPill) {
-        var pillText = task.humanPill.final ? '✓ ' + task.humanPill.text : task.humanPill.text;
-        var hPill = makePill(pillText, 'amber');
-        if (task.humanPill.final) {
-          hPill.dataset.finalGate = 'true';
-        }
-        rightCell.appendChild(hPill);
-      } else {
-        var placeholder = document.createElement('span');
-        placeholder.style.cssText = 'font-size:14px;color:var(--text-3);';
-        placeholder.textContent = '--';
-        rightCell.appendChild(placeholder);
-      }
-
-      row.appendChild(rightCell);
-      grid.appendChild(row);
+      row.appendChild(lblRow);
+      taskGrid.appendChild(row);
     });
 
-    root.appendChild(grid);
+    root.appendChild(taskGrid);
 
-    // Insight strip (fades in at end)
-    var insight = document.createElement('div');
-    insight.dataset.beat = 'insight';
-    insight.style.cssText = 'flex-shrink:0;font-size:13px;font-style:italic;color:var(--text-2);'
-                          + 'padding:6px 0 2px;opacity:0;transition:opacity 500ms ease;';
-    insight.textContent = 'Accountability remains named. Judgement remains human. Only repeatable execution may shift.';
-    root.appendChild(insight);
+    // Accountability line (always visible under all tasks)
+    var acctLine = document.createElement('div');
+    acctLine.dataset.beat = 'acct-line';
+    acctLine.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:10px;'
+                           + 'padding:7px 8px;border-top:2px solid ' + GREEN + ';'
+                           + 'opacity:0;transition:opacity 400ms ease;';
+
+    var acctLabel = document.createElement('span');
+    acctLabel.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
+                            + 'letter-spacing:.12em;text-transform:uppercase;color:' + GREEN + ';'
+                            + 'white-space:nowrap;';
+    acctLabel.textContent = 'ACCOUNTABILITY REMAINS HUMAN THROUGHOUT';
+    acctLine.appendChild(acctLabel);
+
+    var acctOwner = document.createElement('span');
+    acctOwner.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
+                            + 'letter-spacing:.08em;text-transform:uppercase;color:' + AMBER + ';'
+                            + 'margin-left:auto;white-space:nowrap;';
+    acctOwner.textContent = 'RISK OWNER: NAMED -- ACCOUNTABLE';
+    acctLine.appendChild(acctOwner);
+
+    root.appendChild(acctLine);
 
     container.appendChild(root);
   }
@@ -155,7 +170,7 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
   // ── reveal helpers ────────────────────────────────────────────────────────
   function revealHeaders() {
     var hdr = container.querySelector('[data-beat="col-hdrs"]');
-    if (hdr) hdr.classList.add('visible');
+    if (hdr) hdr.style.opacity = '1';
   }
 
   function revealRow(idx) {
@@ -166,40 +181,26 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
     }
   }
 
-  function pulseGate() {
-    var gate = container.querySelector('[data-final-gate]');
-    if (!gate) return;
-    gate.style.transition = 'transform 150ms ease';
-    gate.style.transform = 'scale(1.1)';
-    _timers.push(setTimeout(function() {
-      var g = container.querySelector('[data-final-gate]');
-      if (g) g.style.transform = 'scale(1)';
-    }, 200));
-  }
-
-  function showInsight() {
-    var ins = container.querySelector('[data-beat="insight"]');
-    if (ins) ins.style.opacity = '1';
+  function revealAcctLine() {
+    var line = container.querySelector('[data-beat="acct-line"]');
+    if (line) line.style.opacity = '1';
   }
 
   function showAll() {
     revealHeaders();
-    for (var i = 0; i < tasks.length; i++) { revealRow(i); }
-    showInsight();
+    for (var i = 0; i < TASKS.length; i++) { revealRow(i); }
+    revealAcctLine();
   }
 
-  // ── timeline steps ────────────────────────────────────────────────────────
+  // ── timeline ──────────────────────────────────────────────────────────────
   var steps = [
     { delay: 100,  run: revealHeaders },
-    { delay: 400,  run: function() { revealRow(0); } },
-    { delay: 900,  run: function() { revealRow(1); } },
-    { delay: 1400, run: function() { revealRow(2); } },
-    { delay: 1900, run: function() { revealRow(3); } },
-    { delay: 2400, run: function() {
-      revealRow(4);
-      _timers.push(setTimeout(pulseGate, 300));
-    }},
-    { delay: 3200, run: showInsight }
+    { delay: 350,  run: function() { revealRow(0); } },
+    { delay: 700,  run: function() { revealRow(1); } },
+    { delay: 1050, run: function() { revealRow(2); } },
+    { delay: 1400, run: function() { revealRow(3); } },
+    { delay: 1750, run: function() { revealRow(4); } },
+    { delay: 2200, run: revealAcctLine }
   ];
 
   var tl = createTimeline(steps);
@@ -213,20 +214,17 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
     pause:  tl.pause,
     resume: tl.resume,
     reset: function() {
-      _timers.forEach(clearTimeout);
-      _timers = [];
+      _timers.forEach(clearTimeout); _timers = [];
       build();
       tl.reset();
     },
     finish: function() {
-      _timers.forEach(clearTimeout);
-      _timers = [];
+      _timers.forEach(clearTimeout); _timers = [];
       build();
       showAll();
     },
     destroy: function() {
-      _timers.forEach(clearTimeout);
-      _timers = [];
+      _timers.forEach(clearTimeout); _timers = [];
       container.innerHTML = '';
       tl.destroy();
     }

@@ -1,100 +1,95 @@
-// icon-registry.js -- V18 icon system: audit + geometric fallback for blank slots
+// ── ICON REGISTRY V23 ──
+// Upgrades <i class="ti ti-*"> elements to inline SVG <use> references
+// pointing at assets/icons/tabler-sprite.svg#ti-{name}.
+// Falls back gracefully when a symbol is not in the sprite.
+// The CSS font class remains as a secondary rendering path.
+
 (function() {
-  'use strict';
+  var SPRITE_PATH = 'assets/icons/tabler-sprite.svg';
 
-  var FALLBACK_THRESHOLD_PX = 6;
-
-  var DIAMOND = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" '
-    + 'width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" '
-    + 'stroke-linecap="round" stroke-linejoin="round" '
-    + 'aria-hidden="true" data-icon-fallback="1" '
-    + 'style="display:inline-block;vertical-align:middle;opacity:.55">'
-    + '<path d="M12 3 L21 12 L12 21 L3 12 Z"/>'
-    + '</svg>';
-
-  function _applyFallbacks(icons) {
-    var replaced = 0;
-    for (var i = 0; i < icons.length; i++) {
-      var el = icons[i];
-      if (el.dataset.iconChecked) continue;
-      el.dataset.iconChecked = '1';
-      var rect = el.getBoundingClientRect();
-      if (rect.width < FALLBACK_THRESHOLD_PX || rect.height < FALLBACK_THRESHOLD_PX) {
-        var wrapper = document.createElement('span');
-        wrapper.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;'
-          + 'width:1em;height:1em;vertical-align:middle;';
-        wrapper.innerHTML = DIAMOND;
-        el.parentNode.insertBefore(wrapper, el);
-        el.parentNode.removeChild(el);
-        replaced++;
-      }
-    }
-    return replaced;
-  }
-
-  var NFRIcons = {
-    _ready: false,
-
-    init: function() {
-      if (this._ready) return;
-      this._ready = true;
-
-      var style = document.createElement('style');
-      style.textContent = '.ti{display:inline-flex;align-items:center;justify-content:center;line-height:1;}';
-      document.head.appendChild(style);
-
-      var self = this;
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(function() { self._scan(); });
-      } else {
-        setTimeout(function() { self._scan(); }, 2000);
-      }
-    },
-
-    _scan: function() {
-      var icons = document.querySelectorAll('i.ti');
-      var replaced = _applyFallbacks(icons);
-      if (replaced > 0) {
-        console.warn('[NFRIcons] ' + replaced + ' blank icon slot(s) replaced with geometric fallback.');
-      }
-
-      var observer = new MutationObserver(function(mutations) {
-        var added = [];
-        mutations.forEach(function(m) {
-          m.addedNodes.forEach(function(n) {
-            if (n.nodeType === 1) {
-              if (n.matches && n.matches('i.ti')) added.push(n);
-              else if (n.querySelectorAll) {
-                n.querySelectorAll('i.ti').forEach(function(el) { added.push(el); });
-              }
-            }
-          });
-        });
-        if (added.length) _applyFallbacks(added);
-      });
-
-      observer.observe(document.body, { childList: true, subtree: true });
-    },
-
-    audit: function() {
-      var icons = document.querySelectorAll('i.ti');
-      var issues = [];
-      icons.forEach(function(el) {
-        var rect = el.getBoundingClientRect();
-        if (rect.width < FALLBACK_THRESHOLD_PX || rect.height < FALLBACK_THRESHOLD_PX) {
-          issues.push(el.className);
-        }
-      });
-      if (issues.length > 0) {
-        console.warn('[NFRIcons] Possible rendering issues:', issues);
-      } else {
-        console.info('[NFRIcons] Audit OK: ' + icons.length + ' icons, no blank slots.');
-      }
-      return issues;
-    }
+  // Known sprite symbols (matches tabler-sprite.svg)
+  var SPRITE_SYMBOLS = {
+    'ti-menu-2': 1, 'ti-list': 1, 'ti-player-skip-back': 1,
+    'ti-player-pause': 1, 'ti-player-play': 1, 'ti-x': 1,
+    'ti-mail': 1, 'ti-book': 1, 'ti-file-text': 1, 'ti-sitemap': 1,
+    'ti-database': 1, 'ti-shield': 1, 'ti-shield-check': 1,
+    'ti-clock': 1, 'ti-chart-bar': 1, 'ti-coin': 1,
+    'ti-check': 1, 'ti-alert-triangle': 1, 'ti-info-circle': 1,
+    'ti-external-link': 1, 'ti-arrow-right': 1, 'ti-arrow-right-circle': 1,
+    'ti-robot': 1, 'ti-user-check': 1, 'ti-sparkles': 1,
+    'ti-layers': 1, 'ti-scale': 1, 'ti-certificate': 1, 'ti-target': 1
   };
 
-  window.NFRIcons = NFRIcons;
+  function getIconName(el) {
+    var classes = Array.prototype.slice.call(el.classList);
+    for (var i = 0; i < classes.length; i++) {
+      if (classes[i].indexOf('ti-') === 0 && classes[i] !== 'ti') {
+        return classes[i];
+      }
+    }
+    return null;
+  }
 
-  document.addEventListener('DOMContentLoaded', function() { NFRIcons.init(); });
+  function upgradeSingle(el) {
+    var name = getIconName(el);
+    if (!name || !SPRITE_SYMBOLS[name]) return;
+
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', '1em');
+    svg.setAttribute('height', '1em');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'display:inline-block;vertical-align:-0.125em;fill:none;stroke:currentColor;'
+                      + 'stroke-width:2;stroke-linecap:round;stroke-linejoin:round;';
+
+    var use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', SPRITE_PATH + '#' + name);
+    svg.appendChild(use);
+
+    // Transfer class and style to wrapper span (keep ti class for CSS fallback)
+    var span = document.createElement('span');
+    span.className = el.className;
+    span.setAttribute('aria-hidden', 'true');
+    span.style.cssText = 'display:inline-flex;align-items:center;font-size:inherit;';
+    span.appendChild(svg);
+
+    el.parentNode.replaceChild(span, el);
+  }
+
+  function upgradeAll() {
+    var icons = document.querySelectorAll('i.ti');
+    var arr = Array.prototype.slice.call(icons);
+    arr.forEach(upgradeSingle);
+  }
+
+  // Upgrade on DOMContentLoaded, then watch for dynamic additions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', upgradeAll);
+  } else {
+    upgradeAll();
+  }
+
+  // MutationObserver fallback: catch icons injected after load (scene renders, etc.)
+  if (window.MutationObserver) {
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        m.addedNodes.forEach(function(node) {
+          if (node.nodeType !== 1) return;
+          if (node.tagName === 'I' && node.classList.contains('ti')) {
+            upgradeSingle(node);
+          } else {
+            var found = node.querySelectorAll ? node.querySelectorAll('i.ti') : [];
+            Array.prototype.slice.call(found).forEach(upgradeSingle);
+          }
+        });
+      });
+    });
+    observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
+  }
+
+  // Expose for manual use by scenes that render icons programmatically
+  window.NFRIconRegistry = {
+    upgrade: upgradeAll,
+    upgradeSingle: upgradeSingle
+  };
 }());
