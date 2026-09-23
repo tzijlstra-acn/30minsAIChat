@@ -1,6 +1,6 @@
 // Scene: transformation-system (Screen 05 - WHERE IT APPLIES)
-// V16 overhaul: knowledge graph as centre + five systems around it.
-// Sequence: expand graph from obligation -> assemble systems -> show reuse.
+// V17: static hub SVG rendered immediately (no blank states).
+// Animation enhances the static visual. Knowledge graph loaded async on top.
 SceneDirector.register('transformation-system', function(container, manifest, reduced) {
 
   var GRAPH_DATA_URL = './assets/data/context-graph/regulation-coverage.json';
@@ -12,6 +12,91 @@ SceneDirector.register('transformation-system', function(container, manifest, re
     { id: 'governance', label: 'Governance and assurance',color: 'var(--green)',  nodeIds: ['ctl-001','evd-001'] },
     { id: 'value',      label: 'Value and ownership',     color: 'var(--pink)',   nodeIds: ['evd-001','iss-001'] }
   ];
+
+  // Static hub-and-spoke SVG: rendered immediately at full opacity.
+  // ViewBox="0 0 800 400" fills the wide scene stage with preserveAspectRatio.
+  var HUB_NODES = [
+    { id: 'work',       label: 'Work and decisions',      color: '#55C7E8', x: 30,  y: 50,  w: 200, h: 80  },
+    { id: 'data',       label: 'Data and technology',     color: '#B44CFF', x: 30,  y: 270, w: 200, h: 80  },
+    { id: 'governance', label: 'Governance and assurance',color: '#58C994', x: 570, y: 50,  w: 200, h: 80  },
+    { id: 'value',      label: 'Value and ownership',     color: '#F0758A', x: 570, y: 270, w: 200, h: 80  },
+    { id: 'people',     label: 'People and roles',        color: '#F3B34C', x: 250, y: 340, w: 300, h: 60  }
+  ];
+  var HUB_CENTER = { x: 250, y: 140, w: 300, h: 120 };
+
+  // Line endpoints: from (right or left edge of system node) to (center rect edge)
+  var HUB_LINES = [
+    { from: [230, 90],  to: [250, 185] },
+    { from: [230, 310], to: [250, 225] },
+    { from: [570, 90],  to: [550, 185] },
+    { from: [570, 310], to: [550, 225] },
+    { from: [400, 340], to: [400, 260] }
+  ];
+
+  function buildStaticHub() {
+    container.innerHTML = '';
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 800 400');
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.style.cssText = 'width:100%;height:100%;display:block;';
+
+    // Connector lines (below nodes)
+    HUB_LINES.forEach(function(line) {
+      var l = svgEl('line', {
+        x1: line.from[0], y1: line.from[1], x2: line.to[0], y2: line.to[1],
+        stroke: 'var(--border-1,#343949)', 'stroke-width': '1.5'
+      });
+      svg.appendChild(l);
+    });
+
+    // Centre rect
+    var cx = HUB_CENTER.x, cy = HUB_CENTER.y, cw = HUB_CENTER.w, ch = HUB_CENTER.h;
+    svg.appendChild(svgEl('rect', {
+      x: cx, y: cy, width: cw, height: ch, rx: '10',
+      fill: 'rgba(180,76,255,.06)', stroke: 'rgba(180,76,255,.5)', 'stroke-width': '2'
+    }));
+    var cLabel = svgEl('text', {
+      x: cx + cw / 2, y: cy + 44, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      fill: '#B44CFF', 'font-size': '17', 'font-family': 'Space Grotesk,sans-serif', 'font-weight': '700'
+    });
+    cLabel.textContent = 'Regulation Coverage';
+    svg.appendChild(cLabel);
+    var cSub = svgEl('text', {
+      x: cx + cw / 2, y: cy + 72, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      fill: 'var(--text-2,#A4A9B7)', 'font-size': '13', 'font-family': 'Space Grotesk,sans-serif'
+    });
+    cSub.textContent = 'One obligation -- nine connected objects';
+    svg.appendChild(cSub);
+    var cBadge = svgEl('text', {
+      x: cx + cw / 2, y: cy + 95, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      fill: 'var(--text-3,#71758A)', 'font-size': '10', 'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1.5'
+    });
+    cBadge.textContent = 'OBL-27 -- ILLUSTRATIVE';
+    svg.appendChild(cBadge);
+
+    // System nodes
+    HUB_NODES.forEach(function(n) {
+      svg.appendChild(svgEl('rect', {
+        x: n.x, y: n.y, width: n.w, height: n.h, rx: '8',
+        fill: 'var(--surface-1,#191C25)', stroke: n.color, 'stroke-width': '1.5'
+      }));
+      // Colour strip at top
+      svg.appendChild(svgEl('rect', {
+        x: n.x, y: n.y, width: n.w, height: '4', rx: '8',
+        fill: n.color, opacity: '0.7'
+      }));
+      var nLabel = svgEl('text', {
+        x: n.x + n.w / 2, y: n.y + n.h / 2 + (n.h > 70 ? -6 : 0),
+        'text-anchor': 'middle', 'dominant-baseline': 'middle',
+        fill: 'var(--text-1,#E8E9F0)', 'font-size': '14',
+        'font-family': 'Space Grotesk,sans-serif', 'font-weight': '700'
+      });
+      nLabel.textContent = n.label;
+      svg.appendChild(nLabel);
+    });
+
+    container.appendChild(svg);
+  }
 
   var _graph = null;
   var _graphData = null;
@@ -237,24 +322,52 @@ SceneDirector.register('transformation-system', function(container, manifest, re
     return steps;
   }
 
-  // Async play: load graph data first, then start timeline
+  // play: show static hub immediately, then async load graph and animate on top
   function play() {
-    build(function(hasGraph) {
-      _tl = createTimeline(makeSteps(hasGraph));
-      _tl.play();
+    if (_tl) { _tl.destroy(); _tl = null; }
+    _graph = null;
+
+    // Static hub is visible instantly -- no blank state
+    buildStaticHub();
+
+    if (reduced) { return; } // static hub is the final state for reduced-motion
+
+    // Async: try to load the graph; if it loads, replace hub with animated V16 layout
+    loadGraph(function(data) {
+      if (data) {
+        // Brief cross-fade to V16 two-column layout
+        container.style.cssText = 'opacity:0;transition:opacity 250ms ease;';
+        setTimeout(function() {
+          buildWithGraph(data);
+          container.style.cssText = 'transition:opacity 250ms ease;';
+          requestAnimationFrame(function() { container.style.opacity = '1'; });
+          _tl = createTimeline(makeSteps(true));
+          _tl.play();
+        }, 260);
+      }
+      // If no data: static hub stays as-is (fully visible, no animation needed)
     });
   }
 
   function finish() {
-    build(function(hasGraph) {
-      // Show all nodes
+    if (_tl) { _tl.destroy(); _tl = null; }
+    _graph = null;
+    // Always show the static hub as the completed final state
+    buildStaticHub();
+    // If graph data is cached, use the richer layout
+    if (_graphData) {
+      buildWithGraph(_graphData);
       container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
-      if (hasGraph && _graph) {
-        _graph.showAll();
-        _graph.highlightPath(['reg-001','obl-001','pol-001','ctl-001','prc-001','evd-001']);
-        _graph.showReuseIndicator(['prc-001','evd-001']);
+      if (typeof KnowledgeGraph !== 'undefined') {
+        var graphInner = container.querySelector('.kg-container > div');
+        if (graphInner) {
+          _graph = KnowledgeGraph.create(graphInner, _graphData);
+          _graph.showAll();
+          _graph.highlightPath(['reg-001','obl-001','pol-001','ctl-001','prc-001','evd-001']);
+          _graph.showReuseIndicator(['prc-001','evd-001']);
+        }
       }
-    });
+    }
   }
 
   return {
@@ -264,7 +377,7 @@ SceneDirector.register('transformation-system', function(container, manifest, re
     reset:  function() {
       if (_tl) { _tl.destroy(); _tl = null; }
       _graph = null;
-      build(function(hasGraph) {});
+      buildStaticHub();
     },
     finish:  finish,
     destroy: function() {

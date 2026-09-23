@@ -370,12 +370,12 @@ test('V16: build fingerprint is v16', async ({ page }) => {
   expect(content).toMatch(/^v16-[0-9a-f]{7}$/);
 });
 
-test('V16: story-manifest.json version is 16', async ({ page }) => {
+test('V16: story-manifest.json version is 16 or later', async ({ page }) => {
   await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
   const res = await page.goto('/assets/data/story-manifest.json');
   expect(res && res.status()).toBe(200);
   const json = await res.json();
-  expect(json.version).toBe('16');
+  expect(parseInt(json.version)).toBeGreaterThanOrEqual(16);
 });
 
 test('V16: KnowledgeGraph global is defined', async ({ page }) => {
@@ -452,4 +452,158 @@ test('V16: scale-architecture scene has shared context layer header', async ({ p
   });
   await page.waitForTimeout(500);
   await expect(page.locator('#scale-architecture')).toBeAttached();
+});
+
+// ── V17 HOTFIX TESTS ──
+
+test('V17: story-manifest.json version is 17', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  const res = await page.goto('/assets/data/story-manifest.json');
+  const json = await res.json();
+  expect(json.version).toBe('17');
+});
+
+test('V17: cover scene-stage is data-size=compact (not hero)', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  const size = await page.locator('#cover .scene-stage').getAttribute('data-size');
+  expect(size).toBe('compact');
+});
+
+const GEOMETRY_VIEWPORTS = [
+  { name: '1366x768', width: 1366, height: 768 },
+  { name: '1440x900', width: 1440, height: 900 },
+  { name: '1920x1080', width: 1920, height: 1080 }
+];
+
+for (const vp of GEOMETRY_VIEWPORTS) {
+  test.describe(`V17 Geometry [${vp.name}]`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } });
+
+    test('cover scene-stage height <= 320px', async ({ page }) => {
+      await gotoPage(page, '/pitch.html');
+      await page.waitForTimeout(400);
+      const h = await page.evaluate(() => {
+        const stage = document.querySelector('#cover .scene-stage');
+        return stage ? stage.getBoundingClientRect().height : -1;
+      });
+      expect(h, `Cover stage height at ${vp.name}: ${h}px`).toBeLessThanOrEqual(320);
+      expect(h, `Cover stage height below minimum`).toBeGreaterThanOrEqual(250);
+    });
+
+    test('cover SVG viewBox is fixed 1120 x 280', async ({ page }) => {
+      await gotoPage(page, '/pitch.html');
+      await page.evaluate(() => {
+        const el = document.getElementById('cover');
+        if (el) el.scrollIntoView();
+      });
+      await page.waitForTimeout(800);
+      const vb = await page.evaluate(() => {
+        const svg = document.querySelector('#cover .scene-stage svg');
+        return svg ? svg.getAttribute('viewBox') : null;
+      });
+      expect(vb).toBe('0 0 1120 280');
+    });
+
+    test('cover has no horizontal overflow', async ({ page }) => {
+      await gotoPage(page, '/pitch.html');
+      await page.waitForTimeout(400);
+      const overflow = await page.evaluate(() => {
+        const stage = document.querySelector('#cover .scene-stage');
+        return stage ? (stage.scrollWidth > stage.clientWidth + 2) : false;
+      });
+      expect(overflow, `Cover overflow at ${vp.name}`).toBe(false);
+    });
+
+    test('transformation-system has visible content immediately', async ({ page }) => {
+      await gotoPage(page, '/pitch.html');
+      await page.evaluate(() => {
+        const el = document.getElementById('transformation-implications');
+        if (el) el.scrollIntoView();
+      });
+      // Wait only 100ms -- static hub should be visible before async XHR returns
+      await page.waitForTimeout(100);
+      const hasSVG = await page.evaluate(() => {
+        const stage = document.querySelector('#transformation-implications [data-scene-container]');
+        return stage ? stage.querySelector('svg') !== null : false;
+      });
+      expect(hasSVG, 'Transformation scene has SVG content within 100ms').toBe(true);
+    });
+  });
+}
+
+test('V17: all required scenes are registered', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(600);
+  const missing = await page.evaluate(() => {
+    var required = [
+      'cover-flow', 'pressure-convergence', 'ai-stack-build', 'task-route',
+      'regulation-process', 'transformation-system', 'work-role-shift',
+      'proof-loop', 'scale-architecture', 'unit-economics', 'dual-engine', 'next-move'
+    ];
+    if (typeof SceneDirector === 'undefined' || typeof SceneDirector.hasScene !== 'function') return required;
+    return required.filter(function(id) { return !SceneDirector.hasScene(id); });
+  });
+  expect(missing, 'Missing scene registrations: ' + missing.join(', ')).toHaveLength(0);
+});
+
+test('V17: direct hash to transformation-implications renders scene', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  await page.goto('/pitch.html#transformation-implications');
+  await page.waitForTimeout(800);
+  const hasSVG = await page.evaluate(() => {
+    const stage = document.querySelector('#transformation-implications [data-scene-container]');
+    return stage ? stage.querySelector('svg') !== null : false;
+  });
+  expect(hasSVG, 'transformation-implications scene visible on direct hash').toBe(true);
+});
+
+test('V17: direct hash to regulation-process renders scene container', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  await page.goto('/pitch.html#regulation-process');
+  await page.waitForTimeout(600);
+  const hasContent = await page.evaluate(() => {
+    const stage = document.querySelector('#regulation-process [data-scene-container]');
+    return stage ? stage.children.length > 0 : false;
+  });
+  expect(hasContent, 'regulation-process scene visible on direct hash').toBe(true);
+});
+
+test('V17: reduced-motion shows final state (no empty stages)', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await gotoPage(page, '/pitch.html');
+  await page.evaluate(() => {
+    const el = document.getElementById('cover');
+    if (el) el.scrollIntoView();
+  });
+  await page.waitForTimeout(600);
+  const stageEmpty = await page.evaluate(() => {
+    const stage = document.querySelector('#cover .scene-stage');
+    return stage ? stage.children.length === 0 : true;
+  });
+  expect(stageEmpty, 'Cover stage should not be empty in reduced-motion').toBe(false);
+});
+
+test('V17: cover scene SVG has doc, arrow and chip beat elements', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.evaluate(() => {
+    const el = document.getElementById('cover');
+    if (el) el.scrollIntoView();
+  });
+  await page.waitForTimeout(400);
+  const beats = await page.evaluate(() => {
+    const svg = document.querySelector('#cover .scene-stage svg');
+    if (!svg) return [];
+    return Array.from(svg.querySelectorAll('[data-beat]')).map(function(el) { return el.getAttribute('data-beat'); });
+  });
+  expect(beats).toContain('doc');
+  expect(beats).toContain('word-0');
+  expect(beats).toContain('word-3');
+  expect(beats).toContain('arrow-1');
+});
+
+test('V17: no em-dash in cover-flow.js', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const res = await page.goto('/assets/js/story/scenes/cover-flow.js');
+  const body = await res.text();
+  expect((body.match(/—/g) || []).length, 'Em-dash in cover-flow.js').toBe(0);
 });

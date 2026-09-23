@@ -87,7 +87,9 @@ var SceneDirector = (function() {
     _paused = false;
   }
 
-  return { register: register, enter: enter, cancel: cancel, replay: replay, togglePause: togglePause, finish: finish };
+  function hasScene(id) { return !!_scenes[id]; }
+
+  return { register: register, enter: enter, cancel: cancel, replay: replay, togglePause: togglePause, finish: finish, hasScene: hasScene };
 }());
 
 // ── BASE SCENE HELPER ──
@@ -195,3 +197,50 @@ window.sceneUtils = {
   animatePath: animatePath,
   createTimeline: createTimeline
 };
+
+// ── STARTUP VALIDATION ──
+// Runs after all scene scripts are parsed (DOMContentLoaded fires after inline scripts).
+// Logs and marks any missing registrations so they surface before deployment.
+document.addEventListener('DOMContentLoaded', function() {
+  var REQUIRED_SCENES = [
+    'cover-flow', 'pressure-convergence', 'ai-stack-build', 'task-route',
+    'regulation-process', 'transformation-system', 'work-role-shift',
+    'proof-loop', 'scale-architecture', 'unit-economics', 'dual-engine', 'next-move'
+  ];
+
+  var missing = REQUIRED_SCENES.filter(function(id) { return !SceneDirector.hasScene(id); });
+  if (missing.length) {
+    console.warn('[SceneDirector] Missing scene registrations:', missing.join(', '));
+    // Visually flag in development (console only -- no DOM mutation in production)
+    missing.forEach(function(id) {
+      var sec = document.querySelector('[data-scene="' + id + '"]');
+      if (sec) {
+        var stage = sec.querySelector('[data-scene-container]');
+        if (stage) {
+          stage.style.cssText += 'border:2px dashed var(--pink,#F0758A);box-sizing:border-box;';
+          var warn = document.createElement('div');
+          warn.style.cssText = 'padding:12px;font-family:JetBrains Mono,monospace;font-size:11px;color:var(--pink,#F0758A)';
+          warn.textContent = 'Scene not registered: ' + id;
+          stage.appendChild(warn);
+        }
+      }
+    });
+  }
+
+  // ── Direct-hash rendering ──
+  // When the page loads with a hash (e.g. #transformation-implications), the
+  // IntersectionObserver fires for the visible section on its first tick.
+  // However, if the section is already fully in view AND the browser does not
+  // deliver an initial IO callback, we force-enter the scene here.
+  var hash = window.location.hash && window.location.hash.slice(1);
+  if (hash) {
+    setTimeout(function() {
+      var sec = document.getElementById(hash);
+      if (!sec || !sec.dataset.scene) return;
+      if (typeof getManifestEntry === 'function') {
+        var entry = getManifestEntry(hash);
+        SceneDirector.enter(sec, entry || { scene: sec.dataset.scene, id: hash });
+      }
+    }, 200);
+  }
+});

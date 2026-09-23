@@ -29,7 +29,23 @@
   flex: 0 0 auto;
 }
 
-.scene-stage[data-size="compact"]  { height: clamp(260px, 36vh, 370px); }
+.scene-stage[data-size="compact"] {
+  flex: 0 0 auto;
+  width: min(1120px, 100%);
+  height: clamp(250px, 34vh, 320px);
+  max-height: 320px;
+  min-height: 250px;
+  margin-inline: auto;
+  overflow: hidden;
+}
+.scene-stage[data-size="compact"] > svg,
+.scene-stage[data-size="compact"] > canvas,
+.scene-stage[data-size="compact"] > .scene-root {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 320px;
+}
 .scene-stage[data-size="standard"] { height: clamp(300px, 42vh, 450px); max-height: 450px; }
 .scene-stage[data-size="wide"]     { height: clamp(320px, 46vh, 490px); max-height: 490px; }
 .scene-stage[data-size="hero"]     { height: clamp(250px, 34vh, 360px); max-height: 360px; }
