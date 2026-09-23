@@ -924,6 +924,14 @@
   }
 
   // ── SHELL + TABS ───────────────────────────────────────────────
+  var _TABS = [
+    { id: 'map',          label: 'Risk map'       },
+    { id: 'constellation',label: 'Solutions'      },
+    { id: 'theatre',      label: 'Process theatre'},
+    { id: 'architecture', label: 'Architecture'   },
+    { id: 'method',       label: 'Method'         }
+  ];
+
   function buildShell() {
     _container.innerHTML = '';
     _container.style.position = 'relative';
@@ -933,18 +941,20 @@
 
     var shell = mk('div', { className: 'ea-shell' });
 
-    // Top bar
-    var topbar = mk('div', { className: 'ea-topbar' });
-    var TABS = [
-      { id: 'map',          label: 'Risk map'       },
-      { id: 'constellation',label: 'Solutions'      },
-      { id: 'theatre',      label: 'Process theatre'},
-      { id: 'architecture', label: 'Architecture'   },
-      { id: 'method',       label: 'Method'         }
-    ];
-    TABS.forEach(function (tab) {
-      var btn = mk('button', { className: 'ea-tab' + (tab.id === _currentView ? ' active' : ''), textContent: tab.label });
+    // Top bar -- ARIA tablist
+    var topbar = mk('div', { className: 'ea-topbar', role: 'tablist', 'aria-label': 'Evidence Atlas views' });
+    _TABS.forEach(function (tab, idx) {
+      var isActive = tab.id === _currentView;
+      var btn = mk('button', {
+        className: 'ea-tab' + (isActive ? ' active' : ''),
+        textContent: tab.label,
+        role: 'tab',
+        id: 'ea-tab-' + tab.id,
+        'aria-selected': isActive ? 'true' : 'false',
+        tabindex: isActive ? '0' : '-1'
+      });
       btn._tabId = tab.id;
+      btn._tabIdx = idx;
       btn.addEventListener('click', function () { switchView(tab.id); });
       topbar.appendChild(btn);
     });
@@ -956,17 +966,27 @@
 
     shell.appendChild(topbar);
 
-    var canvas = mk('div', { className: 'ea-canvas' });
+    var canvas = mk('div', { className: 'ea-canvas', role: 'tabpanel', 'aria-labelledby': 'ea-tab-' + _currentView });
     shell.appendChild(canvas);
     _container.appendChild(shell);
 
-    // Keyboard handler
+    // Keyboard handler -- Ctrl+K palette, Escape, and tab arrow navigation
     _keyListener = function (e) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         if (_paletteOverlay) closePalette(); else openPalette();
+        return;
       }
-      if (e.key === 'Escape') { closePalette(); closeDrawer(); }
+      if (e.key === 'Escape') { closePalette(); closeDrawer(); return; }
+      // Arrow key tab navigation only when focus is within the topbar
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      var focusedTab = document.activeElement;
+      if (!focusedTab || focusedTab._tabIdx === undefined) return;
+      var delta = e.key === 'ArrowRight' ? 1 : -1;
+      var nextIdx = (focusedTab._tabIdx + delta + _TABS.length) % _TABS.length;
+      var allTabs = Array.from(topbar.querySelectorAll('[role="tab"]'));
+      var nextBtn = allTabs[nextIdx];
+      if (nextBtn) { e.preventDefault(); nextBtn.focus(); switchView(_TABS[nextIdx].id); }
     };
     document.addEventListener('keydown', _keyListener);
 
@@ -982,11 +1002,15 @@
     var shell = _container.querySelector('.ea-shell');
     if (!shell) return;
     shell.querySelectorAll('.ea-tab').forEach(function (btn) {
-      btn.classList.toggle('active', btn._tabId === name);
+      var active = btn._tabId === name;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+      btn.setAttribute('tabindex', active ? '0' : '-1');
     });
 
     var canvas = shell.querySelector('.ea-canvas');
     if (!canvas) return;
+    canvas.setAttribute('aria-labelledby', 'ea-tab-' + name);
     canvas.innerHTML = '';
 
     switch (name) {

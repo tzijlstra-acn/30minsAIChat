@@ -1550,3 +1550,45 @@ test('V25/8: evidence-atlas.js exposes all 5 switchView targets', async ({ page 
   expect(body).toContain("'architecture'");
   expect(body).toContain("'method'");
 });
+
+// ── V25/9 Source governance, accessibility and offline hardening ──
+
+test('V25/9: evidence-atlas.js topbar has role=tablist', async ({ page }) => {
+  const res = await page.goto('/assets/js/evidence-atlas.js');
+  const body = await res.text();
+  expect(body).toContain('role: \'tablist\'');
+  expect(body).toContain('aria-label');
+  expect(body).toContain('Evidence Atlas views');
+});
+
+test('V25/9: evidence-atlas.js tabs have role=tab and aria-selected', async ({ page }) => {
+  const res = await page.goto('/assets/js/evidence-atlas.js');
+  const body = await res.text();
+  expect(body).toContain("role: 'tab'");
+  expect(body).toContain("'aria-selected'");
+  expect(body).toContain('tabindex');
+});
+
+test('V25/9: evidence-atlas.js canvas has role=tabpanel and aria-labelledby', async ({ page }) => {
+  const res = await page.goto('/assets/js/evidence-atlas.js');
+  const body = await res.text();
+  expect(body).toContain("role: 'tabpanel'");
+  expect(body).toContain("'aria-labelledby'");
+  expect(body).toContain('ea-tab-');
+});
+
+test('V25/9: evidence-atlas.js has arrow key tab navigation', async ({ page }) => {
+  const res = await page.goto('/assets/js/evidence-atlas.js');
+  const body = await res.text();
+  expect(body).toContain('ArrowLeft');
+  expect(body).toContain('ArrowRight');
+  expect(body).toContain('_tabIdx');
+});
+
+test('V25/9: evidence-atlas.js theatre view has source-backed governance badge', async ({ page }) => {
+  const res = await page.goto('/assets/js/evidence-atlas.js');
+  const body = await res.text();
+  expect(body).toContain('sourceBacked');
+  expect(body).toContain('SOURCE-BACKED');
+  expect(body).toContain('ILLUSTRATIVE');
+});
