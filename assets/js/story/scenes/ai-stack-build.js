@@ -4,31 +4,38 @@
 SceneDirector.register('ai-stack-build', function(container, manifest, reduced) {
   var layers = [
     {
-      label:   'Data and controls',
+      label:   'Data, context, identity and integration',
       tag:     'FOUNDATION',
       tagColor:'var(--text-3)',
       bg:      'var(--surface-2)',
       example: 'Source documents, policy library, control register, audit log'
     },
     {
-      label:   'Rules and classification',
+      label:   'Rules and workflow',
       tag:     'DETERMINISTIC',
       tagColor:'var(--cyan)',
       bg:      'var(--surface-1)',
       example: 'Obligation classifier, threshold rules, coverage scoring'
     },
     {
-      label:   'Language models and retrieval',
+      label:   'Analytics and machine learning',
+      tag:     'PREDICTIVE',
+      tagColor:'var(--cyan)',
+      bg:      'var(--surface-1)',
+      example: 'Risk scoring, anomaly detection, pattern matching'
+    },
+    {
+      label:   'Generative AI and retrieval',
       tag:     'GENERATIVE',
       tagColor:'var(--accent)',
-      bg:      'rgba(161,0,255,.08)',
+      bg:      'rgba(180,76,255,.08)',
       example: 'Gap extraction, policy drafting, rationale generation'
     },
     {
-      label:   'Agentic and orchestrated work',
+      label:   'Agents and orchestrated work',
       tag:     'AGENTIC',
       tagColor:'var(--pink)',
-      bg:      'rgba(161,0,255,.16)',
+      bg:      'rgba(180,76,255,.16)',
       example: 'Multi-step coverage analysis, cross-regulation reconciliation'
     }
   ];
@@ -44,8 +51,8 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
     pyramid.style.cssText = 'display:flex;flex-direction:column-reverse;align-items:center;gap:4px;';
 
     layers.forEach(function(layer, i) {
-      // Width increases as we go down (i=0 is foundation = widest at 100%, i=3 is agentic = narrowest at 52%)
-      var widthPct = 100 - (layers.length - 1 - i) * 14;
+      // Width increases as we go down (i=0 is foundation = widest at 100%, top layer narrowest at ~56%)
+      var widthPct = 100 - (layers.length - 1 - i) * 11;
       var el = document.createElement('div');
       el.className = 'ai-stack-layer';
       el.dataset.layerIdx = i;

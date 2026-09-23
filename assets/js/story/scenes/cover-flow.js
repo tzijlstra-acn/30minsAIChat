@@ -57,36 +57,39 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     var div = document.createElement('div');
     div.className = 'scene-node';
     div.dataset.beat = 'divider';
-    div.style.cssText = 'width:1px;height:24px;background:var(--border-1);';
+    div.style.cssText = 'width:1px;height:20px;background:var(--border-1);';
     wrap.appendChild(div);
 
-    // ── Three destination words ──
-    var destRow = document.createElement('div');
-    destRow.style.cssText = 'display:flex;align-items:center;gap:28px;';
+    // ── Four-step horizontal flow: Source -> AI work -> Human decision -> Evidence ──
+    var flowRow = document.createElement('div');
+    flowRow.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;';
 
-    var words = [
-      { text: 'Work.',     color: 'var(--text-1)'  },
-      { text: 'Evidence.', color: 'var(--cyan)'    },
-      { text: 'Decision.', color: 'var(--accent)'  }
+    var flowSteps = [
+      { label: 'Source',          color: 'var(--cyan)',   icon: 'ti-file-text'    },
+      { label: 'AI-supported',    color: 'var(--accent)', icon: 'ti-cpu'          },
+      { label: 'Human decision',  color: 'var(--amber)',  icon: 'ti-user-check'   },
+      { label: 'Evidence',        color: 'var(--green)',  icon: 'ti-certificate'  }
     ];
 
-    words.forEach(function(w, i) {
-      var el = document.createElement('div');
-      el.className = 'scene-node';
-      el.dataset.beat = 'word-' + i;
-      el.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:clamp(26px,4vw,52px);font-weight:700;color:' + w.color + ';letter-spacing:-.02em;line-height:1;';
-      el.textContent = w.text;
-      destRow.appendChild(el);
-      if (i < words.length - 1) {
-        var sep = document.createElement('div');
-        sep.className = 'scene-node';
-        sep.dataset.beat = 'sep-' + i;
-        sep.style.cssText = 'font-size:28px;color:var(--border-2,rgba(255,255,255,.12));font-weight:300;line-height:1;';
-        sep.textContent = '/';
-        destRow.appendChild(sep);
+    flowSteps.forEach(function(s, i) {
+      var chip = document.createElement('div');
+      chip.className = 'scene-node';
+      chip.dataset.beat = 'word-' + i;
+      chip.style.cssText = 'display:flex;align-items:center;gap:6px;padding:8px 14px;'
+        + 'background:var(--surface-1);border:1px solid ' + s.color + ';border-radius:8px;';
+      chip.innerHTML = '<i class="ti ' + s.icon + '" style="font-size:16px;color:' + s.color + '"></i>'
+        + '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:700;color:var(--text-1)">' + s.label + '</span>';
+      flowRow.appendChild(chip);
+      if (i < flowSteps.length - 1) {
+        var arr = document.createElement('div');
+        arr.className = 'scene-node';
+        arr.dataset.beat = 'sep-' + i;
+        arr.style.cssText = 'font-size:16px;color:var(--border-2);';
+        arr.textContent = '→';
+        flowRow.appendChild(arr);
       }
     });
-    wrap.appendChild(destRow);
+    wrap.appendChild(flowRow);
     container.appendChild(wrap);
   }
 

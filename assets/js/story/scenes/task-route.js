@@ -27,7 +27,7 @@ SceneDirector.register('task-route', function(container, manifest, reduced) {
   }
 
   var steps = examples.map(function(_, i) {
-    return { delay: 500 + i * 1000, run: function() {
+    return { delay: 500 + i * 1400, run: function() {
       var nodes = container.querySelectorAll('.scene-node');
       if (nodes[i]) nodes[i].classList.add('visible');
     }};

@@ -2,11 +2,11 @@
 // Three pressure cards enter sequentially, then converge toward a central point
 SceneDirector.register('pressure-convergence', function(container, manifest, reduced) {
   var pressures = [
-    { icon: 'ti-gavel',   label: 'Regulatory volume',  sub: 'More obligations, faster cycles, cross-border reach' },
-    { icon: 'ti-cpu',     label: 'AI deployment pace',  sub: 'Business functions deploying AI the risk function must govern' },
-    { icon: 'ti-coin',    label: 'Cost constraints',    sub: 'Cost per risk decision under pressure while quality requirements rise' }
+    { icon: 'ti-gavel',   label: 'Evidence demand',        sub: 'More obligations, faster cycles, stronger proof requirements' },
+    { icon: 'ti-cpu',     label: 'AI capability and risk',  sub: 'More capable AI introduces opportunity and new governance obligations' },
+    { icon: 'ti-coin',    label: 'Cost and capacity',       sub: 'Cost per risk decision under pressure while quality requirements rise' }
   ];
-  var result = 'The operating model may need to evolve.';
+  var result = 'Three pressures arriving together. The operating model may need to move.';
 
   function build() {
     container.innerHTML = '';
