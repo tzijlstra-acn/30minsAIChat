@@ -489,10 +489,13 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       setWorkOpacity(1);
       showGapIndicator(false);
     }},
-    // 7200ms -- Reuse insight text
+    // 7200ms -- Reuse insight text + complete
     { delay: 7200, run: function() {
       var reuseG = get('reuse-note');
       if (reuseG) reuseG.setAttribute('opacity', '1');
+      _timers.push(setTimeout(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 600));
     }}
   ];
 
@@ -533,6 +536,9 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       showAll();
     },
 
+    getAccessibleSummary: function() {
+      return 'A knowledge graph of obligations anchors the scene. Five transformation fields -- Work and decisions, Data and technology, People and roles, Governance and assurance, Value and ownership -- slide in around it. A gap indicator fires and restores. Shared context is reused across the system.';
+    },
     destroy: function() {
       if (_tl) { _tl.destroy(); _tl = null; }
       _timers.forEach(clearTimeout); _timers = [];

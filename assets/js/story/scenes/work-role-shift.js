@@ -200,7 +200,12 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
     { delay: 1050, run: function() { revealRow(2); } },
     { delay: 1400, run: function() { revealRow(3); } },
     { delay: 1750, run: function() { revealRow(4); } },
-    { delay: 2200, run: revealAcctLine }
+    { delay: 2200, run: function() {
+      revealAcctLine();
+      _timers.push(setTimeout(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 500));
+    }}
   ];
 
   var tl = createTimeline(steps);
@@ -222,6 +227,9 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
       _timers.forEach(clearTimeout); _timers = [];
       build();
       showAll();
+    },
+    getAccessibleSummary: function() {
+      return 'Five RCSA tasks are shown across three lanes: AI execution, Human judgement, and Evidence and accountability. AI handles extraction and pattern matching. Humans challenge and review. Every task terminates at a named risk owner. Accountability remains human throughout.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout); _timers = [];

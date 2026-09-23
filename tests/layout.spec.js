@@ -1409,3 +1409,44 @@ test('V25/4: ai-stack-build.js exposes getAccessibleSummary', async ({ page }) =
   expect(body).toContain('getAccessibleSummary');
   expect(body).toContain('not automatically more suitable');
 });
+
+// ── V25/5 scene additions: regulation-process, transformation-system, work-role-shift ──
+
+test('V25/5: regulation-process.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/regulation-process.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/5: regulation-process.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/regulation-process.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('source-backed');
+});
+
+test('V25/5: transformation-system.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/transformation-system.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/5: transformation-system.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/transformation-system.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('knowledge graph');
+});
+
+test('V25/5: work-role-shift.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/work-role-shift.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/5: work-role-shift.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/work-role-shift.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('Accountability remains human');
+});

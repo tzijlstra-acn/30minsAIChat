@@ -634,10 +634,13 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
       _timers.push(setTimeout(function() { showSeal(); }, 220));
     }},
 
-    // Beat 10 -- 5400ms: arrow CHALLENGE->EVIDENCE + trace label
+    // Beat 10 -- 5400ms: arrow CHALLENGE->EVIDENCE + trace label + complete
     { delay: 5400, run: function() {
       showArrow('arr34');
       showEl(els.trace);
+      _timers.push(setTimeout(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 600));
     }}
   ];
 
@@ -673,6 +676,9 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
     finish: function() {
       build();
       showAll();
+    },
+    getAccessibleSummary: function() {
+      return 'A regulatory clause passes through five stages: Source, Structure, Connect, Challenge, and Evidence. Obligations are extracted, matched to policy and controls, challenged by a human reviewer, and sealed with verified evidence. Each step is source-backed.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout);
