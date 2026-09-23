@@ -53,33 +53,70 @@
    *
    * Returns a port name string ('left', 'right', 'top', 'bottom', ...).
    * ============================================================ */
+  /* V25 semantic port types (uppercase aliases accepted):
+   * INPUT, OUTPUT, CONTEXT, HUMAN, CONTROL, EVIDENCE, EXCEPTION, REUSE
+   * Legacy lowercase types are still accepted.
+   */
   var SEMANTIC_MAP = {
     horizontal: {
       'in':        'left',
+      'input':     'left',
+      'INPUT':     'left',
       'out':       'right',
+      'output':    'right',
+      'OUTPUT':    'right',
       'human':     'top',
+      'HUMAN':     'top',
       'control':   'top',
+      'CONTROL':   'top',
       'evidence':  'bottom',
+      'EVIDENCE':  'bottom',
       'exception': 'right',
-      'context':   'left'
+      'EXCEPTION': 'right',
+      'context':   'left',
+      'CONTEXT':   'left',
+      'reuse':     'bottom',
+      'REUSE':     'bottom'
     },
     vertical: {
       'in':        'top',
+      'input':     'top',
+      'INPUT':     'top',
       'out':       'bottom',
+      'output':    'bottom',
+      'OUTPUT':    'bottom',
       'human':     'left',
+      'HUMAN':     'left',
       'control':   'top',
+      'CONTROL':   'top',
       'evidence':  'bottom',
+      'EVIDENCE':  'bottom',
       'exception': 'right',
-      'context':   'left'
+      'EXCEPTION': 'right',
+      'context':   'left',
+      'CONTEXT':   'left',
+      'reuse':     'right',
+      'REUSE':     'right'
     },
     radial: {
       'in':        'left',
+      'input':     'left',
+      'INPUT':     'left',
       'out':       'right',
+      'output':    'right',
+      'OUTPUT':    'right',
       'human':     'top',
+      'HUMAN':     'top',
       'control':   'top',
+      'CONTROL':   'top',
       'evidence':  'bottom',
+      'EVIDENCE':  'bottom',
       'exception': 'right',
-      'context':   'left'
+      'EXCEPTION': 'right',
+      'context':   'left',
+      'CONTEXT':   'left',
+      'reuse':     'bottom',
+      'REUSE':     'bottom'
     }
   };
 

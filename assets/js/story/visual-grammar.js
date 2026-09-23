@@ -1,6 +1,13 @@
-// -- VISUAL GRAMMAR --
+// -- VISUAL GRAMMAR -- V25 --
 // Reusable visual primitive factories for scene composition.
-// Exposes: Signal, ContextNode, HumanGate, EvidenceRecord, ObligationToken
+// V25 semantic colours:
+//   Cyan   (#55C7E8) -- data and context
+//   Purple (#B44CFF) -- AI work
+//   Amber  (#F3B34C) -- human judgement and control
+//   Green  (#58C994) -- approved evidence
+//   Red    (#F0758A) -- gap, exception or failure only
+// Primitives: SIGNAL, CONTEXT, HUMAN GATE, EVIDENCE RECORD
+// Exposes: Signal, ContextNode, HumanGate, EvidenceRecord, ObligationToken, ReuseMarker
 // Safe to include before scene files; no external dependencies.
 
 (function() {
@@ -441,12 +448,54 @@
     }
   };
 
+  // ── ReuseMarker ──
+  // Small annotated dashed arc indicating that a second use case
+  // reuses a shared context node. SVG-only; placed at (x, y).
+  var ReuseMarker = {
+    create: function(svg, opts) {
+      opts = opts || {};
+      var x     = opts.x     !== undefined ? opts.x     : 0;
+      var y     = opts.y     !== undefined ? opts.y     : 0;
+      var label = opts.label || 'REUSES SHARED CONTEXT';
+      var color = opts.color || 'var(--green, #58C994)';
+
+      function _svgEl2(tag, attrs) {
+        var el = document.createElementNS(SVG_NS, tag);
+        if (attrs) Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
+        return el;
+      }
+
+      var g = _svgEl2('g', { 'class': 'vg-reuse-marker', 'pointer-events': 'none' });
+
+      /* Token circle */
+      var circle = _svgEl2('circle', {
+        cx: String(x), cy: String(y), r: '6',
+        fill: 'rgba(88,201,148,.12)',
+        stroke: color, 'stroke-width': '1'
+      });
+      /* Token label */
+      var text = _svgEl2('text', {
+        x: String(x + 12), y: String(y + 4),
+        'font-family': 'JetBrains Mono,monospace',
+        'font-size': '9', 'letter-spacing': '.08em',
+        fill: color, 'text-anchor': 'start'
+      });
+      text.textContent = label;
+
+      g.appendChild(circle);
+      g.appendChild(text);
+      svg.appendChild(g);
+      return g;
+    }
+  };
+
   window.VisualGrammar = {
     Signal:          Signal,
     ContextNode:     ContextNode,
     HumanGate:       HumanGate,
     EvidenceRecord:  EvidenceRecord,
     ObligationToken: ObligationToken,
+    ReuseMarker:     ReuseMarker,
   };
 
 }());

@@ -1320,3 +1320,34 @@ test('V25: scene-screen has clamp gap in scenes.css', async ({ page }) => {
   const body = await res.text();
   expect(body).toContain('clamp(8px, 1.1vh, 14px)');
 });
+
+test('V25: ports.js has REUSE semantic port type', async ({ page }) => {
+  const res = await page.goto('/assets/js/visual-system/ports.js');
+  const body = await res.text();
+  expect(body).toContain("'reuse'");
+  expect(body).toContain("'REUSE'");
+});
+
+test('V25: connector-debug.js shows endpoint distance and V25 threshold check', async ({ page }) => {
+  const res = await page.goto('/assets/js/visual-system/connector-debug.js');
+  const body = await res.text();
+  expect(body).toContain('ENDPOINT_THRESHOLD');
+  expect(body).toContain('Endpoint >3px');
+  expect(body).toContain('V25 threshold violation');
+});
+
+test('V25: visual-grammar.js exposes ReuseMarker', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/visual-grammar.js');
+  const body = await res.text();
+  expect(body).toContain('ReuseMarker');
+  expect(body).toContain('REUSES SHARED CONTEXT');
+});
+
+test('V25: visual-grammar.js documents V25 semantic colour map', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/visual-grammar.js');
+  const body = await res.text();
+  expect(body).toContain('Cyan');
+  expect(body).toContain('Purple');
+  expect(body).toContain('Amber');
+  expect(body).toContain('human judgement and control');
+});

@@ -230,6 +230,50 @@
       }
     });
 
+    /* ---- V25 endpoint distance validation ---- */
+    var ENDPOINT_THRESHOLD = 3; /* px -- V25 release requirement */
+    var thresholdViolations = [];
+
+    Object.keys(connectors).forEach(function (id) {
+      var conn = connectors[id];
+      if (!conn || !conn.pathEl) return;
+      var d = conn.pathEl.getAttribute('d') || '';
+      var lMatch = d.match(/[LM]\s*([-\d.]+)\s+([-\d.]+)\s*$/);
+      if (!lMatch) return;
+      var ex = parseFloat(lMatch[1]);
+      var ey = parseFloat(lMatch[2]);
+
+      /* Find the target node element */
+      var tgtId = (conn.opts || {}).target;
+      if (!tgtId || !nodes[tgtId] || !nodes[tgtId].el) return;
+      var tgtEl = nodes[tgtId].el;
+      var tgtRect = null;
+      try {
+        if (tgtEl instanceof SVGElement) {
+          var bb = tgtEl.getBBox();
+          tgtRect = { x: bb.x, y: bb.y, width: bb.width, height: bb.height };
+        }
+      } catch(e) { return; }
+      if (!tgtRect) return;
+
+      /* Point-to-rect distance (0 if inside or on boundary) */
+      var dx = Math.max(tgtRect.x - ex, 0, ex - (tgtRect.x + tgtRect.width));
+      var dy = Math.max(tgtRect.y - ey, 0, ey - (tgtRect.y + tgtRect.height));
+      var dist = Math.sqrt(dx * dx + dy * dy);
+
+      /* Draw endpoint distance label */
+      debugLayer.appendChild(
+        _txt(ex + 4, ey - 4,
+             dist.toFixed(1) + 'px',
+             dist > ENDPOINT_THRESHOLD ? 'rgba(255,80,80,0.95)' : 'rgba(88,201,148,0.9)',
+             7, 'start')
+      );
+
+      if (dist > ENDPOINT_THRESHOLD) {
+        thresholdViolations.push({ id: id, dist: dist.toFixed(2) });
+      }
+    });
+
     /* ---- Console report ---- */
     var vb          = svgEl.viewBox && svgEl.viewBox.baseVal;
     var clientRect  = svgEl.getBoundingClientRect();
@@ -260,17 +304,25 @@
       }
     } catch (e) { /* getBBox may throw if SVG is not rendered */ }
 
-    console.group('[ConnectorDebug] Engine report');
-    console.log('Viewport   : ' +
+    console.group('[ConnectorDebug] Engine report -- V25');
+    console.log('Viewport          : ' +
       Math.round(clientRect.width) + ' x ' + Math.round(clientRect.height) + ' px');
-    console.log('ViewBox    : ' + (vb
+    console.log('ViewBox           : ' + (vb
       ? [vb.x, vb.y, vb.width, vb.height].map(Math.round).join(' ')
       : 'not set'));
-    console.log('Nodes      : ' + nodeCount);
-    console.log('Connectors : ' + connCount);
-    console.log('Invalid    : ' + invalid.length +
+    console.log('Nodes             : ' + nodeCount);
+    console.log('Connectors        : ' + connCount);
+    console.log('Invalid routes    : ' + invalid.length +
       (invalid.length > 0 ? ' (' + invalid.join(', ') + ')' : ''));
-    console.log('Crossings  : ' + crossings + ' (bounding-box estimate)');
+    console.log('Crossings         : ' + crossings + ' (bounding-box estimate)');
+    console.log('Endpoint >3px     : ' + thresholdViolations.length +
+      (thresholdViolations.length > 0
+        ? ' -- ' + thresholdViolations.map(function(v) { return v.id + '(' + v.dist + ')'; }).join(', ')
+        : ' -- OK'));
+    if (thresholdViolations.length > 0) {
+      console.warn('[ConnectorDebug] V25 threshold violation: ' + thresholdViolations.length +
+        ' connector(s) miss their target outline by more than ' + ENDPOINT_THRESHOLD + 'px');
+    }
     console.groupEnd();
   }
 
