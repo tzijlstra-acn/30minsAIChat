@@ -1,125 +1,130 @@
 // Scene: unit-economics (Screen 09 - HOW TO SCALE)
-// Cost stations bar chart with relative proportions and a lever for each station.
-// Animation: bars grow left-to-right, levers appear alongside each bar.
-// Note: proportions are illustrative. No client-specific or industry benchmark data.
+// V15 overhaul: case-level cost waterfall.
+// Scenario A (isolated design) vs Scenario B (proportionate design).
+// Generic units only. No client savings or percentages.
+// Label: ILLUSTRATIVE COST PATH -- GENERIC UNITS -- NOT CLIENT DATA
 SceneDirector.register('unit-economics', function(container, manifest, reduced) {
 
   var stations = [
-    {
-      label:    'Inference compute',
-      relative: 0.35,
-      color:    'var(--accent)',
-      lever:    'Model size, batching strategy, response caching'
-    },
-    {
-      label:    'Human review overhead',
-      relative: 0.25,
-      color:    'var(--green)',
-      lever:    'Review rate design, escalation threshold, sampling logic'
-    },
-    {
-      label:    'Data retrieval',
-      relative: 0.20,
-      color:    'var(--cyan)',
-      lever:    'Embedding refresh rate, vector DB scale, chunking strategy'
-    },
-    {
-      label:    'Model risk and compliance',
-      relative: 0.10,
-      color:    'var(--amber)',
-      lever:    'Validation cycle scope, documentation automation'
-    },
-    {
-      label:    'Platform and tooling',
-      relative: 0.07,
-      color:    'var(--pink)',
-      lever:    'Shared infrastructure amortisation across use cases'
-    },
-    {
-      label:    'Retraining and drift',
-      relative: 0.03,
-      color:    'var(--text-3)',
-      lever:    'Drift detection automation, retraining trigger criteria'
-    }
+    { id: 'data',      label: 'Data and context',      iconA: 'ti-database',       iconB: 'ti-database',       colorA: 'var(--cyan)',   colorB: 'var(--cyan)',
+      noteA: 'Repeated retrieval, full corpus each call',  noteB: 'Cached context, targeted retrieval' },
+    { id: 'model',     label: 'Model reasoning',        iconA: 'ti-brain',          iconB: 'ti-brain',          colorA: 'var(--accent)', colorB: 'var(--accent)',
+      noteA: 'Large model for every step',               noteB: 'Routing: deterministic first, generative only where needed' },
+    { id: 'orch',      label: 'Orchestration',          iconA: 'ti-route',          iconB: 'ti-route',          colorA: 'var(--accent)', colorB: 'var(--accent)',
+      noteA: 'No caching, high retry rate',              noteB: 'Controlled retries, shared orchestration' },
+    { id: 'review',    label: 'Human review',           iconA: 'ti-user-check',     iconB: 'ti-user-check',     colorA: 'var(--amber)',  colorB: 'var(--amber)',
+      noteA: 'High review rate for all outputs',         noteB: 'Exception-based review, risk-stratified sampling' },
+    { id: 'platform',  label: 'Platform and assurance', iconA: 'ti-server',         iconB: 'ti-server',         colorA: 'var(--green)',  colorB: 'var(--green)',
+      noteA: 'Duplicated services per use case',         noteB: 'Shared services amortised across use cases' }
   ];
+
+  // Relative proportions (A vs B) -- illustrative only
+  var wA = [0.55, 0.60, 0.50, 0.65, 0.55];
+  var wB = [0.30, 0.30, 0.25, 0.25, 0.20];
+
+  function makeBar(width, color) {
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;height:18px;background:var(--surface-2);border-radius:4px;overflow:hidden;';
+    var fill = document.createElement('div');
+    fill.style.cssText = 'height:100%;width:' + Math.round(width * 100) + '%;background:' + color
+      + ';border-radius:4px;transform:scaleX(0);transform-origin:left;transition:transform 600ms ease;';
+    fill.dataset.bar = '1';
+    wrap.appendChild(fill);
+    return wrap;
+  }
 
   function build() {
     container.innerHTML = '';
-    var wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;height:100%;padding:14px 16px;justify-content:center;';
+    var outer = document.createElement('div');
+    outer.style.cssText = 'display:flex;flex-direction:column;gap:8px;height:100%;padding:10px 16px;';
 
-    // Column headers
-    var hdrs = document.createElement('div');
-    hdrs.style.cssText = 'display:grid;grid-template-columns:190px 1fr 220px;gap:10px;align-items:center;margin-bottom:4px;font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);';
-    hdrs.innerHTML = '<span>Cost component</span><span>Relative proportion</span><span>Primary levers</span>';
-    wrap.appendChild(hdrs);
+    // Scenario headers
+    var headers = document.createElement('div');
+    headers.className = 'scene-node';
+    headers.dataset.beat = 'headers';
+    headers.style.cssText = 'display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;flex-shrink:0;'
+      + 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);';
+    headers.innerHTML =
+      '<span>Cost station</span>'
+      + '<span style="color:var(--pink)">Scenario A -- Isolated design</span>'
+      + '<span style="color:var(--green)">Scenario B -- Proportionate design</span>';
+    outer.appendChild(headers);
 
-    stations.forEach(function(s, i) {
+    // Rows
+    stations.forEach(function(st, i) {
       var row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:190px 1fr 220px;gap:10px;align-items:center;';
+      row.className = 'scene-node';
+      row.dataset.beat = 'row-' + st.id;
+      row.style.cssText = 'display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;align-items:start;flex-shrink:0;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);';
 
       // Label
       var label = document.createElement('div');
-      label.style.cssText = 'font-size:14px;color:var(--text-2);line-height:1.3;font-weight:500;';
-      label.textContent = s.label;
-
-      // Bar + pct
-      var barWrap = document.createElement('div');
-      barWrap.style.cssText = 'position:relative;background:var(--surface-1);border-radius:4px;height:22px;overflow:visible;';
-
-      var bar = document.createElement('div');
-      bar.className = 'cost-station-bar';
-      bar.dataset.stationIdx = i;
-      var pct = Math.round(s.relative * 100);
-      bar.style.cssText = 'height:100%;width:' + pct + '%;background:' + s.color
-        + ';border-radius:4px;transform:scaleX(0);transition:transform 600ms ease;transform-origin:left;';
-      barWrap.appendChild(bar);
-
-      var pctLabel = document.createElement('div');
-      pctLabel.style.cssText = 'position:absolute;right:-36px;top:50%;transform:translateY(-50%);'
-        + 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:' + s.color
-        + ';font-weight:600;opacity:0;transition:opacity 300ms ease;white-space:nowrap;';
-      pctLabel.dataset.pctIdx = i;
-      pctLabel.textContent = pct + '%';
-      barWrap.appendChild(pctLabel);
-
-      // Lever text
-      var lever = document.createElement('div');
-      lever.dataset.leverIdx = i;
-      lever.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-3);line-height:1.4;opacity:0;transition:opacity 300ms ease;';
-      lever.textContent = s.lever;
-
+      label.style.cssText = 'display:flex;align-items:center;gap:6px;';
+      label.innerHTML =
+        '<i class="ti ' + st.iconA + '" style="font-size:14px;color:var(--text-3);flex-shrink:0"></i>'
+        + '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);line-height:1.3">' + st.label + '</span>';
       row.appendChild(label);
-      row.appendChild(barWrap);
-      row.appendChild(lever);
-      wrap.appendChild(row);
+
+      // Scenario A cell
+      var cellA = document.createElement('div');
+      cellA.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+      cellA.appendChild(makeBar(wA[i], 'var(--pink)'));
+      var noteA = document.createElement('div');
+      noteA.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:11px;color:var(--text-3);line-height:1.3;';
+      noteA.textContent = st.noteA;
+      cellA.appendChild(noteA);
+      row.appendChild(cellA);
+
+      // Scenario B cell
+      var cellB = document.createElement('div');
+      cellB.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+      cellB.appendChild(makeBar(wB[i], 'var(--green)'));
+      var noteB = document.createElement('div');
+      noteB.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:11px;color:var(--text-3);line-height:1.3;';
+      noteB.textContent = st.noteB;
+      cellB.appendChild(noteB);
+      row.appendChild(cellB);
+
+      outer.appendChild(row);
     });
 
-    // Evidence note
-    var note = document.createElement('div');
-    note.className = 'scene-node';
-    note.dataset.beat = 'note';
-    note.style.cssText = 'margin-top:8px;font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.06em;color:var(--text-3);line-height:1.5;';
-    note.textContent = 'Illustrative proportions. Actual cost structure depends on model selection, call volume, review rate design, and infrastructure choices. Baseline must be established from client data before a business case is prepared.';
-    wrap.appendChild(note);
+    // Final statement
+    var statement = document.createElement('div');
+    statement.className = 'scene-node';
+    statement.dataset.beat = 'statement';
+    statement.style.cssText = 'flex-shrink:0;padding:8px 12px;background:rgba(88,201,148,.05);'
+      + 'border:1px solid rgba(88,201,148,.25);border-radius:6px;'
+      + 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);';
+    statement.textContent = 'Lower avoidable run cost comes from architecture and process design, not model price alone.';
+    outer.appendChild(statement);
 
-    container.appendChild(wrap);
+    container.appendChild(outer);
   }
 
-  var steps = stations.map(function(_, i) {
-    return { delay: 300 + i * 700, run: function() {
-      var bar   = container.querySelector('[data-station-idx="' + i + '"]');
-      var pct   = container.querySelector('[data-pct-idx="' + i + '"]');
-      var lever = container.querySelector('[data-lever-idx="' + i + '"]');
-      if (bar)   bar.style.transform = 'scaleX(1)';
-      if (pct)   pct.style.opacity   = '1';
-      if (lever) lever.style.opacity = '1';
+  function animateRow(stationId) {
+    var row = container.querySelector('[data-beat="row-' + stationId + '"]');
+    if (!row) return;
+    row.querySelectorAll('[data-bar]').forEach(function(bar) {
+      bar.style.transform = 'scaleX(1)';
+    });
+  }
+
+  var steps = [
+    { delay: 300, run: function() {
+      var h = container.querySelector('[data-beat="headers"]');
+      if (h) h.classList.add('visible');
+    }}
+  ].concat(stations.map(function(st, i) {
+    return { delay: 700 + i * 900, run: function() {
+      var row = container.querySelector('[data-beat="row-' + st.id + '"]');
+      if (row) row.classList.add('visible');
+      setTimeout(function() { animateRow(st.id); }, 50);
     }};
-  }).concat([{
-    delay: 300 + stations.length * 700 + 200,
+  })).concat([{
+    delay: 700 + stations.length * 900 + 300,
     run: function() {
-      var note = container.querySelector('[data-beat="note"]');
-      if (note) note.classList.add('visible');
+      var n = container.querySelector('[data-beat="statement"]');
+      if (n) n.classList.add('visible');
     }
   }]);
 
@@ -132,16 +137,8 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     reset:   function() { build(); tl.reset(); },
     finish:  function() {
       build();
-      stations.forEach(function(_, i) {
-        var bar   = container.querySelector('[data-station-idx="' + i + '"]');
-        var pct   = container.querySelector('[data-pct-idx="' + i + '"]');
-        var lever = container.querySelector('[data-lever-idx="' + i + '"]');
-        if (bar)   bar.style.transform = 'scaleX(1)';
-        if (pct)   pct.style.opacity   = '1';
-        if (lever) lever.style.opacity = '1';
-      });
-      var note = container.querySelector('[data-beat="note"]');
-      if (note) note.classList.add('visible');
+      container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
+      stations.forEach(function(st) { animateRow(st.id); });
     },
     destroy: function() { container.innerHTML = ''; tl.destroy(); }
   };

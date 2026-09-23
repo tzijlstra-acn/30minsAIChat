@@ -1,136 +1,179 @@
 // Scene: dual-engine (Screen 10 - HOW TO SCALE)
-// Shows the two delivery engines: client transformation + accelerated delivery.
-// Visual: two columns connected by a shared spine ("Reusable across both").
-// Animation: engine headers appear, then items stagger in, then shared spine chips.
+// V15 overhaul: two parallel lanes converging on one evidence pack.
+// Lane 1: Transform the function
+// Lane 2: Accelerate delivery
+// Three reusable assets shown in Lane 2. Convergence on evidence pack.
 SceneDirector.register('dual-engine', function(container, manifest, reduced) {
 
-  var engineA = {
-    label:    'Engine A',
-    sublabel: 'Transform the client function',
-    color:    'var(--accent)',
-    icon:     'ti-building',
-    items: [
-      { text: 'Regulation coverage automation',  note: 'Straight-through for standard obligations' },
-      { text: 'Risk decision support',           note: 'AI-drafted rationale, named human approval' },
-      { text: 'Monitoring and surveillance',     note: 'Continuous signal detection and alert routing' },
-      { text: 'Report and evidence generation',  note: 'Regulatory-grade evidence packaging at scale' }
-    ]
-  };
+  var lane1Steps = [
+    { label: 'Redesign work',      icon: 'ti-route',        color: 'var(--accent)' },
+    { label: 'Build controls',     icon: 'ti-shield-check', color: 'var(--accent)' },
+    { label: 'Prove value',        icon: 'ti-certificate',  color: 'var(--green)'  },
+    { label: 'Scale the pattern',  icon: 'ti-layers',       color: 'var(--green)'  }
+  ];
 
-  var engineB = {
-    label:    'Engine B',
-    sublabel: 'Accelerate selected delivery activities',
-    color:    'var(--cyan)',
-    icon:     'ti-rocket',
-    items: [
-      { text: 'Reusable AI components',          note: 'Shared inference, retrieval and evaluation' },
-      { text: 'Pre-built data pipelines',        note: 'Regulatory data and control-library connectors' },
-      { text: 'Control frameworks',              note: 'Model risk, audit, and evidence templates' },
-      { text: 'AI-assisted quality review',      note: 'Faster internal review, earlier issue detection' }
-    ]
-  };
+  var lane2Steps = [
+    { label: 'Ingest evidence',          icon: 'ti-database',      color: 'var(--cyan)'   },
+    { label: 'Map processes',            icon: 'ti-sitemap',        color: 'var(--cyan)'   },
+    { label: 'Generate specifications',  icon: 'ti-file-code',     color: 'var(--cyan)'   },
+    { label: 'Test and document',        icon: 'ti-check-circle',  color: 'var(--green)'  }
+  ];
 
-  var spineItems = ['Shared data layer', 'Orchestration platform', 'Evaluation and monitoring', 'Identity and access'];
+  var assets = [
+    { label: 'Regulatory data connectors', icon: 'ti-plug' },
+    { label: 'Model risk templates',        icon: 'ti-file-check' },
+    { label: 'AI-assisted review tooling',  icon: 'ti-cpu' }
+  ];
 
-  function buildEngine(eng) {
-    var col = document.createElement('div');
-    col.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;';
-
-    // Engine header
-    var hdr = document.createElement('div');
-    hdr.className = 'scene-node';
-    hdr.dataset.beat = 'hdr-' + eng.label;
-    hdr.style.cssText = 'background:var(--surface-2);border:1px solid ' + eng.color
-      + ';border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:3px;';
-    hdr.innerHTML =
-      '<div style="display:flex;align-items:center;gap:8px">'
-      + '<i class="ti ' + eng.icon + '" style="font-size:20px;color:' + eng.color + '"></i>'
-      + '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:.1em;font-weight:700;color:' + eng.color + '">' + eng.label + '</span>'
-      + '</div>'
-      + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:16px;font-weight:700;color:var(--text-1);margin-top:2px">' + eng.sublabel + '</div>';
-    col.appendChild(hdr);
-
-    // Items
-    eng.items.forEach(function(item, i) {
-      var el = document.createElement('div');
-      el.className = 'scene-node';
-      el.dataset.beat = 'item-' + eng.label + '-' + i;
-      el.style.cssText = 'background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px;';
-      el.innerHTML =
-        '<div style="font-size:14px;color:var(--text-1);font-weight:600;margin-bottom:3px">' + item.text + '</div>'
-        + '<div style="font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-3);line-height:1.4">' + item.note + '</div>';
-      col.appendChild(el);
-    });
-    return col;
+  function makeStep(step) {
+    var el = document.createElement('div');
+    el.style.cssText = 'display:flex;align-items:center;gap:6px;padding:7px 10px;'
+      + 'background:var(--surface-1);border:1px solid var(--border-1);border-radius:7px;';
+    el.innerHTML =
+      '<i class="ti ' + step.icon + '" style="font-size:15px;color:' + step.color + ';flex-shrink:0"></i>'
+      + '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);line-height:1.3">' + step.label + '</span>'
+      + '<span style="margin-left:auto;font-size:14px;color:' + step.color + '">&#8594;</span>';
+    return el;
   }
 
   function build() {
     container.innerHTML = '';
     var outer = document.createElement('div');
-    outer.style.cssText = 'display:flex;flex-direction:column;gap:10px;height:100%;padding:12px 16px;';
+    outer.style.cssText = 'display:flex;flex-direction:column;gap:10px;height:100%;padding:10px 16px;';
 
-    // Engines row
-    var engines = document.createElement('div');
-    engines.style.cssText = 'display:flex;gap:12px;flex:1;min-height:0;';
-    engines.appendChild(buildEngine(engineA));
+    // Two-lane + convergence layout
+    var mainRow = document.createElement('div');
+    mainRow.style.cssText = 'display:grid;grid-template-columns:1fr 24px 1fr 24px 160px;gap:0;align-items:start;flex:1;min-height:0;';
 
-    // Connector column
-    var conn = document.createElement('div');
-    conn.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex-shrink:0;';
-    var connLine1 = document.createElement('div');
-    connLine1.className = 'scene-node';
-    connLine1.dataset.beat = 'conn';
-    connLine1.style.cssText = 'width:1px;flex:1;background:var(--border-1);';
-    var connIcon = document.createElement('div');
-    connIcon.className = 'scene-node';
-    connIcon.dataset.beat = 'conn';
-    connIcon.style.cssText = 'font-size:18px;color:var(--border-2,rgba(255,255,255,.15));';
-    connIcon.textContent = '↔';
-    var connLine2 = document.createElement('div');
-    connLine2.className = 'scene-node';
-    connLine2.dataset.beat = 'conn';
-    connLine2.style.cssText = 'width:1px;flex:1;background:var(--border-1);';
-    conn.appendChild(connLine1);
-    conn.appendChild(connIcon);
-    conn.appendChild(connLine2);
-    engines.appendChild(conn);
-    engines.appendChild(buildEngine(engineB));
-    outer.appendChild(engines);
+    // Lane 1: Transform
+    var l1 = document.createElement('div');
+    l1.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
 
-    // Shared platform spine
-    var spineWrap = document.createElement('div');
-    spineWrap.className = 'scene-node';
-    spineWrap.dataset.beat = 'spine';
-    spineWrap.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:7px;flex-shrink:0;flex-wrap:wrap;';
-    spineWrap.innerHTML = '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);white-space:nowrap">Shared across both</span>';
-    spineItems.forEach(function(s) {
-      var chip = document.createElement('span');
-      chip.style.cssText = 'background:var(--surface-2);border:1px solid var(--border-1);border-radius:4px;padding:3px 10px;font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--text-2);';
-      chip.textContent = s;
-      spineWrap.appendChild(chip);
+    var l1Hdr = document.createElement('div');
+    l1Hdr.className = 'scene-node';
+    l1Hdr.dataset.beat = 'l1-hdr';
+    l1Hdr.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 10px;'
+      + 'background:rgba(180,76,255,.08);border:1px solid rgba(180,76,255,.3);border-radius:8px;margin-bottom:2px;';
+    l1Hdr.innerHTML =
+      '<i class="ti ti-building" style="font-size:18px;color:var(--accent)"></i>'
+      + '<div>'
+      + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">Lane 1</div>'
+      + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;color:var(--text-1)">Transform the function</div>'
+      + '</div>';
+    l1.appendChild(l1Hdr);
+
+    lane1Steps.forEach(function(step, i) {
+      var el = makeStep(step);
+      el.className = 'scene-node';
+      el.dataset.beat = 'l1-step-' + i;
+      l1.appendChild(el);
     });
-    outer.appendChild(spineWrap);
+    mainRow.appendChild(l1);
+
+    // Separator 1
+    var sep1 = document.createElement('div');
+    sep1.style.cssText = 'display:flex;align-items:center;justify-content:center;padding-top:60px;';
+    sep1.innerHTML = '<div style="width:1px;height:100%;background:var(--border-1);"></div>';
+    mainRow.appendChild(sep1);
+
+    // Lane 2: Accelerate
+    var l2 = document.createElement('div');
+    l2.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+
+    var l2Hdr = document.createElement('div');
+    l2Hdr.className = 'scene-node';
+    l2Hdr.dataset.beat = 'l2-hdr';
+    l2Hdr.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 10px;'
+      + 'background:rgba(85,199,232,.07);border:1px solid rgba(85,199,232,.3);border-radius:8px;margin-bottom:2px;';
+    l2Hdr.innerHTML =
+      '<i class="ti ti-rocket" style="font-size:18px;color:var(--cyan)"></i>'
+      + '<div>'
+      + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)">Lane 2</div>'
+      + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;color:var(--text-1)">Accelerate delivery</div>'
+      + '</div>';
+    l2.appendChild(l2Hdr);
+
+    lane2Steps.forEach(function(step, i) {
+      var el = makeStep(step);
+      el.className = 'scene-node';
+      el.dataset.beat = 'l2-step-' + i;
+      l2.appendChild(el);
+    });
+
+    // Reusable assets (sub-items in lane 2)
+    var assetsWrap = document.createElement('div');
+    assetsWrap.className = 'scene-node';
+    assetsWrap.dataset.beat = 'assets';
+    assetsWrap.style.cssText = 'margin-top:4px;display:flex;flex-direction:column;gap:4px;padding:8px 10px;'
+      + 'background:var(--surface-2);border:1px solid var(--border-1);border-radius:7px;';
+    assetsWrap.innerHTML = '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px">Reusable assets entering lane 2</div>'
+      + assets.map(function(a) {
+        return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);">'
+          + '<i class="ti ' + a.icon + '" style="font-size:12px;color:var(--cyan);flex-shrink:0"></i>' + a.label + '</div>';
+      }).join('');
+    l2.appendChild(assetsWrap);
+    mainRow.appendChild(l2);
+
+    // Separator 2
+    var sep2 = document.createElement('div');
+    sep2.style.cssText = 'display:flex;align-items:center;justify-content:center;padding-top:60px;';
+    sep2.innerHTML = '<div style="font-size:18px;color:var(--border-2)">&#8594;</div>';
+    mainRow.appendChild(sep2);
+
+    // Convergence: Evidence pack
+    var evidPack = document.createElement('div');
+    evidPack.className = 'scene-node';
+    evidPack.dataset.beat = 'evid-pack';
+    evidPack.style.cssText = 'background:rgba(88,201,148,.07);border:1px solid var(--green);border-radius:10px;padding:12px;'
+      + 'display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;';
+    evidPack.innerHTML =
+      '<i class="ti ti-certificate" style="font-size:28px;color:var(--green)"></i>'
+      + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--green)">Evidence pack</div>'
+      + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:12px;font-weight:600;color:var(--text-1);line-height:1.3">Gate-ready decision support</div>';
+    mainRow.appendChild(evidPack);
+
+    outer.appendChild(mainRow);
     container.appendChild(outer);
   }
 
-  function byBeat(beat) { return container.querySelectorAll('[data-beat="' + beat + '"]'); }
-
   var steps = [
-    { delay: 300,  run: function() { byBeat('hdr-' + engineA.label).forEach(function(n){n.classList.add('visible');}); byBeat('hdr-' + engineB.label).forEach(function(n){n.classList.add('visible');}); }},
-    { delay: 700,  run: function() { byBeat('conn').forEach(function(n){n.classList.add('visible');}); }}
+    { delay: 300,  run: function() {
+      var n = container.querySelector('[data-beat="l1-hdr"]');
+      if (n) n.classList.add('visible');
+      n = container.querySelector('[data-beat="l2-hdr"]');
+      if (n) n.classList.add('visible');
+    }},
+    { delay: 900,  run: function() {
+      ['l1-step-0','l2-step-0'].forEach(function(b) {
+        var n = container.querySelector('[data-beat="' + b + '"]');
+        if (n) n.classList.add('visible');
+      });
+    }},
+    { delay: 1500, run: function() {
+      ['l1-step-1','l2-step-1'].forEach(function(b) {
+        var n = container.querySelector('[data-beat="' + b + '"]');
+        if (n) n.classList.add('visible');
+      });
+    }},
+    { delay: 2200, run: function() {
+      ['l1-step-2','l2-step-2'].forEach(function(b) {
+        var n = container.querySelector('[data-beat="' + b + '"]');
+        if (n) n.classList.add('visible');
+      });
+      var a = container.querySelector('[data-beat="assets"]');
+      if (a) a.classList.add('visible');
+    }},
+    { delay: 3000, run: function() {
+      ['l1-step-3','l2-step-3'].forEach(function(b) {
+        var n = container.querySelector('[data-beat="' + b + '"]');
+        if (n) n.classList.add('visible');
+      });
+    }},
+    { delay: 3800, run: function() {
+      var n = container.querySelector('[data-beat="evid-pack"]');
+      if (n) n.classList.add('visible');
+    }}
   ];
-
-  // Stagger items from both engines together
-  var maxItems = Math.max(engineA.items.length, engineB.items.length);
-  for (var i = 0; i < maxItems; i++) {
-    (function(idx) {
-      steps.push({ delay: 1100 + idx * 600, run: function() {
-        byBeat('item-' + engineA.label + '-' + idx).forEach(function(n){n.classList.add('visible');});
-        byBeat('item-' + engineB.label + '-' + idx).forEach(function(n){n.classList.add('visible');});
-      }});
-    })(i);
-  }
-  steps.push({ delay: 1100 + maxItems * 600 + 200, run: function() { byBeat('spine').forEach(function(n){n.classList.add('visible');}); }});
 
   var tl = createTimeline(steps);
 
