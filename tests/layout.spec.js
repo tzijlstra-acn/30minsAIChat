@@ -205,7 +205,7 @@ test('V13: story-manifest.json is accessible', async ({ page }) => {
   const res = await page.goto('/assets/data/story-manifest.json');
   expect(res && res.status()).toBe(200);
   const json = await res.json();
-  expect(json.version).toBe('13');
+  expect(json.version).toBe('15');
   expect(json.screens).toHaveLength(12);
 });
 
@@ -258,3 +258,105 @@ test('V13: no hard-coded hex colors in core section inner HTML', async ({ page }
   });
   expect(hexInCore, 'Hard-coded hex colors found in core sections').toHaveLength(0);
 });
+
+// ── V15 RELEASE HARDENING ──
+
+test('V15: build fingerprint meta tag present', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  const content = await page.locator('meta[name="nfr-build"]').getAttribute('content');
+  expect(content).toMatch(/^v15-[0-9a-f]{7}$/);
+});
+
+test('V15: all core scene-stage elements have data-size attribute', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const missing = await page.evaluate(() => {
+    const stages = Array.from(document.querySelectorAll('section[data-route="core"] .scene-stage'));
+    return stages.filter(function(s) { return !s.dataset.size; }).map(function(s) { return s.closest('section') ? s.closest('section').id : 'unknown'; });
+  });
+  expect(missing, 'scene-stage elements missing data-size').toHaveLength(0);
+});
+
+test('V15: all core screens have a .scene-insight element', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const missing = await page.evaluate(() => {
+    const coreSecs = Array.from(document.querySelectorAll('section[data-route="core"]'));
+    return coreSecs.filter(function(s) { return !s.querySelector('.scene-insight'); }).map(function(s) { return s.id; });
+  });
+  expect(missing, 'Core screens missing .scene-insight').toHaveLength(0);
+});
+
+test('V15: maturity-criteria nav-title updated', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(300);
+  const navTitle = await page.evaluate(() => {
+    const el = document.getElementById('maturity-matrix');
+    return el ? el.getAttribute('data-nav-title') : null;
+  });
+  expect(navTitle).toBe('Maturity criteria');
+});
+
+test('V15: no em-dash in any JS scene file', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const sceneIds = [
+    'cover-flow', 'pressure-convergence', 'ai-stack-build', 'task-route',
+    'regulation-process', 'transformation-system', 'work-role-shift',
+    'proof-loop', 'scale-architecture', 'unit-economics', 'dual-engine', 'next-move'
+  ];
+  for (const id of sceneIds) {
+    const res = await page.goto('/assets/js/story/scenes/' + id + '.js');
+    const body = await res.text();
+    const count = (body.match(/—/g) || []).length;
+    expect(count, 'Em-dash in scene: ' + id).toBe(0);
+  }
+});
+
+test('V15: reduced-motion disables scene animation', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(500);
+  const bgCanvas = page.locator('#bgCanvas');
+  await expect(bgCanvas).toBeAttached();
+});
+
+test('V15: right arrow key advances to next screen', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'keyboard focus differs on WebKit');
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(500);
+  const initialIdx = await page.evaluate(() => typeof currentIdx !== 'undefined' ? currentIdx : -1);
+  await page.keyboard.press('ArrowRight');
+  await page.waitForTimeout(300);
+  const nextIdx = await page.evaluate(() => typeof currentIdx !== 'undefined' ? currentIdx : -1);
+  expect(nextIdx).toBeGreaterThan(initialIdx);
+});
+
+// ── V15 ADDITIONAL VIEWPORTS ──
+const V15_VIEWPORTS = [
+  { name: '1920x1080', width: 1920, height: 1080 },
+  { name: '1280x720',  width: 1280, height: 720  },
+];
+
+for (const vp of V15_VIEWPORTS) {
+  test.describe(`V15 Layout [${vp.name}]`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } });
+
+    test('no console errors on load', async ({ page }) => {
+      const errors = [];
+      page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
+      page.on('pageerror', err => errors.push(err.message));
+      await gotoPage(page, '/pitch.html');
+      await page.waitForTimeout(1200);
+      expect(errors, `Console errors at ${vp.name}: ${errors.join('; ')}`).toHaveLength(0);
+    });
+
+    test('no horizontal overflow on core slides', async ({ page }) => {
+      await gotoPage(page, '/pitch.html');
+      await page.waitForTimeout(800);
+      const report = await getOverlapReport(page);
+      const overflows = report.filter(r => r.route === 'core' && r.horizontalOverflow);
+      expect(overflows.map(r => r.id), `Horizontal overflow at ${vp.name}`).toHaveLength(0);
+    });
+  });
+}
