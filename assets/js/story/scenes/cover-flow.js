@@ -104,7 +104,8 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     { delay: 2000, run: function() { var n = getByBeat('divider'); if (n) n.classList.add('visible'); }},
     { delay: 2300, run: function() { var n = getByBeat('word-0');  if (n) n.classList.add('visible'); var s = getByBeat('sep-0'); if (s) s.classList.add('visible'); }},
     { delay: 2900, run: function() { var n = getByBeat('word-1');  if (n) n.classList.add('visible'); var s = getByBeat('sep-1'); if (s) s.classList.add('visible'); }},
-    { delay: 3500, run: function() { var n = getByBeat('word-2');  if (n) n.classList.add('visible'); }}
+    { delay: 3500, run: function() { var n = getByBeat('word-2');  if (n) n.classList.add('visible'); var s = getByBeat('sep-2'); if (s) s.classList.add('visible'); }},
+    { delay: 4100, run: function() { var n = getByBeat('word-3');  if (n) n.classList.add('visible'); }}
   ];
 
   var tl = createTimeline(anim_steps);
