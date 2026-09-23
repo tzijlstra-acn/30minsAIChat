@@ -1,44 +1,44 @@
 // Scene: dual-engine (Screen 10 - HOW TO SCALE)
-// V16 overhaul: Accenture proposition.
-// Three connected fields (Business/Technology/Economics) around the use case.
+// V18: One partner from risk to run.
+// Three integrated fields map the journey from risk understanding to production run.
 // Delivery spine: Frame -> Design -> Build -> Prove -> Industrialise -> Optimise.
 SceneDirector.register('dual-engine', function(container, manifest, reduced) {
 
   var fields = [
     {
-      id:    'business',
-      label: 'Business and risk understanding',
+      id:    'risk',
+      label: 'Risk and regulatory design',
       color: 'var(--cyan)',
       items: [
-        'Risk capability and service design',
+        'Risk capability and obligation mapping',
         'Process and control model',
-        'Human decision rights',
-        'Regulatory and policy interpretation',
-        'Workforce and adoption'
+        'Human decision rights and gate criteria',
+        'Regulatory interpretation and evidence standard',
+        'Workforce and adoption design'
       ]
     },
     {
-      id:    'technology',
-      label: 'Technical implementation',
+      id:    'build',
+      label: 'AI build and integration',
       color: 'var(--accent)',
       items: [
         'Data and context model',
-        'Knowledge graph and integration',
-        'Model and agent orchestration',
-        'Security, identity and evidence',
+        'Knowledge graph and retrieval',
+        'Model selection and agent orchestration',
+        'Security, identity and provenance',
         'Evaluation and observability'
       ]
     },
     {
-      id:    'economics',
-      label: 'Cost-efficient setup',
+      id:    'run',
+      label: 'Production run and scale',
       color: 'var(--green)',
       items: [
         'Least complex suitable technology',
-        'Reuse shared platform and context',
-        'Route work to the right model',
-        'Risk-based human review',
-        'Track cost per successful case'
+        'Shared platform and context reuse',
+        'Cost per case tracking and optimisation',
+        'Risk-based human review routing',
+        'Continuous governance and improvement'
       ]
     }
   ];
