@@ -1,5 +1,5 @@
 {
-  "version": "15",
+  "version": "16",
   "chapters": [
     { "id": "introduction",    "label": "INTRODUCTION"      },
     { "id": "why-now",         "label": "WHY NOW"           },
@@ -137,9 +137,9 @@
       "id": "dual-engine",
       "order": 10,
       "chapterId": "how-to-scale",
-      "title": "Use AI twice.",
-      "subtitle": "AI can reshape the client function and accelerate selected delivery activities.",
-      "closingLine": "Reusable assets, infrastructure knowledge and AI-assisted delivery can shorten the route to evidence.",
+      "title": "One partner across business, technology and economics.",
+      "subtitle": "Accenture can connect the operating problem, the production design and the value model in one delivery route.",
+      "closingLine": "Business context, engineering depth and cost discipline are integrated in one delivery route.",
       "scene": "dual-engine",
       "durationMs": 8000,
       "autoplay": true,

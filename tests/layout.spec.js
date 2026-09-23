@@ -205,7 +205,7 @@ test('V13: story-manifest.json is accessible', async ({ page }) => {
   const res = await page.goto('/assets/data/story-manifest.json');
   expect(res && res.status()).toBe(200);
   const json = await res.json();
-  expect(json.version).toBe('15');
+  expect(json.version).toBe('16');
   expect(json.screens).toHaveLength(12);
 });
 
@@ -265,7 +265,7 @@ test('V15: build fingerprint meta tag present', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
   await page.goto('/pitch.html');
   const content = await page.locator('meta[name="nfr-build"]').getAttribute('content');
-  expect(content).toMatch(/^v15-[0-9a-f]{7}$/);
+  expect(content).toMatch(/^v1[56]-[0-9a-f]{7}$/);
 });
 
 test('V15: all core scene-stage elements have data-size attribute', async ({ page }) => {
@@ -360,3 +360,96 @@ for (const vp of V15_VIEWPORTS) {
     });
   });
 }
+
+// ── V16 RELEASE HARDENING ──
+
+test('V16: build fingerprint is v16', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  const content = await page.locator('meta[name="nfr-build"]').getAttribute('content');
+  expect(content).toMatch(/^v16-[0-9a-f]{7}$/);
+});
+
+test('V16: story-manifest.json version is 16', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  const res = await page.goto('/assets/data/story-manifest.json');
+  expect(res && res.status()).toBe(200);
+  const json = await res.json();
+  expect(json.version).toBe('16');
+});
+
+test('V16: KnowledgeGraph global is defined', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(600);
+  const defined = await page.evaluate(() => typeof KnowledgeGraph !== 'undefined');
+  expect(defined).toBe(true);
+});
+
+test('V16: NFRIcons global is defined', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(600);
+  const defined = await page.evaluate(() => typeof NFRIcons !== 'undefined');
+  expect(defined).toBe(true);
+});
+
+test('V16: context-graph JSON loads with 9 nodes', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  const res = await page.goto('/assets/data/context-graph/regulation-coverage.json');
+  expect(res && res.status()).toBe(200);
+  const json = await res.json();
+  expect(json.nodes).toHaveLength(9);
+  expect(json.edges).toHaveLength(8);
+});
+
+test('V16: icon-manifest.json loads with 31 icons', async ({ page }) => {
+  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
+  const res = await page.goto('/assets/data/icon-manifest.json');
+  expect(res && res.status()).toBe(200);
+  const json = await res.json();
+  expect(Array.isArray(json)).toBe(true);
+  expect(json).toHaveLength(31);
+});
+
+test('V16: partner proposition screen has 3 field cards', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.waitForTimeout(400);
+  const dualEngine = page.locator('#dual-engine');
+  await expect(dualEngine).toBeAttached();
+  const navTitle = await dualEngine.getAttribute('data-nav-title');
+  expect(navTitle).toContain('partner');
+});
+
+test('V16: no em-dash in knowledge-graph.js', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const res = await page.goto('/assets/js/knowledge-graph.js');
+  const body = await res.text();
+  expect((body.match(/—/g) || []).length, 'Em-dash in knowledge-graph.js').toBe(0);
+});
+
+test('V16: no em-dash in icon-registry.js', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const res = await page.goto('/assets/js/icon-registry.js');
+  const body = await res.text();
+  expect((body.match(/—/g) || []).length, 'Em-dash in icon-registry.js').toBe(0);
+});
+
+test('V16: transformation-system scene has knowledge-graph container', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.evaluate(() => {
+    const el = document.getElementById('transformation-implications');
+    if (el) el.scrollIntoView();
+  });
+  await page.waitForTimeout(2000);
+  const container = page.locator('#transformation-implications [data-scene-container]');
+  await expect(container).toBeAttached();
+});
+
+test('V16: scale-architecture scene has shared context layer header', async ({ page }) => {
+  await gotoPage(page, '/pitch.html');
+  await page.evaluate(() => {
+    const el = document.getElementById('scale-architecture');
+    if (el) el.scrollIntoView();
+  });
+  await page.waitForTimeout(500);
+  await expect(page.locator('#scale-architecture')).toBeAttached();
+});
