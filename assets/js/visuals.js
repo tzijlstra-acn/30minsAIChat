@@ -1993,30 +1993,16 @@ var REF_GROUPS=[
 ];
 
 function renderRefRoom(sec){
-  var grid=sec.querySelector('#refCardGrid');if(!grid)return;
-  function buildCards(query){
-    var q=(query||'').toLowerCase().trim();
-    grid.innerHTML=REF_GROUPS.map(function(g){
-      var filtered=g.screens.filter(function(s){
-        return !q||s.title.toLowerCase().indexOf(q)>-1||s.desc.toLowerCase().indexOf(q)>-1;
-      });
-      if(!filtered.length)return '';
-      return '<div class="ref-group"><div class="ref-group-label">'+g.label+'</div>'
-        +'<div class="ref-group-cards">'+filtered.map(function(s){
-          return '<a class="ref-card" href="#'+s.id+'" onclick="goToId(\''+s.id+'\');return false;">'
-            +'<div class="ref-card-title">'+s.title+'</div>'
-            +'<div class="ref-card-desc">'+s.desc+'</div>'
-            +'<div class="ref-card-link"><i class="ti ti-arrow-right" style="font-size:11px"></i> Open</div>'
-            +'</a>';
-        }).join('')+'</div></div>';
-    }).join('');
+  if(window.EvidenceAtlas){
+    var inner=sec.querySelector('.inner')||sec;
+    inner.style.cssText='padding:0;height:100%;display:flex;flex-direction:column;';
+    window.EvidenceAtlas.init(inner);
   }
-  buildCards('');
-  window.filterRefCards=buildCards;
 }
 
 var renderers={
   'refRoom':renderRefRoom,
+  'atlasMain':renderRefRoom,
   'solutionPortfolio':renderSolutionPortfolio,
   'pressureToProof':renderPressureToProof,
   'aiLandscape':renderAITaskRouter,

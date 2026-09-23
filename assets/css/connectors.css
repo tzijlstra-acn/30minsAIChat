@@ -1,0 +1,137 @@
+/* ============================================================
+ * connectors.css
+ * Visual styles for the ConnectorEngine system.
+ *
+ * SVG markers are injected programmatically by connector-engine.js
+ * into the host SVG's <defs> block at engine initialisation time.
+ * The marker SVG markup for each arrow type is documented below
+ * as a reference; do not duplicate it here.
+ *
+ * Load order: after pitch.css / scenes.css, before scene scripts.
+ * ============================================================ */
+
+/* ============================================================
+ * MARKER REFERENCE
+ * (injected by ConnectorEngine.init(), prefix example: "ce")
+ *
+ * All markers share these attributes:
+ *   markerUnits="strokeWidth"  orient="auto"
+ *   viewBox="0 0 10 10"  refX="8.2"  refY="5"
+ *   markerWidth="7"  markerHeight="7"
+ *
+ * ce-ce-arrow-primary  -- filled triangle, theme stroke colour:
+ *   <path d="M 0 0 L 10 5 L 0 10 Z"
+ *         fill="var(--border-2, #4B5067)"/>
+ *
+ * ce-ce-arrow-context  -- open triangle, cyan:
+ *   <path d="M 0 0 L 10 5 L 0 10"
+ *         fill="none"
+ *         stroke="var(--cyan, #55C7E8)" stroke-width="1.5"/>
+ *
+ * ce-ce-arrow-human  -- amber filled triangle (slightly inset):
+ *   <path d="M 0.5 0.5 L 9.5 5 L 0.5 9.5 Z"
+ *         fill="var(--amber, #F3B34C)"/>
+ *
+ * ce-ce-arrow-control  -- green filled triangle:
+ *   <path d="M 0 0 L 10 5 L 0 10 Z"
+ *         fill="var(--green, #58C994)"/>
+ *
+ * ce-ce-arrow-evidence  -- green double chevron:
+ *   <path d="M 0 2 L 7 5 L 0 8"
+ *         fill="none" stroke="var(--green, #58C994)" stroke-width="1.5"/>
+ *   <path d="M 3 2 L 10 5 L 3 8"
+ *         fill="none" stroke="var(--green, #58C994)" stroke-width="1.5"/>
+ *
+ * ce-ce-arrow-hypothesis  -- grey open triangle:
+ *   <path d="M 0 0 L 10 5 L 0 10"
+ *         fill="none"
+ *         stroke="var(--text-3, #A4A9B7)" stroke-width="1.5"/>
+ * ============================================================ */
+
+
+/* ============================================================
+ * Connector paths
+ * ============================================================ */
+
+.ce-path {
+  fill:              none;
+  stroke-linecap:    round;
+  stroke-linejoin:   round;
+  pointer-events:    none;
+  transition:        opacity 300ms ease, stroke 200ms ease;
+}
+
+.ce-path--primary {
+  stroke:       var(--border-2, #4B5067);
+  stroke-width: 1.5;
+}
+
+.ce-path--context {
+  stroke:       var(--cyan, #55C7E8);
+  stroke-width: 1;
+  opacity:      0.6;
+}
+
+.ce-path--human {
+  stroke:       var(--amber, #F3B34C);
+  stroke-width: 1.5;
+}
+
+.ce-path--control {
+  stroke:       var(--green, #58C994);
+  stroke-width: 1.5;
+}
+
+.ce-path--evidence {
+  stroke:       var(--green, #58C994);
+  stroke-width: 2;
+}
+
+.ce-path--hypothesis {
+  stroke:            var(--text-3, #A4A9B7);
+  stroke-width:      1;
+  stroke-dasharray:  4 3;
+}
+
+/* State modifiers */
+.ce-path--active {
+  opacity: 1 !important;
+}
+
+.ce-path--dim {
+  opacity: 0.2;
+}
+
+
+/* ============================================================
+ * Connector labels
+ * ============================================================ */
+
+.ce-label {
+  font-family:   'JetBrains Mono', monospace;
+  font-size:     10px;
+  fill:          var(--text-3, #A4A9B7);
+  pointer-events: none;
+}
+
+
+/* ============================================================
+ * Debug overlays
+ * All drawn into a g[data-ce-layer="debug"] appended to the SVG.
+ * ============================================================ */
+
+.ce-debug-box {
+  fill:              none;
+  stroke:            rgba(239, 68, 68, 0.6);
+  stroke-width:      1;
+  stroke-dasharray:  3 2;
+}
+
+.ce-debug-port {
+  fill: rgba(34, 211, 238, 0.8);
+}
+
+.ce-debug-hitbox {
+  fill:   rgba(161, 0, 255, 0.08);
+  stroke: none;
+}
