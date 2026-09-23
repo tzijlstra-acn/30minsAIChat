@@ -378,10 +378,13 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
     { delay: 5600, run: function() {
       fillTrack('economics');
     }},
-    // 13. 6200ms: gate chips appear
+    // 13. 6200ms: gate chips appear + complete
     { delay: 6200, run: function() {
       var el = container.querySelector('#pf-gate-chips');
       if (el) el.style.opacity = '1';
+      _timers.push(setTimeout(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 500));
     }}
   ];
 
@@ -404,6 +407,9 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
       tl.reset();
       build();
       showFinalFrame();
+    },
+    getAccessibleSummary: function() {
+      return 'A proof loop runs an obligation through five stages: Baseline, Run, Compare, Challenge, and Decide. Five evidence tracks -- Speed, Quality, Control, Adoption, and Economics -- fill progressively. The gate presents four options with no outcome preselected.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout);

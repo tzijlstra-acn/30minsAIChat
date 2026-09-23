@@ -1450,3 +1450,44 @@ test('V25/5: work-role-shift.js exposes getAccessibleSummary', async ({ page }) 
   expect(body).toContain('getAccessibleSummary');
   expect(body).toContain('Accountability remains human');
 });
+
+// ── V25/6 scene additions: proof-loop, scale-architecture, unit-economics ──
+
+test('V25/6: proof-loop.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/6: proof-loop.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('no outcome preselected');
+});
+
+test('V25/6: scale-architecture.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/scale-architecture.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/6: scale-architecture.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/scale-architecture.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('Enterprise reuse');
+});
+
+test('V25/6: unit-economics.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/6: unit-economics.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('no validated percentages');
+});

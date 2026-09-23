@@ -255,11 +255,14 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       showTradeoff('Quality: sampling only');
     }},
 
-    // 6000ms: control 6 -- meter 30%, label LOWER
+    // 6000ms: control 6 -- meter 30%, label LOWER + complete
     { delay: 6000, run: function() {
       activateCard('shared');
       setMeter(30);
       setLevel('LOWER', 'var(--green)');
+      _timers.push(setTimeout(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 500));
     }}
   ];
 
@@ -281,6 +284,9 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     finish: function() {
       build();
       showFinal();
+    },
+    getAccessibleSummary: function() {
+      return 'Six cost stations are shown: Data and context, Model reasoning, Orchestration, Retries, Human review, and Platform assurance. Six design controls activate one by one, each reducing the cost meter. The meter ends at LOWER. One control notes a quality trade-off. No client data, no validated percentages.';
     },
     destroy: function() {
       _timers.forEach(function(id) { clearTimeout(id); });

@@ -450,9 +450,13 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
       _timers.push(t1, t2);
     }},
 
-    // Beat 11 (6500ms): reuse badge
+    // Beat 11 (6500ms): reuse badge + complete
     { delay: 6500, run: function() {
       fadeInEl('reuse-badge', 500);
+      var t3 = setTimeout(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 600);
+      _timers.push(t3);
     }}
   ];
 
@@ -483,6 +487,9 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
       _cleanup();
       build();
       showAll();
+    },
+    getAccessibleSummary: function() {
+      return 'The scene zooms from a single proof run outward through three layers: Proof, Production, and Enterprise reuse. A failure and controlled fallback are shown inside the proof context. Six shared services span the enterprise layer with a reuse badge confirming zero duplicated builds.';
     },
     destroy: function() {
       _cleanup();
