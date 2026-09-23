@@ -99,7 +99,7 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
     gate.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:12px;padding:10px 14px;'
       + 'background:rgba(52,57,73,.5);border:1px solid var(--border-1);border-radius:7px;';
     gate.innerHTML =
-      '<i class="ti ti-gate" style="font-size:18px;color:var(--text-3);flex-shrink:0"></i>'
+      '<i class="ti ti-scale" style="font-size:18px;color:var(--text-3);flex-shrink:0"></i>'
       + '<div>'
       + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:3px">Decision gate</div>'
       + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:600;color:var(--text-1)">Is the evidence sufficient for a controlled next step?</div>'

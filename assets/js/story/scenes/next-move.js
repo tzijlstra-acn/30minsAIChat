@@ -30,7 +30,7 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
     },
     {
       label:   'PROVE',
-      icon:    'ti-check-circle',
+      icon:    'ti-circle-check',
       color:   'var(--green)',
       heading: 'Test one bounded path',
       actions: [

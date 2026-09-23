@@ -18,17 +18,34 @@ var SceneDirector = (function() {
     _scenes[sceneId] = createFn;
   }
 
+  function _showFallback(container, sceneId) {
+    // Preserve existing fallback content; surface a debug label if ?debug=1
+    var isDebug = window.location.search.indexOf('debug=1') !== -1;
+    if (isDebug) {
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'position:absolute;top:4px;right:6px;font-family:JetBrains Mono,monospace;'
+        + 'font-size:9px;letter-spacing:.08em;color:var(--pink,#F0758A);pointer-events:none;z-index:9';
+      lbl.textContent = 'scene-error: ' + sceneId;
+      container.style.position = 'relative';
+      container.appendChild(lbl);
+    }
+  }
+
   function enter(sectionEl, manifestEntry) {
     cancel();
     if (!manifestEntry || !manifestEntry.scene) return;
     var factory = _scenes[manifestEntry.scene];
-    if (!factory) return;
     var container = sectionEl.querySelector('[data-scene-container]') || sectionEl;
+    if (!factory) {
+      _showFallback(container, manifestEntry.scene);
+      return;
+    }
     var instance;
     try {
       instance = factory(container, manifestEntry, _reduced);
     } catch (e) {
-      console.warn('SceneDirector: scene init error', e);
+      console.error('[scene:' + manifestEntry.scene + '] init error', e);
+      _showFallback(container, manifestEntry.scene);
       return;
     }
     _current = { sceneId: manifestEntry.scene, instance: instance, manifest: manifestEntry };
@@ -41,7 +58,8 @@ var SceneDirector = (function() {
           instance.play();
         }
       } catch (e) {
-        console.warn('SceneDirector: scene play error', e);
+        console.error('[scene:' + manifestEntry.scene + '] play error', e);
+        _showFallback(container, manifestEntry.scene);
       }
     });
   }
