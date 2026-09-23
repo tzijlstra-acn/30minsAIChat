@@ -1123,3 +1123,81 @@ test('V23: pitch.html loads at 1024x768 without horizontal overflow', async ({ p
   });
   expect(overflow).toBe(false);
 });
+
+// ── V24 regression gates ──────────────────────────────────────────────────────
+
+test('V24: window.NFR_BUILD object present in pitch.html', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  expect(body).toContain('window.NFR_BUILD');
+  expect(body).toContain('"release"');
+  expect(body).toContain('"commit"');
+});
+
+test('V24: all pitch.html local asset ?v= strings use one SHA', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  const versions = body.match(/\?v=[0-9a-f]{7}/g) || [];
+  const unique = Array.from(new Set(versions));
+  expect(unique.length).toBeLessThanOrEqual(1);
+});
+
+test('V24: pressure-convergence uses convergence bus pattern', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/pressure-convergence.js');
+  expect(res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('BUS_X');
+  expect(body).toContain('pc-bus-line');
+  expect(body).toContain('pc-hconn0');
+  expect(body).toContain('getBBox');
+  expect(body).toContain('routeConnectors');
+});
+
+test('V24: pressure-convergence has no direct text-baseline connector for stream 3', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/pressure-convergence.js');
+  const body = await res.text();
+  // Old hard-coded y=385 start point must not appear
+  expect(body).not.toContain('270 385');
+});
+
+test('V24: regulation-process has measuredPill with getComputedTextLength', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/regulation-process.js');
+  expect(res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('getComputedTextLength');
+  expect(body).toContain('buildLivePill');
+  expect(body).toContain('text-anchor');
+  expect(body).toContain('dominant-baseline');
+});
+
+test('V24: transformation-system does not render raw node ID as display label', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/transformation-system.js');
+  expect(res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('displayLabel');
+  expect(body).toContain('Missing displayLabel');
+  expect(body).toContain('REUSES SHARED CONTEXT');
+  expect(body).not.toContain('y: \'527\'');
+});
+
+test('V24: transformation-system zone labels have pointer-events none', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/transformation-system.js');
+  const body = await res.text();
+  expect(body).toContain("'pointer-events': 'none'");
+  expect(body).toContain('BUSINESS MEANING');
+  expect(body).toContain('EXECUTION');
+});
+
+test('V24: scale-architecture final zoom is 0.9 not 0.7', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/scale-architecture.js');
+  const body = await res.text();
+  expect(body).toContain('zoomTo(0.9)');
+  expect(body).not.toContain('zoomTo(0.7)');
+});
+
+test('V24: dual-engine viewBox height is 560', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/dual-engine.js');
+  const body = await res.text();
+  expect(body).toContain('0 0 1200 560');
+  expect(body).not.toContain('0 0 1200 500');
+});
