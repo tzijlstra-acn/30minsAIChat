@@ -1,0 +1,84 @@
+{
+  "version": "v25",
+  "lastValidated": "2026-09-23",
+  "claims": [
+    {
+      "id": "C001",
+      "copy": "Faster route to evidence",
+      "screen": "10-dual-engine",
+      "source": "cross-source synthesis",
+      "evidenceStatus": "illustrative",
+      "legalStatus": "under review",
+      "sharingStatus": "internal",
+      "approvedWording": "Faster route to evidence",
+      "owner": "thomas.zijlstra@accenture.com",
+      "lastValidated": "2026-09-23",
+      "notes": "Directional claim; no specific time saving asserted"
+    },
+    {
+      "id": "C002",
+      "copy": "Lower avoidable build and run effort",
+      "screen": "10-dual-engine",
+      "source": "cross-source synthesis",
+      "evidenceStatus": "illustrative",
+      "legalStatus": "under review",
+      "sharingStatus": "internal",
+      "approvedWording": "Lower avoidable build and run effort",
+      "owner": "thomas.zijlstra@accenture.com",
+      "lastValidated": "2026-09-23",
+      "notes": "Directional; avoidable qualifier is essential; no percentage claimed"
+    },
+    {
+      "id": "C003",
+      "copy": "More value retained through reuse and control",
+      "screen": "10-dual-engine",
+      "source": "cross-source synthesis",
+      "evidenceStatus": "illustrative",
+      "legalStatus": "under review",
+      "sharingStatus": "internal",
+      "approvedWording": "More value retained through reuse and control",
+      "owner": "thomas.zijlstra@accenture.com",
+      "lastValidated": "2026-09-23",
+      "notes": "Directional; no quantified retention figure"
+    },
+    {
+      "id": "C004",
+      "copy": "AI performs repeatable analysis. People retain judgement, challenge and approval.",
+      "screen": "04-regulation-process",
+      "source": "illustrative",
+      "evidenceStatus": "illustrative",
+      "legalStatus": "cleared",
+      "sharingStatus": "public",
+      "approvedWording": "AI performs repeatable analysis. People retain judgement, challenge and approval.",
+      "owner": "thomas.zijlstra@accenture.com",
+      "lastValidated": "2026-09-23",
+      "notes": "Illustrative process flow; not client-specific"
+    },
+    {
+      "id": "C005",
+      "copy": "Source-backed flow -- illustrative timing -- not client data",
+      "screen": "04-regulation-process",
+      "source": "illustrative",
+      "evidenceStatus": "illustrative",
+      "legalStatus": "cleared",
+      "sharingStatus": "public",
+      "approvedWording": "Source-backed flow -- illustrative timing -- not client data",
+      "owner": "thomas.zijlstra@accenture.com",
+      "lastValidated": "2026-09-23",
+      "notes": "Disclosure footer; no claim content"
+    },
+    {
+      "id": "C006",
+      "copy": "Illustrative cost path -- generic units -- not client data",
+      "screen": "09-unit-economics",
+      "source": "illustrative",
+      "evidenceStatus": "illustrative",
+      "legalStatus": "cleared",
+      "sharingStatus": "public",
+      "approvedWording": "Illustrative cost path -- generic units -- not client data",
+      "owner": "thomas.zijlstra@accenture.com",
+      "lastValidated": "2026-09-23",
+      "notes": "Disclosure footer"
+    }
+  ]
+}

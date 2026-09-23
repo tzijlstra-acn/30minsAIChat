@@ -3,17 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="nfr-build" content="v24-422660e">
+<meta name="nfr-build" content="v25-pending">
 <title>NFR AI: Introduction</title>
 <script>if(sessionStorage.getItem('pitch_auth')!=='1'){location.replace('index.html');}</script>
-<script>window.NFR_BUILD={release:'v24',commit:'422660e',builtAt:'2026-09-23T00:00:00Z'};</script>
-<script src="./assets/vendor/d3/d3.min.js"></script>
-<script src="./assets/vendor/d3-sankey/d3-sankey.min.js"></script>
-<script src="./assets/vendor/motion/motion.js"></script>
-<script src="./assets/vendor/elkjs/elk.bundled.js"></script>
+<script>window.NFR_BUILD={release:'v25',commit:'pending',builtAt:'2026-09-23T00:00:00Z'};</script>
 <link rel="stylesheet" href="./assets/vendor/fonts/fonts.css">
 <link rel="stylesheet" href="./assets/vendor/tabler-icons/tabler-icons.css">
-<script src="./assets/js/icon-registry.js"></script>
 <link rel="stylesheet" href="./assets/css/pitch.css?v=422660e">
 <link rel="stylesheet" href="./assets/css/scenes.css?v=422660e">
 <link rel="stylesheet" href="./assets/css/knowledge-graph.css?v=422660e">
@@ -46,6 +41,8 @@
       <div class="counter" id="counter">1 / 12</div>
     </div>
     <button class="nav-icon-btn" onclick="openAgenda()" title="Agenda (G)"><i class="ti ti-list"></i></button>
+    <button class="nav-icon-btn" onclick="goToId('ref-room')" title="Evidence Atlas (E)"><i class="ti ti-book"></i></button>
+    <a class="nav-icon-btn" href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI: next steps" title="Contact" style="text-decoration:none"><i class="ti ti-mail"></i></a>
     <button class="nav-icon-btn" id="sceneReplayBtn" onclick="if(typeof SceneDirector!=='undefined')SceneDirector.replay();" title="Replay scene (R)"><i class="ti ti-player-skip-back"></i></button>
     <button class="nav-icon-btn" id="scenePauseBtn" title="Pause / resume scene (Space)"><i class="ti ti-player-pause"></i></button>
   </div>
@@ -59,28 +56,8 @@
       <div class="agenda-hdr-title">Agenda</div>
       <button class="nav-icon-btn" onclick="closeAgenda()"><i class="ti ti-x"></i></button>
     </div>
-    <div class="agenda-tabs">
-      <button class="agenda-tab-btn" data-atab="story" onclick="switchAgendaTab('story')">Story</button>
-      <button class="agenda-tab-btn" data-atab="questions" onclick="switchAgendaTab('questions')">Questions</button>
-      <button class="agenda-tab-btn" data-atab="deepdives" onclick="switchAgendaTab('deepdives')">Deep Dives</button>
-      <button class="agenda-tab-btn" data-atab="method" onclick="switchAgendaTab('method')">Method</button>
-    </div>
     <div class="agenda-content">
-      <div class="agenda-tab-panel" data-panel="story" id="agendaStory"></div>
-      <div class="agenda-tab-panel" data-panel="questions" id="agendaQuestions"></div>
-      <div class="agenda-tab-panel" data-panel="deepdives">
-        <div style="padding:18px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Deep dives available</p><p style="font-size:13px;color:var(--text-2);line-height:1.6">Transformation blocks and capability cards each carry a 5-tab detail panel: why it exists, how to diagnose, what good looks like, how to change it, and which metrics to track.</p></div>
-      </div>
-      <div class="agenda-tab-panel" data-panel="method">
-        <div style="padding:18px">
-          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:10px">Lean client entry: three gates</p>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 1 · Discover</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Scope priority blocks and capabilities. Typically no direct client cost at this stage. Output: scoped intent document.</div></div>
-            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 2 · Diagnose</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">AI-assisted evidence assembly and maturity scoring. 2&#x2013;4 weeks. Output: maturity baseline and prioritised use case.</div></div>
-            <div style="background:var(--surface-1);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent)">Gate 3 · Prove</div><div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.4">Lighthouse delivery in a controlled environment with a gate-ready evidence pack and board-ready metrics.</div></div>
-          </div>
-        </div>
-      </div>
+      <div class="agenda-tab-panel" data-panel="story" id="agendaStory" style="display:block"></div>
     </div>
   </div>
 </div>
@@ -286,8 +263,6 @@
     </div>
     <div class="scene-footer">
       <div class="scene-footer-insight">The first objective is not a platform. It is a decision supported by evidence.</div>
-      <a class="sec-opt" href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI: next steps" style="flex-shrink:0;font-size:12px"><i class="ti ti-mail"></i>Email</a>
-      <button class="sec-opt" onclick="goToId('ref-room')" style="flex-shrink:0;font-size:12px"><i class="ti ti-book"></i>Reference</button>
     </div>
   </div>
 </section>
@@ -308,7 +283,7 @@
 <!-- REF · EVIDENCE-TO-DESIGN FLOW -->
 <section id="how-blocks-built" data-slide data-route="reference" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="How blocks are designed" data-render="evidenceFlow">
   <div class="inner">
-    <div class="sec-tag reveal">Transformation System · 04</div>
+    <div class="sec-tag reveal">Reference · Process</div>
     <h2 class="slide-h reveal">Each block is developed through a five-stage evidence pipeline.</h2>
     <p class="slide-sub reveal">Evidence assembly feeds diagnostic questions, informing target-state design and an intervention pathway gated by measurable outcomes. Maturity targets are context-dependent.</p>
     <div id="evidenceFlowDiagram" style="margin-top:14px"></div>
@@ -318,7 +293,7 @@
 <!-- REF · OPPORTUNITY PORTFOLIO -->
 <section id="opportunity-portfolio" data-slide data-route="reference" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="AI opportunity patterns" data-render="oppPortfolio">
   <div class="inner">
-    <div class="sec-tag reveal">Locate the Value · 07</div>
+    <div class="sec-tag reveal">Reference · Patterns</div>
     <h2 class="slide-h reveal">Twenty AI opportunity patterns across the risk function.</h2>
     <p class="slide-sub reveal">These patterns combine multiple capabilities and transformation blocks across the risk function.</p>
     <div id="oppPortfolioArea" style="margin-top:14px"></div>
@@ -328,7 +303,7 @@
 <!-- REF · SOLUTION PORTFOLIO -->
 <section id="solution-portfolio" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="Reference" data-nav-title="Source-backed solutions" data-render="solutionPortfolio">
   <div class="inner">
-    <div class="sec-tag reveal">Prove Safely · 08</div>
+    <div class="sec-tag reveal">Reference · Solutions</div>
     <h2 class="slide-h reveal">A broad portfolio of source-backed solutions. Relevance and readiness are subject to your context.</h2>
     <p class="slide-sub reveal">28 solutions across seven practice clusters. Status and sharing confirmations are in progress.</p>
     <div id="solutionPortfolioArea" style="margin-top:14px"></div>
@@ -516,13 +491,18 @@
 </section>
 
 <!-- â•â• SCRIPTS â•â• -->
+<script src="./assets/vendor/d3/d3.min.js"></script>
+<script src="./assets/vendor/d3-sankey/d3-sankey.min.js"></script>
+<script src="./assets/vendor/motion/motion.js"></script>
+<script src="./assets/vendor/elkjs/elk.bundled.js"></script>
+<script src="./assets/js/icon-registry.js?v=422660e"></script>
 <script src="./assets/js/solutions.js?v=422660e"></script>
 <script src="./assets/js/content.js?v=422660e"></script>
 <script src="./assets/js/state.js?v=422660e"></script>
 <script src="./assets/js/store.js?v=422660e"></script>
 <script src="./assets/js/selectors.js?v=422660e"></script>
 <script src="./assets/js/components.js?v=422660e"></script>
-<script src="./assets/js/evidence-atlas.js"></script>
+<script src="./assets/js/evidence-atlas.js?v=422660e"></script>
 <script src="./assets/js/visuals.js?v=422660e"></script>
 <script src="./assets/js/navigation.js?v=422660e"></script>
 <script src="./assets/js/edge-rail.js?v=422660e"></script>

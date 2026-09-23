@@ -1201,3 +1201,82 @@ test('V24: dual-engine viewBox height is 560', async ({ page }) => {
   expect(body).toContain('0 0 1200 560');
   expect(body).not.toContain('0 0 1200 500');
 });
+
+// ── V25 regression gates ──────────────────────────────────────────────────────
+
+test('V25: NFR_BUILD release is v25', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  const release = await page.evaluate(() => typeof window.NFR_BUILD !== 'undefined' ? window.NFR_BUILD.release : null);
+  expect(release).toBe('v25');
+});
+
+test('V25: evidence-atlas.js has a ?v= fingerprint', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  // evidence-atlas.js must appear with a ?v= parameter (not bare)
+  expect(body).toContain('evidence-atlas.js?v=');
+  expect(body).not.toMatch(/evidence-atlas\.js">/);
+});
+
+test('V25: vendor scripts (d3, motion, elk) are not in document head', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  // Extract the head section only
+  const headMatch = body.match(/<head[\s\S]*?<\/head>/i);
+  const head = headMatch ? headMatch[0] : '';
+  expect(head).not.toContain('d3.min.js');
+  expect(head).not.toContain('motion.js');
+  expect(head).not.toContain('elk.bundled.js');
+});
+
+test('V25: vendor scripts appear in document body before app scripts', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  const d3Pos = body.indexOf('d3.min.js');
+  const appPos = body.indexOf('app.js');
+  expect(d3Pos).toBeGreaterThan(-1);
+  expect(appPos).toBeGreaterThan(-1);
+  expect(d3Pos).toBeLessThan(appPos);
+});
+
+test('V25: agenda overlay has no workshop-era tab buttons', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  expect(body).not.toContain('switchAgendaTab(\'questions\')');
+  expect(body).not.toContain('switchAgendaTab(\'deepdives\')');
+  expect(body).not.toContain('switchAgendaTab(\'method\')');
+});
+
+test('V25: nav bar contains evidence atlas button', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  expect(body).toContain('goToId(\'ref-room\')');
+  expect(body).toContain('Evidence Atlas');
+});
+
+test('V25: screen 11 footer has no inline mailto link', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  // mailto should be in nav, not inside next-move scene-footer
+  const nextMoveSection = body.match(/id="next-move"[\s\S]*?<\/section>/);
+  if (nextMoveSection) {
+    expect(nextMoveSection[0]).not.toContain('mailto:');
+  }
+});
+
+test('V25: claims.json is accessible and has claims array', async ({ page }) => {
+  const res = await page.goto('/assets/data/claims.json');
+  expect(res && res.status()).toBe(200);
+  const json = await res.json();
+  expect(json).toHaveProperty('claims');
+  expect(Array.isArray(json.claims)).toBe(true);
+  expect(json.claims.length).toBeGreaterThanOrEqual(1);
+});
+
+test('V25: reference section labels do not contain Locate the Value or Prove Safely', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  expect(body).not.toContain('Locate the Value');
+  expect(body).not.toContain('Prove Safely');
+});
