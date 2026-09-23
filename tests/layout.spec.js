@@ -1858,3 +1858,21 @@ test('V26/7: next-move.js has V26 comment and artefact panel (not 4 equal cards)
   // Must NOT use the old 4-card style (separate border-radius boxes)
   expect(body).not.toContain("border-radius:6px;\\n        + 'padding:8px 10px");
 });
+
+// ── V26/8 deterministic Evidence Atlas and reference views ──
+
+test('V26/8: evidence-atlas.js has V26 comment declaring deterministic map', async ({ page }) => {
+  const res = await page.goto('/assets/js/evidence-atlas.js');
+  const body = await res.text();
+  expect(body).toContain('V26');
+  expect(body).toContain('deterministic radial layout');
+});
+
+test('V26/8: evidence-atlas.js theatre uses 2-column row layout (not 3x2 grid)', async ({ page }) => {
+  const res = await page.goto('/assets/js/evidence-atlas.js');
+  const body = await res.text();
+  // Row wrapper class added
+  expect(body).toContain('ea-theatre-row');
+  // Must NOT use the old fixed 3-column grid
+  expect(body).not.toContain('grid-template-columns:repeat(3,1fr)');
+});

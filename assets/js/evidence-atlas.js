@@ -1,4 +1,6 @@
 // evidence-atlas.js -- Visual Evidence Atlas for NFR AI Pitch
+// V26: Risk map is a deterministic radial layout (angle-proportional, no force simulation).
+// Theatre view uses a 2-column list layout, not a fixed 3x2 card grid.
 // Exposes window.EvidenceAtlas with init / destroy / switchView
 // Requires: D3 (globally available), RISK_CATEGORIES, RISK_CAPABILITIES,
 //           PORTFOLIO_CLUSTERS, SOLUTIONS (all loaded before this file)
@@ -168,8 +170,9 @@
       '.ea-sol-src{font-size:9px;font-family:"JetBrains Mono",monospace;color:' + C.text3 + ';margin-bottom:5px}',
       '.ea-sol-badges{display:flex;flex-wrap:wrap;gap:3px}',
       /* theatre */
-      '.ea-theatre-wrap{width:100%;height:100%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:10px;padding:10px;box-sizing:border-box}',
-      '.ea-theatre-card{background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;display:flex;flex-direction:column;overflow:hidden}',
+      '.ea-theatre-wrap{width:100%;height:100%;display:flex;flex-direction:column;gap:6px;padding:10px;box-sizing:border-box;overflow-y:auto}',
+      '.ea-theatre-row{display:flex;flex-direction:row;gap:6px;flex-shrink:0}',
+      '.ea-theatre-card{flex:1;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:12px;display:flex;flex-direction:column;overflow:hidden;min-width:0}',
       '.ea-theatre-badge{font-size:8px;font-family:"JetBrains Mono",monospace;padding:1px 5px;border-radius:2px;border-width:1px;border-style:solid;display:inline-block;margin-bottom:8px}',
       '.ea-theatre-title{font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:' + C.text1 + ';margin-bottom:5px}',
       '.ea-theatre-desc{font-size:13px;color:' + C.text2 + ';line-height:1.4;flex:1}',
@@ -720,10 +723,17 @@
   }
 
   // ── VIEW 3: PROCESS THEATRE ────────────────────────────────────
+  // V26: 2-column row layout, not a 3x2 equal-card grid.
   function buildTheatre(canvas) {
     var wrap = mk('div', { className: 'ea-theatre-wrap' });
+    var currentRow = null;
 
-    THEATRE_DEMOS.forEach(function (demo) {
+    THEATRE_DEMOS.forEach(function (demo, di) {
+      // Start a new row every 2 cards
+      if (di % 2 === 0) {
+        currentRow = mk('div', { className: 'ea-theatre-row' });
+        wrap.appendChild(currentRow);
+      }
       var card = mk('div', { className: 'ea-theatre-card' });
 
       var bdgColor = demo.sourceBacked ? C.green : C.amber;
@@ -790,7 +800,7 @@
 
       playBtn.addEventListener('click', function () { if (playing) stopPlay(); else startPlay(); });
       card.appendChild(playBtn);
-      wrap.appendChild(card);
+      currentRow.appendChild(card);
     });
 
     canvas.appendChild(wrap);
