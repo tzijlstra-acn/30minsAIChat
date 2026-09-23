@@ -1592,3 +1592,70 @@ test('V25/9: evidence-atlas.js theatre view has source-backed governance badge',
   expect(body).toContain('SOURCE-BACKED');
   expect(body).toContain('ILLUSTRATIVE');
 });
+
+// ── V25/10 Visual regression, smoke test and release report ──
+
+test('V25/10: build fingerprint is v25-3e5ec2d', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  const content = await page.locator('meta[name="nfr-build"]').getAttribute('content');
+  expect(content).toBe('v25-3e5ec2d');
+});
+
+test('V25/10: NFR_BUILD commit is 3e5ec2d', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  const commit = await page.evaluate(() => window.NFR_BUILD && window.NFR_BUILD.commit);
+  expect(commit).toBe('3e5ec2d');
+});
+
+test('V25/10: all asset ?v= strings use the v25/10 SHA', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  const versions = body.match(/\?v=[0-9a-f]{7}/g) || [];
+  const unique = Array.from(new Set(versions));
+  expect(unique.length).toBeLessThanOrEqual(1);
+  if (unique.length === 1) expect(unique[0]).toBe('?v=3e5ec2d');
+});
+
+test('V25/10: Evidence Atlas tabs render with ARIA attributes', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  await page.evaluate(function() {
+    var s = document.querySelector('section[data-render="atlasMain"]');
+    if (s) s.scrollIntoView({ behavior: 'instant' });
+  });
+  await page.waitForTimeout(1400);
+  const tablistCount = await page.locator('[role="tablist"]').count();
+  expect(tablistCount).toBeGreaterThanOrEqual(1);
+  const tabCount = await page.locator('[role="tab"]').count();
+  expect(tabCount).toBe(5);
+});
+
+test('V25/10: Evidence Atlas active tab has aria-selected=true', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  await page.evaluate(function() {
+    var s = document.querySelector('section[data-render="atlasMain"]');
+    if (s) s.scrollIntoView({ behavior: 'instant' });
+  });
+  await page.waitForTimeout(1400);
+  const selectedCount = await page.locator('[role="tab"][aria-selected="true"]').count();
+  expect(selectedCount).toBe(1);
+});
+
+test('V25/10: no console errors on full pitch.html load at 1440x900', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const errors = [];
+  page.on('pageerror', err => errors.push(err.message));
+  page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  await page.waitForTimeout(1200);
+  const critical = errors.filter(function(e) {
+    return !e.includes('favicon') && !e.includes('font');
+  });
+  expect(critical, 'Console errors: ' + critical.join('; ')).toHaveLength(0);
+});
