@@ -36,10 +36,12 @@ var sceneIcons = new Set();
 if (fs.existsSync(scenesDir)) {
   fs.readdirSync(scenesDir).filter(function(f) { return f.endsWith('.js'); }).forEach(function(f) {
     var code = fs.readFileSync(path.join(scenesDir, f), 'utf8');
-    var re = /['"](ti-[a-z][a-z0-9-]+)['"]/g;
+    // Match icon class names in quoted strings and in class attribute values inside JS strings
+    var re = /(?:['"](ti-[a-z][a-z0-9-]+)['"]|class="[^"]*\b(ti-[a-z][a-z0-9-]+)\b[^"]*")/g;
     var sm;
     while ((sm = re.exec(code)) !== null) {
-      if (sm[1] !== 'ti') sceneIcons.add(sm[1]);
+      var cls = sm[1] || sm[2];
+      if (cls && cls !== 'ti') sceneIcons.add(cls);
     }
   });
 }

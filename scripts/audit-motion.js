@@ -56,13 +56,11 @@ files.forEach(function(f) {
     issues.push('cursor:pointer found -- controls must not look clickable');
   }
 
-  // Untracked setTimeout (leak risk): setTimeout not preceded by assignment or push
-  var leaks = 0;
-  var stRe = /(?<![\w.=,\[])setTimeout\s*\(/g;
-  var assignedRe = /(?:_timers\.push|=\s*)setTimeout\s*\(/g;
-  var totalST = (code.match(/setTimeout\s*\(/g) || []).length;
-  var trackedST = (code.match(/(?:_timers\.push|=\s*)setTimeout\s*\(/g) || []).length;
-  leaks = totalST - trackedST;
+  // Untracked setTimeout (leak risk)
+  var totalST = (code.match(/\bsetTimeout\s*\(/g) || []).length;
+  // Tracked: _timers.push(setTimeout or = setTimeout
+  var trackedST = (code.match(/_timers\.push\s*\(\s*setTimeout\s*\(|=\s*setTimeout\s*\(/g) || []).length;
+  var leaks = totalST - trackedST;
   if (leaks > 0) {
     var severity = leaks >= 5 ? 'P1' : 'P2';
     issues.push(severity + ': ' + leaks + ' un-tracked setTimeout call(s) -- timer leak risk');
