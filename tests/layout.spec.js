@@ -1748,3 +1748,22 @@ test('V26/3: ai-stack-build.js terrain layers have no card border-radius', async
   expect(body).toContain('border-radius:0');
   expect(body).not.toContain('border-radius:5px 5px 0 0');
 });
+
+// ── V26/4 transformation system as continuous fields ──
+
+test('V26/4: transformation-system.js fields use dashed boundary (not card border)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/transformation-system.js');
+  const body = await res.text();
+  expect(body).toContain('stroke-dasharray');
+  expect(body).toContain('system fields');
+  // Must NOT use the old opaque card fill
+  expect(body).not.toContain("fill: 'rgba(18,21,30,0.93)'");
+});
+
+test('V26/4: transformation-system.js field labels are corner-positioned (not centred)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/transformation-system.js');
+  const body = await res.text();
+  // Corner label uses text-anchor:start and f.x + 10 offset
+  expect(body).toContain("'text-anchor': 'start'");
+  expect(body).toContain('f.x + 10');
+});

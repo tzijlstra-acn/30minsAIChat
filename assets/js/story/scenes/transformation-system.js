@@ -1,6 +1,7 @@
 // Scene: transformation-system (Screen 05)
-// V19: The operating system assembles around the use case.
-// Knowledge graph persists at centre; five transformation fields slide in.
+// V26: Continuous system fields assemble around the obligation knowledge graph.
+// Each field is a labelled background region -- not a card.
+// Fields use transparent fill + colored dashed boundary + corner label.
 // Failure demo: Work and decisions dims; process gap appears; system restores.
 SceneDirector.register('transformation-system', function(container, manifest, reduced) {
 
@@ -280,7 +281,7 @@ SceneDirector.register('transformation-system', function(container, manifest, re
       svg.appendChild(cl);
     });
 
-    // ── Field panels ──
+    // ── System fields (V26: labelled background regions, not cards) ──
     FIELDS.forEach(function(f) {
       var g = svgEl('g', { 'data-id': 'field-' + f.id });
       g.style.cssText =
@@ -289,26 +290,26 @@ SceneDirector.register('transformation-system', function(container, manifest, re
         'transition:transform 520ms cubic-bezier(0.22,1,0.36,1),' +
         'opacity 520ms ease;';
 
-      // Background rect
+      // System field: transparent fill, subtle dashed boundary -- not a card
+      var hexR = parseInt(f.color.slice(1,3),16);
+      var hexG = parseInt(f.color.slice(3,5),16);
+      var hexB = parseInt(f.color.slice(5,7),16);
       g.appendChild(svgEl('rect', {
-        x: f.x, y: f.y, width: f.w, height: f.h, rx: '10',
-        fill: 'rgba(18,21,30,0.93)', stroke: f.color, 'stroke-width': '1.5'
+        x: f.x, y: f.y, width: f.w, height: f.h, rx: '3',
+        fill: 'rgba(' + hexR + ',' + hexG + ',' + hexB + ',0.05)',
+        stroke: 'rgba(' + hexR + ',' + hexG + ',' + hexB + ',0.28)',
+        'stroke-width': '1', 'stroke-dasharray': '5,4'
       }));
 
-      // Colour accent strip along top
-      g.appendChild(svgEl('rect', {
-        x: f.x, y: f.y, width: f.w, height: '4', rx: '10',
-        fill: f.color, opacity: '0.65'
-      }));
-
-      // Field label
+      // Corner label: top-left, JetBrains Mono, uppercase -- region identity not card title
       var lbl = svgEl('text', {
-        x: f.x + f.w / 2, y: f.y + f.h / 2,
-        'text-anchor': 'middle', 'dominant-baseline': 'middle',
-        fill: '#E8E9F0', 'font-size': '14', 'font-weight': '700',
-        'font-family': 'Space Grotesk,sans-serif'
+        x: f.x + 10, y: f.y + 16,
+        'text-anchor': 'start', 'dominant-baseline': 'middle',
+        fill: f.color, 'font-size': '9',
+        'letter-spacing': '0.1em', 'text-transform': 'uppercase',
+        'font-family': 'JetBrains Mono,monospace', opacity: '0.8'
       });
-      lbl.textContent = f.label;
+      lbl.textContent = f.label.toUpperCase();
       g.appendChild(lbl);
 
       svg.appendChild(g);
