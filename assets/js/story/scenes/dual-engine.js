@@ -219,7 +219,8 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       { y: 290, text: '· Cost assumptions' }
     ].forEach(function(item) {
       var t = svgEl('text', {
-        x: 355, y: item.y,
+        x: 394, y: item.y,
+        'text-anchor': 'middle',
         'font-family': 'JetBrains Mono, monospace',
         'font-size': '9',
         fill: AMBER
@@ -239,7 +240,8 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       { y: 290, text: '· Cost assumptions' }
     ].forEach(function(item) {
       var t = svgEl('text', {
-        x: 765, y: item.y,
+        x: 804, y: item.y,
+        'text-anchor': 'middle',
         'font-family': 'JetBrains Mono, monospace',
         'font-size': '9',
         fill: AMBER
@@ -327,9 +329,9 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       }));
 
       var nlbl = svgEl('text', {
-        x: nx, y: SPINE_Y + 28,
+        x: nx, y: SPINE_Y - 18,
         'font-family': 'Space Grotesk, sans-serif',
-        'font-size': '12',
+        'font-size': '11',
         'font-weight': '700',
         fill: ACCENT,
         'text-anchor': 'middle'

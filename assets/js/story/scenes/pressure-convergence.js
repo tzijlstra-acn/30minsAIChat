@@ -91,16 +91,21 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     var bnG = svgEl('g', { id: 'pc-bottleneck', opacity: '0' });
     bnG.appendChild(svgEl('rect', {
       x: '500', y: '95', width: '140', height: '215', rx: '10',
-      fill: C_DARK, stroke: C_BORDER, 'stroke-width': '1.5'
+      fill: 'rgba(243,179,76,0.14)', stroke: C_AMBER, 'stroke-width': '2'
     }));
-    var bt1 = svgEl('text', { x: '570', y: '125', 'text-anchor': 'middle',
-      fill: 'var(--text-1,#F0F0F0)', 'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '13', 'font-weight': '700' });
+    var bnTag = svgEl('text', { x: '570', y: '84', 'text-anchor': 'middle',
+      fill: C_AMBER, 'font-family': "'JetBrains Mono',monospace",
+      'font-size': '9', 'letter-spacing': '1.5', 'font-weight': '700' });
+    bnTag.textContent = 'BOTTLENECK';
+    bnG.appendChild(bnTag);
+    var bt1 = svgEl('text', { x: '570', y: '128', 'text-anchor': 'middle',
+      fill: C_AMBER, 'font-family': "'Space Grotesk',sans-serif",
+      'font-size': '14', 'font-weight': '700' });
     bt1.textContent = 'Manual operating';
     bnG.appendChild(bt1);
-    var bt2 = svgEl('text', { x: '570', y: '141', 'text-anchor': 'middle',
-      fill: 'var(--text-1,#F0F0F0)', 'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '13', 'font-weight': '700' });
+    var bt2 = svgEl('text', { x: '570', y: '147', 'text-anchor': 'middle',
+      fill: C_AMBER, 'font-family': "'Space Grotesk',sans-serif",
+      'font-size': '14', 'font-weight': '700' });
     bt2.textContent = 'bottleneck';
     bnG.appendChild(bt2);
     svg.appendChild(bnG);
@@ -139,22 +144,39 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     // Output arrow + labels
     var outPath = svgEl('path', {
       id: 'pc-outpath',
-      d: 'M 640 202 L 890 202',
+      d: 'M 640 202 L 878 202',
       stroke: C_CYAN, 'stroke-width': '3', fill: 'none',
       'marker-end': 'url(#arr-cyan)', opacity: '0'
     });
     svg.appendChild(outPath);
+    // Target-state destination box
+    var futureBox = svgEl('g', { id: 'pc-futurebox', opacity: '0' });
+    futureBox.appendChild(svgEl('rect', {
+      x: '888', y: '160', width: '216', height: '86', rx: '10',
+      fill: 'rgba(85,199,232,0.10)', stroke: C_CYAN, 'stroke-width': '2'
+    }));
+    var futTag = svgEl('text', {
+      x: '996', y: '176',
+      'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      fill: C_CYAN, 'font-family': "'JetBrains Mono',monospace",
+      'font-size': '9', 'letter-spacing': '1.5'
+    });
+    futTag.textContent = 'TARGET STATE';
+    futureBox.appendChild(futTag);
+    svg.appendChild(futureBox);
     var oL1 = svgEl('text', {
-      id: 'pc-outlbl1', x: '900', y: '190',
+      id: 'pc-outlbl1', x: '996', y: '204',
+      'text-anchor': 'middle',
       fill: C_CYAN, 'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '15', 'font-weight': '700', opacity: '0'
+      'font-size': '17', 'font-weight': '700', opacity: '0'
     });
     oL1.textContent = 'Evidence-led';
     svg.appendChild(oL1);
     var oL2 = svgEl('text', {
-      id: 'pc-outlbl2', x: '900', y: '210',
+      id: 'pc-outlbl2', x: '996', y: '226',
+      'text-anchor': 'middle',
       fill: C_CYAN, 'font-family': "'Space Grotesk',sans-serif",
-      'font-size': '15', 'font-weight': '700', opacity: '0'
+      'font-size': '17', 'font-weight': '700', opacity: '0'
     });
     oL2.textContent = 'operating model';
     svg.appendChild(oL2);
@@ -299,7 +321,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     });
     var badge = container.querySelector('#pc-badge');
     if (badge) badge.setAttribute('opacity', '1');
-    ['pc-outpath', 'pc-outlbl1', 'pc-outlbl2'].forEach(function(id) {
+    ['pc-outpath', 'pc-futurebox', 'pc-outlbl1', 'pc-outlbl2'].forEach(function(id) {
       var el = container.querySelector('#' + id);
       if (el) { el.setAttribute('opacity', '1'); el.style.strokeDashoffset = '0'; }
     });
@@ -317,6 +339,7 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
     { delay: 3800, run: function() { show('pc-badge', 350); } },
     { delay: 4600, run: function() {
       drawPath('pc-outpath', 600);
+      show('pc-futurebox', 400);
       show('pc-outlbl1', 400);
       show('pc-outlbl2', 400);
       _timers.push(setTimeout(function() {

@@ -355,12 +355,34 @@
   <div class="inner">
     <div class="sec-tag reveal">Reference · A3</div>
     <h2 class="slide-h reveal">Five maturity levels and what each requires.</h2>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
-      <div class="arch-layer reveal"><div class="arch-layer-num">L1</div><div class="arch-layer-name">Assist</div><div class="arch-layer-chips"><span class="arch-chip">AI surfaces insight, human acts</span><span class="arch-chip">Annotation and summarisation</span><span class="arch-chip">Copilot for analyst</span></div></div>
-      <div class="arch-layer reveal"><div class="arch-layer-num">L2</div><div class="arch-layer-name">Augment</div><div class="arch-layer-chips"><span class="arch-chip">AI generates draft, human reviews and approves</span><span class="arch-chip">Workflow embedded</span></div></div>
-      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">L3</div><div class="arch-layer-name">Automate</div><div class="arch-layer-chips"><span class="arch-chip">AI acts within defined parameters</span><span class="arch-chip">Human monitors and escalates</span><span class="arch-chip">STP for standard cases</span></div></div>
-      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">L4</div><div class="arch-layer-name">Orchestrate</div><div class="arch-layer-chips"><span class="arch-chip">Multi-agent execution</span><span class="arch-chip">Dynamic task delegation</span><span class="arch-chip">AI coordinates AI</span></div></div>
-      <div class="arch-layer reveal"><div class="arch-layer-num">L5</div><div class="arch-layer-name">Bounded autonomy</div><div class="arch-layer-chips"><span class="arch-chip">AI acts with defined authority limits</span><span class="arch-chip">Full audit trail</span><span class="arch-chip">Subject to governance approval</span></div></div>
+    <!-- Maturity staircase: 5 columns, height increases with level, AI territory marked -->
+    <div class="reveal" style="display:flex;flex-direction:row;gap:8px;margin-top:24px;align-items:flex-end">
+      <div style="flex:1;background:rgba(161,0,255,0.04);border:1px solid rgba(161,0,255,0.18);border-radius:10px;padding:16px 12px 14px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:rgba(161,0,255,0.32);line-height:1;margin-bottom:10px">L1</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:8px">Assist</div>
+        <div style="font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace;line-height:1.5">AI surfaces insight<br>Human acts on it<br>Copilot for analyst</div>
+      </div>
+      <div style="flex:1;background:rgba(161,0,255,0.07);border:1px solid rgba(161,0,255,0.24);border-radius:10px;padding:16px 12px 14px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:rgba(161,0,255,0.45);line-height:1;margin-bottom:10px">L2</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:8px">Augment</div>
+        <div style="font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace;line-height:1.5">AI generates draft<br>Human reviews &amp; approves<br>Workflow embedded</div>
+      </div>
+      <div style="flex:1;background:rgba(161,0,255,0.12);border:1px solid rgba(161,0,255,0.36);border-radius:10px;padding:16px 12px 14px;position:relative;">
+        <div style="position:absolute;top:-10px;left:12px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--accent);background:var(--canvas);padding:0 6px;white-space:nowrap">AI TERRITORY</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:rgba(161,0,255,0.60);line-height:1;margin-bottom:10px">L3</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:8px">Automate</div>
+        <div style="font-size:11px;color:var(--text-2);font-family:'JetBrains Mono',monospace;line-height:1.5">AI acts within parameters<br>Human monitors &amp; escalates<br>STP for standard cases</div>
+      </div>
+      <div style="flex:1;background:rgba(161,0,255,0.17);border:1px solid rgba(161,0,255,0.45);border-radius:10px;padding:16px 12px 14px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:rgba(161,0,255,0.76);line-height:1;margin-bottom:10px">L4</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:8px">Orchestrate</div>
+        <div style="font-size:11px;color:var(--text-2);font-family:'JetBrains Mono',monospace;line-height:1.5">Multi-agent execution<br>Dynamic task delegation<br>AI coordinates AI</div>
+      </div>
+      <div style="flex:1;background:rgba(161,0,255,0.22);border:1px solid rgba(161,0,255,0.58);border-radius:10px;padding:16px 12px 14px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:rgba(161,0,255,0.95);line-height:1;margin-bottom:10px">L5</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:8px">Bounded autonomy</div>
+        <div style="font-size:11px;color:var(--text-2);font-family:'JetBrains Mono',monospace;line-height:1.5">AI acts with authority limits<br>Full audit trail<br>Governance approval required</div>
+      </div>
     </div>
     <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-3);letter-spacing:.06em;line-height:1.5" class="reveal">Target maturity is not maximum by default. Appropriate level depends on use-case risk tier, data quality, control environment, and regulatory context. Bounded autonomy requires explicit governance approval and confirmation of applicable supervisory expectations.</div>
   </div>
@@ -372,11 +394,31 @@
     <div class="sec-tag reveal">Reference · A4</div>
     <h2 class="slide-h reveal">What evidence is needed before AI can be proved?</h2>
     <p class="slide-sub reveal">Accenture's AI-assisted evidence assembly accelerates the diagnostic phase. This page lists minimum evidence requirements per block category.</p>
-    <div class="reveal app-2col-grid">
-      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-file-text" style="font-size:14px"></i></div><div class="arch-layer-name">Policy &amp; framework documents</div><div class="arch-layer-chips"><span class="arch-chip">Risk appetite statement</span><span class="arch-chip">AI risk policy</span><span class="arch-chip">Control framework</span></div></div>
-      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-sitemap" style="font-size:14px"></i></div><div class="arch-layer-name">Process maps</div><div class="arch-layer-chips"><span class="arch-chip">RCSA workflow</span><span class="arch-chip">Approval chains</span><span class="arch-chip">Escalation logic</span></div></div>
-      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-database" style="font-size:14px"></i></div><div class="arch-layer-name">Data inventory</div><div class="arch-layer-chips"><span class="arch-chip">Data lineage</span><span class="arch-chip">Quality metrics</span><span class="arch-chip">Access controls</span></div></div>
-      <div class="arch-layer"><div class="arch-layer-num"><i class="ti ti-shield" style="font-size:14px"></i></div><div class="arch-layer-name">Control &amp; model inventory</div><div class="arch-layer-chips"><span class="arch-chip">Existing model logs</span><span class="arch-chip">MRM catalogue</span><span class="arch-chip">Validation findings</span></div></div>
+    <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px">
+      <div style="display:flex;gap:16px;padding:18px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;align-items:flex-start">
+        <div style="width:52px;height:52px;flex-shrink:0;border-radius:12px;background:rgba(180,76,255,0.10);border:1px solid rgba(180,76,255,0.28);display:flex;align-items:center;justify-content:center">
+          <i class="ti ti-file-text" style="font-size:26px;color:var(--accent)"></i>
+        </div>
+        <div><div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:7px">Policy &amp; framework documents</div><div class="arch-layer-chips"><span class="arch-chip">Risk appetite statement</span><span class="arch-chip">AI risk policy</span><span class="arch-chip">Control framework</span></div></div>
+      </div>
+      <div style="display:flex;gap:16px;padding:18px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;align-items:flex-start">
+        <div style="width:52px;height:52px;flex-shrink:0;border-radius:12px;background:rgba(85,199,232,0.10);border:1px solid rgba(85,199,232,0.28);display:flex;align-items:center;justify-content:center">
+          <i class="ti ti-sitemap" style="font-size:26px;color:var(--cyan)"></i>
+        </div>
+        <div><div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:7px">Process maps</div><div class="arch-layer-chips"><span class="arch-chip">RCSA workflow</span><span class="arch-chip">Approval chains</span><span class="arch-chip">Escalation logic</span></div></div>
+      </div>
+      <div style="display:flex;gap:16px;padding:18px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;align-items:flex-start">
+        <div style="width:52px;height:52px;flex-shrink:0;border-radius:12px;background:rgba(88,201,148,0.10);border:1px solid rgba(88,201,148,0.28);display:flex;align-items:center;justify-content:center">
+          <i class="ti ti-database" style="font-size:26px;color:var(--green)"></i>
+        </div>
+        <div><div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:7px">Data inventory</div><div class="arch-layer-chips"><span class="arch-chip">Data lineage</span><span class="arch-chip">Quality metrics</span><span class="arch-chip">Access controls</span></div></div>
+      </div>
+      <div style="display:flex;gap:16px;padding:18px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;align-items:flex-start">
+        <div style="width:52px;height:52px;flex-shrink:0;border-radius:12px;background:rgba(243,179,76,0.10);border:1px solid rgba(243,179,76,0.28);display:flex;align-items:center;justify-content:center">
+          <i class="ti ti-shield" style="font-size:26px;color:var(--amber)"></i>
+        </div>
+        <div><div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:7px">Control &amp; model inventory</div><div class="arch-layer-chips"><span class="arch-chip">Existing model logs</span><span class="arch-chip">MRM catalogue</span><span class="arch-chip">Validation findings</span></div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -386,11 +428,50 @@
   <div class="inner">
     <div class="sec-tag reveal">Reference · A5</div>
     <h2 class="slide-h reveal">Lean client entry: methodology principles.</h2>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
-      <div class="arch-layer reveal"><div class="arch-layer-num">P1</div><div class="arch-layer-name">Evidence before design</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">No target state is designed before the diagnostic evidence is assembled. Prevents designing for a context that doesn't match the client's actual operating model.</div></div>
-      <div class="arch-layer reveal"><div class="arch-layer-num">P2</div><div class="arch-layer-name">Gate-first, not timeline-first</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">Each phase has a gate test. The next phase only begins when the gate test passes. Timelines are targets, not commitments.</div></div>
-      <div class="arch-layer reveal"><div class="arch-layer-num">P3</div><div class="arch-layer-name">Lighthouse before platform</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">Prove value in one controlled use case before investing in platform infrastructure. Lighthouse evidence justifies the platform investment.</div></div>
-      <div class="arch-layer ai-layer reveal"><div class="arch-layer-num">P4</div><div class="arch-layer-name">Human-centred AI design</div><div style="font-size:12px;color:var(--text-2);line-height:1.5">Every use case design specifies exactly which decisions remain with humans, which are AI-assisted, and what the escalation triggers are. Not configurable at runtime without governance approval.</div></div>
+    <!-- Vertical timeline: each principle is a numbered node on a connecting line -->
+    <div class="reveal" style="position:relative;margin-top:28px;padding-left:72px">
+      <!-- Vertical connector line -->
+      <div style="position:absolute;left:23px;top:24px;bottom:24px;width:2px;background:linear-gradient(180deg,rgba(161,0,255,0.4),rgba(240,117,138,0.55))"></div>
+
+      <div style="display:flex;align-items:flex-start;gap:20px;margin-bottom:24px;position:relative">
+        <div style="position:absolute;left:-72px;width:48px;height:48px;border-radius:50%;background:rgba(161,0,255,0.12);border:2px solid rgba(161,0,255,0.42);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--accent)">P1</span>
+        </div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:4px">Evidence before design</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.5">No target state is designed before the diagnostic evidence is assembled. Prevents designing for a context that does not match the actual operating model.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:20px;margin-bottom:24px;position:relative">
+        <div style="position:absolute;left:-72px;width:48px;height:48px;border-radius:50%;background:rgba(161,0,255,0.12);border:2px solid rgba(161,0,255,0.42);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--accent)">P2</span>
+        </div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:4px">Gate-first, not timeline-first</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.5">Each phase has a gate test. The next phase only begins when the gate test passes. Timelines are targets, not commitments.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:20px;margin-bottom:24px;position:relative">
+        <div style="position:absolute;left:-72px;width:48px;height:48px;border-radius:50%;background:rgba(161,0,255,0.12);border:2px solid rgba(161,0,255,0.42);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--accent)">P3</span>
+        </div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:4px">Lighthouse before platform</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.5">Prove value in one controlled use case before investing in platform infrastructure. Lighthouse evidence justifies the platform investment.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:20px;position:relative">
+        <div style="position:absolute;left:-72px;width:48px;height:48px;border-radius:50%;background:rgba(240,117,138,0.14);border:2px solid rgba(240,117,138,0.50);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--pink)">P4</span>
+        </div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:4px">Human-centred AI design</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.5">Every use case design specifies which decisions remain with humans, which are AI-assisted, and what the escalation triggers are. Not configurable at runtime without governance approval.</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -401,11 +482,24 @@
     <div class="sec-tag reveal">Reference · A6</div>
     <h2 class="slide-h reveal">Full use case inventory.</h2>
     <p class="slide-sub reveal">Source-backed solution records across the portfolio. Evidence status, demo availability, legal review and sharing status are tracked separately. Contact thomas.zijlstra@accenture.com for access to any specific solution.</p>
-    <div class="reveal app-2col-grid">
-      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-live">ASSET</span></div><div class="arch-layer-name">Built and available</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Developed, tested, and available for demonstration. NDA may apply. Contact the practice for access.</div></div>
-      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-team">PROTO</span></div><div class="arch-layer-name">Prototype or demo</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Functional prototype built to demonstrate the approach. Not yet production-hardened. Suitable for proof-of-concept discussion.</div></div>
-      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-nda">CONCEPT</span></div><div class="arch-layer-name">Concept design</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Designed and specified. Scoping-level artefacts available. Approach validated through related work.</div></div>
-      <div class="arch-layer"><div class="arch-layer-num"><span class="status-badge status-illustrative">DEPLOYED</span></div><div class="arch-layer-name">Client deployment</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Deployed at a client. Outcomes and references subject to NDA and legal clearance. Do not name the client without explicit written permission.</div></div>
+    <!-- Status legend: badge separate from text to avoid overflow overlap -->
+    <div class="reveal" style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
+      <div style="display:flex;gap:14px;padding:14px 18px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;align-items:flex-start">
+        <span class="status-badge status-live" style="flex-shrink:0;margin-top:3px;min-width:62px;text-align:center">ASSET</span>
+        <div><div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:4px">Built and available</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Developed, tested, and available for demonstration. NDA may apply. Contact the practice for access.</div></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:14px 18px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;align-items:flex-start">
+        <span class="status-badge status-team" style="flex-shrink:0;margin-top:3px;min-width:62px;text-align:center">PROTO</span>
+        <div><div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:4px">Prototype or demo</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Functional prototype built to demonstrate the approach. Not yet production-hardened. Suitable for proof-of-concept discussion.</div></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:14px 18px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;align-items:flex-start">
+        <span class="status-badge status-nda" style="flex-shrink:0;margin-top:3px;min-width:62px;text-align:center">CONCEPT</span>
+        <div><div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:4px">Concept design</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Designed and specified. Scoping-level artefacts available. Approach validated through related work.</div></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:14px 18px;background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;align-items:flex-start">
+        <span class="status-badge status-illustrative" style="flex-shrink:0;margin-top:3px;min-width:62px;text-align:center">DEPLOYED</span>
+        <div><div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:4px">Client deployment</div><div style="font-size:12px;color:var(--text-2);line-height:1.4">Deployed at a client. Outcomes and references subject to NDA and legal clearance. Do not name the client without explicit written permission.</div></div>
+      </div>
     </div>
   </div>
 </section>

@@ -1,5 +1,7 @@
 // Scene: cover-flow (Screen 00 -- Introduction)
-// Cinematic clause-to-evidence cold open. ~10.5 seconds.
+// V26: Fast cinematic cold open. ~4 seconds.
+// The clause becomes the obligation; AI detects a gap; evidence locks.
+// Title shown via screen-hdr only -- no SVG duplicate.
 // ViewBox: 0 0 1200 560. No external deps. No em-dash.
 SceneDirector.register('cover-flow', function(container, manifest, reduced) {
 
@@ -7,16 +9,12 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
   var _alive  = false;
   var _hdr    = null;
 
-  // ── Local SVG element helper ──────────────────────────────────────────────
   function svgEl(tag, attrs) {
     var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    if (attrs) {
-      Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
-    }
+    if (attrs) Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
     return el;
   }
 
-  // ── Colours ───────────────────────────────────────────────────────────────
   var C = {
     accent : '#B44CFF',
     cyan   : '#55C7E8',
@@ -30,7 +28,6 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     text3  : '#71758A'
   };
 
-  // ── Graph data ────────────────────────────────────────────────────────────
   var NODES = [
     { id: 'obligation', cx: 780, cy: 250, r: 22, fill: C.accent, label: 'OBL-27', ldy: 28 },
     { id: 'policy',     cx: 860, cy: 200, r: 16, fill: C.text2,  label: 'policy',  ldy: 22 },
@@ -61,23 +58,20 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     return null;
   }
 
-  // ── Element refs (populated in build()) ──────────────────────────────────
   var _svg, _rootG;
   var _pageG, _clauseRect;
   var _fragG, _pills, _bracketG;
-  var _graphG, _nodes, _edges, _gapEdge, _gapBadge, _gapText, _connArrow;
-  var _gateG, _diamond;
-  var _evidenceG;
-  var _aiPropG, _titleEl;
+  var _graphG, _nodes, _edges, _gapEdge, _gapBadge, _gapText;
+  var _aiPropG, _evidenceG;
 
-  // ── Header reveal ─────────────────────────────────────────────────────────
+  // ── Header ────────────────────────────────────────────────────────────────
   function revealHeader(show) {
     if (!_hdr) {
       var screen = container.closest('.scene-screen');
       _hdr = screen ? screen.querySelector('.screen-hdr') : null;
     }
     if (_hdr) {
-      _hdr.style.transition = 'opacity 600ms ease';
+      _hdr.style.transition = 'opacity 400ms ease';
       _hdr.style.opacity = show ? '1' : '0';
     }
   }
@@ -106,17 +100,18 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     _buildRegPage();
     _buildFragments();
     _buildGraph();
-    _buildGate();
     _buildEvidence();
     _buildAiProposal();
-    _buildTitle();
 
     container.appendChild(_svg);
   }
 
   function _buildRegPage() {
     _pageG = svgEl('g', {});
-    _pageG.style.cssText = 'opacity:0;transform-origin:180px 300px;transform:scale(0.96);transition:opacity 600ms ease,transform 600ms ease;';
+    // Starts shifted up slightly -- slides down into place on beat0
+    _pageG.style.cssText = 'opacity:0;transform:translateY(-18px);'
+      + 'transform-origin:180px 300px;'
+      + 'transition:opacity 320ms cubic-bezier(.16,1,.3,1),transform 320ms cubic-bezier(.16,1,.3,1);';
 
     _pageG.appendChild(svgEl('rect', {
       x: 80, y: 180, width: 200, height: 240,
@@ -147,9 +142,10 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
 
     var PW = 120, PH = 28;
 
-    PILLS.forEach(function(p, i) {
+    PILLS.forEach(function(p) {
       var g = svgEl('g', {});
-      g.style.cssText = 'opacity:0;transform:translateY(20px);transition:opacity 400ms ease,transform 400ms ease;';
+      // Start lower, slides up -- burst animation
+      g.style.cssText = 'opacity:0;transform:translateY(14px);transition:opacity 280ms ease,transform 280ms cubic-bezier(.16,1,.3,1);';
 
       g.appendChild(svgEl('rect', {
         x: p.x, y: p.y - PH / 2,
@@ -171,9 +167,8 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
       _pills.push(g);
     });
 
-    // Bracket { and group label
     _bracketG = svgEl('g', {});
-    _bracketG.style.cssText = 'opacity:0;transition:opacity 400ms ease;';
+    _bracketG.style.cssText = 'opacity:0;transition:opacity 300ms ease;';
 
     var bx   = 340 + 120 + 10;
     var by1  = 200;
@@ -192,8 +187,9 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
       fill: 'none', stroke: C.text3, 'stroke-width': '1.2'
     }));
 
+    // Label positioned well above the bracket so it never clips the first pill
     var glt = svgEl('text', {
-      x: bx, y: by1 - 16,
+      x: bx, y: by1 - 30,
       'text-anchor': 'middle',
       fill: C.text3, 'font-size': '9',
       'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1'
@@ -201,7 +197,6 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     glt.textContent = 'OBLIGATION OBJECT';
     _bracketG.appendChild(glt);
 
-    // Arrow to graph -- starts at right opening of bracket (bx+bw), not left tip
     var arrowX1 = bx + bw + 4;
     var arrowX2 = 540;
     var arrowY  = bmid;
@@ -223,7 +218,6 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
   function _buildGraph() {
     _graphG = svgEl('g', {});
 
-    // Edges (behind nodes)
     var edgeLayer = svgEl('g', {});
     EDGES.forEach(function(ed) {
       var n1 = getNode(ed.from);
@@ -242,22 +236,19 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
         'stroke-dashoffset': len,
         id: ed.id
       });
-      path.style.cssText = 'transition:stroke-dashoffset 400ms ease;';
+      path.style.cssText = 'transition:stroke-dashoffset 320ms ease;';
       edgeLayer.appendChild(path);
       _edges.push({ el: path, len: len, data: ed });
     });
     _graphG.appendChild(edgeLayer);
 
-    // Gap edge ref
     _edges.forEach(function(e) { if (e.data.id === 'e-ctl-prc') _gapEdge = e.el; });
 
-    // Nodes -- 3-layer globe: outer glow + solid sphere + specular highlight
     var nodeLayer = svgEl('g', {});
     NODES.forEach(function(n) {
       var g = svgEl('g', {});
-      g.style.cssText = 'opacity:0;transition:opacity 300ms ease;';
+      g.style.cssText = 'opacity:0;transition:opacity 220ms ease;';
 
-      // Outer glow halo
       g.appendChild(svgEl('circle', {
         cx: n.cx, cy: n.cy,
         r: Math.round(n.r * 1.55),
@@ -265,13 +256,11 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
         opacity: n.id === 'obligation' ? '0.18' : '0.12'
       }));
 
-      // Main sphere body
       g.appendChild(svgEl('circle', {
         cx: n.cx, cy: n.cy, r: n.r,
         fill: n.fill, opacity: '0.92'
       }));
 
-      // Specular highlight (top-left quarter)
       g.appendChild(svgEl('circle', {
         cx: Math.round(n.cx - n.r * 0.28),
         cy: Math.round(n.cy - n.r * 0.28),
@@ -292,73 +281,48 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     });
     _graphG.appendChild(nodeLayer);
 
-    // Gap badge
+    // Gap badge -- larger and more dramatic than before
     var gmx = (940 + 900) / 2;
     var gmy = (250 + 330) / 2;
     _gapBadge = svgEl('g', {});
-    _gapBadge.style.cssText = 'opacity:0;transition:opacity 300ms ease;';
+    _gapBadge.style.cssText = 'opacity:0;transform-origin:' + gmx + 'px ' + gmy + 'px;'
+      + 'transform:scale(0.5);transition:opacity 200ms ease,transform 220ms cubic-bezier(.16,1,.3,1);';
+
     _gapBadge.appendChild(svgEl('rect', {
-      x: gmx - 14, y: gmy - 9, width: 28, height: 16,
-      rx: 3, fill: 'rgba(239,68,68,0.85)'
+      x: gmx - 20, y: gmy - 11, width: 40, height: 20,
+      rx: 4, fill: 'rgba(239,68,68,0.9)'
     }));
     var gbt = svgEl('text', {
       x: gmx, y: gmy,
       'text-anchor': 'middle', 'dominant-baseline': 'middle',
-      fill: '#fff', 'font-size': '9',
+      fill: '#fff', 'font-size': '10', 'font-weight': '700',
       'font-family': 'JetBrains Mono,monospace'
     });
     gbt.textContent = 'GAP';
     _gapBadge.appendChild(gbt);
     _graphG.appendChild(_gapBadge);
 
-    // Gap recommendation text
     _gapText = svgEl('text', {
       x: 860, y: 490,
       'text-anchor': 'middle',
-      fill: 'rgba(239,68,68,0.7)',
-      'font-size': '11',
+      fill: 'rgba(239,68,68,0.75)',
+      'font-size': '12',
       'font-family': 'Space Grotesk,sans-serif'
     });
     _gapText.textContent = 'Obligation not linked to process evidence';
-    _gapText.style.cssText = 'opacity:0;transition:opacity 400ms ease;';
+    _gapText.style.cssText = 'opacity:0;transition:opacity 300ms ease;';
     _graphG.appendChild(_gapText);
 
     _rootG.appendChild(_graphG);
   }
 
-  function _buildGate() {
-    _gateG = svgEl('g', {});
-    _gateG.style.cssText = 'opacity:0;transition:opacity 400ms ease;';
-
-    var cx = 840, cy = 290;
-    _diamond = svgEl('polygon', {
-      points: cx + ',' + (cy - 22) + ' ' +
-              (cx + 16) + ',' + cy + ' ' +
-              cx + ',' + (cy + 22) + ' ' +
-              (cx - 16) + ',' + cy,
-      fill: 'none', stroke: C.amber, 'stroke-width': '2.5'
-    });
-    _gateG.appendChild(_diamond);
-
-    var lbl = svgEl('text', {
-      x: cx, y: cy + 36,
-      'text-anchor': 'middle',
-      fill: C.amber, 'font-size': '10',
-      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1'
-    });
-    lbl.textContent = 'RISK OWNER';
-    _gateG.appendChild(lbl);
-
-    _rootG.appendChild(_gateG);
-  }
-
   function _buildEvidence() {
     _evidenceG = svgEl('g', {});
-    _evidenceG.style.cssText = 'opacity:0;transform-origin:950px 386px;transform:scale(0);transition:opacity 300ms ease,transform 300ms ease;';
+    _evidenceG.style.cssText = 'opacity:0;transform-origin:950px 386px;transform:scale(0.6);'
+      + 'transition:opacity 200ms ease,transform 260ms cubic-bezier(.16,1,.3,1);';
 
     var ex = 860, ey = 360, ew = 180, eh = 52;
 
-    // Provenance line back to clause
     _evidenceG.appendChild(svgEl('path', {
       d: 'M' + ex + ',' + ey +
          ' C' + (ex - 200) + ',' + (ey - 80) +
@@ -371,28 +335,28 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     _evidenceG.appendChild(svgEl('rect', {
       x: ex, y: ey, width: ew, height: eh,
       rx: 6, fill: 'rgba(0,0,0,0.4)',
-      stroke: C.green, 'stroke-width': '1.5'
+      stroke: C.green, 'stroke-width': '2'
     }));
 
     var ck = svgEl('text', {
       x: ex + 14, y: ey + 26,
       'dominant-baseline': 'middle',
-      fill: C.green, 'font-size': '16',
+      fill: C.green, 'font-size': '18',
       'font-family': 'sans-serif'
     });
     ck.textContent = '✓';
     _evidenceG.appendChild(ck);
 
     var evLbl = svgEl('text', {
-      x: ex + 28, y: ey + 20,
-      fill: C.text1, 'font-size': '11',
+      x: ex + 32, y: ey + 20,
+      fill: C.text1, 'font-size': '12', 'font-weight': '600',
       'font-family': 'Space Grotesk,sans-serif'
     });
     evLbl.textContent = 'Control linkage confirmed';
     _evidenceG.appendChild(evLbl);
 
     var evDate = svgEl('text', {
-      x: ex + 28, y: ey + 38,
+      x: ex + 32, y: ey + 38,
       fill: C.green, 'font-size': '9',
       'font-family': 'JetBrains Mono,monospace'
     });
@@ -404,17 +368,18 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
 
   function _buildAiProposal() {
     _aiPropG = svgEl('g', {});
-    _aiPropG.style.cssText = 'opacity:0;transition:opacity 350ms ease;';
+    // Starts from below; slides up
+    _aiPropG.style.cssText = 'opacity:0;transform:translateY(16px);'
+      + 'transition:opacity 280ms ease,transform 280ms cubic-bezier(.16,1,.3,1);';
 
     var px = 540, py = 268, pw = 220, ph = 46;
 
     _aiPropG.appendChild(svgEl('rect', {
       x: px, y: py, width: pw, height: ph, rx: 5,
-      fill: 'rgba(180,76,255,0.08)',
+      fill: 'rgba(180,76,255,0.10)',
       stroke: C.accent, 'stroke-width': '1.5'
     }));
 
-    // "AI" badge
     _aiPropG.appendChild(svgEl('rect', {
       x: px + 8, y: py + 8, width: 22, height: 13, rx: 3,
       fill: C.accent
@@ -431,7 +396,7 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     var propTxt = svgEl('text', {
       x: px + 36, y: py + 17,
       'dominant-baseline': 'middle',
-      fill: C.text1, 'font-size': '11',
+      fill: C.text1, 'font-size': '11', 'font-weight': '600',
       'font-family': 'Space Grotesk,sans-serif'
     });
     propTxt.textContent = 'Link OBL-27 to evidence record';
@@ -448,31 +413,15 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     _rootG.appendChild(_aiPropG);
   }
 
-  function _buildTitle() {
-    _titleEl = svgEl('text', {
-      x: '600', y: '46',
-      'text-anchor': 'middle',
-      fill: C.text1, 'font-size': '26',
-      'font-family': 'Space Grotesk,sans-serif',
-      'font-weight': '700'
-    });
-    _titleEl.textContent = 'AI changes risk work.';
-    _titleEl.style.cssText = 'opacity:0;transition:opacity 800ms ease;';
-    _rootG.appendChild(_titleEl);
-  }
-
-  // ── Show final static frame (reduced mode + finish) ───────────────────────
+  // ── Show final static frame ───────────────────────────────────────────────
   function showFinal() {
-    // Page
-    _pageG.style.transition = 'none';
-    _pageG.style.opacity    = '1';
-    _pageG.style.transform  = 'scale(1)';
-
-    // Clause bright
+    _pageG.style.transition   = 'none';
+    _pageG.style.opacity      = '1';
+    _pageG.style.transform    = 'translateY(0)';
     _clauseRect.setAttribute('stroke', 'rgba(85,199,232,0.8)');
     _clauseRect.setAttribute('fill', 'rgba(85,199,232,0.18)');
+    _pageG.style.opacity      = '0.4';
 
-    // Fragment group + pills
     _fragG.style.opacity = '1';
     _pills.forEach(function(p) {
       p.style.transition = 'none';
@@ -482,13 +431,11 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     _bracketG.style.transition = 'none';
     _bracketG.style.opacity    = '1';
 
-    // Nodes
     _nodes.forEach(function(n) {
       n.el.style.transition = 'none';
       n.el.style.opacity    = '1';
     });
 
-    // Edges
     _edges.forEach(function(e) {
       e.el.style.transition = 'none';
       if (e.data.id === 'e-ctl-prc') {
@@ -500,188 +447,130 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
       }
     });
 
-    // Gap
     _gapBadge.style.transition = 'none';
     _gapBadge.style.opacity    = '1';
+    _gapBadge.style.transform  = 'scale(1)';
     _gapText.style.transition  = 'none';
     _gapText.style.opacity     = '1';
 
-    // Gate (solid, no pulse)
-    _gateG.style.transition = 'none';
-    _gateG.style.opacity    = '1';
+    _aiPropG.style.transition  = 'none';
+    _aiPropG.style.opacity     = '1';
+    _aiPropG.style.transform   = 'translateY(0)';
 
-    // Evidence
     _evidenceG.style.transition = 'none';
     _evidenceG.style.opacity    = '1';
     _evidenceG.style.transform  = 'scale(1)';
-
-    // AI proposal
-    if (_aiPropG) { _aiPropG.style.transition = 'none'; _aiPropG.style.opacity = '1'; }
-
-    // Title
-    if (_titleEl) { _titleEl.style.transition = 'none'; _titleEl.style.opacity = '1'; }
 
     revealHeader(true);
   }
 
   // ── Beat handlers ─────────────────────────────────────────────────────────
+
+  // Beat 0 (0ms): document drops in
   function _beat0() {
     _pageG.style.opacity   = '1';
-    _pageG.style.transform = 'scale(1)';
+    _pageG.style.transform = 'translateY(0)';
   }
 
+  // Beat 1 (380ms): clause flashes bright, page dims -- "clause fires"
   function _beat1() {
-    // Scan line via rAF
-    var scanG = svgEl('g', {});
-    var scanL = svgEl('line', {
-      x1: 80, y1: 180, x2: 280, y2: 180,
-      stroke: C.amber, 'stroke-width': '1', opacity: '0.8'
-    });
-    scanG.appendChild(scanL);
-    _rootG.insertBefore(scanG, _pageG.nextSibling);
-
-    var startY = 180, endY = 420, dur = 1200;
-    var t0 = null;
-    var dimmed = false;
-
-    function step(ts) {
-      if (!_alive) return;
-      if (!t0) t0 = ts;
-      var prog = Math.min((ts - t0) / dur, 1);
-      var cy   = startY + (endY - startY) * prog;
-      scanL.setAttribute('y1', cy);
-      scanL.setAttribute('y2', cy);
-
-      if (!dimmed && cy >= 358) {
-        dimmed = true;
-        _clauseRect.setAttribute('stroke', 'rgba(85,199,232,0.8)');
-        _clauseRect.setAttribute('fill', 'rgba(85,199,232,0.18)');
-        _pageG.style.opacity = '0.4';
-      }
-
-      if (prog < 1) {
-        requestAnimationFrame(step);
-      } else {
-        if (scanG.parentNode) scanG.parentNode.removeChild(scanG);
-        _pageG.style.opacity = '0.35';
-      }
-    }
-    requestAnimationFrame(step);
-  }
-
-  function _beat2() {
-    _fragG.style.opacity = '1';
-
-    PILLS.forEach(function(p, i) {
-      _timers.push(setTimeout(function() {
-        if (!_alive) return;
-        var pill = _pills[i];
-        pill.style.opacity   = '1';
-        pill.style.transform = 'translateY(0)';
-      }, i * 150));
-    });
+    _clauseRect.style.transition = 'fill 160ms ease, stroke 160ms ease';
+    _clauseRect.setAttribute('stroke', 'rgba(85,199,232,0.9)');
+    _clauseRect.setAttribute('fill', 'rgba(85,199,232,0.22)');
 
     _timers.push(setTimeout(function() {
       if (!_alive) return;
-      _bracketG.style.opacity = '1';
-    }, PILLS.length * 150 + 200));
+      _pageG.style.transition = 'opacity 400ms ease';
+      _pageG.style.opacity    = '0.4';
+    }, 200));
   }
 
+  // Beat 2 (800ms): ALL pills burst out simultaneously (tiny stagger 50ms)
+  function _beat2() {
+    _fragG.style.opacity = '1';
+
+    _pills.forEach(function(pill, i) {
+      _timers.push(setTimeout(function() {
+        if (!_alive) return;
+        pill.style.opacity   = '1';
+        pill.style.transform = 'translateY(0)';
+      }, i * 50));
+    });
+
+    // Bracket appears after the last pill
+    _timers.push(setTimeout(function() {
+      if (!_alive) return;
+      _bracketG.style.opacity = '1';
+    }, _pills.length * 50 + 120));
+  }
+
+  // Beat 3 (1300ms): graph nodes flash in fast (60ms stagger)
   function _beat3() {
     _nodes.forEach(function(n, i) {
       _timers.push(setTimeout(function() {
         if (!_alive) return;
         n.el.style.opacity = '1';
-      }, i * 250));
+      }, i * 60));
     });
-
-    var edgeStart = _nodes.length * 250 + 100;
-    _edges.forEach(function(e, i) {
-      _timers.push(setTimeout(function() {
-        if (!_alive) return;
-        e.el.setAttribute('stroke-dashoffset', '0');
-      }, edgeStart + i * 400));
-    });
-
   }
 
+  // Beat 4 (1750ms): all edges draw simultaneously
   function _beat4() {
+    _edges.forEach(function(e) {
+      if (!_alive) return;
+      e.el.setAttribute('stroke-dashoffset', '0');
+    });
+  }
+
+  // Beat 5 (2200ms): GAP -- red edge + badge pounds in + text
+  function _beat5() {
     if (_gapEdge) {
-      _gapEdge.style.transition = 'stroke 300ms ease';
-      _gapEdge.setAttribute('stroke', 'rgba(239,68,68,0.7)');
+      _gapEdge.style.transition = 'stroke 200ms ease';
+      _gapEdge.setAttribute('stroke', 'rgba(239,68,68,0.8)');
       _gapEdge.setAttribute('stroke-dasharray', '3 4');
     }
-    _gapBadge.style.opacity = '1';
+
+    _timers.push(setTimeout(function() {
+      if (!_alive) return;
+      _gapBadge.style.opacity   = '1';
+      _gapBadge.style.transform = 'scale(1)';
+    }, 120));
 
     _timers.push(setTimeout(function() {
       if (!_alive) return;
       _gapText.style.opacity = '1';
-    }, 600));
+    }, 360));
   }
 
-  function _beat5() {
-    _gateG.style.opacity = '1';
-
-    // Inject pulse keyframe once
-    if (!document.getElementById('cf-gate-style')) {
-      var s = document.createElement('style');
-      s.id = 'cf-gate-style';
-      s.textContent = '@keyframes cfGatePulse{0%,100%{opacity:.7}50%{opacity:1}}';
-      document.head.appendChild(s);
-    }
-    _diamond.style.animation = 'cfGatePulse 1.2s ease-in-out infinite';
-  }
-
+  // Beat 6 (2800ms): AI proposal slides up
   function _beat6() {
-    // Freeze diamond
-    if (_diamond) _diamond.style.animation = 'none';
+    _aiPropG.style.opacity   = '1';
+    _aiPropG.style.transform = 'translateY(0)';
+  }
 
-    // Spring stamp: 0 -> 1.1 -> 1.0
-    _evidenceG.style.transition = 'opacity 200ms ease,transform 200ms ease';
-    _evidenceG.style.opacity    = '1';
-    _evidenceG.style.transform  = 'scale(1.1)';
+  // Beat 7 (3300ms): evidence stamps in -- spring from scale(0.6) to scale(1.08) to scale(1)
+  function _beat7() {
+    _evidenceG.style.opacity   = '1';
+    _evidenceG.style.transform = 'scale(1.08)';
 
     _timers.push(setTimeout(function() {
       if (!_alive) return;
-      _evidenceG.style.transform = 'scale(1.0)';
-    }, 220));
-  }
-
-  function _beat5b() {
-    _aiPropG.style.opacity = '1';
-  }
-
-  function _beat7() {
-    _titleEl.style.opacity = '1';
-    revealHeader(true);
-  }
-
-  function _addControlStrip() {
-    var strip = document.createElement('div');
-    strip.style.cssText = 'position:absolute;bottom:6px;right:10px;display:flex;gap:16px;pointer-events:none;';
-    ['replay', 'pause', 'next'].forEach(function(lbl) {
-      var sp = document.createElement('span');
-      sp.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:11px;color:var(--text-3,#71758A);letter-spacing:.05em;';
-      sp.textContent = lbl;
-      strip.appendChild(sp);
-    });
-    container.style.position = 'relative';
-    container.appendChild(strip);
+      _evidenceG.style.transition = 'transform 180ms ease';
+      _evidenceG.style.transform  = 'scale(1)';
+    }, 260));
   }
 
   // ── Timeline ──────────────────────────────────────────────────────────────
   var tl = createTimeline([
-    { delay:     0, run: function() { _beat0(); } },
-    { delay:  1000, run: function() { _beat1(); } },
-    { delay:  2500, run: function() { _beat2(); } },
-    { delay:  4000, run: function() { _beat3(); } },
-    { delay:  5800, run: function() { _beat4(); } },
-    { delay:  7000, run: function() { _beat5(); } },
-    { delay:  7800, run: function() { _beat5b(); } },
-    { delay:  8400, run: function() { _beat6(); } },
-    { delay:  9300, run: function() { _beat7(); } },
-    { delay: 10500, run: function() {
-      _addControlStrip();
+    { delay:    0, run: function() { _beat0(); } },   // doc drops in
+    { delay:  380, run: function() { _beat1(); } },   // clause fires
+    { delay:  800, run: function() { _beat2(); } },   // pills burst
+    { delay: 1300, run: function() { _beat3(); } },   // graph nodes
+    { delay: 1750, run: function() { _beat4(); } },   // edges draw
+    { delay: 2200, run: function() { _beat5(); } },   // GAP detected
+    { delay: 2800, run: function() { _beat6(); } },   // AI proposal
+    { delay: 3300, run: function() { _beat7(); } },   // evidence stamp
+    { delay: 4000, run: function() {
       container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
     }}
   ]);
@@ -706,7 +595,7 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     },
     finish:  function() { build(); showFinal(); },
     getAccessibleSummary: function() {
-      return 'A regulatory clause is parsed into a structured obligation. AI detects a gap in the evidence chain and proposes a link. After human review, the obligation connects to a verified evidence record. AI changes risk work.';
+      return 'A regulatory clause is parsed into a structured obligation object. AI detects a gap in the evidence chain and proposes a link. The obligation connects to a verified evidence record. AI changes risk work.';
     },
     destroy: function() {
       _alive = false;

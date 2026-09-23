@@ -504,124 +504,52 @@ function openSolutionDrawer(solId){
   openDrawer(s.displayName,tabs,'overview');
 }
 
-// ── EVIDENCE-TO-DESIGN FLOW (Screen 05) ──
+// ── EVIDENCE-TO-DESIGN FLOW (Reference · Process) ──
+// Reimagined as a large, readable horizontal pipeline. No D3 needed.
 function renderEvidenceFlow(sec){
   var container=sec.querySelector('#evidenceFlowDiagram');if(!container)return;
-  container.innerHTML='';
 
   var STAGES=[
-    {id:'evidence',label:'Evidence assembly',color:'#0F8A62',
-     nodes:['Policies and procedures','Process maps','Control inventory','Interview transcripts','Regulatory obligations','AI-assisted ingestion']},
-    {id:'diagnose',label:'Diagnostic questions',color:'#0E7490',
-     nodes:['Failure mode mapping','Maturity scoring','Decision-right gaps','Control design gaps','Capability ownership gaps']},
-    {id:'design',label:'Target-state design',color:'#A100FF',
-     nodes:['Design principles','Decision rights','Technology pattern','Human-AI interface','Control embedding','Evidence schema']},
-    {id:'intervene',label:'Intervention pathway',color:'#B46A00',
-     nodes:['No-regret moves','Lighthouse use case','Industrialise','Scale across function']},
-    {id:'gate',label:'Gate evidence',color:'#0F8A62',
-     nodes:['Business KPIs','Operational metrics','Control effectiveness','Adoption measures','Regulatory defensibility']}
+    {num:'01', label:'Evidence assembly', color:'#58C994', bg:'rgba(88,201,148,0.08)', border:'rgba(88,201,148,0.30)',
+     items:['Policies and procedures','Process maps','Control inventory','Interview transcripts','Regulatory obligations','AI-assisted ingestion']},
+    {num:'02', label:'Diagnostic questions', color:'#55C7E8', bg:'rgba(85,199,232,0.08)', border:'rgba(85,199,232,0.30)',
+     items:['Failure mode mapping','Maturity scoring','Decision-right gaps','Control design gaps','Capability ownership gaps']},
+    {num:'03', label:'Target-state design', color:'#B44CFF', bg:'rgba(180,76,255,0.10)', border:'rgba(180,76,255,0.36)',
+     items:['Design principles','Decision rights','Technology pattern','Human-AI interface','Control embedding','Evidence schema']},
+    {num:'04', label:'Intervention pathway', color:'#F3B34C', bg:'rgba(243,179,76,0.08)', border:'rgba(243,179,76,0.30)',
+     items:['No-regret moves','Lighthouse use case','Industrialise','Scale across function']},
+    {num:'05', label:'Gate evidence', color:'#58C994', bg:'rgba(88,201,148,0.08)', border:'rgba(88,201,148,0.30)',
+     items:['Business KPIs','Operational metrics','Control effectiveness','Adoption measures','Regulatory defensibility']}
   ];
 
-  // Connections: which stage-node pairs connect (stage index, node index pairs)
-  var LINKS=[
-    {from:[0,0],to:[1,0]},{from:[0,1],to:[1,0]},{from:[0,2],to:[1,1]},{from:[0,3],to:[1,2]},
-    {from:[0,4],to:[1,3]},{from:[0,5],to:[1,4]},
-    {from:[1,0],to:[2,0]},{from:[1,1],to:[2,1]},{from:[1,2],to:[2,2]},{from:[1,3],to:[2,3]},
-    {from:[1,4],to:[2,4]},
-    {from:[2,0],to:[3,0]},{from:[2,1],to:[3,0]},{from:[2,2],to:[3,1]},{from:[2,3],to:[3,1]},
-    {from:[2,4],to:[3,2]},{from:[2,5],to:[3,2]},
-    {from:[3,0],to:[4,0]},{from:[3,1],to:[4,1]},{from:[3,2],to:[4,2]},{from:[3,3],to:[4,3]}
-  ];
-
-  if(typeof d3==='undefined'){
-    // Fallback: static HTML
-    container.innerHTML='<div class="arch-stack">'+STAGES.map(function(s){
-      return '<div class="arch-layer"><div class="arch-layer-name">'+s.label+'</div><div class="arch-layer-chips">'+s.nodes.map(function(n){return '<span class="arch-chip">'+n+'</span>';}).join('')+'</div></div>';
-    }).join('<div class="arch-conn-v">down</div>')+'</div>';
-    return;
-  }
-
-  var W=container.clientWidth||900,COL=Math.floor(W/STAGES.length),NODE_H=24,NODE_W=COL-20,STAGE_PAD=12;
-  var stageHeights=STAGES.map(function(s){return s.nodes.length*(NODE_H+4)+STAGE_PAD*2+28;});
-  var H=Math.max.apply(null,stageHeights);
-  var svg=d3.select(container).append('svg').attr('viewBox','0 0 '+W+' '+H).attr('width','100%').attr('height',H)
-    .attr('role','img').attr('aria-label','Evidence to design pipeline flow');
-
-  // Compute node centre positions
-  var nodePos=[];
+  var html='<div style="display:flex;flex-direction:row;gap:0;align-items:stretch;">';
   STAGES.forEach(function(s,si){
-    nodePos.push([]);
-    s.nodes.forEach(function(n,ni){
-      var x=si*COL+10;
-      var y=STAGE_PAD+28+ni*(NODE_H+4)+NODE_H/2;
-      nodePos[si].push({x:x+NODE_W/2,y:y,x0:x,y0:y-NODE_H/2});
+    // Stage card
+    html+='<div style="flex:1;background:'+s.bg+';border:1px solid '+s.border+';border-radius:'
+      +(si===0?'10px 0 0 10px':(si===STAGES.length-1?'0 10px 10px 0':'0'))
+      +';padding:16px 14px 16px;display:flex;flex-direction:column;gap:10px;">';
+    // Stage number + label
+    html+='<div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid '+s.border+';padding-bottom:10px;flex-shrink:0">';
+    html+='<span style="font-family:\'JetBrains Mono\',monospace;font-size:18px;font-weight:700;color:'+s.color+';opacity:.45;line-height:1">'+s.num+'</span>';
+    html+='<span style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:700;color:var(--text-1);line-height:1.2">'+s.label+'</span>';
+    html+='</div>';
+    // Items
+    html+='<div style="display:flex;flex-direction:column;gap:5px;flex:1">';
+    s.items.forEach(function(item){
+      html+='<div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:'+s.color+';background:rgba(0,0,0,0.18);border:1px solid '+s.border+';border-radius:4px;padding:4px 8px;line-height:1.3">'+item+'</div>';
     });
-  });
-
-  // Draw links first (behind nodes)
-  var linkLayer=svg.append('g').attr('class','ef-links');
-  LINKS.forEach(function(lk){
-    var from=nodePos[lk.from[0]][lk.from[1]];
-    var to=nodePos[lk.to[0]][lk.to[1]];
-    if(!from||!to)return;
-    var x1=lk.from[0]*COL+10+NODE_W,y1=from.y;
-    var x2=lk.to[0]*COL+10,y2=to.y;
-    var mx=(x1+x2)/2;
-    linkLayer.append('path')
-      .attr('d','M'+x1+','+y1+' C'+mx+','+y1+' '+mx+','+y2+' '+x2+','+y2)
-      .attr('fill','none').attr('stroke','rgba(255,255,255,0.06)').attr('stroke-width',1.5);
-  });
-
-  // Draw stages and nodes
-  STAGES.forEach(function(s,si){
-    var x=si*COL;
-    // Stage header
-    svg.append('text')
-      .attr('x',x+10).attr('y',18)
-      .attr('font-size','8.5').attr('font-family','JetBrains Mono, monospace').attr('font-weight','700')
-      .attr('fill',s.color).attr('letter-spacing','0.06em').attr('text-transform','uppercase')
-      .text(s.label.toUpperCase());
-    // Column background
-    svg.append('rect').attr('x',x+4).attr('y',22).attr('width',COL-8).attr('height',H-28)
-      .attr('rx',6).attr('fill',s.color).attr('fill-opacity',0.04)
-      .attr('stroke',s.color).attr('stroke-opacity',0.12).attr('stroke-width',1);
-
-    s.nodes.forEach(function(n,ni){
-      var pos=nodePos[si][ni];
-      var g=svg.append('g').attr('class','ef-node').style('cursor','default');
-      g.append('rect')
-        .attr('x',pos.x0).attr('y',pos.y0)
-        .attr('width',NODE_W).attr('height',NODE_H).attr('rx',4)
-        .attr('fill',s.color).attr('fill-opacity',0.12)
-        .attr('stroke',s.color).attr('stroke-opacity',0.3).attr('stroke-width',1);
-      // Word wrap text into 2 lines max
-      var words=n.split(' '),line1=[],line2=[],limit=Math.floor(NODE_W/5.5);
-      var acc='';
-      words.forEach(function(w){
-        if((acc+' '+w).trim().length<=limit){acc=(acc+' '+w).trim();}
-        else if(!line1.length){line1.push(acc);acc=w;}
-        else{line2.push(w);}
-      });
-      if(acc)(!line1.length?line1:line2).push(acc);
-      var totalLines=line2.length?2:1;
-      var textY=pos.y-(totalLines-1)*5.5;
-      [line1.join(' '),line2.join(' ')].forEach(function(ln,li){
-        if(!ln)return;
-        g.append('text')
-          .attr('x',pos.x).attr('y',textY+li*11)
-          .attr('text-anchor','middle').attr('font-size','8.5').attr('font-family','Inter, sans-serif')
-          .attr('fill',s.color).attr('fill-opacity',0.9)
-          .text(ln);
-      });
-    });
-
-    // Stage separator line
+    html+='</div>';
+    html+='</div>';
+    // Arrow between stages
     if(si<STAGES.length-1){
-      svg.append('line')
-        .attr('x1',x+COL-4).attr('y1',22).attr('x2',x+COL-4).attr('y2',H-6)
-        .attr('stroke','rgba(255,255,255,0.07)').attr('stroke-width',1);
+      html+='<div style="flex-shrink:0;width:24px;display:flex;align-items:center;justify-content:center;background:transparent;font-size:18px;color:rgba(255,255,255,0.20);z-index:1;position:relative;margin:0 -1px">'
+        +'<span style="position:relative;z-index:2">&#8250;</span>'
+        +'</div>';
     }
   });
+  html+='</div>';
+
+  container.innerHTML=html;
 }
 
 // ── CAPABILITY HOTSPOTS (Screen 7) ──

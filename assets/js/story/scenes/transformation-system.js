@@ -1,529 +1,267 @@
-// Scene: transformation-system (Screen 05)
-// V26: Continuous system fields assemble around the obligation knowledge graph.
-// Each field is a labelled background region -- not a card.
-// Fields use transparent fill + colored dashed boundary + corner label.
-// Failure demo: Work and decisions dims; process gap appears; system restores.
+// Scene: transformation-system (Screen 05 -- WHERE IT APPLIES)
+// Message: "One use case changes five systems."
+// Reimagined as a clean left/right HTML layout: obligation trigger card on the left,
+// five impact cards on the right that illuminate one by one.
+// Eliminates all text-over-border issues from the previous SVG knowledge graph approach.
 SceneDirector.register('transformation-system', function(container, manifest, reduced) {
-
-  var GRAPH_DATA_URL = './assets/data/context-graph/regulation-coverage.json';
 
   var _timers = [];
   var _tl = null;
 
-  // ── Field panel definitions ──────────────────────────────────────────────
-  // connFrom: midpoint of the edge facing the graph
-  // connTo:   target node position in the graph
-  var FIELDS = [
+  function _t(fn, delay) {
+    var id = setTimeout(fn, delay);
+    _timers.push(id);
+    return id;
+  }
+
+  // Five systems that the obligation change touches
+  var SYSTEMS = [
     {
-      id: 'work', label: 'Work and decisions', color: '#55C7E8',
-      x:  40, y:  40, w: 260, h: 120,
-      slideDir: 'left',
-      connFrom: { x: 300, y: 100 }, connTo: { x: 463, y: 200 }
+      label: 'Policy documentation',
+      sub:   'Affected clause requires revision',
+      color: '#58C994',
+      bg:    'rgba(88,201,148,0.08)',
+      border:'rgba(88,201,148,0.30)'
     },
     {
-      id: 'data', label: 'Data and technology', color: '#B44CFF',
-      x:  40, y: 390, w: 260, h: 120,
-      slideDir: 'bottom-left',
-      connFrom: { x: 300, y: 450 }, connTo: { x: 548, y: 360 }
+      label: 'Control framework',
+      sub:   'Two controls require redesign',
+      color: '#55C7E8',
+      bg:    'rgba(85,199,232,0.08)',
+      border:'rgba(85,199,232,0.30)'
     },
     {
-      id: 'governance', label: 'Governance and assurance', color: '#58C994',
-      x: 920, y:  40, w: 240, h: 120,
-      slideDir: 'right',
-      connFrom: { x: 920, y: 100 }, connTo: { x: 718, y: 200 }
+      label: 'Data catalogue',
+      sub:   'Processing basis entries updated',
+      color: '#B44CFF',
+      bg:    'rgba(180,76,255,0.08)',
+      border:'rgba(180,76,255,0.30)'
     },
     {
-      id: 'value', label: 'Value and ownership', color: '#F3B34C',
-      x: 920, y: 390, w: 240, h: 120,
-      slideDir: 'bottom-right',
-      connFrom: { x: 920, y: 450 }, connTo: { x: 695, y: 318 }
+      label: 'Process maps',
+      sub:   'Workflow decision node changes',
+      color: '#F3B34C',
+      bg:    'rgba(243,179,76,0.08)',
+      border:'rgba(243,179,76,0.28)'
     },
     {
-      id: 'people', label: 'People and roles', color: '#F0758A',
-      x: 450, y: 455, w: 300, h:  90,
-      slideDir: 'bottom',
-      connFrom: { x: 600, y: 455 }, connTo: { x: 720, y: 268 }
+      label: 'Governance register',
+      sub:   'Approval gate record updated',
+      color: '#F0758A',
+      bg:    'rgba(240,117,138,0.08)',
+      border:'rgba(240,117,138,0.28)'
     }
   ];
 
-  function slideOffset(dir) {
-    switch (dir) {
-      case 'left':         return 'translate(-200px,0)';
-      case 'bottom-left':  return 'translate(-160px,100px)';
-      case 'right':        return 'translate(200px,0)';
-      case 'bottom-right': return 'translate(160px,100px)';
-      case 'bottom':       return 'translate(0,120px)';
-    }
-    return 'translate(0,0)';
-  }
-
-  // ── Graph node layout (fixed SVG coords) ────────────────────────────────
-  // Colours and positions from V19 spec; labels/sublabels enriched from JSON when available.
-  var GRAPH_NODES = [
-    // Business meaning zone (top row, y~200)
-    { id: 'reg-001', label: 'Regulation', sublabel: '',  cx: 463, cy: 200, r: 11, color: '#55C7E8', onChain: true,  hero: false },
-    { id: 'obl-001', label: 'Obligation', sublabel: '',  cx: 545, cy: 200, r: 15, color: '#B44CFF', onChain: true,  hero: true  },
-    { id: 'pol-001', label: 'Policy',     sublabel: '',  cx: 633, cy: 200, r: 11, color: '#A4A9B7', onChain: true,  hero: false },
-    { id: 'ctl-001', label: 'Control',    sublabel: '',  cx: 718, cy: 200, r: 11, color: '#A4A9B7', onChain: true,  hero: false },
-    // Operating execution zone (right side)
-    { id: 'prc-001', label: 'Process',    sublabel: '',  cx: 720, cy: 268, r: 11, color: '#58C994', onChain: true,  hero: false },
-    { id: 'sys-001', label: 'System',     sublabel: '',  cx: 752, cy: 315, r:  9, color: '#A4A9B7', onChain: false, hero: false },
-    { id: 'own-001', label: 'Owner',      sublabel: '',  cx: 695, cy: 318, r:  9, color: '#F3B34C', onChain: false, hero: false },
-    // Assurance zone (bottom)
-    { id: 'evd-001', label: 'Evidence',   sublabel: '',  cx: 548, cy: 360, r: 13, color: '#58C994', onChain: true,  hero: false },
-    { id: 'iss-001', label: 'Issue',      sublabel: '',  cx: 635, cy: 360, r: 10, color: '#F0758A', onChain: false, hero: false }
-  ];
-
-  // OBL-27 highlighted chain: reg -> obl -> pol -> ctl -> prc -> evd
-  var CHAIN_EDGES = [
-    { from: 'reg-001', to: 'obl-001' },
-    { from: 'obl-001', to: 'pol-001' },
-    { from: 'pol-001', to: 'ctl-001' },
-    { from: 'ctl-001', to: 'prc-001' },
-    { from: 'prc-001', to: 'evd-001' }
-  ];
-
-  // Off-chain edges (dashed, faint)
-  var OFFCHAIN_EDGES = [
-    { from: 'prc-001', to: 'sys-001' },
-    { from: 'prc-001', to: 'own-001' },
-    { from: 'evd-001', to: 'iss-001' }
-  ];
-
-  // ── Helpers ──────────────────────────────────────────────────────────────
-  function nodeById(id) {
-    for (var i = 0; i < GRAPH_NODES.length; i++) {
-      if (GRAPH_NODES[i].id === id) return GRAPH_NODES[i];
-    }
-    return null;
-  }
-
-  function edgeLen(n1, n2) {
-    var dx = n2.cx - n1.cx, dy = n2.cy - n1.cy;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  function get(id) {
-    return container.querySelector('[data-id="' + id + '"]');
-  }
-
-  // ── JSON enrichment (synchronous XHR at play() time) ────────────────────
-  function loadGraphData() {
-    try {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', GRAPH_DATA_URL, false); // synchronous
-      xhr.send(null);
-      if (xhr.status === 200) {
-        var data = JSON.parse(xhr.responseText);
-        if (data && data.nodes) {
-          data.nodes.forEach(function(jn) {
-            var local = nodeById(jn.id);
-            if (local) {
-              // Prefer displayLabel; fall back to label. Never render the raw node ID.
-              var dl = jn.displayLabel || jn.label;
-              if (dl && dl !== jn.id) {
-                local.label = dl;
-              } else if (!dl || dl === jn.id) {
-                if (typeof console !== 'undefined' && console.error) {
-                  console.error('[transformation-system] Missing displayLabel for node ' + jn.id);
-                }
-                // Keep the local default label; do not expose raw ID.
-              }
-              if (jn.sublabel) local.sublabel = jn.sublabel;
-            }
-          });
-        }
-      }
-    } catch (e) {
-      // Fallback: GRAPH_NODES already populated with reasonable labels
-    }
-  }
-
-  // ── Build DOM ────────────────────────────────────────────────────────────
   function build() {
     container.innerHTML = '';
 
     var root = document.createElement('div');
-    root.style.cssText = 'width:100%;height:100%;position:relative;';
+    root.className = 'scene-root';
+    root.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:row;gap:0;'
+      + 'align-items:stretch;overflow:hidden;box-sizing:border-box;padding:14px 18px;';
 
-    var svg = svgEl('svg', {
-      viewBox: '0 0 1200 560',
-      preserveAspectRatio: 'xMidYMid meet'
-    });
-    svg.style.cssText = 'width:100%;height:100%;display:block;';
+    // ── LEFT PANEL: Obligation trigger ──────────────────────────────────────
+    var leftPanel = document.createElement('div');
+    leftPanel.id = 'ts-left';
+    leftPanel.style.cssText = 'flex:0 0 310px;display:flex;flex-direction:column;gap:14px;'
+      + 'opacity:0;transform:translateX(-28px);'
+      + 'transition:opacity .5s ease,transform .5s cubic-bezier(.16,1,.3,1);';
 
-    // ── Graph background panel ──
-    var graphBg = svgEl('g', { 'data-id': 'graph-bg', opacity: '0' });
-    graphBg.style.cssText = 'transition:opacity 400ms ease;';
-    graphBg.appendChild(svgEl('rect', {
-      x: '428', y: '168', width: '365', height: '214', rx: '14',
-      fill: 'rgba(18,21,30,0.92)', stroke: 'rgba(180,76,255,0.35)', 'stroke-width': '1.5'
-    }));
+    // Tag
+    var oblTag = document.createElement('div');
+    oblTag.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;'
+      + 'letter-spacing:.14em;text-transform:uppercase;color:rgba(180,76,255,.55);flex-shrink:0;';
+    oblTag.textContent = 'Obligation';
+    leftPanel.appendChild(oblTag);
 
-    // Zone label: business meaning -- sits in the header band above the nodes.
-    // Nodes have cy=200 (min radius 11), so top at y=189. Label is centered at y=176,
-    // keeping it clearly in the graph panel header strip (y=168..188).
-    var bzLbl = svgEl('text', {
-      x: '593', y: '176',
-      'text-anchor': 'middle', 'dominant-baseline': 'middle',
-      fill: 'rgba(164,169,183,0.40)', 'font-size': '9',
-      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1.5',
-      'pointer-events': 'none'
-    });
-    bzLbl.textContent = 'BUSINESS MEANING';
-    graphBg.appendChild(bzLbl);
+    // Obligation card
+    var oblCard = document.createElement('div');
+    oblCard.style.cssText = 'border:2px solid rgba(180,76,255,.42);border-radius:12px;'
+      + 'background:rgba(180,76,255,.08);padding:22px 20px 18px;display:flex;'
+      + 'flex-direction:column;gap:10px;flex-shrink:0;';
 
-    // Zone label: execution -- placed in the left margin of the graph panel,
-    // below the off-chain execution cluster (prc/sys/own at cy=268..318).
-    // Horizontal, not rotated, to avoid overlapping the PROCESS GAP badge region.
-    var execLbl = svgEl('text', {
-      x: '436', y: '370',
-      'text-anchor': 'start', 'dominant-baseline': 'middle',
-      fill: 'rgba(164,169,183,0.30)', 'font-size': '8',
-      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1',
-      'pointer-events': 'none'
-    });
-    execLbl.textContent = 'EXECUTION';
-    graphBg.appendChild(execLbl);
+    var artNum = document.createElement('div');
+    artNum.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:26px;'
+      + 'font-weight:700;color:rgba(180,76,255,.45);line-height:1;';
+    artNum.textContent = 'Art. 7(3)';
+    oblCard.appendChild(artNum);
 
-    // OBL-27 badge inside graph panel
-    var oblBadge = svgEl('text', {
-      x: '609', y: '374',
-      'text-anchor': 'middle', 'dominant-baseline': 'middle',
-      fill: 'rgba(180,76,255,0.55)', 'font-size': '9',
-      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1.5'
-    });
-    oblBadge.textContent = 'OBL-27 -- ILLUSTRATIVE';
-    graphBg.appendChild(oblBadge);
+    var artTitle = document.createElement('div');
+    artTitle.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:21px;'
+      + 'font-weight:700;color:var(--text-1);line-height:1.2;';
+    artTitle.textContent = 'Data minimisation';
+    oblCard.appendChild(artTitle);
 
-    svg.appendChild(graphBg);
+    var artScope = document.createElement('div');
+    artScope.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:12px;'
+      + 'color:rgba(180,76,255,.60);margin-top:2px;';
+    artScope.textContent = 'Processing activities — Coverage mapping';
+    oblCard.appendChild(artScope);
 
-    // ── Off-chain edges ──
-    var offchainG = svgEl('g', { 'data-id': 'offchain-edges', opacity: '0' });
-    offchainG.style.cssText = 'transition:opacity 500ms ease;';
-    OFFCHAIN_EDGES.forEach(function(e) {
-      var n1 = nodeById(e.from), n2 = nodeById(e.to);
-      if (!n1 || !n2) return;
-      offchainG.appendChild(svgEl('line', {
-        x1: n1.cx, y1: n1.cy, x2: n2.cx, y2: n2.cy,
-        stroke: 'rgba(164,169,183,0.25)', 'stroke-width': '1',
-        'stroke-dasharray': '3,4'
-      }));
-    });
-    svg.appendChild(offchainG);
+    leftPanel.appendChild(oblCard);
 
-    // ── Chain edges (animated stroke-dashoffset) ──
-    CHAIN_EDGES.forEach(function(e) {
-      var n1 = nodeById(e.from), n2 = nodeById(e.to);
-      if (!n1 || !n2) return;
-      var len = Math.ceil(edgeLen(n1, n2)) + 1;
-      var lineEl = svgEl('line', {
-        'data-id': 'chain-edge-' + e.from + '-' + e.to,
-        x1: n1.cx, y1: n1.cy, x2: n2.cx, y2: n2.cy,
-        stroke: 'rgba(180,76,255,0.75)', 'stroke-width': '2'
-      });
-      lineEl.style.cssText =
-        'stroke-dasharray:' + len + ';' +
-        'stroke-dashoffset:' + len + ';' +
-        'transition:stroke-dashoffset 380ms ease;';
-      svg.appendChild(lineEl);
-    });
+    // Impact counter
+    var implRow = document.createElement('div');
+    implRow.id = 'ts-impl';
+    implRow.style.cssText = 'opacity:0;transition:opacity .5s ease;flex-shrink:0;'
+      + 'display:flex;align-items:baseline;gap:8px;padding:12px 16px;'
+      + 'background:rgba(255,255,255,0.04);border-radius:8px;'
+      + 'border:1px solid rgba(255,255,255,0.12);';
 
-    // ── Graph nodes ──
-    GRAPH_NODES.forEach(function(n) {
-      var g = svgEl('g', { 'data-id': 'node-' + n.id });
-      g.style.cssText =
-        'transform-origin:' + n.cx + 'px ' + n.cy + 'px;' +
-        'transform:scale(0);' +
-        'transition:transform 320ms cubic-bezier(0.175,0.885,0.32,1.275);' +
-        (n.onChain ? '' : 'opacity:0.5;');
+    var implPre = document.createElement('span');
+    implPre.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:14px;color:var(--text-3);';
+    implPre.textContent = 'One change touches';
+    implRow.appendChild(implPre);
 
-      // Hero glow
-      if (n.hero) {
-        g.appendChild(svgEl('circle', {
-          cx: n.cx, cy: n.cy, r: n.r + 7,
-          fill: 'rgba(180,76,255,0.12)'
-        }));
-      }
+    var counter = document.createElement('span');
+    counter.id = 'ts-counter';
+    counter.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:32px;'
+      + 'font-weight:700;color:var(--text-1);line-height:1;';
+    counter.textContent = '0';
+    implRow.appendChild(counter);
 
-      // Main circle
-      g.appendChild(svgEl('circle', {
-        cx: n.cx, cy: n.cy, r: n.r,
-        fill: n.hero ? 'rgba(180,76,255,0.22)' : 'rgba(18,21,30,0.95)',
-        stroke: n.color,
-        'stroke-width': n.hero ? '2.5' : (n.onChain ? '2' : '1.5')
-      }));
+    var implPost = document.createElement('span');
+    implPost.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:14px;color:var(--text-3);';
+    implPost.textContent = 'systems';
+    implRow.appendChild(implPost);
 
-      // Primary label (below circle)
-      var lbl = svgEl('text', {
-        x: n.cx, y: n.cy + n.r + 11,
-        'text-anchor': 'middle', 'dominant-baseline': 'middle',
-        fill: n.onChain ? n.color : 'rgba(164,169,183,0.55)',
-        'font-size': '11', 'font-weight': '600',
-        'font-family': 'Space Grotesk,sans-serif'
-      });
-      lbl.textContent = n.label;
-      g.appendChild(lbl);
+    leftPanel.appendChild(implRow);
+    root.appendChild(leftPanel);
 
-      svg.appendChild(g);
-    });
+    // ── CENTER DIVIDER ──────────────────────────────────────────────────────
+    var divider = document.createElement('div');
+    divider.id = 'ts-divider';
+    divider.style.cssText = 'flex:0 0 44px;display:flex;align-items:center;justify-content:center;'
+      + 'opacity:0;transition:opacity .5s ease;'
+      + 'font-family:\'JetBrains Mono\',monospace;font-size:22px;color:rgba(255,255,255,.20);';
+    divider.textContent = '›';
+    root.appendChild(divider);
 
-    // ── Connector lines (field -> graph node) ──
-    FIELDS.forEach(function(f) {
-      var cl = svgEl('line', {
-        'data-id': 'conn-' + f.id,
-        x1: f.connFrom.x, y1: f.connFrom.y,
-        x2: f.connTo.x,   y2: f.connTo.y,
-        stroke: f.color, 'stroke-width': '1',
-        'stroke-dasharray': '4,5', opacity: '0'
-      });
-      cl.style.cssText = 'transition:opacity 350ms ease;';
-      svg.appendChild(cl);
+    // ── RIGHT PANEL: System impact cards ────────────────────────────────────
+    var rightPanel = document.createElement('div');
+    rightPanel.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:8px;';
+
+    // Header
+    var rightHdr = document.createElement('div');
+    rightHdr.id = 'ts-right-hdr';
+    rightHdr.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;'
+      + 'letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);flex-shrink:0;'
+      + 'opacity:0;transition:opacity .5s ease;';
+    rightHdr.textContent = 'Systems affected';
+    rightPanel.appendChild(rightHdr);
+
+    SYSTEMS.forEach(function(s, i) {
+      var card = document.createElement('div');
+      card.id = 'ts-sys-' + i;
+      card.style.cssText = 'flex:1;display:flex;flex-direction:row;align-items:center;gap:16px;'
+        + 'background:' + s.bg + ';border:1px solid ' + s.border + ';border-radius:10px;'
+        + 'padding:0 18px;'
+        + 'opacity:0;transform:translateX(24px);'
+        + 'transition:opacity .4s ease,transform .4s cubic-bezier(.16,1,.3,1);';
+
+      // Number badge
+      var badge = document.createElement('div');
+      badge.style.cssText = 'flex-shrink:0;width:38px;height:38px;border-radius:50%;'
+        + 'background:' + s.bg + ';border:2px solid ' + s.border + ';'
+        + 'display:flex;align-items:center;justify-content:center;';
+      badge.innerHTML = '<span style="font-family:\'JetBrains Mono\',monospace;font-size:16px;'
+        + 'font-weight:700;color:' + s.color + '">' + (i + 1) + '</span>';
+      card.appendChild(badge);
+
+      // Label + sub
+      var textWrap = document.createElement('div');
+      textWrap.style.cssText = 'flex:1;';
+      textWrap.innerHTML =
+        '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:16px;font-weight:700;'
+        + 'color:var(--text-1);margin-bottom:3px;line-height:1.2">' + s.label + '</div>'
+        + '<div style="font-family:\'Inter\',sans-serif;font-size:14px;color:var(--text-2)">' + s.sub + '</div>';
+      card.appendChild(textWrap);
+
+      // Right accent bar
+      var bar = document.createElement('div');
+      bar.style.cssText = 'flex-shrink:0;width:4px;height:22px;border-radius:2px;'
+        + 'background:' + s.color + ';opacity:.55;';
+      card.appendChild(bar);
+
+      rightPanel.appendChild(card);
     });
 
-    // ── System fields (V26: labelled background regions, not cards) ──
-    FIELDS.forEach(function(f) {
-      var g = svgEl('g', { 'data-id': 'field-' + f.id });
-      g.style.cssText =
-        'transform:' + slideOffset(f.slideDir) + ';' +
-        'opacity:0;' +
-        'transition:transform 520ms cubic-bezier(0.22,1,0.36,1),' +
-        'opacity 520ms ease;';
-
-      // System field: transparent fill, subtle dashed boundary -- not a card
-      var hexR = parseInt(f.color.slice(1,3),16);
-      var hexG = parseInt(f.color.slice(3,5),16);
-      var hexB = parseInt(f.color.slice(5,7),16);
-      g.appendChild(svgEl('rect', {
-        x: f.x, y: f.y, width: f.w, height: f.h, rx: '3',
-        fill: 'rgba(' + hexR + ',' + hexG + ',' + hexB + ',0.05)',
-        stroke: 'rgba(' + hexR + ',' + hexG + ',' + hexB + ',0.28)',
-        'stroke-width': '1', 'stroke-dasharray': '5,4'
-      }));
-
-      // Corner label: top-left, JetBrains Mono, uppercase -- region identity not card title
-      var lbl = svgEl('text', {
-        x: f.x + 10, y: f.y + 16,
-        'text-anchor': 'start', 'dominant-baseline': 'middle',
-        fill: f.color, 'font-size': '9',
-        'letter-spacing': '0.1em', 'text-transform': 'uppercase',
-        'font-family': 'JetBrains Mono,monospace', opacity: '0.8'
-      });
-      lbl.textContent = f.label.toUpperCase();
-      g.appendChild(lbl);
-
-      svg.appendChild(g);
-    });
-
-    // ── Gap indicator (failure demo overlay) ──
-    // Overlays the ctl-001 -> prc-001 edge with a red dashed line + badge
-    var ctlN = nodeById('ctl-001'), prcN = nodeById('prc-001');
-    var gapG = svgEl('g', { 'data-id': 'gap-indicator', opacity: '0' });
-    gapG.style.cssText = 'transition:opacity 380ms ease;';
-
-    if (ctlN && prcN) {
-      gapG.appendChild(svgEl('line', {
-        x1: ctlN.cx, y1: ctlN.cy, x2: prcN.cx, y2: prcN.cy,
-        stroke: '#FF6B6B', 'stroke-width': '2.5', 'stroke-dasharray': '5,4'
-      }));
-    }
-
-    // PROCESS GAP badge -- to the right of the ctl->prc edge
-    gapG.appendChild(svgEl('rect', {
-      x: '730', y: '227', width: '98', height: '22', rx: '5',
-      fill: 'rgba(255,107,107,0.15)', stroke: '#FF6B6B', 'stroke-width': '1.5'
-    }));
-    var badgeT = svgEl('text', {
-      x: '779', y: '238',
-      'text-anchor': 'middle', 'dominant-baseline': 'middle',
-      fill: '#FF6B6B', 'font-size': '11', 'font-weight': '700',
-      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '1'
-    });
-    badgeT.textContent = 'PROCESS GAP';
-    gapG.appendChild(badgeT);
-
-    svg.appendChild(gapG);
-
-    // ── Second use-case token + REUSES SHARED CONTEXT label ──
-    // Enters from upper-right edge and routes to illuminate shared nodes.
-    // The full sentence is in the HTML footer strip below the scene.
-    var reuseG = svgEl('g', { 'data-id': 'reuse-note', opacity: '0' });
-    reuseG.style.cssText = 'transition:opacity 500ms ease;';
-
-    // Small use-case token entering from right (positioned above the graph)
-    reuseG.appendChild(svgEl('rect', {
-      x: '950', y: '110', width: '68', height: '22', rx: '5',
-      fill: 'rgba(85,199,232,0.15)', stroke: '#55C7E8', 'stroke-width': '1.5'
-    }));
-    var tok2T = svgEl('text', {
-      x: '984', y: '121',
-      'text-anchor': 'middle', 'dominant-baseline': 'middle',
-      fill: '#55C7E8', 'font-size': '9', 'font-weight': '700',
-      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '0.5'
-    });
-    tok2T.textContent = 'USE CASE 2';
-    reuseG.appendChild(tok2T);
-
-    // Connector from token to graph (dashed, towards reg-001 at cx=463, cy=200)
-    reuseG.appendChild(svgEl('path', {
-      d: 'M 950 121 C 800 121 600 180 475 200',
-      stroke: '#55C7E8', 'stroke-width': '1.5',
-      'stroke-dasharray': '5 3', fill: 'none', opacity: '0.6'
-    }));
-
-    // Short label below the token
-    var rsLbl = svgEl('text', {
-      x: '984', y: '144',
-      'text-anchor': 'middle', 'dominant-baseline': 'middle',
-      fill: '#55C7E8', 'font-size': '9',
-      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '0.8'
-    });
-    rsLbl.textContent = 'REUSES SHARED CONTEXT';
-    reuseG.appendChild(rsLbl);
-
-    svg.appendChild(reuseG);
-
-    root.appendChild(svg);
+    root.appendChild(rightPanel);
     container.appendChild(root);
   }
 
-  // ── Animation actions ────────────────────────────────────────────────────
-  function raf2(fn) {
-    requestAnimationFrame(function() { requestAnimationFrame(fn); });
+  // ── Animation helpers ──────────────────────────────────────────────────────
+  function showLeft() {
+    var el = container.querySelector('#ts-left');
+    if (!el) return;
+    el.style.opacity = '1';
+    el.style.transform = 'translateX(0)';
   }
 
-  function showNodes() {
-    var bg = get('graph-bg');
-    if (bg) bg.setAttribute('opacity', '1');
-    var oc = get('offchain-edges');
-    if (oc) oc.setAttribute('opacity', '1');
-
-    GRAPH_NODES.forEach(function(n, i) {
-      _timers.push(setTimeout(function() {
-        var el = get('node-' + n.id);
-        if (el) raf2(function() { el.style.transform = 'scale(1)'; });
-      }, i * 80));
-    });
+  function showDivider() {
+    var el = container.querySelector('#ts-divider');
+    if (el) el.style.opacity = '1';
+    var hdr = container.querySelector('#ts-right-hdr');
+    if (hdr) hdr.style.opacity = '1';
   }
 
-  function drawChainEdges() {
-    CHAIN_EDGES.forEach(function(e) {
-      var el = get('chain-edge-' + e.from + '-' + e.to);
-      if (el) raf2(function() { el.style.strokeDashoffset = '0'; });
-    });
+  function showImplication() {
+    var el = container.querySelector('#ts-impl');
+    if (el) el.style.opacity = '1';
   }
 
-  function revealField(id) {
-    var g    = get('field-' + id);
-    var conn = get('conn-' + id);
-    if (g) {
-      g.style.transform = 'translate(0,0)';
-      g.style.opacity   = '1';
+  function showSystem(i) {
+    var card = container.querySelector('#ts-sys-' + i);
+    if (card) {
+      card.style.opacity = '1';
+      card.style.transform = 'translateX(0)';
     }
-    if (conn) conn.setAttribute('opacity', '1');
-  }
-
-  function setWorkOpacity(opacity) {
-    var g = get('field-work');
-    if (!g) return;
-    g.style.transition = 'opacity 400ms ease';
-    g.style.opacity = String(opacity);
-  }
-
-  function showGapIndicator(on) {
-    var gapG = get('gap-indicator');
-    if (gapG) gapG.setAttribute('opacity', on ? '1' : '0');
-    // Dim the purple ctl->prc chain edge so red version reads clearly
-    var chainEdge = get('chain-edge-ctl-001-prc-001');
-    if (chainEdge) {
-      chainEdge.setAttribute('stroke',
-        on ? 'rgba(180,76,255,0)' : 'rgba(180,76,255,0.75)');
-    }
+    var ctr = container.querySelector('#ts-counter');
+    if (ctr) ctr.textContent = String(i + 1);
   }
 
   function showAll() {
-    var bg = get('graph-bg');
-    if (bg) bg.setAttribute('opacity', '1');
-    var oc = get('offchain-edges');
-    if (oc) oc.setAttribute('opacity', '1');
-
-    GRAPH_NODES.forEach(function(n) {
-      var el = get('node-' + n.id);
-      if (el) el.style.transform = 'scale(1)';
-    });
-
-    CHAIN_EDGES.forEach(function(e) {
-      var el = get('chain-edge-' + e.from + '-' + e.to);
-      if (el) el.style.strokeDashoffset = '0';
-    });
-
-    FIELDS.forEach(function(f) { revealField(f.id); });
-
-    var reuseG = get('reuse-note');
-    if (reuseG) reuseG.setAttribute('opacity', '1');
+    showLeft();
+    showDivider();
+    showImplication();
+    for (var i = 0; i < SYSTEMS.length; i++) { showSystem(i); }
   }
 
-  // ── Timeline steps ───────────────────────────────────────────────────────
+  // ── Timeline ──────────────────────────────────────────────────────────────
   var _steps = [
-    // 200ms  -- graph nodes scale in (staggered internally)
-    { delay: 200,  run: function() { showNodes(); } },
-    // 800ms  -- OBL-27 chain edges draw
-    { delay: 800,  run: function() { drawChainEdges(); } },
-    // 1600ms -- Work and decisions slides in from left
-    { delay: 1600, run: function() { revealField('work'); } },
-    // 2200ms -- Data and technology slides in from bottom-left
-    { delay: 2200, run: function() { revealField('data'); } },
-    // 2800ms -- People and roles slides in from bottom
-    { delay: 2800, run: function() { revealField('people'); } },
-    // 3400ms -- Governance and assurance slides in from right
-    { delay: 3400, run: function() { revealField('governance'); } },
-    // 4000ms -- Value and ownership slides in from bottom-right
-    { delay: 4000, run: function() { revealField('value'); } },
-    // 4800ms -- 1 second hold (no action needed; createTimeline continues)
-    // 5800ms -- Failure demo: Work dims, process gap appears
-    { delay: 5800, run: function() {
-      setWorkOpacity(0.15);
-      showGapIndicator(true);
-    }},
-    // 6600ms -- Restore: Work restores, gap fades
-    { delay: 6600, run: function() {
-      setWorkOpacity(1);
-      showGapIndicator(false);
-    }},
-    // 7200ms -- Reuse insight text + complete
-    { delay: 7200, run: function() {
-      var reuseG = get('reuse-note');
-      if (reuseG) reuseG.setAttribute('opacity', '1');
-      _timers.push(setTimeout(function() {
+    { delay: 200,  run: showLeft },
+    { delay: 750,  run: function() { showDivider(); showImplication(); } },
+    { delay: 1100, run: function() { showSystem(0); } },
+    { delay: 1500, run: function() { showSystem(1); } },
+    { delay: 1900, run: function() { showSystem(2); } },
+    { delay: 2300, run: function() { showSystem(3); } },
+    { delay: 2700, run: function() {
+      showSystem(4);
+      _t(function() {
         container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
-      }, 600));
+      }, 600);
     }}
   ];
 
-  // ── Public interface ─────────────────────────────────────────────────────
+  // ── Public interface ──────────────────────────────────────────────────────
   return {
     play: function() {
       if (_tl) { _tl.destroy(); _tl = null; }
       _timers.forEach(clearTimeout); _timers = [];
-      loadGraphData();
       build();
       if (reduced) { showAll(); return; }
       _tl = createTimeline(_steps);
       _tl.play();
     },
 
-    pause: function() {
-      if (_tl) _tl.pause();
-    },
+    pause: function() { if (_tl) _tl.pause(); },
 
-    resume: function() {
-      if (_tl) _tl.resume();
-    },
+    resume: function() { if (_tl) _tl.resume(); },
 
     reset: function() {
       if (_tl) { _tl.destroy(); _tl = null; }
       _timers.forEach(clearTimeout); _timers = [];
-      loadGraphData();
       build();
       _tl = createTimeline(_steps);
       _tl.reset();
@@ -532,14 +270,16 @@ SceneDirector.register('transformation-system', function(container, manifest, re
     finish: function() {
       if (_tl) { _tl.destroy(); _tl = null; }
       _timers.forEach(clearTimeout); _timers = [];
-      loadGraphData();
       build();
       showAll();
     },
 
     getAccessibleSummary: function() {
-      return 'A knowledge graph of obligations anchors the scene. Five transformation fields -- Work and decisions, Data and technology, People and roles, Governance and assurance, Value and ownership -- slide in around it. A gap indicator fires and restores. Shared context is reused across the system.';
+      return 'Obligation Art. 7(3) Data minimisation triggers changes across five systems: '
+        + 'Policy documentation, Control framework, Data catalogue, Process maps, and Governance register. '
+        + 'One use case change touches five connected systems.';
     },
+
     destroy: function() {
       if (_tl) { _tl.destroy(); _tl = null; }
       _timers.forEach(clearTimeout); _timers = [];

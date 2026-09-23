@@ -113,8 +113,8 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
     // and tilts the apex layers back into the scene.
     var terrain = document.createElement('div');
     terrain.style.cssText = 'flex:1;min-height:0;display:flex;flex-direction:column;'
-      + 'justify-content:flex-end;align-items:center;gap:3px;padding:0 10px 0;'
-      + 'transform:perspective(900px) rotateX(15deg);transform-origin:center 95%;';
+      + 'justify-content:flex-end;align-items:center;gap:2px;padding:0 10px 0;'
+      + 'transform:perspective(900px) rotateX(12deg);transform-origin:center 95%;';
 
     // Foundation bar -- dashed cyan border, full width.
     var foundation = document.createElement('div');
@@ -161,13 +161,13 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       // box-shadow beneath each layer creates the "front face" depth illusion
       // that becomes visible once the parent perspective rotateX tilts the terrain.
       // Terrain stratum -- shared edges, no border-radius (strata look like terrain, not cards)
-      el.style.cssText = 'width:' + ld.w + '%;flex-shrink:0;border-radius:0;'
+      el.style.cssText = 'width:' + ld.w + '%;flex:1;min-height:44px;border-radius:0;'
         + 'padding:9px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;'
         + 'background:' + ld.bg + ';'
         + 'border-top:1.5px solid ' + ld.bc + ';'
         + 'border-left:1.5px solid ' + ld.bc + ';'
         + 'border-right:1.5px solid ' + ld.bc + ';'
-        + 'box-shadow:0 8px 0 rgba(0,0,0,.16);'
+        + 'box-shadow:0 6px 0 rgba(0,0,0,.16);'
         + 'opacity:0;transform:translateY(24px);'
         + 'transition:opacity .45s ease-out,transform .45s cubic-bezier(.16,1,.3,1);';
 

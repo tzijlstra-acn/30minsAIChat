@@ -167,8 +167,8 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
     svg.removeChild(tMeasure);
 
     var pillW = Math.max(MIN_W, Math.ceil(tw) + PAD_X * 2);
-    var pillX = Math.min(W - SAFE_R - pillW, W - SAFE_R - pillW); // rightmost safe position
-    pillX = W - SAFE_R - pillW; // right-aligned with safe inset
+    // Centre-left of the header bar -- avoids the far-right clip zone
+    var pillX = Math.round(W * 0.68) - Math.round(pillW / 2);
 
     var pg = svgEl('g', {});
 

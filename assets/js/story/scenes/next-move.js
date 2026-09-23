@@ -226,15 +226,17 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
     { delay: 3200, run: function() { showGate(2); }},
     // 7. Artefact footer appears
     { delay: 4000, run: function() { show('nm-footer'); }},
-    // 8-11. Artefacts stamp in one by one
-    { delay: 4200, run: function() { stamp('nm-art-0'); }},
-    { delay: 4600, run: function() { stamp('nm-art-1'); }},
-    { delay: 5000, run: function() { stamp('nm-art-2'); }},
-    { delay: 5400, run: function() {
-      stamp('nm-art-3');
-      _timers.push(setTimeout(function() {
-        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
-      }, 500));
+    // 8. All artefacts stamp in sequentially via _t so createTimeline does not block
+    { delay: 4200, run: function() {
+      stamp('nm-art-0');
+      _t(function() { stamp('nm-art-1'); }, 400);
+      _t(function() { stamp('nm-art-2'); }, 800);
+      _t(function() {
+        stamp('nm-art-3');
+        _t(function() {
+          container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+        }, 500);
+      }, 1200);
     }}
   ];
 
