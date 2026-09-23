@@ -727,3 +727,55 @@ test('V18: build fingerprint is v17 or v18', async ({ page }) => {
   const content = await page.locator('meta[name="nfr-build"]').getAttribute('content');
   expect(content).toMatch(/^v1[78]-[0-9a-f]{7}$/);
 });
+
+// --- V19 geometry and scene tests ---
+const BASE = '/pitch.html';
+
+test('Screen 02 h2 updated to new framing', async ({ page }) => {
+  await page.goto(BASE);
+  const h2 = await page.locator('section#ai-stack h2').textContent();
+  expect(h2).toContain('AI is not one choice');
+});
+
+test('Screen 10 h2 updated to hand-off tax framing', async ({ page }) => {
+  await page.goto(BASE);
+  const h2 = await page.locator('section#dual-engine h2').textContent();
+  expect(h2).toContain('hand-off tax');
+});
+
+test('Screen 02 nav-title updated', async ({ page }) => {
+  await page.goto(BASE);
+  const navTitle = await page.locator('section#ai-stack').getAttribute('data-nav-title');
+  expect(navTitle).toBeTruthy();
+});
+
+test('Screen 10 nav-title is Reduce the hand-off tax', async ({ page }) => {
+  await page.goto(BASE);
+  const navTitle = await page.locator('section#dual-engine').getAttribute('data-nav-title');
+  expect(navTitle).toContain('hand-off tax');
+});
+
+test('scene-screen uses grid layout', async ({ page }) => {
+  await page.goto(BASE);
+  // geometry contract: .scene-screen should be CSS grid
+  const display = await page.evaluate(function() {
+    var el = document.querySelector('.scene-screen');
+    if (!el) return null;
+    return window.getComputedStyle(el).display;
+  });
+  expect(display).toBe('grid');
+});
+
+test('section height is viewport height', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(BASE);
+  const h = await page.evaluate(function() {
+    var s = document.querySelector('section');
+    if (!s) return null;
+    var attr = s.getAttribute('data-density');
+    if (attr === 'long') return 'long-skip';
+    return s.getBoundingClientRect().height;
+  });
+  if (h === 'long-skip') return; // skip long sections
+  expect(Math.round(Number(h))).toBeGreaterThanOrEqual(890);
+});
