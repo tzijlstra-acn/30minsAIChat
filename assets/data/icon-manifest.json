@@ -2,6 +2,7 @@
   "version": "18",
   "icons": [
     { "name": "alert-triangle",       "class": "ti-alert-triangle",       "semantic": "risk" },
+    { "name": "arrow-right-circle",   "class": "ti-arrow-right-circle",   "semantic": "navigation" },
     { "name": "book",                 "class": "ti-book",                 "semantic": "reference" },
     { "name": "brain",                "class": "ti-brain",                "semantic": "ai-work" },
     { "name": "building",             "class": "ti-building",             "semantic": "organisation" },
@@ -18,6 +19,7 @@
     { "name": "external-link",        "class": "ti-external-link",        "semantic": "navigation" },
     { "name": "file-code",            "class": "ti-file-code",            "semantic": "specification" },
     { "name": "file-description",     "class": "ti-file-description",     "semantic": "source-document" },
+    { "name": "file-check",           "class": "ti-file-check",           "semantic": "evidence" },
     { "name": "file-text",            "class": "ti-file-text",            "semantic": "source-document" },
     { "name": "flask",                "class": "ti-flask",                "semantic": "proof" },
     { "name": "gavel",                "class": "ti-gavel",                "semantic": "regulation" },

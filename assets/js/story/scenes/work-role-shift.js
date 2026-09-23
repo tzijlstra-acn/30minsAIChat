@@ -1,184 +1,234 @@
-// Scene: work-role-shift (Screen 06 - WHERE IT APPLIES)
-// V15 overhaul: one representative role -- Governance and policy analyst.
-// TODAY column vs WITH AI column, showing task migration and human judgement.
-// Evidence label: ILLUSTRATIVE TASK MODEL -- NOT A HEADCOUNT FORECAST
+// Scene: work-role-shift (Screen 06)
+// V19: RCSA-style process showing task shift from human execution to AI/agent execution.
+// Two-column layout: AI and agent execution (left) | Human judgement (right).
+// Source-backed framing: COVERAGE MAPPING -- ILLUSTRATIVE TASK SHIFT -- NOT A HEADCOUNT FORECAST
+
 SceneDirector.register('work-role-shift', function(container, manifest, reduced) {
 
-  var todayTasks = [
-    'Collect source material',
-    'Compare requirements',
-    'Draft obligation mappings',
-    'Chase owners for responses',
-    'Prepare evidence packages'
-  ];
+  var ACCENT = '#B44CFF';
+  var AMBER  = '#F3B34C';
+  var GREEN  = '#3EC97F';
 
-  var withAITasks = [
-    { text: 'Interpret ambiguity',    type: 'human', label: 'Judgement' },
-    { text: 'Challenge AI matches',   type: 'human', label: 'Challenge' },
-    { text: 'Decide materiality',     type: 'human', label: 'Decision'  },
-    { text: 'Approve changes',        type: 'human', label: 'Approval'  },
-    { text: 'Own the evidence record',type: 'human', label: 'Ownership' }
+  var tasks = [
+    {
+      label:     'Extract obligations from source',
+      aiPill:    { text: 'AI extraction',    type: 'accent' },
+      humanPill: null
+    },
+    {
+      label:     'Match to policies and controls',
+      aiPill:    { text: 'AI pattern match', type: 'accent' },
+      humanPill: null
+    },
+    {
+      label:     'Identify gaps',
+      aiPill:    { text: 'AI gap analysis',  type: 'accent' },
+      humanPill: { text: 'CHALLENGE GAP',     final: false }
+    },
+    {
+      label:     'Draft assessment',
+      aiPill:    { text: 'GenAI draft',      type: 'accent' },
+      humanPill: { text: 'REVIEW AND ADJUST', final: false }
+    },
+    {
+      label:     'Record evidence',
+      aiPill:    { text: 'Agent records',    type: 'green' },
+      humanPill: { text: 'FINAL APPROVAL',   final: true }
+    }
   ];
-
-  var humanColor = 'var(--amber)';
-  var aiColor    = 'var(--accent)';
 
   var _timers = [];
 
-  function build() {
-    container.innerHTML = '';
-    var outer = document.createElement('div');
-    outer.style.cssText = 'display:flex;flex-direction:column;gap:10px;height:100%;padding:10px 16px;';
-
-    // Role header
-    var roleHdr = document.createElement('div');
-    roleHdr.className = 'scene-node';
-    roleHdr.dataset.beat = 'role-hdr';
-    roleHdr.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:10px;padding:8px 14px;'
-      + 'background:var(--surface-2);border:1px solid var(--border-1);border-radius:6px;';
-    roleHdr.innerHTML =
-      '<i class="ti ti-user" style="font-size:18px;color:var(--text-2)"></i>'
-      + '<div>'
-      + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)">Representative role</div>'
-      + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:700;color:var(--text-1)">Governance and policy analyst</div>'
-      + '</div>'
-      + '<div style="margin-left:auto;font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);background:var(--surface-1);border:1px solid var(--border-1);border-radius:3px;padding:2px 6px;">Illustrative</div>';
-    outer.appendChild(roleHdr);
-
-    // Two-column layout
-    var cols = document.createElement('div');
-    cols.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:0;';
-
-    // TODAY column
-    var todayCol = document.createElement('div');
-    todayCol.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
-
-    var todayHdr = document.createElement('div');
-    todayHdr.className = 'scene-node';
-    todayHdr.dataset.beat = 'col-hdr-today';
-    todayHdr.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);padding:4px 8px;border-bottom:2px solid var(--border-1);margin-bottom:2px;';
-    todayHdr.textContent = 'Today';
-    todayCol.appendChild(todayHdr);
-
-    todayTasks.forEach(function(t, i) {
-      var card = document.createElement('div');
-      card.className = 'scene-node';
-      card.dataset.beat = 'today-' + i;
-      card.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;'
-        + 'background:var(--surface-1);border:1px solid var(--border-1);border-radius:7px;';
-      card.innerHTML =
-        '<i class="ti ti-point" style="font-size:12px;color:var(--text-3);flex-shrink:0"></i>'
-        + '<span style="font-family:\'Inter\',sans-serif;font-size:14px;color:var(--text-2);line-height:1.3">' + t + '</span>';
-      todayCol.appendChild(card);
-    });
-
-    // WITH AI column
-    var aiCol = document.createElement('div');
-    aiCol.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
-
-    var aiHdr = document.createElement('div');
-    aiHdr.className = 'scene-node';
-    aiHdr.dataset.beat = 'col-hdr-ai';
-    aiHdr.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:' + humanColor + ';padding:4px 8px;border-bottom:2px solid ' + humanColor + ';margin-bottom:2px;';
-    aiHdr.textContent = 'With AI -- human focus';
-    aiCol.appendChild(aiHdr);
-
-    withAITasks.forEach(function(t, i) {
-      var card = document.createElement('div');
-      card.className = 'scene-node';
-      card.dataset.beat = 'ai-' + i;
-      card.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;'
-        + 'background:rgba(243,179,76,.05);border:1px solid rgba(243,179,76,.3);border-radius:7px;';
-      card.innerHTML =
-        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.09em;text-transform:uppercase;'
-        + 'color:' + humanColor + ';background:rgba(243,179,76,.1);border:1px solid rgba(243,179,76,.3);border-radius:3px;padding:1px 5px;flex-shrink:0;white-space:nowrap;">' + t.label + '</span>'
-        + '<span style="font-family:\'Inter\',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);line-height:1.3">' + t.text + '</span>';
-      aiCol.appendChild(card);
-    });
-
-    cols.appendChild(todayCol);
-    cols.appendChild(aiCol);
-    outer.appendChild(cols);
-
-    // AI workbench note
-    var note = document.createElement('div');
-    note.className = 'scene-node';
-    note.dataset.beat = 'ai-note';
-    note.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:8px;padding:7px 12px;'
-      + 'background:rgba(180,76,255,.05);border:1px solid rgba(180,76,255,.2);border-radius:5px;';
-    note.innerHTML =
-      '<i class="ti ti-cpu" style="font-size:15px;color:' + aiColor + ';flex-shrink:0"></i>'
-      + '<span style="font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-3)">AI handles ingestion, extraction, comparison and evidence packaging in the background.</span>';
-    outer.appendChild(note);
-
-    container.appendChild(outer);
+  // ── pill factory ──────────────────────────────────────────────────────────
+  function makePill(text, type) {
+    var span = document.createElement('span');
+    var base = 'border-radius:4px;padding:3px 8px;font-family:\'JetBrains Mono\',monospace;'
+             + 'font-size:11px;white-space:nowrap;flex-shrink:0;line-height:1.4;';
+    if (type === 'accent') {
+      span.style.cssText = base
+        + 'background:rgba(180,76,255,.1);border:1px solid ' + ACCENT + ';color:' + ACCENT + ';';
+    } else if (type === 'green') {
+      span.style.cssText = base
+        + 'background:rgba(62,201,127,.1);border:1px solid ' + GREEN + ';color:' + GREEN + ';';
+    } else {
+      // amber gate
+      span.style.cssText = base
+        + 'background:rgba(243,179,76,.1);border:1px solid ' + AMBER + ';color:' + AMBER + ';font-weight:700;';
+    }
+    span.textContent = text;
+    return span;
   }
 
+  // ── DOM builder ───────────────────────────────────────────────────────────
+  function build() {
+    container.innerHTML = '';
+
+    var root = document.createElement('div');
+    root.className = 'scene-root';
+    root.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;gap:8px;padding:4px 0;';
+
+    // Process label -- always visible reference metadata
+    var procLabel = document.createElement('div');
+    procLabel.style.cssText = 'flex-shrink:0;font-family:\'JetBrains Mono\',monospace;font-size:10px;'
+                            + 'letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);';
+    procLabel.textContent = 'COVERAGE MAPPING -- ILLUSTRATIVE TASK SHIFT -- NOT A HEADCOUNT FORECAST';
+    root.appendChild(procLabel);
+
+    // Grid (flex column, fills remaining height)
+    var grid = document.createElement('div');
+    grid.style.cssText = 'flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;';
+
+    // Column header row
+    var hdrRow = document.createElement('div');
+    hdrRow.className = 'scene-node';
+    hdrRow.dataset.beat = 'col-hdrs';
+    hdrRow.style.cssText = 'display:flex;flex-direction:row;gap:16px;padding-bottom:8px;'
+                         + 'border-bottom:2px solid var(--border-1);margin-bottom:2px;flex-shrink:0;';
+
+    var leftHdr = document.createElement('div');
+    leftHdr.style.cssText = 'flex:0 0 45%;font-size:12px;font-weight:700;color:' + ACCENT + ';';
+    leftHdr.textContent = 'AI and agent execution';
+    hdrRow.appendChild(leftHdr);
+
+    var rightHdr = document.createElement('div');
+    rightHdr.style.cssText = 'flex:0 0 55%;font-size:12px;font-weight:700;color:' + AMBER + ';';
+    rightHdr.textContent = 'Human judgement';
+    hdrRow.appendChild(rightHdr);
+
+    grid.appendChild(hdrRow);
+
+    // Task rows
+    tasks.forEach(function(task, i) {
+      var row = document.createElement('div');
+      row.dataset.beat = 'task-row-' + i;
+      row.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:16px;'
+                        + 'padding:8px 0;border-bottom:1px solid var(--border-1);flex-shrink:0;'
+                        + 'opacity:0;transform:translateY(12px);'
+                        + 'transition:opacity 350ms ease,transform 350ms ease;';
+
+      // Left cell (45%): task label + AI pill
+      var leftCell = document.createElement('div');
+      leftCell.style.cssText = 'flex:0 0 45%;display:flex;align-items:center;gap:8px;';
+
+      var taskLabel = document.createElement('span');
+      taskLabel.style.cssText = 'font-size:14px;color:var(--text-1);flex:1;line-height:1.3;';
+      taskLabel.textContent = task.label;
+      leftCell.appendChild(taskLabel);
+      leftCell.appendChild(makePill(task.aiPill.text, task.aiPill.type));
+      row.appendChild(leftCell);
+
+      // Right cell (55%): human gate pill or placeholder
+      var rightCell = document.createElement('div');
+      rightCell.style.cssText = 'flex:0 0 55%;display:flex;align-items:center;';
+
+      if (task.humanPill) {
+        var pillText = task.humanPill.final ? '✓ ' + task.humanPill.text : task.humanPill.text;
+        var hPill = makePill(pillText, 'amber');
+        if (task.humanPill.final) {
+          hPill.dataset.finalGate = 'true';
+        }
+        rightCell.appendChild(hPill);
+      } else {
+        var placeholder = document.createElement('span');
+        placeholder.style.cssText = 'font-size:14px;color:var(--text-3);';
+        placeholder.textContent = '--';
+        rightCell.appendChild(placeholder);
+      }
+
+      row.appendChild(rightCell);
+      grid.appendChild(row);
+    });
+
+    root.appendChild(grid);
+
+    // Insight strip (fades in at end)
+    var insight = document.createElement('div');
+    insight.dataset.beat = 'insight';
+    insight.style.cssText = 'flex-shrink:0;font-size:13px;font-style:italic;color:var(--text-2);'
+                          + 'padding:6px 0 2px;opacity:0;transition:opacity 500ms ease;';
+    insight.textContent = 'Accountability remains named. Judgement remains human. Only repeatable execution may shift.';
+    root.appendChild(insight);
+
+    container.appendChild(root);
+  }
+
+  // ── reveal helpers ────────────────────────────────────────────────────────
+  function revealHeaders() {
+    var hdr = container.querySelector('[data-beat="col-hdrs"]');
+    if (hdr) hdr.classList.add('visible');
+  }
+
+  function revealRow(idx) {
+    var row = container.querySelector('[data-beat="task-row-' + idx + '"]');
+    if (row) {
+      row.style.opacity = '1';
+      row.style.transform = 'translateY(0)';
+    }
+  }
+
+  function pulseGate() {
+    var gate = container.querySelector('[data-final-gate]');
+    if (!gate) return;
+    gate.style.transition = 'transform 150ms ease';
+    gate.style.transform = 'scale(1.1)';
+    _timers.push(setTimeout(function() {
+      var g = container.querySelector('[data-final-gate]');
+      if (g) g.style.transform = 'scale(1)';
+    }, 200));
+  }
+
+  function showInsight() {
+    var ins = container.querySelector('[data-beat="insight"]');
+    if (ins) ins.style.opacity = '1';
+  }
+
+  function showAll() {
+    revealHeaders();
+    for (var i = 0; i < tasks.length; i++) { revealRow(i); }
+    showInsight();
+  }
+
+  // ── timeline steps ────────────────────────────────────────────────────────
   var steps = [
-    { delay: 300,  run: function() {
-      var n = container.querySelector('[data-beat="role-hdr"]');
-      if (n) n.classList.add('visible');
+    { delay: 100,  run: revealHeaders },
+    { delay: 400,  run: function() { revealRow(0); } },
+    { delay: 900,  run: function() { revealRow(1); } },
+    { delay: 1400, run: function() { revealRow(2); } },
+    { delay: 1900, run: function() { revealRow(3); } },
+    { delay: 2400, run: function() {
+      revealRow(4);
+      _timers.push(setTimeout(pulseGate, 300));
     }},
-    { delay: 800,  run: function() {
-      var n = container.querySelector('[data-beat="col-hdr-today"]');
-      if (n) n.classList.add('visible');
-    }},
-    { delay: 1100, run: function() {
-      for (var i = 0; i < todayTasks.length; i++) {
-        (function(idx) {
-          _timers.push(setTimeout(function() {
-            var n = container.querySelector('[data-beat="today-' + idx + '"]');
-            if (n) n.classList.add('visible');
-          }, idx * 200));
-        })(i);
-      }
-    }},
-    { delay: 2500, run: function() {
-      var n = container.querySelector('[data-beat="col-hdr-ai"]');
-      if (n) n.classList.add('visible');
-    }},
-    { delay: 2900, run: function() {
-      for (var i = 0; i < withAITasks.length; i++) {
-        (function(idx) {
-          _timers.push(setTimeout(function() {
-            var n = container.querySelector('[data-beat="ai-' + idx + '"]');
-            if (n) n.classList.add('visible');
-            // Fade corresponding today card slightly
-            var todayCard = container.querySelector('[data-beat="today-' + idx + '"]');
-            if (todayCard) todayCard.style.opacity = '0.4';
-          }, idx * 250));
-        })(i);
-      }
-    }},
-    { delay: 4300, run: function() {
-      var n = container.querySelector('[data-beat="ai-note"]');
-      if (n) n.classList.add('visible');
-    }}
+    { delay: 3200, run: showInsight }
   ];
 
   var tl = createTimeline(steps);
 
+  // ── public interface ──────────────────────────────────────────────────────
   return {
-    play:    function() { build(); tl.play(); },
-    pause:   tl.pause,
-    resume:  tl.resume,
-    reset:   function() {
-      _timers.forEach(function(id) { clearTimeout(id); });
-      _timers = [];
-      build(); tl.reset();
-    },
-    finish:  function() {
+    play: function() {
       build();
-      container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
-      for (var i = 0; i < todayTasks.length; i++) {
-        var todayCard = container.querySelector('[data-beat="today-' + i + '"]');
-        if (todayCard) todayCard.style.opacity = '0.4';
-      }
+      tl.play();
+    },
+    pause:  tl.pause,
+    resume: tl.resume,
+    reset: function() {
+      _timers.forEach(clearTimeout);
+      _timers = [];
+      build();
+      tl.reset();
+    },
+    finish: function() {
+      _timers.forEach(clearTimeout);
+      _timers = [];
+      build();
+      showAll();
     },
     destroy: function() {
-      _timers.forEach(function(id) { clearTimeout(id); });
+      _timers.forEach(clearTimeout);
       _timers = [];
-      container.innerHTML = ''; tl.destroy();
+      container.innerHTML = '';
+      tl.destroy();
     }
   };
 });

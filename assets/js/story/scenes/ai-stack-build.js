@@ -1,183 +1,332 @@
-// Scene: ai-stack-build (Screen 02 - WHAT AI IS)
-// V17: true spatial work stack. Layers build bottom-up. No button borders.
-// Foundation, 5 AI layers, 2 rails, 4 routed task tokens.
+// Scene: ai-stack-build (Screen 02 -- WHAT AI IS)
+// V19 Viewport Wow System -- Wow 1: The AI stack becomes a terrain.
+// Five technology terraces with CSS perspective + box-shadow front-face illusion.
+// Layers build bottom-up (300ms apart), rails follow, tokens table, implication.
 SceneDirector.register('ai-stack-build', function(container, manifest, reduced) {
 
+  // Layer definitions.
+  // idx 0 = base terrace (rules, widest), idx 4 = apex terrace (agents, narrowest).
+  // w = width as percent of terrain container.
+  // bc = border colour (top + sides only -- open bottom for stacked look).
   var LAYERS = [
-    { label: 'Rules and workflow',              tag: 'DETERMINISTIC', bg: 'rgba(85,199,232,.07)',  tc: 'var(--cyan)',   idx: 0 },
-    { label: 'RPA and orchestration',           tag: 'AUTOMATION',    bg: 'rgba(85,199,232,.09)',  tc: 'var(--cyan)',   idx: 1 },
-    { label: 'Analytics and machine learning',  tag: 'PREDICTIVE',    bg: 'rgba(85,199,232,.12)',  tc: 'var(--cyan)',   idx: 2 },
-    { label: 'Generative AI and retrieval',     tag: 'GENERATIVE',    bg: 'rgba(180,76,255,.10)',  tc: 'var(--accent)', idx: 3 },
-    { label: 'Agents and orchestrated work',    tag: 'AGENTIC',       bg: 'rgba(180,76,255,.16)',  tc: 'var(--pink)',   idx: 4 }
+    {
+      label: 'Rules and workflow',
+      tag:   'DETERMINISTIC',
+      bg:    'rgba(85,199,232,.10)',
+      bc:    'rgba(85,199,232,.32)',
+      tc:    'var(--cyan)',
+      idx: 0,
+      w:   96
+    },
+    {
+      label: 'RPA and orchestration',
+      tag:   'AUTOMATION',
+      bg:    'rgba(85,199,232,.13)',
+      bc:    'rgba(85,199,232,.36)',
+      tc:    'var(--cyan)',
+      idx: 1,
+      w:   88
+    },
+    {
+      label: 'Analytics and machine learning',
+      tag:   'PREDICTIVE',
+      bg:    'rgba(85,199,232,.17)',
+      bc:    'rgba(85,199,232,.42)',
+      tc:    'var(--cyan)',
+      idx: 2,
+      w:   80
+    },
+    {
+      label: 'Generative AI and retrieval',
+      tag:   'GENERATIVE',
+      bg:    'rgba(180,76,255,.12)',
+      bc:    'rgba(180,76,255,.36)',
+      tc:    'var(--accent)',
+      idx: 3,
+      w:   72
+    },
+    {
+      label: 'Agents and orchestrated work',
+      tag:   'AGENTIC',
+      bg:    'rgba(180,76,255,.20)',
+      bc:    'rgba(180,76,255,.48)',
+      tc:    'var(--pink)',
+      idx: 4,
+      w:   64
+    }
   ];
 
-  // Task tokens: routed to layer index (0=rules, 2=analytics, 3=genai, 4=agents)
+  // Task routing tokens -- each maps a task type to its appropriate AI layer.
   var TOKENS = [
-    { label: 'Check a threshold',             route: 'Rules and workflow',             targetIdx: 0, color: 'var(--cyan)'   },
-    { label: 'Detect a deviation',            route: 'Analytics and ML',               targetIdx: 2, color: 'var(--cyan)'   },
-    { label: 'Draft from documents',          route: 'GenAI + human review',           targetIdx: 3, color: 'var(--accent)' },
-    { label: 'Coordinate obligation mapping', route: 'Agents + approval gates',        targetIdx: 4, color: 'var(--pink)'   }
+    { label: 'Check a threshold',             route: 'Rules and workflow',     color: 'var(--cyan)'   },
+    { label: 'Detect a deviation',            route: 'Analytics and ML',        color: 'var(--cyan)'   },
+    { label: 'Draft from documents',          route: 'GenAI + human review',    color: 'var(--accent)' },
+    { label: 'Coordinate obligation mapping', route: 'Agents + approval gates', color: 'var(--pink)'   }
   ];
 
-  // Width percent per layer: narrowest at top (agentic), widest at bottom (rules)
-  // Maps to LAYERS index 0-4 (rules=0 widest, agents=4 narrowest)
-  var WIDTHS = [96, 88, 80, 72, 64];
+  // Raw timer handles (none used currently -- pattern required by contract).
+  var _timers = [];
 
+  // ── DOM BUILDER ──────────────────────────────────────────────────────────────
+  // All scene-node elements start hidden (opacity:0, translateY offset).
+  // revealBeat() drives the transition to visible state.
   function build() {
     container.innerHTML = '';
-    var outer = document.createElement('div');
-    outer.style.cssText = 'display:flex;flex-direction:column;height:100%;padding:8px 0 4px;gap:0;';
 
-    // Stack area: 3-column grid [rail | pyramid | rail]
+    // scene-root: direct child of container, required by lifecycle contract.
+    var root = document.createElement('div');
+    root.className = 'scene-root';
+    root.style.cssText = 'display:flex;flex-direction:column;height:100%;padding:6px 0 4px;';
+
+    // 3-column grid: left-rail | center | right-rail
     var grid = document.createElement('div');
     grid.style.cssText = 'display:grid;grid-template-columns:56px 1fr 56px;flex:1;min-height:0;';
 
-    // Left rail: Human accountability
+    // ── LEFT RAIL: Human accountability ──────────────────────────────────────
     var lRail = document.createElement('div');
     lRail.className = 'scene-node';
     lRail.dataset.beat = 'rail-left';
-    lRail.style.cssText = 'display:flex;align-items:stretch;opacity:0;transition:opacity .6s;';
+    lRail.style.cssText = 'display:flex;align-items:stretch;opacity:0;transition:opacity .6s ease;';
+
     var lBar = document.createElement('div');
     lBar.style.cssText = 'width:100%;display:flex;align-items:center;justify-content:center;'
       + 'background:rgba(88,201,148,.05);border-right:2px solid rgba(88,201,148,.28);';
+
     var lTxt = document.createElement('div');
     lTxt.style.cssText = 'writing-mode:vertical-rl;transform:rotate(180deg);'
       + 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.14em;'
       + 'text-transform:uppercase;color:var(--green);';
     lTxt.textContent = 'Human accountability';
+
     lBar.appendChild(lTxt);
     lRail.appendChild(lBar);
     grid.appendChild(lRail);
 
-    // Center: pyramid layers + foundation + tokens
+    // ── CENTER COLUMN: terrain + token table ─────────────────────────────────
     var center = document.createElement('div');
-    center.style.cssText = 'display:flex;flex-direction:column;justify-content:flex-end;'
-      + 'align-items:center;gap:3px;padding:4px 12px 0;min-height:0;';
+    center.style.cssText = 'display:flex;flex-direction:column;min-height:0;';
 
-    // Layers in reverse (agentic first = top of DOM, rules last = closest to foundation)
-    var layersReversed = LAYERS.slice().reverse(); // [agents, genai, analytics, rpa, rules]
-    layersReversed.forEach(function(ld) {
-      var w = WIDTHS[4 - ld.idx]; // agents(idx4)->width[0]=64%, rules(idx0)->width[4]=96%
+    // Terrain perspective wrapper.
+    // perspective applied HERE -- not on the whole scene-root -- so text in
+    // the token table and rails (outside this wrapper) remains fully readable.
+    // transform-origin at 95% height keeps the base terrace roughly in-place
+    // and tilts the apex layers back into the scene.
+    var terrain = document.createElement('div');
+    terrain.style.cssText = 'flex:1;min-height:0;display:flex;flex-direction:column;'
+      + 'justify-content:flex-end;align-items:center;gap:3px;padding:0 10px 0;'
+      + 'transform:perspective(900px) rotateX(15deg);transform-origin:center 95%;';
+
+    // Foundation bar -- dashed cyan border, full width.
+    var foundation = document.createElement('div');
+    foundation.className = 'scene-node';
+    foundation.dataset.beat = 'foundation';
+    foundation.style.cssText = 'width:100%;flex-shrink:0;'
+      + 'background:rgba(85,199,232,.04);border:1.5px dashed rgba(85,199,232,.38);'
+      + 'border-radius:4px;padding:7px 14px;display:flex;align-items:center;gap:10px;'
+      + 'opacity:0;transform:translateY(22px);'
+      + 'transition:opacity .45s ease-out,transform .45s cubic-bezier(.16,1,.3,1);';
+
+    var fBadge = document.createElement('span');
+    fBadge.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
+      + 'letter-spacing:.12em;text-transform:uppercase;color:rgba(85,199,232,.52);flex-shrink:0;';
+    fBadge.textContent = 'Foundation';
+    foundation.appendChild(fBadge);
+
+    ['Data', 'Context', 'Identity', 'Integration'].forEach(function(f, i, arr) {
+      var item = document.createElement('span');
+      item.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;'
+        + 'font-weight:600;color:var(--text-2);';
+      item.textContent = f;
+      foundation.appendChild(item);
+      if (i < arr.length - 1) {
+        var pipe = document.createElement('span');
+        pipe.style.cssText = 'color:rgba(85,199,232,.28);font-size:11px;flex-shrink:0;';
+        pipe.textContent = '|';
+        foundation.appendChild(pipe);
+      }
+    });
+
+    // Terrain layers.
+    // DOM order is visual top-to-bottom: with flex-direction:column +
+    // justify-content:flex-end, the first child in DOM sits at the TOP of the
+    // packed group. We want apex (Agents, narrowest) at the top and base
+    // (Rules, widest) at the bottom, so reverse LAYERS before iterating.
+    var layersDesc = LAYERS.slice().reverse(); // [idx4, idx3, idx2, idx1, idx0]
+
+    layersDesc.forEach(function(ld) {
       var el = document.createElement('div');
       el.className = 'ai-stack-layer scene-node';
       el.dataset.beat = 'layer-' + ld.idx;
-      el.style.cssText = 'width:' + w + '%;background:' + ld.bg + ';border-radius:6px;'
+      // Open bottom border simulates the terrace shelf edge.
+      // box-shadow beneath each layer creates the "front face" depth illusion
+      // that becomes visible once the parent perspective rotateX tilts the terrain.
+      el.style.cssText = 'width:' + ld.w + '%;flex-shrink:0;border-radius:5px 5px 0 0;'
         + 'padding:9px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;'
-        + 'flex-shrink:0;';
-      el.innerHTML =
-        '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;color:var(--text-1);line-height:1.2">'
-        + ld.label + '</span>'
-        + '<span style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.1em;'
-        + 'color:' + ld.tc + ';white-space:nowrap;flex-shrink:0">' + ld.tag + '</span>';
-      center.appendChild(el);
+        + 'background:' + ld.bg + ';'
+        + 'border-top:1.5px solid ' + ld.bc + ';'
+        + 'border-left:1.5px solid ' + ld.bc + ';'
+        + 'border-right:1.5px solid ' + ld.bc + ';'
+        + 'box-shadow:0 8px 0 rgba(0,0,0,.16);'
+        + 'opacity:0;transform:translateY(24px);'
+        + 'transition:opacity .45s ease-out,transform .45s cubic-bezier(.16,1,.3,1);';
+
+      var lbl = document.createElement('span');
+      lbl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;'
+        + 'font-weight:700;color:var(--text-1);line-height:1.2;';
+      lbl.textContent = ld.label;
+
+      var tag = document.createElement('span');
+      tag.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8px;'
+        + 'letter-spacing:.1em;color:' + ld.tc + ';white-space:nowrap;flex-shrink:0;';
+      tag.textContent = ld.tag;
+
+      el.appendChild(lbl);
+      el.appendChild(tag);
+      terrain.appendChild(el);
     });
 
-    // Foundation
-    var foundation = document.createElement('div');
-    foundation.className = 'ai-stack-layer scene-node';
-    foundation.dataset.beat = 'foundation';
-    foundation.style.cssText = 'width:100%;background:var(--surface-2);margin-top:4px;'
-      + 'border-top:2px solid var(--border-2);border-radius:4px;'
-      + 'padding:9px 14px;display:flex;align-items:center;gap:12px;flex-shrink:0;';
-    foundation.innerHTML =
-      '<span style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.1em;'
-      + 'color:var(--text-3);text-transform:uppercase;flex-shrink:0">Foundation</span>'
-      + ['Data', 'Context', 'Identity', 'Integration'].map(function(f, i, arr) {
-        return '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-2)">' + f + '</span>'
-          + (i < arr.length - 1 ? '<span style="color:var(--border-2);font-size:12px;margin:0 4px">&#183;</span>' : '');
-      }).join('');
-    center.appendChild(foundation);
+    terrain.appendChild(foundation);
+    center.appendChild(terrain);
 
-    // Task token routing table
+    // Task token routing table.
+    // Outside the terrain perspective wrapper so text is rendered flat and
+    // fully readable at normal reading distance.
     var tokensWrap = document.createElement('div');
     tokensWrap.className = 'scene-node';
     tokensWrap.dataset.beat = 'tokens';
-    tokensWrap.style.cssText = 'width:100%;display:flex;flex-wrap:wrap;gap:5px;justify-content:center;'
-      + 'padding:8px 0 0;opacity:0;transition:opacity .5s;';
+    tokensWrap.style.cssText = 'flex-shrink:0;display:flex;flex-wrap:wrap;gap:5px;'
+      + 'justify-content:center;padding:8px 10px 0;opacity:0;transition:opacity .5s ease;';
 
     TOKENS.forEach(function(t) {
       var tok = document.createElement('div');
-      tok.style.cssText = 'display:flex;align-items:center;gap:7px;padding:5px 10px;'
-        + 'background:var(--surface-1);border-left:3px solid ' + t.color + ';border-radius:4px;'
-        + 'flex-shrink:0;';
-      tok.innerHTML =
-        '<span style="font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-2)">' + t.label + '</span>'
-        + '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:' + t.color
-        + ';letter-spacing:.04em;white-space:nowrap">&#8594; ' + t.route + '</span>';
+      tok.style.cssText = 'display:flex;align-items:center;gap:6px;padding:5px 10px;'
+        + 'background:var(--surface-1);border-left:3px solid ' + t.color + ';border-radius:4px;flex-shrink:0;';
+
+      var tokLbl = document.createElement('span');
+      tokLbl.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:12px;color:var(--text-2);';
+      tokLbl.textContent = t.label;
+
+      var tokRoute = document.createElement('span');
+      tokRoute.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11.5px;'
+        + 'color:' + t.color + ';letter-spacing:.03em;white-space:nowrap;';
+      tokRoute.textContent = '-> ' + t.route;
+
+      tok.appendChild(tokLbl);
+      tok.appendChild(tokRoute);
       tokensWrap.appendChild(tok);
     });
-    center.appendChild(tokensWrap);
 
+    center.appendChild(tokensWrap);
     grid.appendChild(center);
 
-    // Right rail: Security, control and evidence
+    // ── RIGHT RAIL: Security, control and evidence ────────────────────────────
     var rRail = document.createElement('div');
     rRail.className = 'scene-node';
     rRail.dataset.beat = 'rail-right';
-    rRail.style.cssText = 'display:flex;align-items:stretch;opacity:0;transition:opacity .6s;';
+    rRail.style.cssText = 'display:flex;align-items:stretch;opacity:0;transition:opacity .6s ease;';
+
     var rBar = document.createElement('div');
     rBar.style.cssText = 'width:100%;display:flex;align-items:center;justify-content:center;'
       + 'background:rgba(85,199,232,.04);border-left:2px solid rgba(85,199,232,.22);';
+
     var rTxt = document.createElement('div');
     rTxt.style.cssText = 'writing-mode:vertical-rl;'
       + 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.14em;'
       + 'text-transform:uppercase;color:var(--cyan);';
     rTxt.textContent = 'Security, control and evidence';
+
     rBar.appendChild(rTxt);
     rRail.appendChild(rBar);
     grid.appendChild(rRail);
 
-    outer.appendChild(grid);
+    root.appendChild(grid);
 
-    // Final implication
+    // ── IMPLICATION text ──────────────────────────────────────────────────────
     var impl = document.createElement('div');
     impl.className = 'scene-node';
     impl.dataset.beat = 'implication';
-    impl.style.cssText = 'text-align:center;padding:7px 0 0;font-family:\'Space Grotesk\',sans-serif;'
-      + 'font-size:13px;font-style:italic;color:var(--text-3);opacity:0;transition:opacity .5s;flex-shrink:0;';
+    impl.style.cssText = 'flex-shrink:0;text-align:center;padding:7px 0 2px;'
+      + 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-style:italic;'
+      + 'color:var(--text-3);opacity:0;transition:opacity .5s ease;';
     impl.textContent = 'More advanced does not automatically mean more suitable.';
-    outer.appendChild(impl);
+    root.appendChild(impl);
 
-    container.appendChild(outer);
+    container.appendChild(root);
   }
 
-  // Layer animation order: foundation first, then rules(0)...agents(4), then rails, then tokens, then implication
-  var timeSteps = [
-    { delay: 200,  beat: 'foundation' },
-    { delay: 600,  beat: 'layer-0' },    // rules
-    { delay: 1000, beat: 'layer-1' },    // rpa
-    { delay: 1400, beat: 'layer-2' },    // analytics
-    { delay: 1800, beat: 'layer-3' },    // genai
-    { delay: 2200, beat: 'layer-4' },    // agents
-    { delay: 2900, beat: 'rail-left' },
-    { delay: 3300, beat: 'rail-right' },
-    { delay: 4000, beat: 'tokens' },
-    { delay: 5200, beat: 'implication' }
+  // ── REVEAL HELPERS ────────────────────────────────────────────────────────────
+  // Transition a single beat from hidden to visible.
+  function revealBeat(beat) {
+    var el = container.querySelector('[data-beat="' + beat + '"]');
+    if (!el) return;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  }
+
+  // All beats in order. When instant=true, transitions are disabled first so
+  // elements appear without animation (used for reduced-motion and finish).
+  var BEAT_ORDER = [
+    'foundation',
+    'layer-0', 'layer-1', 'layer-2', 'layer-3', 'layer-4',
+    'rail-left', 'rail-right',
+    'tokens',
+    'implication'
   ];
 
-  var steps = timeSteps.map(function(ts) {
-    return { delay: ts.delay, run: function() {
-      var el = container.querySelector('[data-beat="' + ts.beat + '"]');
-      if (!el) return;
-      el.classList.add('visible');
-      el.style.opacity = '1';
-    }};
-  });
+  function showAll(instant) {
+    if (instant) {
+      container.querySelectorAll('.scene-node').forEach(function(n) {
+        n.style.transition = 'none';
+      });
+    }
+    BEAT_ORDER.forEach(function(b) { revealBeat(b); });
+  }
+
+  // ── TIMELINE STEPS (10-step choreography) ────────────────────────────────────
+  // Delays match the V19 Wow 1 choreography spec exactly.
+  var steps = [
+    { delay:  200, run: function() { revealBeat('foundation');  } },  // 1 foundation assembles
+    { delay:  500, run: function() { revealBeat('layer-0');     } },  // 2 rules rises
+    { delay:  800, run: function() { revealBeat('layer-1');     } },  // 3 RPA rises
+    { delay: 1100, run: function() { revealBeat('layer-2');     } },  // 4 analytics rises
+    { delay: 1400, run: function() { revealBeat('layer-3');     } },  // 5 genai rises
+    { delay: 1700, run: function() { revealBeat('layer-4');     } },  // 6 agents rises
+    { delay: 2200, run: function() { revealBeat('rail-left');   } },  // 7 left rail fades in
+    { delay: 2600, run: function() { revealBeat('rail-right');  } },  // 8 right rail fades in
+    { delay: 3400, run: function() { revealBeat('tokens');      } },  // 9 token routing table
+    { delay: 5000, run: function() { revealBeat('implication'); } }   // 10 implication text
+  ];
 
   var tl = createTimeline(steps);
 
+  // ── LIFECYCLE CONTRACT ────────────────────────────────────────────────────────
   return {
-    play:   function() { build(); tl.play(); },
+    play: function() {
+      build();
+      // Reduced motion: jump straight to final state, no animation.
+      if (reduced) { showAll(true); return; }
+      tl.play();
+    },
+
     pause:  tl.pause,
     resume: tl.resume,
-    reset:  function() { build(); tl.reset(); },
+
+    reset: function() {
+      build();
+      tl.reset();
+    },
+
     finish: function() {
       build();
-      container.querySelectorAll('.scene-node').forEach(function(n) {
-        n.classList.add('visible');
-        n.style.opacity = '1';
-      });
+      showAll(true);  // disable transitions, reveal everything
+      tl.finish();    // also flush step functions (belt-and-suspenders)
     },
-    destroy: function() { container.innerHTML = ''; tl.destroy(); }
+
+    destroy: function() {
+      _timers.forEach(clearTimeout);
+      _timers = [];
+      container.innerHTML = '';
+      tl.destroy();
+    }
   };
 });

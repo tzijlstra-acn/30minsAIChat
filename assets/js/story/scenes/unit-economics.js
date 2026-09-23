@@ -1,155 +1,292 @@
-// Scene: unit-economics (Screen 09 - HOW TO SCALE)
-// V15 overhaul: case-level cost waterfall.
-// Scenario A (isolated design) vs Scenario B (proportionate design).
-// Generic units only. No client savings or percentages.
-// Label: ILLUSTRATIVE COST PATH -- GENERIC UNITS -- NOT CLIENT DATA
+// Scene: unit-economics (Screen 09 -- Live cost telemetry)
+// V19: one case moves through a cost path. A meter accumulates generic cost units.
+// Design controls activate one by one, reducing the meter with explanations.
+// Generic units only. No client data. No validated percentages.
 SceneDirector.register('unit-economics', function(container, manifest, reduced) {
 
   var stations = [
-    { id: 'data',      label: 'Data and context',      iconA: 'ti-database',       iconB: 'ti-database',       colorA: 'var(--cyan)',   colorB: 'var(--cyan)',
-      noteA: 'Repeated retrieval, full corpus each call',  noteB: 'Cached context, targeted retrieval' },
-    { id: 'model',     label: 'Model reasoning',        iconA: 'ti-brain',          iconB: 'ti-brain',          colorA: 'var(--accent)', colorB: 'var(--accent)',
-      noteA: 'Large model for every step',               noteB: 'Routing: deterministic first, generative only where needed' },
-    { id: 'orch',      label: 'Orchestration',          iconA: 'ti-route',          iconB: 'ti-route',          colorA: 'var(--accent)', colorB: 'var(--accent)',
-      noteA: 'No caching, high retry rate',              noteB: 'Controlled retries, shared orchestration' },
-    { id: 'review',    label: 'Human review',           iconA: 'ti-user-check',     iconB: 'ti-user-check',     colorA: 'var(--amber)',  colorB: 'var(--amber)',
-      noteA: 'High review rate for all outputs',         noteB: 'Exception-based review, risk-stratified sampling' },
-    { id: 'platform',  label: 'Platform and assurance', iconA: 'ti-server',         iconB: 'ti-server',         colorA: 'var(--green)',  colorB: 'var(--green)',
-      noteA: 'Duplicated services per use case',         noteB: 'Shared services amortised across use cases' }
+    { id: 'data',     label: 'Data and context',        sublabel: 'Retrieval and context load', color: 'var(--cyan)'   },
+    { id: 'model',    label: 'Model reasoning',          sublabel: 'Inference per step',          color: 'var(--accent)' },
+    { id: 'orch',     label: 'Orchestration and tools',  sublabel: 'Routing and tool calls',      color: 'var(--text-2)' },
+    { id: 'retries',  label: 'Retries',                  sublabel: 'Failure recovery cost',       color: 'var(--pink)'   },
+    { id: 'review',   label: 'Human review',             sublabel: 'Manual triage time',          color: 'var(--amber)'  },
+    { id: 'platform', label: 'Platform and assurance',   sublabel: 'Infrastructure and audit',    color: 'var(--green)'  }
   ];
 
-  // Relative proportions (A vs B) -- illustrative only
-  var wA = [0.55, 0.60, 0.50, 0.65, 0.55];
-  var wB = [0.30, 0.30, 0.25, 0.25, 0.20];
+  var controls = [
+    { id: 'preprocess', label: 'Deterministic preprocessing', tradeoff: null,                     meter: 80 },
+    { id: 'routing',    label: 'Model routing',               tradeoff: null,                     meter: 68 },
+    { id: 'cache',      label: 'Cached context',              tradeoff: null,                     meter: 56 },
+    { id: 'bounded',    label: 'Bounded retries',             tradeoff: null,                     meter: 46 },
+    { id: 'exception',  label: 'Exception-based review',      tradeoff: 'Quality: sampling only', meter: 38 },
+    { id: 'shared',     label: 'Shared services',             tradeoff: null,                     meter: 30 }
+  ];
 
-  var _timers = [];
-
-  function makeBar(width, color) {
-    var wrap = document.createElement('div');
-    wrap.style.cssText = 'position:relative;height:18px;background:var(--surface-2);border-radius:4px;overflow:hidden;';
-    var fill = document.createElement('div');
-    fill.style.cssText = 'height:100%;width:' + Math.round(width * 100) + '%;background:' + color
-      + ';border-radius:4px;transform:scaleX(0);transform-origin:left;transition:transform 600ms ease;';
-    fill.dataset.bar = '1';
-    wrap.appendChild(fill);
-    return wrap;
-  }
+  var _timers   = [];
+  var _meterFill  = null;
+  var _levelLabel = null;
+  var _tradeoffEl = null;
+  var _cardEls    = {};
 
   function build() {
     container.innerHTML = '';
-    var outer = document.createElement('div');
-    outer.style.cssText = 'display:flex;flex-direction:column;gap:8px;height:100%;padding:10px 16px;';
+    _cardEls    = {};
+    _meterFill  = null;
+    _levelLabel = null;
+    _tradeoffEl = null;
 
-    // Scenario headers
-    var headers = document.createElement('div');
-    headers.className = 'scene-node';
-    headers.dataset.beat = 'headers';
-    headers.style.cssText = 'display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;flex-shrink:0;'
-      + 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);';
-    headers.innerHTML =
-      '<span>Cost station</span>'
-      + '<span style="color:var(--pink)">Scenario A -- Isolated design</span>'
-      + '<span style="color:var(--green)">Scenario B -- Proportionate design</span>';
-    outer.appendChild(headers);
+    var root = document.createElement('div');
+    root.className = 'scene-root';
+    root.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;gap:10px;padding:8px 0;';
 
-    // Rows
+    // ── Section 1: Cost path stations ──────────────────────────────
+    var stRow = document.createElement('div');
+    stRow.id = 'ue-stations';
+    stRow.style.cssText = 'display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap;'
+      + 'gap:4px;flex-shrink:0;opacity:0;transition:opacity 400ms ease;overflow:hidden;';
+
     stations.forEach(function(st, i) {
-      var row = document.createElement('div');
-      row.className = 'scene-node';
-      row.dataset.beat = 'row-' + st.id;
-      row.style.cssText = 'display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;align-items:start;flex-shrink:0;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);';
+      var box = document.createElement('div');
+      box.style.cssText = 'display:flex;flex-direction:column;gap:2px;padding:5px 7px;'
+        + 'background:var(--surface-1);border-radius:6px;border:1px solid var(--border-1);'
+        + 'min-width:0;flex:1;overflow:hidden;';
 
-      // Label
-      var label = document.createElement('div');
-      label.style.cssText = 'display:flex;align-items:center;gap:6px;';
-      label.innerHTML =
-        '<i class="ti ' + st.iconA + '" style="font-size:14px;color:var(--text-3);flex-shrink:0"></i>'
-        + '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);line-height:1.3">' + st.label + '</span>';
-      row.appendChild(label);
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;'
+        + 'color:' + st.color + ';line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      lbl.textContent = st.label;
 
-      // Scenario A cell
-      var cellA = document.createElement('div');
-      cellA.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
-      cellA.appendChild(makeBar(wA[i], 'var(--pink)'));
-      var noteA = document.createElement('div');
-      noteA.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:11px;color:var(--text-3);line-height:1.3;';
-      noteA.textContent = st.noteA;
-      cellA.appendChild(noteA);
-      row.appendChild(cellA);
+      var sub = document.createElement('div');
+      sub.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;'
+        + 'color:var(--text-3);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      sub.textContent = st.sublabel;
 
-      // Scenario B cell
-      var cellB = document.createElement('div');
-      cellB.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
-      cellB.appendChild(makeBar(wB[i], 'var(--green)'));
-      var noteB = document.createElement('div');
-      noteB.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:11px;color:var(--text-3);line-height:1.3;';
-      noteB.textContent = st.noteB;
-      cellB.appendChild(noteB);
-      row.appendChild(cellB);
+      box.appendChild(lbl);
+      box.appendChild(sub);
+      stRow.appendChild(box);
 
-      outer.appendChild(row);
+      if (i < stations.length - 1) {
+        var plus = document.createElement('div');
+        plus.style.cssText = 'font-size:16px;font-weight:700;color:var(--text-3);flex-shrink:0;padding:0 2px;';
+        plus.textContent = '+';
+        stRow.appendChild(plus);
+      }
     });
 
-    // Final statement
-    var statement = document.createElement('div');
-    statement.className = 'scene-node';
-    statement.dataset.beat = 'statement';
-    statement.style.cssText = 'flex-shrink:0;padding:8px 12px;background:rgba(88,201,148,.05);'
-      + 'border:1px solid rgba(88,201,148,.25);border-radius:6px;'
-      + 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);';
-    statement.textContent = 'Lower avoidable run cost comes from architecture and process design, not model price alone.';
-    outer.appendChild(statement);
+    var eq = document.createElement('div');
+    eq.style.cssText = 'font-size:16px;font-weight:700;color:var(--text-3);flex-shrink:0;padding:0 4px;';
+    eq.textContent = '=';
+    stRow.appendChild(eq);
 
-    container.appendChild(outer);
+    var totalBox = document.createElement('div');
+    totalBox.style.cssText = 'display:flex;flex-direction:column;justify-content:center;padding:5px 10px;'
+      + 'background:var(--surface-1);border-radius:6px;border:2px solid var(--cyan);flex-shrink:0;';
+    var totalLbl = document.createElement('div');
+    totalLbl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;'
+      + 'color:var(--cyan);line-height:1.2;white-space:nowrap;';
+    totalLbl.textContent = 'Cost per successful case';
+    totalBox.appendChild(totalLbl);
+    stRow.appendChild(totalBox);
+
+    root.appendChild(stRow);
+
+    // ── Section 2: Cost meter ──────────────────────────────────────
+    var meterSec = document.createElement('div');
+    meterSec.id = 'ue-meter';
+    meterSec.style.cssText = 'display:flex;flex-direction:column;gap:6px;flex-shrink:0;opacity:0;transition:opacity 400ms ease;';
+
+    var meterHead = document.createElement('div');
+    meterHead.style.cssText = 'display:flex;align-items:center;gap:10px;';
+
+    var meterTitle = document.createElement('div');
+    meterTitle.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);';
+    meterTitle.textContent = 'Aggregated cost signal';
+
+    _levelLabel = document.createElement('div');
+    _levelLabel.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:14px;font-weight:700;'
+      + 'color:var(--pink);transition:color 600ms ease;';
+    _levelLabel.textContent = 'HIGH';
+
+    meterHead.appendChild(meterTitle);
+    meterHead.appendChild(_levelLabel);
+    meterSec.appendChild(meterHead);
+
+    var meterWrap = document.createElement('div');
+    meterWrap.style.cssText = 'background:var(--surface-2);overflow:hidden;height:24px;border-radius:4px;border:1px solid var(--border-1);';
+
+    _meterFill = document.createElement('div');
+    _meterFill.style.cssText = 'height:100%;width:0%;background:linear-gradient(90deg,var(--pink),var(--accent));'
+      + 'border-radius:4px;transition:width 600ms ease;';
+    meterWrap.appendChild(_meterFill);
+    meterSec.appendChild(meterWrap);
+
+    var meterNote = document.createElement('div');
+    meterNote.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--text-3);';
+    meterNote.textContent = 'Generic cost units -- illustrative only';
+    meterSec.appendChild(meterNote);
+
+    root.appendChild(meterSec);
+
+    // ── Section 3: Design controls ─────────────────────────────────
+    var compSec = document.createElement('div');
+    compSec.id = 'ue-controls';
+    compSec.style.cssText = 'display:flex;flex-direction:column;gap:6px;flex:1;min-height:0;opacity:0;transition:opacity 400ms ease;';
+
+    var compTitle = document.createElement('div');
+    compTitle.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);flex-shrink:0;';
+    compTitle.textContent = 'Design controls';
+    compSec.appendChild(compTitle);
+
+    var cardsWrap = document.createElement('div');
+    cardsWrap.style.cssText = 'display:flex;flex-direction:column;gap:5px;flex:1;';
+
+    controls.forEach(function(ctrl) {
+      var card = document.createElement('div');
+      card.style.cssText = 'border-radius:8px;padding:9px 14px;display:flex;align-items:center;gap:12px;'
+        + 'background:var(--surface-1);border:1px solid var(--border-1);opacity:.5;'
+        + 'transition:background 400ms ease,border-color 400ms ease,opacity 400ms ease;';
+
+      var cardLbl = document.createElement('div');
+      cardLbl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;color:var(--text-1);flex:1;';
+      cardLbl.textContent = ctrl.label;
+
+      var pill = document.createElement('div');
+      pill.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--green);'
+        + 'background:rgba(88,201,148,.1);border-radius:4px;padding:2px 8px;flex-shrink:0;';
+      pill.textContent = '-';
+
+      card.appendChild(cardLbl);
+      card.appendChild(pill);
+      cardsWrap.appendChild(card);
+      _cardEls[ctrl.id] = card;
+    });
+
+    compSec.appendChild(cardsWrap);
+
+    _tradeoffEl = document.createElement('div');
+    _tradeoffEl.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:11px;color:var(--text-3);'
+      + 'padding:2px 0;opacity:0;transition:opacity 300ms ease;flex-shrink:0;min-height:16px;';
+    compSec.appendChild(_tradeoffEl);
+
+    root.appendChild(compSec);
+    container.appendChild(root);
   }
 
-  function animateRow(stationId) {
-    var row = container.querySelector('[data-beat="row-' + stationId + '"]');
-    if (!row) return;
-    row.querySelectorAll('[data-bar]').forEach(function(bar) {
-      bar.style.transform = 'scaleX(1)';
-    });
+  function setMeter(pct) {
+    if (_meterFill) _meterFill.style.width = pct + '%';
+  }
+
+  function setLevel(text, color) {
+    if (!_levelLabel) return;
+    _levelLabel.textContent = text;
+    _levelLabel.style.color = color;
+  }
+
+  function activateCard(id) {
+    var card = _cardEls[id];
+    if (!card) return;
+    card.style.background    = 'rgba(88,201,148,.08)';
+    card.style.borderColor   = 'var(--green)';
+    card.style.opacity       = '1';
+  }
+
+  function showTradeoff(text) {
+    if (!_tradeoffEl) return;
+    _tradeoffEl.textContent  = 'Trade-off: ' + text;
+    _tradeoffEl.style.opacity = '1';
+    var t = setTimeout(function() {
+      if (_tradeoffEl) _tradeoffEl.style.opacity = '0';
+    }, 1500);
+    _timers.push(t);
+  }
+
+  function showFinal() {
+    var stRow    = container.querySelector('#ue-stations');
+    var meterSec = container.querySelector('#ue-meter');
+    var compSec  = container.querySelector('#ue-controls');
+    if (stRow)    stRow.style.opacity    = '1';
+    if (meterSec) meterSec.style.opacity = '1';
+    if (compSec)  compSec.style.opacity  = '1';
+    if (_meterFill) {
+      _meterFill.style.transition = 'none';
+      _meterFill.style.width      = '30%';
+    }
+    setLevel('LOWER', 'var(--green)');
+    controls.forEach(function(ctrl) { activateCard(ctrl.id); });
   }
 
   var steps = [
-    { delay: 300, run: function() {
-      var h = container.querySelector('[data-beat="headers"]');
-      if (h) h.classList.add('visible');
+    // 200ms: stations row appears
+    { delay: 200, run: function() {
+      var el = container.querySelector('#ue-stations');
+      if (el) el.style.opacity = '1';
+    }},
+
+    // 600ms: meter appears, fill animates to 90%, label HIGH
+    { delay: 600, run: function() {
+      var el = container.querySelector('#ue-meter');
+      if (el) el.style.opacity = '1';
+      setMeter(90);
+      setLevel('HIGH', 'var(--pink)');
+    }},
+
+    // 1400ms: comparison area appears, all 6 cards inactive
+    { delay: 1400, run: function() {
+      var el = container.querySelector('#ue-controls');
+      if (el) el.style.opacity = '1';
+    }},
+
+    // 2000ms: control 1 -- meter 80%
+    { delay: 2000, run: function() { activateCard('preprocess'); setMeter(80); }},
+
+    // 2800ms: control 2 -- meter 68%
+    { delay: 2800, run: function() { activateCard('routing');    setMeter(68); }},
+
+    // 3600ms: control 3 -- meter 56%
+    { delay: 3600, run: function() { activateCard('cache');      setMeter(56); }},
+
+    // 4400ms: control 4 -- meter 46%
+    { delay: 4400, run: function() { activateCard('bounded');    setMeter(46); }},
+
+    // 5200ms: control 5 -- meter 38%, trade-off note
+    { delay: 5200, run: function() {
+      activateCard('exception');
+      setMeter(38);
+      showTradeoff('Quality: sampling only');
+    }},
+
+    // 6000ms: control 6 -- meter 30%, label LOWER
+    { delay: 6000, run: function() {
+      activateCard('shared');
+      setMeter(30);
+      setLevel('LOWER', 'var(--green)');
     }}
-  ].concat(stations.map(function(st, i) {
-    return { delay: 700 + i * 900, run: function() {
-      var row = container.querySelector('[data-beat="row-' + st.id + '"]');
-      if (row) row.classList.add('visible');
-      _timers.push(setTimeout(function() { animateRow(st.id); }, 50));
-    }};
-  })).concat([{
-    delay: 700 + stations.length * 900 + 300,
-    run: function() {
-      var n = container.querySelector('[data-beat="statement"]');
-      if (n) n.classList.add('visible');
-    }
-  }]);
+  ];
 
   var tl = createTimeline(steps);
 
   return {
-    play:    function() { build(); tl.play(); },
-    pause:   tl.pause,
-    resume:  tl.resume,
-    reset:   function() {
+    play: function() {
+      build();
+      tl.play();
+    },
+    pause:  tl.pause,
+    resume: tl.resume,
+    reset:  function() {
       _timers.forEach(function(id) { clearTimeout(id); });
       _timers = [];
-      build(); tl.reset();
-    },
-    finish:  function() {
       build();
-      container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
-      stations.forEach(function(st) { animateRow(st.id); });
+      tl.reset();
+    },
+    finish: function() {
+      build();
+      showFinal();
     },
     destroy: function() {
       _timers.forEach(function(id) { clearTimeout(id); });
       _timers = [];
-      container.innerHTML = ''; tl.destroy();
+      container.innerHTML = '';
+      tl.destroy();
     }
   };
 });

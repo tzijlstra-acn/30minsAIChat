@@ -1,308 +1,631 @@
-// Scene: regulation-process (Screen 04 - WHERE IT APPLIES)
-// V15 overhaul: 5-beat cinematic executive flow replacing the 28-cell process grid.
-// source -> structure -> match -> challenge -> evidence
-// One obligation token (OBL-27) transforms as it moves through the flow.
+// Scene: regulation-process -- Wow 2: One clause becomes a governed decision
+// V19 Viewport Wow System -- 10-beat hero flow, SVG-native.
 SceneDirector.register('regulation-process', function(container, manifest, reduced) {
 
-  var beats = [
+  var _timers = [];
+
+  var W = 1200, H = 520;
+  var CY = 60, CH = 340, CW = 200;
+  var CXS = [20, 265, 510, 755, 1000];
+  var ARR_Y = CY + CH / 2; // 230
+
+  var C = {
+    accent:  '#B44CFF',
+    amber:   '#F3B34C',
+    green:   '#58C994',
+    pink:    '#F0758A',
+    text1:   '#F7F7FA',
+    text2:   '#D4D8E2',
+    text3:   '#B3BAC8',
+    border1: '#343949',
+    border2: '#4A5168',
+    bg1:     '#0F111A',
+    bg2:     '#161927',
+    bg3:     '#1D2135'
+  };
+
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
+    return el;
+  }
+
+  var els = {};
+  var svg;
+
+  // ── Card definitions ──
+  var CARDS = [
     {
       id: 'source',
-      label: 'SOURCE',
-      sub: 'Regulatory text',
-      lane: 'Data',
-      laneColor: 'var(--cyan)',
-      color: 'var(--cyan)',
-      icon: 'ti-file-text',
-      hint: 'Document ingested'
+      tag: '01 SOURCE',
+      title: 'Regulatory text',
+      body: ['Source document arrives'],
+      borderColor: C.border1,
+      topBarColor: null,
+      tagColor: C.text3,
+      titleColor: C.text1
     },
     {
       id: 'structure',
-      label: 'STRUCTURE',
-      sub: 'Obligation record',
-      lane: 'AI',
-      laneColor: 'var(--accent)',
-      color: 'var(--accent)',
-      icon: 'ti-database',
-      hint: 'Elements extracted'
+      tag: '02 STRUCTURE',
+      title: 'Obligation extracted',
+      body: ['Actor, action,', 'condition, frequency'],
+      borderColor: C.accent,
+      topBarColor: C.accent,
+      tagColor: C.accent,
+      titleColor: C.text1
     },
     {
-      id: 'match',
-      label: 'MATCH',
-      sub: 'Policy and control',
-      lane: 'AI',
-      laneColor: 'var(--accent)',
-      color: 'var(--accent)',
-      icon: 'ti-sitemap',
-      hint: 'Coverage assessed'
+      id: 'connect',
+      tag: '03 CONNECT',
+      title: 'Policy and control mapped',
+      body: ['Gap identified', 'by AI analysis'],
+      borderColor: C.accent,
+      topBarColor: C.accent,
+      tagColor: C.accent,
+      titleColor: C.text1
     },
     {
       id: 'challenge',
-      label: 'CHALLENGE',
-      sub: 'Gap and review',
-      lane: 'Human',
-      laneColor: 'var(--amber)',
-      color: 'var(--amber)',
-      icon: 'ti-user-check',
-      hint: 'Analyst challenge gate',
-      isGate: true
+      tag: '04 CHALLENGE',
+      title: 'Human reviews',
+      body: ['Analyst challenges', 'AI output'],
+      borderColor: C.amber,
+      topBarColor: C.amber,
+      tagColor: C.amber,
+      titleColor: C.amber
     },
     {
       id: 'evidence',
-      label: 'EVIDENCE',
-      sub: 'Approved action record',
-      lane: 'Evidence',
-      laneColor: 'var(--green)',
-      color: 'var(--green)',
-      icon: 'ti-certificate',
-      hint: 'Traceable and approved'
+      tag: '05 EVIDENCE',
+      title: 'Approved and traceable',
+      body: ['Evidence record', 'Audit trail complete'],
+      borderColor: C.green,
+      topBarColor: C.green,
+      tagColor: C.green,
+      titleColor: C.green
     }
   ];
 
-  var tokenFields = [
-    { key: 'ID',        val: 'OBL-27'              },
-    { key: 'Actor',     val: 'Control owner'        },
-    { key: 'Action',    val: 'Review access rights' },
-    { key: 'Condition', val: 'Critical systems'     },
-    { key: 'Frequency', val: 'Quarterly'            }
-  ];
-
+  // ── Build DOM ──
   function build() {
     container.innerHTML = '';
-    var wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;height:100%;padding:10px 16px;';
+    els = {};
 
-    // ── Obligation token area ──
-    var tokenWrap = document.createElement('div');
-    tokenWrap.className = 'scene-node';
-    tokenWrap.dataset.tokenWrap = '1';
-    tokenWrap.style.cssText = 'flex-shrink:0;background:var(--surface-2);border:1px solid var(--border-1);border-radius:8px;padding:10px 14px;transition:border-color 600ms,background 600ms;';
+    var root = document.createElement('div');
+    root.className = 'scene-root';
+    root.style.cssText = 'width:100%;height:100%;position:relative;overflow:hidden';
 
-    // Raw text phase
-    var rawDiv = document.createElement('div');
-    rawDiv.dataset.phase = 'raw';
-    rawDiv.style.cssText = 'display:flex;align-items:center;gap:10px;';
-    rawDiv.innerHTML =
-      '<i class="ti ti-file-description" style="font-size:20px;color:var(--cyan);flex-shrink:0"></i>'
-      + '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);line-height:1.5">'
-      + '&ldquo;Art.&nbsp;7(3): Each institution shall assess coverage of obligations mapped to internal controls on a quarterly basis&hellip;&rdquo;'
-      + '</span>';
-    tokenWrap.appendChild(rawDiv);
-
-    // Structured phase
-    var structDiv = document.createElement('div');
-    structDiv.dataset.phase = 'structured';
-    structDiv.style.cssText = 'display:none;align-items:center;gap:14px;flex-wrap:wrap;';
-
-    tokenFields.forEach(function(f, i) {
-      var field = document.createElement('div');
-      if (i === 0) {
-        field.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:12px;letter-spacing:.1em;font-weight:700;color:var(--accent);padding:3px 10px;background:rgba(180,76,255,.1);border:1px solid var(--accent);border-radius:4px;flex-shrink:0;';
-        field.textContent = f.val;
-      } else {
-        field.style.cssText = 'display:flex;flex-direction:column;gap:1px;';
-        field.innerHTML = '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)">' + f.key + '</span>'
-          + '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1)">' + f.val + '</span>';
-      }
-      structDiv.appendChild(field);
+    svg = svgEl('svg', {
+      viewBox: '0 0 ' + W + ' ' + H,
+      preserveAspectRatio: 'xMidYMid meet',
+      style: 'width:100%;height:100%;display:block'
     });
-    tokenWrap.appendChild(structDiv);
-    wrap.appendChild(tokenWrap);
 
-    // ── Flow spine ──
-    var spine = document.createElement('div');
-    spine.style.cssText = 'display:flex;align-items:stretch;gap:0;flex:1;min-height:0;';
+    // Background
+    svg.appendChild(svgEl('rect', { x: 0, y: 0, width: W, height: H, fill: C.bg1 }));
 
-    beats.forEach(function(beat, i) {
-      // Node card
-      var node = document.createElement('div');
-      node.className = 'scene-node';
-      node.dataset.beat = 'beat-' + beat.id;
-      node.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px 10px;'
-        + 'background:var(--surface-1);border:1px solid var(--border-1);border-radius:10px;'
-        + 'min-width:0;text-align:center;position:relative;transition:border-color 400ms ease,background 400ms ease;';
+    buildHeader();
+    buildCards();
+    buildArrows();
+    buildPauseIndicator();
+    buildTraceLabel();
 
-      if (beat.isGate) {
-        var gateMark = document.createElement('div');
-        gateMark.style.cssText = 'position:absolute;top:-9px;left:50%;transform:translateX(-50%);'
-          + 'font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;'
-          + 'color:var(--amber);background:var(--surface-1);padding:0 6px;border:1px solid var(--amber);border-radius:3px;white-space:nowrap;';
-        gateMark.textContent = 'Human gate';
-        node.appendChild(gateMark);
+    root.appendChild(svg);
+    container.appendChild(root);
+  }
+
+  function buildHeader() {
+    var g = svgEl('g', { opacity: '0' });
+    g.style.transition = 'opacity 400ms ease';
+    els.header = g;
+
+    g.appendChild(svgEl('rect', {
+      x: 20, y: 12, width: W - 40, height: 34,
+      rx: 4, fill: C.bg2, stroke: C.border1, 'stroke-width': 1
+    }));
+
+    var ht = svgEl('text', {
+      x: 36, y: 34,
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': 12,
+      'letter-spacing': '0.1em',
+      fill: C.text3
+    });
+    ht.textContent = 'ART. 7(3) -- COVERAGE MAPPING';
+    g.appendChild(ht);
+
+    g.appendChild(svgEl('circle', { cx: W - 56, cy: 29, r: 4, fill: C.accent, opacity: '0.8' }));
+
+    var ls = svgEl('text', {
+      x: W - 48, y: 34,
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': 11,
+      'letter-spacing': '0.1em',
+      fill: C.accent
+    });
+    ls.textContent = 'LIVE';
+    g.appendChild(ls);
+
+    svg.appendChild(g);
+  }
+
+  function buildCards() {
+    CARDS.forEach(function(card, i) {
+      var cx = CXS[i];
+      var g = svgEl('g', { opacity: '0' });
+      g.style.transition = 'opacity 500ms ease';
+      els['card_' + card.id] = g;
+
+      // Card background rect
+      g.appendChild(svgEl('rect', {
+        x: cx, y: CY, width: CW, height: CH,
+        rx: 6, fill: C.bg2,
+        stroke: card.borderColor, 'stroke-width': 1.5
+      }));
+
+      // Top accent bar
+      if (card.topBarColor) {
+        g.appendChild(svgEl('rect', {
+          x: cx + 1, y: CY + 1, width: CW - 2, height: 7,
+          rx: 5, fill: card.topBarColor, opacity: '0.9'
+        }));
       }
 
-      var ico = document.createElement('div');
-      ico.style.cssText = 'font-size:24px;color:' + beat.color + ';margin-top:' + (beat.isGate ? '4px' : '0') + ';';
-      ico.innerHTML = '<i class="ti ' + beat.icon + '"></i>';
-      node.appendChild(ico);
+      var tagY = CY + (card.topBarColor ? 30 : 22);
 
-      var lbl = document.createElement('div');
-      lbl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.14em;font-weight:700;color:' + beat.color + ';';
-      lbl.textContent = beat.label;
-      node.appendChild(lbl);
+      // Tag
+      var tag = svgEl('text', {
+        x: cx + 12, y: tagY,
+        'font-family': 'JetBrains Mono, monospace',
+        'font-size': 9,
+        'letter-spacing': '0.12em',
+        fill: card.tagColor
+      });
+      tag.textContent = card.tag;
+      g.appendChild(tag);
 
-      var sub = document.createElement('div');
-      sub.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);line-height:1.2;';
-      sub.textContent = beat.sub;
-      node.appendChild(sub);
+      // Title
+      var title = svgEl('text', {
+        x: cx + 12, y: tagY + 24,
+        'font-family': 'Space Grotesk, sans-serif',
+        'font-size': 15,
+        'font-weight': '700',
+        fill: card.titleColor
+      });
+      title.textContent = card.title;
+      g.appendChild(title);
 
-      var hint = document.createElement('div');
-      hint.style.cssText = 'font-family:\'Inter\',sans-serif;font-size:11px;color:var(--text-3);line-height:1.3;margin-top:auto;';
-      hint.textContent = beat.hint;
-      node.appendChild(hint);
+      // Body lines
+      card.body.forEach(function(line, li) {
+        var bt = svgEl('text', {
+          x: cx + 12, y: tagY + 46 + li * 17,
+          'font-family': 'Space Grotesk, sans-serif',
+          'font-size': 13,
+          fill: C.text2
+        });
+        bt.textContent = line;
+        g.appendChild(bt);
+      });
 
-      var badge = document.createElement('div');
-      badge.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;'
-        + 'color:' + beat.laneColor + ';border:1px solid ' + beat.laneColor + ';border-radius:3px;padding:2px 6px;opacity:.6;';
-      badge.textContent = beat.lane;
-      node.appendChild(badge);
+      // Per-card extra content
+      if (card.id === 'source') buildSourceExtras(g, cx, tagY);
+      if (card.id === 'structure') buildStructureExtras(g, cx, tagY);
+      if (card.id === 'connect') buildConnectExtras(g, cx);
+      if (card.id === 'challenge') buildChallengeExtras(g, cx);
+      if (card.id === 'evidence') buildEvidenceExtras(g, cx);
 
-      spine.appendChild(node);
+      svg.appendChild(g);
+    });
+  }
 
-      if (i < beats.length - 1) {
-        var connWrap = document.createElement('div');
-        connWrap.style.cssText = 'flex-shrink:0;width:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;';
+  function buildSourceExtras(g, cx, tagY) {
+    // Separator line at bottom
+    g.appendChild(svgEl('line', {
+      x1: cx + 12, y1: CY + CH - 26,
+      x2: cx + CW - 12, y2: CY + CH - 26,
+      stroke: C.border1, 'stroke-width': 1.5
+    }));
+    var hint = svgEl('text', {
+      x: cx + 12, y: CY + CH - 12,
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': 9,
+      'letter-spacing': '0.08em',
+      fill: C.text3, opacity: '0.7'
+    });
+    hint.textContent = 'INGESTED';
+    g.appendChild(hint);
 
-        var arr = document.createElement('div');
-        arr.className = 'scene-node';
-        arr.dataset.beat = 'arr-' + i;
-        arr.style.cssText = 'font-size:16px;color:var(--border-2);';
-        arr.textContent = '→';
-        connWrap.appendChild(arr);
+    // Document icon
+    var dx = cx + CW / 2 - 18, dy = CY + 155;
+    g.appendChild(svgEl('rect', {
+      x: dx, y: dy, width: 36, height: 44,
+      rx: 3, fill: 'none', stroke: C.border2, 'stroke-width': 1.5
+    }));
+    [[6, 12], [6, 20], [6, 28]].forEach(function(p, li) {
+      g.appendChild(svgEl('line', {
+        x1: dx + p[0], y1: dy + p[1],
+        x2: dx + (li < 2 ? 30 : 22), y2: dy + p[1],
+        stroke: C.text3, 'stroke-width': 1.2, opacity: '0.6'
+      }));
+    });
+  }
 
-        // Gap indicator appears between MATCH and CHALLENGE
-        if (i === 2) {
-          var gapPin = document.createElement('div');
-          gapPin.className = 'scene-node';
-          gapPin.dataset.beat = 'gap-pin';
-          gapPin.style.cssText = 'position:absolute;top:8px;font-family:\'JetBrains Mono\',monospace;font-size:8px;'
-            + 'letter-spacing:.08em;text-transform:uppercase;color:var(--pink);background:rgba(240,117,138,.1);'
-            + 'border:1px solid var(--pink);border-radius:3px;padding:1px 5px;white-space:nowrap;';
-          gapPin.textContent = 'Gap';
-          connWrap.appendChild(gapPin);
+  function buildStructureExtras(g, cx, tagY) {
+    var chips = ['actor', 'action', 'condition', 'frequency'];
+    var chipY0 = CY + 200;
+    chips.forEach(function(chip, ci) {
+      var row = Math.floor(ci / 2);
+      var col = ci % 2;
+      var chipX = cx + 10 + col * 96;
+      var chipG = svgEl('g', { opacity: '0' });
+      chipG.style.cssText = 'transition:opacity 300ms ease,transform 300ms ease;transform-box:fill-box;transform-origin:center;transform:scale(0)';
+      els['chip_' + ci] = chipG;
+
+      chipG.appendChild(svgEl('rect', {
+        x: chipX, y: chipY0 + row * 28, width: 84, height: 20,
+        rx: 10,
+        fill: 'rgba(180,76,255,0.10)',
+        stroke: C.accent, 'stroke-width': 0.8
+      }));
+      var ct = svgEl('text', {
+        x: chipX + 42, y: chipY0 + row * 28 + 14,
+        'font-family': 'JetBrains Mono, monospace',
+        'font-size': 9,
+        'text-anchor': 'middle',
+        'letter-spacing': '0.06em',
+        fill: C.accent
+      });
+      ct.textContent = chip;
+      chipG.appendChild(ct);
+      g.appendChild(chipG);
+    });
+  }
+
+  function buildConnectExtras(g, cx) {
+    var gcx = cx + CW / 2;
+    var gcy = CY + 225;
+    var nodes = [
+      { x: gcx - 42, y: gcy + 10, label: 'obligation', color: C.accent },
+      { x: gcx + 8,  y: gcy - 22, label: 'policy',     color: C.accent },
+      { x: gcx + 50, y: gcy + 14, label: 'control',    color: C.green }
+    ];
+
+    // Edges -- stored so we can dim one for gap highlight
+    var edgeG = svgEl('g', { opacity: '0' });
+    edgeG.style.transition = 'opacity 400ms ease';
+    els.graphEdges = edgeG;
+
+    var edge1 = svgEl('line', {
+      x1: nodes[0].x, y1: nodes[0].y,
+      x2: nodes[1].x, y2: nodes[1].y,
+      stroke: C.accent, 'stroke-width': 1.2, opacity: '0.65'
+    });
+    els.graphEdge1 = edge1;
+    edgeG.appendChild(edge1);
+
+    var edge2 = svgEl('line', {
+      x1: nodes[1].x, y1: nodes[1].y,
+      x2: nodes[2].x, y2: nodes[2].y,
+      stroke: C.green, 'stroke-width': 1.2, opacity: '0.65'
+    });
+    edgeG.appendChild(edge2);
+    g.appendChild(edgeG);
+
+    nodes.forEach(function(np) {
+      g.appendChild(svgEl('circle', {
+        cx: np.x, cy: np.y, r: 5,
+        fill: np.color, opacity: '0.9'
+      }));
+      var nl = svgEl('text', {
+        x: np.x, y: np.y + 16,
+        'font-family': 'JetBrains Mono, monospace',
+        'font-size': 9,
+        'text-anchor': 'middle',
+        fill: C.text3
+      });
+      nl.textContent = np.label;
+      g.appendChild(nl);
+    });
+  }
+
+  function buildChallengeExtras(g, cx) {
+    var dcx = cx + CW / 2, dcy = CY + 230, ds = 22;
+    var diamond = svgEl('polygon', {
+      points: [
+        dcx + ',' + (dcy - ds),
+        (dcx + ds) + ',' + dcy,
+        dcx + ',' + (dcy + ds),
+        (dcx - ds) + ',' + dcy
+      ].join(' '),
+      fill: 'rgba(243,179,76,0.12)',
+      stroke: C.amber, 'stroke-width': 1.8
+    });
+    diamond.style.cssText = 'transform-box:fill-box;transform-origin:center;transform:scale(1);transition:transform 150ms ease';
+    els.diamond = diamond;
+    g.appendChild(diamond);
+
+    var dq = svgEl('text', {
+      x: dcx, y: dcy + 5,
+      'font-family': 'Space Grotesk, sans-serif',
+      'font-size': 14,
+      'font-weight': '700',
+      'text-anchor': 'middle',
+      fill: C.amber
+    });
+    dq.textContent = '?';
+    g.appendChild(dq);
+  }
+
+  function buildEvidenceExtras(g, cx) {
+    var scx = cx + CW / 2, scy = CY + 230;
+    var sealG = svgEl('g', { opacity: '0' });
+    sealG.style.cssText = 'transform-box:fill-box;transform-origin:center;transform:scale(0);transition:opacity 300ms ease,transform 420ms cubic-bezier(0.175,0.885,0.32,1.275)';
+    els.seal = sealG;
+
+    sealG.appendChild(svgEl('circle', {
+      cx: scx, cy: scy, r: 23,
+      fill: 'rgba(88,201,148,0.12)',
+      stroke: C.green, 'stroke-width': 2
+    }));
+
+    // Checkmark
+    sealG.appendChild(svgEl('polyline', {
+      points: (scx - 10) + ',' + scy + ' ' + (scx - 3) + ',' + (scy + 8) + ' ' + (scx + 12) + ',' + (scy - 8),
+      fill: 'none',
+      stroke: C.green,
+      'stroke-width': 2.5,
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round'
+    }));
+    g.appendChild(sealG);
+  }
+
+  function buildArrows() {
+    var arrowColors = [C.accent, C.accent, C.amber, C.green];
+    var arrowIds = ['arr01', 'arr12', 'arr23', 'arr34'];
+
+    for (var ai = 0; ai < 4; ai++) {
+      var ax1 = CXS[ai] + CW + 2;
+      var ax2 = CXS[ai + 1] - 2;
+      var color = arrowColors[ai];
+
+      var ag = svgEl('g', { opacity: '0' });
+      ag.style.transition = 'opacity 400ms ease';
+      els[arrowIds[ai]] = ag;
+
+      ag.appendChild(svgEl('line', {
+        x1: ax1, y1: ARR_Y,
+        x2: ax2 - 8, y2: ARR_Y,
+        stroke: color, 'stroke-width': 1.5, opacity: '0.8'
+      }));
+
+      ag.appendChild(svgEl('polygon', {
+        points: ax2 + ',' + ARR_Y + ' '
+          + (ax2 - 8) + ',' + (ARR_Y - 5) + ' '
+          + (ax2 - 8) + ',' + (ARR_Y + 5),
+        fill: color, opacity: '0.9'
+      }));
+
+      svg.appendChild(ag);
+    }
+  }
+
+  function buildPauseIndicator() {
+    // Between CONNECT and CHALLENGE (arrow arr23 region)
+    var midX = (CXS[2] + CW + CXS[3]) / 2;
+    var pg = svgEl('g', { opacity: '0' });
+    pg.style.transition = 'opacity 400ms ease';
+    els.pauseIndicator = pg;
+
+    pg.appendChild(svgEl('rect', {
+      x: midX - 36, y: ARR_Y - 32, width: 72, height: 18,
+      rx: 3,
+      fill: 'rgba(243,179,76,0.10)',
+      stroke: C.amber, 'stroke-width': 0.8
+    }));
+    var pt = svgEl('text', {
+      x: midX, y: ARR_Y - 19,
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': 9,
+      'text-anchor': 'middle',
+      'letter-spacing': '0.07em',
+      fill: C.amber
+    });
+    pt.textContent = 'HUMAN GATE';
+    pg.appendChild(pt);
+    svg.appendChild(pg);
+  }
+
+  function buildTraceLabel() {
+    var tg = svgEl('g', { opacity: '0' });
+    tg.style.transition = 'opacity 500ms ease';
+    els.trace = tg;
+
+    tg.appendChild(svgEl('rect', {
+      x: 20, y: H - 34, width: W - 40, height: 18,
+      rx: 3, fill: C.bg2, stroke: C.border1, 'stroke-width': 1
+    }));
+
+    var tt = svgEl('text', {
+      x: W / 2, y: H - 21,
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': 9,
+      'text-anchor': 'middle',
+      'letter-spacing': '0.08em',
+      fill: C.text3, opacity: '0.7'
+    });
+    tt.textContent = 'SOURCE-BACKED FLOW -- ILLUSTRATIVE TIMING -- NOT CLIENT DATA';
+    tg.appendChild(tt);
+    svg.appendChild(tg);
+  }
+
+  // ── Animation helpers ──
+  function showEl(el) {
+    if (el) el.setAttribute('opacity', '1');
+  }
+
+  function showCard(id) {
+    showEl(els['card_' + id]);
+  }
+
+  function showArrow(id) {
+    showEl(els[id]);
+  }
+
+  function pulseDiamond() {
+    var d = els.diamond;
+    if (!d) return;
+    d.style.transform = 'scale(0.8)';
+    _timers.push(setTimeout(function() {
+      if (d) d.style.transform = 'scale(1.2)';
+      _timers.push(setTimeout(function() {
+        if (d) d.style.transform = 'scale(1.0)';
+      }, 160));
+    }, 160));
+  }
+
+  function showSeal() {
+    var s = els.seal;
+    if (!s) return;
+    s.setAttribute('opacity', '1');
+    // Defer one frame so transition fires
+    _timers.push(setTimeout(function() {
+      if (s) s.style.transform = 'scale(1)';
+    }, 20));
+  }
+
+  function bloomChips() {
+    [0, 1, 2, 3].forEach(function(ci) {
+      _timers.push(setTimeout(function() {
+        var c = els['chip_' + ci];
+        if (c) {
+          c.setAttribute('opacity', '1');
+          c.style.transform = 'scale(1)';
         }
-
-        spine.appendChild(connWrap);
-      }
-    });
-
-    wrap.appendChild(spine);
-
-    // ── Context teaser (prepares knowledge graph on Screen 05) ──
-    var ctxRow = document.createElement('div');
-    ctxRow.className = 'scene-node';
-    ctxRow.dataset.beat = 'ctx-teaser';
-    ctxRow.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:6px;padding:6px 12px;'
-      + 'background:var(--surface-2);border:1px solid var(--border-1);border-radius:6px;';
-    ctxRow.innerHTML =
-      '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);flex-shrink:0">Connected to:</span>'
-      + ['Policy','Control','Owner'].map(function(label, i) {
-          var colors = ['var(--accent)','var(--green)','var(--amber)'];
-          return '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;'
-            + 'background:var(--surface-1);border:1px solid ' + colors[i] + ';border-radius:20px;'
-            + 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:' + colors[i] + '">'
-            + label + '</span>';
-        }).join('<span style="color:var(--border-2);font-size:12px;flex-shrink:0">&#183;</span>');
-    wrap.appendChild(ctxRow);
-
-    container.appendChild(wrap);
-  }
-
-  function activateNode(beatId) {
-    beats.forEach(function(b) {
-      var n = container.querySelector('[data-beat="beat-' + b.id + '"]');
-      if (!n) return;
-      if (b.id === beatId) {
-        n.style.borderColor = b.color;
-        n.style.background = 'rgba(0,0,0,.12)';
-      }
+      }, ci * 110));
     });
   }
 
-  function showStructured() {
-    var rawDiv = container.querySelector('[data-phase="raw"]');
-    var structDiv = container.querySelector('[data-phase="structured"]');
-    if (rawDiv) rawDiv.style.display = 'none';
-    if (structDiv) structDiv.style.display = 'flex';
+  function bloomGraphEdges() {
+    _timers.push(setTimeout(function() {
+      showEl(els.graphEdges);
+    }, 280));
   }
 
+  function gapHighlight() {
+    // Briefly dim edge1 to red then restore
+    var e = els.graphEdge1;
+    if (!e) return;
+    _timers.push(setTimeout(function() {
+      if (e) {
+        e.style.transition = 'stroke 250ms ease';
+        e.setAttribute('stroke', C.pink);
+      }
+      _timers.push(setTimeout(function() {
+        if (e) e.setAttribute('stroke', C.accent);
+      }, 500));
+    }, 300));
+  }
+
+  // ── Timeline steps ──
   var steps = [
-    { delay: 300, run: function() {
-      var tw = container.querySelector('[data-token-wrap]');
-      if (tw) tw.classList.add('visible');
-      var n = container.querySelector('[data-beat="beat-source"]');
-      if (n) n.classList.add('visible');
-      activateNode('source');
+    // Beat 1 -- 200ms: header
+    { delay: 200, run: function() {
+      showEl(els.header);
     }},
-    { delay: 1000, run: function() {
-      var a = container.querySelector('[data-beat="arr-0"]');
-      if (a) a.classList.add('visible');
-      showStructured();
-      var n = container.querySelector('[data-beat="beat-structure"]');
-      if (n) n.classList.add('visible');
-      activateNode('structure');
+
+    // Beat 2 -- 600ms: SOURCE card
+    { delay: 600, run: function() {
+      showCard('source');
     }},
-    { delay: 2000, run: function() {
-      var a = container.querySelector('[data-beat="arr-1"]');
-      if (a) a.classList.add('visible');
-      var n = container.querySelector('[data-beat="beat-match"]');
-      if (n) n.classList.add('visible');
-      activateNode('match');
+
+    // Beat 3 -- 1200ms: STRUCTURE card + chips
+    { delay: 1200, run: function() {
+      showCard('structure');
+      _timers.push(setTimeout(function() { bloomChips(); }, 250));
     }},
-    { delay: 3200, run: function() {
-      var g = container.querySelector('[data-beat="gap-pin"]');
-      if (g) g.classList.add('visible');
-      var a = container.querySelector('[data-beat="arr-2"]');
-      if (a) a.classList.add('visible');
+
+    // Beat 4 -- 1800ms: arrow SOURCE->STRUCTURE
+    { delay: 1800, run: function() {
+      showArrow('arr01');
     }},
-    { delay: 4000, run: function() {
-      var n = container.querySelector('[data-beat="beat-challenge"]');
-      if (n) n.classList.add('visible');
-      activateNode('challenge');
+
+    // Beat 5 -- 2400ms: CONNECT card + graph edges bloom
+    { delay: 2400, run: function() {
+      showCard('connect');
+      bloomGraphEdges();
     }},
-    { delay: 5200, run: function() {
-      var a = container.querySelector('[data-beat="arr-3"]');
-      if (a) a.classList.add('visible');
-      var n = container.querySelector('[data-beat="beat-evidence"]');
-      if (n) {
-        n.classList.add('visible');
-        n.style.borderColor = 'var(--green)';
-        n.style.background = 'rgba(88,201,148,.07)';
-      }
-      var tw = container.querySelector('[data-token-wrap]');
-      if (tw) {
-        tw.style.borderColor = 'var(--green)';
-        tw.style.background = 'rgba(88,201,148,.06)';
-      }
+
+    // Beat 6 -- 3000ms: arrow STRUCTURE->CONNECT + gap highlight
+    { delay: 3000, run: function() {
+      showArrow('arr12');
+      gapHighlight();
     }},
-    { delay: 6400, run: function() {
-      var ctx = container.querySelector('[data-beat="ctx-teaser"]');
-      if (ctx) ctx.classList.add('visible');
+
+    // Beat 7 -- 3600ms: CHALLENGE card + diamond pulse
+    { delay: 3600, run: function() {
+      showCard('challenge');
+      _timers.push(setTimeout(function() { pulseDiamond(); }, 350));
+    }},
+
+    // Beat 8 -- 4200ms: arrow CONNECT->CHALLENGE + pause indicator
+    { delay: 4200, run: function() {
+      showArrow('arr23');
+      showEl(els.pauseIndicator);
+    }},
+
+    // Beat 9 -- 4800ms: EVIDENCE card + seal stamps in
+    { delay: 4800, run: function() {
+      showCard('evidence');
+      _timers.push(setTimeout(function() { showSeal(); }, 220));
+    }},
+
+    // Beat 10 -- 5400ms: arrow CHALLENGE->EVIDENCE + trace label
+    { delay: 5400, run: function() {
+      showArrow('arr34');
+      showEl(els.trace);
     }}
   ];
 
   var tl = createTimeline(steps);
 
+  function showAll() {
+    showEl(els.header);
+    CARDS.forEach(function(card) { showCard(card.id); });
+    ['arr01', 'arr12', 'arr23', 'arr34'].forEach(showArrow);
+    [0, 1, 2, 3].forEach(function(ci) {
+      var c = els['chip_' + ci];
+      if (c) { c.setAttribute('opacity', '1'); c.style.transform = 'scale(1)'; }
+    });
+    showEl(els.graphEdges);
+    showEl(els.pauseIndicator);
+    showEl(els.trace);
+    var s = els.seal;
+    if (s) { s.setAttribute('opacity', '1'); s.style.transform = 'scale(1)'; }
+  }
+
   return {
-    play:    function() { build(); tl.play(); },
-    pause:   tl.pause,
-    resume:  tl.resume,
-    reset:   function() { build(); tl.reset(); },
-    finish:  function() {
+    play: function() {
       build();
-      container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
-      showStructured();
-      beats.forEach(function(b) { activateNode(b.id); });
-      var evNode = container.querySelector('[data-beat="beat-evidence"]');
-      if (evNode) {
-        evNode.style.borderColor = 'var(--green)';
-        evNode.style.background = 'rgba(88,201,148,.07)';
-      }
-      var tw = container.querySelector('[data-token-wrap]');
-      if (tw) {
-        tw.style.borderColor = 'var(--green)';
-        tw.style.background = 'rgba(88,201,148,.06)';
-      }
+      if (reduced) { showAll(); return; }
+      tl.play();
     },
-    destroy: function() { container.innerHTML = ''; tl.destroy(); }
+    pause: function() { tl.pause(); },
+    resume: function() { tl.resume(); },
+    reset: function() {
+      tl.reset();
+      build();
+    },
+    finish: function() {
+      build();
+      showAll();
+    },
+    destroy: function() {
+      _timers.forEach(clearTimeout);
+      _timers = [];
+      container.innerHTML = '';
+      tl.destroy();
+    }
   };
 });

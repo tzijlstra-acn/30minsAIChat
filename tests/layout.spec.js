@@ -8,10 +8,12 @@
 const { test, expect } = require('@playwright/test');
 
 const VIEWPORTS = [
-  { name: '1440x900', width: 1440, height: 900  },
-  { name: '1366x768', width: 1366, height: 768  },
-  { name: '1024x768', width: 1024, height: 768  },
-  { name: '390x844',  width: 390,  height: 844  },
+  { name: '1440x900',  width: 1440, height: 900  },
+  { name: '1366x768',  width: 1366, height: 768  },
+  { name: '1024x768',  width: 1024, height: 768  },
+  { name: '390x844',   width: 390,  height: 844  },
+  { name: '1280x720',  width: 1280, height: 720  },
+  { name: '1920x1080', width: 1920, height: 1080 },
 ];
 
 const CORE_SLIDES = [
@@ -50,6 +52,31 @@ async function getOverlapReport(page) {
   });
 }
 
+async function assertInsideSafeFrame(page, selector) {
+  const offenders = await page.locator(selector).evaluate((root) => {
+    const safe = root.getBoundingClientRect();
+    const result = [];
+    root.querySelectorAll('[data-visual-object]').forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) return;
+      const inside =
+        r.left >= safe.left - 2 &&
+        r.right <= safe.right + 2 &&
+        r.top >= safe.top - 2 &&
+        r.bottom <= safe.bottom + 2;
+      if (!inside) {
+        result.push({
+          id: el.id || el.getAttribute('data-visual-object') || 'unknown',
+          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+          safe: { x: Math.round(safe.x), y: Math.round(safe.y), w: Math.round(safe.width), h: Math.round(safe.height) }
+        });
+      }
+    });
+    return result;
+  });
+  expect(offenders, 'Objects outside safe frame: ' + JSON.stringify(offenders)).toEqual([]);
+}
+
 // ── LAYOUT TESTS ──
 for (const vp of VIEWPORTS) {
   test.describe(`Layout [${vp.name}]`, () => {
@@ -78,6 +105,33 @@ for (const vp of VIEWPORTS) {
       for (const slideId of CORE_SLIDES.slice(0, 6)) {
         await expect(page.locator(`#${slideId}`), `${slideId} missing at ${vp.name}`).toBeAttached();
       }
+    });
+
+    test('no horizontal overflow on core screens', async ({ page }) => {
+      await gotoPage(page, 'http://localhost:8080/pitch.html');
+      const report = await getOverlapReport(page);
+      const overflowing = report.filter(r => r.route === 'core' && r.horizontalOverflow);
+      expect(overflowing.map(r => r.id)).toEqual([]);
+    });
+
+    test('core section height is 100dvh', async ({ page }) => {
+      await gotoPage(page, 'http://localhost:8080/pitch.html');
+      const bad = await page.evaluate(() => {
+        const vh = window.innerHeight;
+        const sections = [...document.querySelectorAll('section[data-route="core"]')];
+        return sections.filter(s => Math.abs(s.offsetHeight - vh) > 2).map(s => s.id);
+      });
+      expect(bad).toEqual([]);
+    });
+
+    test('scene-footer max-height 44px on core screens', async ({ page }) => {
+      await gotoPage(page, 'http://localhost:8080/pitch.html');
+      const bad = await page.evaluate(() => {
+        return [...document.querySelectorAll('.scene-footer')]
+          .filter(el => el.offsetHeight > 46)
+          .map(el => el.closest('section')?.id || 'unknown');
+      });
+      expect(bad).toEqual([]);
     });
   });
 }
