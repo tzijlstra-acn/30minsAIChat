@@ -42,7 +42,7 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       + 'background:rgba(88,201,148,.05);border-right:2px solid rgba(88,201,148,.28);';
     var lTxt = document.createElement('div');
     lTxt.style.cssText = 'writing-mode:vertical-rl;transform:rotate(180deg);'
-      + 'font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.14em;'
+      + 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.14em;'
       + 'text-transform:uppercase;color:var(--green);';
     lTxt.textContent = 'Human accountability';
     lBar.appendChild(lTxt);
@@ -120,7 +120,7 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       + 'background:rgba(85,199,232,.04);border-left:2px solid rgba(85,199,232,.22);';
     var rTxt = document.createElement('div');
     rTxt.style.cssText = 'writing-mode:vertical-rl;'
-      + 'font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.14em;'
+      + 'font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.14em;'
       + 'text-transform:uppercase;color:var(--cyan);';
     rTxt.textContent = 'Security, control and evidence';
     rBar.appendChild(rTxt);

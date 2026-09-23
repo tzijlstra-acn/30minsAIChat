@@ -22,6 +22,8 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
   var wA = [0.55, 0.60, 0.50, 0.65, 0.55];
   var wB = [0.30, 0.30, 0.25, 0.25, 0.20];
 
+  var _timers = [];
+
   function makeBar(width, color) {
     var wrap = document.createElement('div');
     wrap.style.cssText = 'position:relative;height:18px;background:var(--surface-2);border-radius:4px;overflow:hidden;';
@@ -118,7 +120,7 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     return { delay: 700 + i * 900, run: function() {
       var row = container.querySelector('[data-beat="row-' + st.id + '"]');
       if (row) row.classList.add('visible');
-      setTimeout(function() { animateRow(st.id); }, 50);
+      _timers.push(setTimeout(function() { animateRow(st.id); }, 50));
     }};
   })).concat([{
     delay: 700 + stations.length * 900 + 300,
@@ -134,12 +136,20 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     play:    function() { build(); tl.play(); },
     pause:   tl.pause,
     resume:  tl.resume,
-    reset:   function() { build(); tl.reset(); },
+    reset:   function() {
+      _timers.forEach(function(id) { clearTimeout(id); });
+      _timers = [];
+      build(); tl.reset();
+    },
     finish:  function() {
       build();
       container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
       stations.forEach(function(st) { animateRow(st.id); });
     },
-    destroy: function() { container.innerHTML = ''; tl.destroy(); }
+    destroy: function() {
+      _timers.forEach(function(id) { clearTimeout(id); });
+      _timers = [];
+      container.innerHTML = ''; tl.destroy();
+    }
   };
 });

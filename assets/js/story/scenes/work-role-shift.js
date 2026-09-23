@@ -23,6 +23,8 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
   var humanColor = 'var(--amber)';
   var aiColor    = 'var(--accent)';
 
+  var _timers = [];
+
   function build() {
     container.innerHTML = '';
     var outer = document.createElement('div');
@@ -124,10 +126,10 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
     { delay: 1100, run: function() {
       for (var i = 0; i < todayTasks.length; i++) {
         (function(idx) {
-          setTimeout(function() {
+          _timers.push(setTimeout(function() {
             var n = container.querySelector('[data-beat="today-' + idx + '"]');
             if (n) n.classList.add('visible');
-          }, idx * 200);
+          }, idx * 200));
         })(i);
       }
     }},
@@ -138,13 +140,13 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
     { delay: 2900, run: function() {
       for (var i = 0; i < withAITasks.length; i++) {
         (function(idx) {
-          setTimeout(function() {
+          _timers.push(setTimeout(function() {
             var n = container.querySelector('[data-beat="ai-' + idx + '"]');
             if (n) n.classList.add('visible');
             // Fade corresponding today card slightly
             var todayCard = container.querySelector('[data-beat="today-' + idx + '"]');
             if (todayCard) todayCard.style.opacity = '0.4';
-          }, idx * 250);
+          }, idx * 250));
         })(i);
       }
     }},
@@ -160,7 +162,11 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
     play:    function() { build(); tl.play(); },
     pause:   tl.pause,
     resume:  tl.resume,
-    reset:   function() { build(); tl.reset(); },
+    reset:   function() {
+      _timers.forEach(function(id) { clearTimeout(id); });
+      _timers = [];
+      build(); tl.reset();
+    },
     finish:  function() {
       build();
       container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
@@ -169,6 +175,10 @@ SceneDirector.register('work-role-shift', function(container, manifest, reduced)
         if (todayCard) todayCard.style.opacity = '0.4';
       }
     },
-    destroy: function() { container.innerHTML = ''; tl.destroy(); }
+    destroy: function() {
+      _timers.forEach(function(id) { clearTimeout(id); });
+      _timers = [];
+      container.innerHTML = ''; tl.destroy();
+    }
   };
 });
