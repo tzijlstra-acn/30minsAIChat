@@ -1,136 +1,135 @@
-// Scene: next-move (Screen 11 - WHAT NEXT)
-// Three parallel decision lanes (FRAME, MAP, PROVE) with concrete actions and gate criteria.
-// Animation: lanes appear left-to-right, then the gate bar with criteria appears.
 SceneDirector.register('next-move', function(container, manifest, reduced) {
-
-  var lanes = [
+  var STAGES = [
     {
-      label:   'FRAME',
-      icon:    'ti-target',
-      color:   'var(--cyan)',
-      heading: 'Confirm the outcome',
-      actions: [
-        'Name the regulatory obligation or risk decision to improve',
-        'Agree the quality and evidence standard the output must meet',
-        'Set the human approval gate and its criteria in advance'
+      label: 'STAGE 1', heading: 'Confirm the outcome',
+      color: 'var(--cyan)', bg: 'rgba(85,199,232,.06)',
+      width: '40%',
+      bullets: [
+        'Agree one bounded outcome with a named owner',
+        'Define the evidence standard before any build',
+        'Identify the single process this will first prove'
       ],
-      gate:    'Gate: outcome statement with agreed evidence standard.'
+      beat: 'stage-0'
     },
     {
-      label:   'MAP',
-      icon:    'ti-route',
-      color:   'var(--accent)',
-      heading: 'Trace one real process',
-      actions: [
-        'Follow one obligation from receipt to evidence, end to end',
-        'Identify where AI can assist, automate or analyse',
-        'Confirm data availability and human touchpoints'
+      label: 'STAGE 2', heading: 'Trace one real process',
+      color: 'var(--accent)', bg: 'rgba(180,76,255,.06)',
+      width: '35%',
+      bullets: [
+        'Map the full process from input to decision record',
+        'Mark where AI can assist and where humans decide',
+        'Note five system implications for the proof'
       ],
-      gate:    'Gate: process map with AI insertion points and human gates marked.'
+      beat: 'stage-1'
     },
     {
-      label:   'PROVE',
-      icon:    'ti-circle-check',
-      color:   'var(--green)',
-      heading: 'Test one bounded path',
-      actions: [
-        'Run AI on real work in a controlled environment',
-        'Measure all five dimensions: quality, control, adoption, speed, economics',
-        'Present gate-ready evidence before scaling investment'
+      label: 'STAGE 3', heading: 'Test one bounded path',
+      color: 'var(--green)', bg: 'rgba(88,201,148,.06)',
+      width: '25%',
+      bullets: [
+        'Run the AI on real work within the defined boundary',
+        'Measure quality, control, adoption, speed and economics',
+        'Produce a five-dimension evidence pack, board-ready'
       ],
-      gate:    'Gate: five-dimension evidence pack, board-ready.'
+      beat: 'stage-2'
     }
+  ];
+
+  var GATES = [
+    { text: 'Gate: agreed outcome statement with named owner and evidence standard', beat: 'gate-0' },
+    { text: 'Gate: process map with AI points, human gates and system implications marked', beat: 'gate-1' }
   ];
 
   function build() {
     container.innerHTML = '';
     var outer = document.createElement('div');
-    outer.style.cssText = 'display:flex;flex-direction:column;gap:8px;height:100%;padding:12px 16px;';
+    outer.style.cssText = 'display:flex;flex-direction:column;height:100%;padding:8px 14px;gap:6px;';
 
-    // Lanes row
-    var lanesRow = document.createElement('div');
-    lanesRow.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex:1;min-height:0;';
+    // Stage row
+    var stageRow = document.createElement('div');
+    stageRow.style.cssText = 'display:flex;align-items:stretch;gap:0;flex:1;min-height:0;';
 
-    lanes.forEach(function(lane, i) {
-      var col = document.createElement('div');
-      col.className = 'scene-node';
-      col.dataset.beat = 'lane-' + i;
-      col.style.cssText = 'background:var(--surface-1);border:1px solid ' + lane.color
-        + ';border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;';
+    STAGES.forEach(function(stage, i) {
+      // Stage card
+      var card = document.createElement('div');
+      card.className = 'nm-stage scene-node';
+      card.dataset.beat = stage.beat;
+      card.style.cssText = 'width:' + stage.width + ';display:flex;flex-direction:column;gap:6px;padding:12px;'
+        + 'background:' + stage.bg + ';border-top:3px solid ' + stage.color + ';border-radius:6px;'
+        + 'flex-shrink:0;opacity:0;transition:opacity .5s;overflow:hidden;';
 
-      // Lane header
-      var hdr = document.createElement('div');
-      hdr.style.cssText = 'display:flex;align-items:center;gap:10px;';
-      hdr.innerHTML =
-        '<i class="ti ' + lane.icon + '" style="font-size:22px;color:' + lane.color + ';flex-shrink:0"></i>'
-        + '<div>'
-        + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;letter-spacing:.1em;font-weight:700;color:' + lane.color + '">' + lane.label + '</div>'
-        + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);margin-top:2px;line-height:1.2">' + lane.heading + '</div>'
+      card.innerHTML =
+        '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:' + stage.color + '">' + stage.label + '</div>'
+        + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:700;color:' + stage.color + ';line-height:1.2">' + stage.heading + '</div>'
+        + '<div style="display:flex;flex-direction:column;gap:5px;margin-top:2px;">'
+        + stage.bullets.map(function(b) {
+          return '<div style="display:flex;align-items:flex-start;gap:6px;font-family:\'Inter\',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.4">'
+            + '<span style="color:' + stage.color + ';flex-shrink:0;margin-top:2px">&#8227;</span>' + b + '</div>';
+        }).join('')
         + '</div>';
-      col.appendChild(hdr);
 
-      // Actions
-      var actions = document.createElement('div');
-      actions.style.cssText = 'display:flex;flex-direction:column;gap:6px;flex:1;';
-      lane.actions.forEach(function(action) {
-        var el = document.createElement('div');
-        el.style.cssText = 'display:flex;align-items:flex-start;gap:7px;font-family:\'Inter\',sans-serif;font-size:13px;color:var(--text-2);line-height:1.5;';
-        el.innerHTML = '<span style="color:' + lane.color + ';flex-shrink:0;margin-top:3px">&#8227;</span>' + action;
-        actions.appendChild(el);
-      });
-      col.appendChild(actions);
+      stageRow.appendChild(card);
 
-      // Gate line at bottom
-      var gateEl = document.createElement('div');
-      gateEl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.04em;color:'
-        + lane.color + ';background:rgba(0,0,0,.15);border-radius:4px;padding:5px 8px;line-height:1.4;';
-      gateEl.textContent = lane.gate;
-      col.appendChild(gateEl);
-
-      lanesRow.appendChild(col);
+      // Gate bar (after stages 0 and 1)
+      if (i < STAGES.length - 1) {
+        var gate = GATES[i];
+        var gateBar = document.createElement('div');
+        gateBar.className = 'nm-gate scene-node';
+        gateBar.dataset.beat = gate.beat;
+        gateBar.style.cssText = 'width:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;'
+          + 'opacity:0;transition:opacity .5s;';
+        var gateInner = document.createElement('div');
+        gateInner.style.cssText = 'writing-mode:vertical-rl;transform:rotate(180deg);'
+          + 'font-family:\'JetBrains Mono\',monospace;font-size:7.5px;letter-spacing:.08em;'
+          + 'color:var(--text-3);text-align:center;padding:0 4px;'
+          + 'border-right:1px solid var(--border-2);height:100%;';
+        gateInner.textContent = gate.text;
+        gateBar.appendChild(gateInner);
+        stageRow.appendChild(gateBar);
+      }
     });
-    outer.appendChild(lanesRow);
 
-    // Closing gate bar
-    var gateBar = document.createElement('div');
-    gateBar.className = 'scene-node';
-    gateBar.dataset.beat = 'gate';
-    gateBar.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 16px;'
-      + 'background:rgba(52,211,153,.06);border:1px solid var(--green);border-radius:7px;flex-shrink:0;';
-    gateBar.innerHTML =
-      '<i class="ti ti-lock-check" style="font-size:18px;color:var(--green);flex-shrink:0"></i>'
-      + '<div>'
-      + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:2px">First objective</div>'
-      + '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:15px;font-weight:700;color:var(--text-1)">One decision supported by evidence -- before any platform investment.</div>'
-      + '</div>';
-    outer.appendChild(gateBar);
+    outer.appendChild(stageRow);
+
+    // Commitment bar
+    var commit = document.createElement('div');
+    commit.className = 'scene-node';
+    commit.dataset.beat = 'commit';
+    commit.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:10px;'
+      + 'padding:10px 14px;background:rgba(88,201,148,.07);border:1px solid var(--green);'
+      + 'border-radius:7px;opacity:0;transition:opacity .5s;';
+    commit.innerHTML =
+      '<i class="ti ti-lock-check" style="color:var(--green);font-size:18px;flex-shrink:0"></i>'
+      + '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:700;color:var(--text-1)">'
+      + 'One decision supported by evidence -- before any platform investment.'
+      + '</span>';
+    outer.appendChild(commit);
 
     container.appendChild(outer);
   }
 
-  var steps = lanes.map(function(_, i) {
-    return { delay: 300 + i * 600, run: function() {
-      var node = container.querySelector('[data-beat="lane-' + i + '"]');
-      if (node) node.classList.add('visible');
-    }};
-  }).concat([{
-    delay: 300 + lanes.length * 600 + 300,
-    run: function() {
-      var gate = container.querySelector('[data-beat="gate"]');
-      if (gate) gate.classList.add('visible');
-    }
-  }]);
+  var steps = [
+    { delay: 200,  run: function() { var n = container.querySelector('[data-beat="stage-0"]'); if(n){n.classList.add('visible');n.style.opacity='1';} }},
+    { delay: 1000, run: function() { var n = container.querySelector('[data-beat="gate-0"]');  if(n){n.classList.add('visible');n.style.opacity='1';} }},
+    { delay: 1600, run: function() { var n = container.querySelector('[data-beat="stage-1"]'); if(n){n.classList.add('visible');n.style.opacity='1';} }},
+    { delay: 2400, run: function() { var n = container.querySelector('[data-beat="gate-1"]');  if(n){n.classList.add('visible');n.style.opacity='1';} }},
+    { delay: 3000, run: function() { var n = container.querySelector('[data-beat="stage-2"]'); if(n){n.classList.add('visible');n.style.opacity='1';} }},
+    { delay: 3800, run: function() { var n = container.querySelector('[data-beat="commit"]');  if(n){n.classList.add('visible');n.style.opacity='1';} }}
+  ];
 
   var tl = createTimeline(steps);
 
   return {
-    play:    function() { build(); tl.play(); },
-    pause:   tl.pause,
-    resume:  tl.resume,
-    reset:   function() { build(); tl.reset(); },
-    finish:  function() {
+    play:   function() { build(); tl.play(); },
+    pause:  tl.pause,
+    resume: tl.resume,
+    reset:  function() { build(); tl.reset(); },
+    finish: function() {
       build();
-      container.querySelectorAll('.scene-node').forEach(function(n) { n.classList.add('visible'); });
+      container.querySelectorAll('.scene-node').forEach(function(n) {
+        n.classList.add('visible');
+        n.style.opacity = '1';
+      });
     },
     destroy: function() { container.innerHTML = ''; tl.destroy(); }
   };
