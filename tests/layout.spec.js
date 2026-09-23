@@ -672,20 +672,22 @@ test('V17/4: build fingerprint is v17', async ({ page }) => {
   expect(content).toMatch(/^v17-[0-9a-f]{7}$/);
 });
 
-test('V17/4: proof-loop Compare step uses ti-git-compare icon', async ({ page }) => {
+test('V27: proof-loop pipeline step labels are text (Baseline Run Compare Challenge Decide)', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
   const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
   const body = await res.text();
-  expect(body).toContain('ti-git-compare');
-  expect(body).not.toContain('ti-git-diff');
+  expect(body).toContain('Baseline');
+  expect(body).toContain('Compare');
+  expect(body).toContain('Challenge');
+  expect(body).toContain('Decide');
 });
 
-test('V17/4: proof-loop Decide step uses ti-scale icon', async ({ page }) => {
+test('V27: proof-loop gate section has evidence gate label and human decision point', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
   const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
   const body = await res.text();
-  expect(body).toContain('ti-scale');
-  expect(body).not.toContain('ti-gate');
+  expect(body).toContain('EVIDENCE GATE');
+  expect(body).toContain('HUMAN DECISION POINT');
 });
 
 // ── V18 VISUAL EXCELLENCE AUDIT ──
@@ -1794,13 +1796,15 @@ test('V26/5: proof-loop.js uses connected pipeline strip (not 5 equal cards)', a
   expect(body).not.toContain('border-radius:8px');
 });
 
-test('V26/5: proof-loop.js gate is one human approval element (not 4 equal chips)', async ({ page }) => {
+test('V27: proof-loop.js gate has evidence gate icon box and labelled options', async ({ page }) => {
   const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
   const body = await res.text();
-  // Gate uses border:1px solid var(--green) on one container
-  expect(body).toContain('border:1px solid var(--green)');
-  // Options are internal dividers, not separate border-radius chips
-  expect(body).toContain('border-left:1px solid rgba(88,201,148,0.2)');
+  // V27: gate icon uses rounded square with green tint
+  expect(body).toContain('rgba(88,201,148,.12)');
+  // Gate options use green-tinted border on individual items
+  expect(body).toContain('rgba(88,201,148,0.22)');
+  // Each option has a label and a sub-label
+  expect(body).toContain('pf-gate-chips');
 });
 
 // ── V26/6 semantic zoom and cost waterfall ──
@@ -1828,11 +1832,13 @@ test('V26/6: unit-economics.js station strip is one connected element (not 6 equ
   expect(body).not.toContain("'border-radius:6px;border:1px solid var(--border-1)'");
 });
 
-test('V26/6: unit-economics.js controls are rows inside one panel (not 6 equal cards)', async ({ page }) => {
+test('V27: unit-economics.js controls panel has two-pass design decisions header', async ({ page }) => {
   const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
   const body = await res.text();
-  // Panel header identifies the design controls container
-  expect(body).toContain('DESIGN CONTROLS');
+  // V27: panel header is DESIGN DECISIONS -- PASS 1 vs PASS 2
+  expect(body).toContain('DESIGN DECISIONS');
+  expect(body).toContain('PASS 1');
+  expect(body).toContain('PASS 2');
   // Control rows use internal top-border dividers
   expect(body).toContain('border-top:1px solid var(--border-1)');
   // Must NOT use the old card border-radius
@@ -1963,4 +1969,68 @@ test('V26/10: pitch.html asset ?v= fingerprints all match build commit', async (
   // All asset fingerprints should use the v26/10 commit SHA
   expect(body).toContain('?v=68f790f');
   expect(body).not.toContain('?v=afa82a4');
+});
+
+// ── V27 lifecycle contract and two-pass waterfall ──
+
+const V27_SCENES = [
+  'ai-stack-build', 'task-route', 'work-role-shift', 'proof-loop',
+  'unit-economics', 'next-move', 'cover-flow', 'pressure-convergence',
+  'regulation-process', 'transformation-system', 'scale-architecture', 'dual-engine'
+];
+
+V27_SCENES.forEach(function(scene) {
+  test('V27: ' + scene + '.js has renderStatic method', async ({ page }) => {
+    const res = await page.goto('/assets/js/story/scenes/' + scene + '.js');
+    const body = await res.text();
+    expect(body).toContain('renderStatic:');
+  });
+
+  test('V27: ' + scene + '.js has renderError method', async ({ page }) => {
+    const res = await page.goto('/assets/js/story/scenes/' + scene + '.js');
+    const body = await res.text();
+    expect(body).toContain('renderError:');
+  });
+
+  test('V27: ' + scene + '.js has resize method', async ({ page }) => {
+    const res = await page.goto('/assets/js/story/scenes/' + scene + '.js');
+    const body = await res.text();
+    expect(body).toContain('resize:');
+  });
+
+  test('V27: ' + scene + '.js has seek method', async ({ page }) => {
+    const res = await page.goto('/assets/js/story/scenes/' + scene + '.js');
+    const body = await res.text();
+    expect(body).toContain('seek:');
+  });
+});
+
+test('V27: unit-economics.js has two-pass waterfall content (PASS 1 isolated, PASS 2 proportionate)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
+  const body = await res.text();
+  expect(body).toContain('PASS 1');
+  expect(body).toContain('PASS 2');
+  expect(body).toContain('switchToPass2');
+  expect(body).toContain('isolated');
+});
+
+test('V27: playwright.config.js has 1280x720 viewport project', async ({ page }) => {
+  const res = await page.goto('/playwright.config.js');
+  const body = await res.text();
+  expect(body).toContain('1280x720');
+  expect(body).toContain('width: 1280');
+});
+
+test('V27: proof-loop.js gate options have sub-labels (Controlled scale, Refine approach)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
+  const body = await res.text();
+  expect(body).toContain('Controlled scale');
+  expect(body).toContain('Refine approach');
+});
+
+test('V27: unit-economics.js two-pass shows isolated state before switching (Largest model for all tasks)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
+  const body = await res.text();
+  expect(body).toContain('Largest model for all tasks');
+  expect(body).toContain('ISOLATED');
 });

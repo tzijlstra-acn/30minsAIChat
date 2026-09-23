@@ -1,6 +1,7 @@
 // Scene: unit-economics (Screen 09)
-// V26: Cost waterfall. Stations are one connected strip -- not equal boxes.
-// Design controls are rows inside one panel -- not equal cards.
+// V27: Two-pass cost waterfall. Pass 1 shows the isolated design (expensive).
+// Pass 2 applies proportionate controls one by one, each reducing cost.
+// Stations are one connected strip. Controls panel is one boundary, not 6 cards.
 // Generic cost units only. No client data. No validated percentages.
 SceneDirector.register('unit-economics', function(container, manifest, reduced) {
 
@@ -13,18 +14,20 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     { id: 'platform', label: 'Platform and assurance',   sublabel: 'Infrastructure and audit',    color: 'var(--green)'  }
   ];
 
+  // Each control has an isolated state (Pass 1) and an optimised label (Pass 2).
   var controls = [
-    { id: 'preprocess', label: 'Deterministic preprocessing', meter: 80 },
-    { id: 'routing',    label: 'Model routing',               meter: 68 },
-    { id: 'cache',      label: 'Cached context',              meter: 56 },
-    { id: 'bounded',    label: 'Bounded retries',             meter: 46 },
-    { id: 'exception',  label: 'Exception-based review',      meter: 38, tradeoff: 'Quality: sampling only' },
-    { id: 'shared',     label: 'Shared services',             meter: 30 }
+    { id: 'preprocess', label: 'Deterministic preprocessing', isolated: 'Largest model for all tasks',         meter: 80 },
+    { id: 'routing',    label: 'Model routing by complexity',  isolated: 'Single model at every step',          meter: 68 },
+    { id: 'cache',      label: 'Cached context',               isolated: 'Repeated retrieval per call',          meter: 56 },
+    { id: 'bounded',    label: 'Bounded retries',              isolated: 'Unbounded retry loops',               meter: 46 },
+    { id: 'exception',  label: 'Exception-based review',       isolated: 'Full human review on every case',     meter: 38, tradeoff: 'Quality: sampling only' },
+    { id: 'shared',     label: 'Shared platform services',     isolated: 'Duplicated platform per use case',    meter: 30 }
   ];
 
   var _timers    = [];
   var _meterFill  = null;
   var _levelLabel = null;
+  var _passLabel  = null;
   var _tradeoffEl = null;
   var _rowEls     = {};
 
@@ -33,6 +36,7 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     _rowEls     = {};
     _meterFill  = null;
     _levelLabel = null;
+    _passLabel  = null;
     _tradeoffEl = null;
 
     var root = document.createElement('div');
@@ -90,14 +94,23 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
 
     var meterTitle = document.createElement('div');
     meterTitle.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);';
-    meterTitle.textContent = 'Aggregated cost signal';
+    meterTitle.textContent = 'Cost per successful case';
+
+    _passLabel = document.createElement('div');
+    _passLabel.id = 'ue-pass-label';
+    _passLabel.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8.5px;'
+      + 'letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;'
+      + 'background:rgba(240,117,138,.10);color:var(--pink);border:1px solid rgba(240,117,138,.25);'
+      + 'transition:background 500ms ease,color 500ms ease,border-color 500ms ease;white-space:nowrap;';
+    _passLabel.textContent = 'PASS 1: ISOLATED DESIGN';
 
     _levelLabel = document.createElement('div');
     _levelLabel.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:14px;font-weight:700;'
-      + 'color:var(--pink);transition:color 600ms ease;';
+      + 'color:var(--pink);transition:color 600ms ease;margin-left:auto;';
     _levelLabel.textContent = 'HIGH';
 
     meterHead.appendChild(meterTitle);
+    meterHead.appendChild(_passLabel);
     meterHead.appendChild(_levelLabel);
     meterSec.appendChild(meterHead);
 
@@ -133,7 +146,7 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     var panelHdrLbl = document.createElement('div');
     panelHdrLbl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
       + 'letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);';
-    panelHdrLbl.textContent = 'DESIGN CONTROLS';
+    panelHdrLbl.textContent = 'DESIGN DECISIONS -- PASS 1 vs PASS 2';
     panelHdr.appendChild(panelHdrLbl);
     ctrlPanel.appendChild(panelHdr);
 
@@ -142,18 +155,32 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       row.id = 'ctrl-row-' + ctrl.id;
       row.style.cssText = 'flex:1;display:flex;align-items:center;gap:12px;padding:0 12px;'
         + (i > 0 ? 'border-top:1px solid var(--border-1);' : '')
-        + 'opacity:0.35;transition:background 400ms ease,opacity 400ms ease;';
+        + 'opacity:1;transition:background 400ms ease,opacity 400ms ease;';
 
       var rowLbl = document.createElement('div');
-      rowLbl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;'
-        + 'font-weight:700;color:var(--text-1);flex:1;';
-      rowLbl.textContent = ctrl.label;
+      rowLbl.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:1px;min-width:0;';
+
+      var rowMain = document.createElement('div');
+      rowMain.id = 'ctrl-main-' + ctrl.id;
+      rowMain.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;'
+        + 'font-weight:700;color:var(--text-3);transition:color 400ms ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      rowMain.textContent = ctrl.isolated;
+
+      var rowSub = document.createElement('div');
+      rowSub.id = 'ctrl-sub-' + ctrl.id;
+      rowSub.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9.5px;'
+        + 'color:var(--text-3);opacity:0;transition:opacity 400ms ease,color 400ms ease;white-space:nowrap;';
+      rowSub.textContent = ctrl.label;
+
+      rowLbl.appendChild(rowMain);
+      rowLbl.appendChild(rowSub);
 
       var rowState = document.createElement('div');
       rowState.id = 'ctrl-state-' + ctrl.id;
-      rowState.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;'
-        + 'color:var(--text-3);flex-shrink:0;transition:color 300ms ease;';
-      rowState.textContent = '--';
+      rowState.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9.5px;'
+        + 'color:var(--text-3);flex-shrink:0;transition:color 300ms ease,background 300ms ease;'
+        + 'padding:2px 6px;border-radius:3px;border:1px solid transparent;white-space:nowrap;';
+      rowState.textContent = 'ISOLATED';
 
       row.appendChild(rowLbl);
       row.appendChild(rowState);
@@ -182,13 +209,34 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     _levelLabel.style.color = color;
   }
 
+  function switchToPass2() {
+    if (_passLabel) {
+      _passLabel.textContent = 'PASS 2: PROPORTIONATE DESIGN';
+      _passLabel.style.background = 'rgba(88,201,148,.10)';
+      _passLabel.style.color = 'var(--green)';
+      _passLabel.style.borderColor = 'rgba(88,201,148,.28)';
+    }
+  }
+
   function activateRow(id) {
     var row = _rowEls[id];
     if (!row) return;
     row.style.background = 'rgba(88,201,148,0.08)';
-    row.style.opacity = '1';
+    var mainEl = container.querySelector('#ctrl-main-' + id);
+    var subEl  = container.querySelector('#ctrl-sub-' + id);
+    var ctrl   = controls.filter(function(c) { return c.id === id; })[0];
+    if (mainEl) {
+      mainEl.style.color = 'var(--green)';
+      mainEl.textContent = ctrl ? ctrl.label : mainEl.textContent;
+    }
+    if (subEl) { subEl.style.opacity = '1'; subEl.style.color = 'var(--text-3)'; }
     var state = container.querySelector('#ctrl-state-' + id);
-    if (state) { state.style.color = 'var(--green)'; state.textContent = 'ACTIVE'; }
+    if (state) {
+      state.style.color = 'var(--green)';
+      state.style.background = 'rgba(88,201,148,.10)';
+      state.style.borderColor = 'rgba(88,201,148,.28)';
+      state.textContent = 'OPTIMISED';
+    }
   }
 
   // Back-compat alias used in timeline steps
@@ -216,51 +264,58 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       _meterFill.style.width      = '30%';
     }
     setLevel('LOWER', 'var(--green)');
+    switchToPass2();
     controls.forEach(function(ctrl) { activateRow(ctrl.id); });
   }
 
   var steps = [
-    // 200ms: station strip appears
+    // 200ms: station strip appears (cost components visible)
     { delay: 200, run: function() {
       var el = container.querySelector('#ue-stations');
       if (el) el.style.opacity = '1';
     }},
 
-    // 600ms: meter appears, fill animates to 90%, label HIGH
-    { delay: 600, run: function() {
+    // 700ms: meter appears -- PASS 1: ISOLATED DESIGN, all costs at maximum
+    { delay: 700, run: function() {
       var el = container.querySelector('#ue-meter');
       if (el) el.style.opacity = '1';
       setMeter(90);
       setLevel('HIGH', 'var(--pink)');
     }},
 
-    // 1400ms: controls panel appears, all 6 rows inactive
-    { delay: 1400, run: function() {
+    // 1300ms: controls panel appears showing isolated state for each station
+    { delay: 1300, run: function() {
       var el = container.querySelector('#ue-controls');
       if (el) el.style.opacity = '1';
     }},
 
-    // 2000ms: control 1 -- meter 80%
-    { delay: 2000, run: function() { activateCard('preprocess'); setMeter(80); }},
+    // 2400ms: pause on PASS 1 so audience sees isolated baseline
+    // then transition label to PASS 2: PROPORTIONATE DESIGN
+    { delay: 2400, run: function() {
+      switchToPass2();
+    }},
 
-    // 2800ms: control 2 -- meter 68%
-    { delay: 2800, run: function() { activateCard('routing');    setMeter(68); }},
+    // 3000ms: control 1 optimised -- meter falls from 90 to 80%
+    { delay: 3000, run: function() { activateCard('preprocess'); setMeter(80); }},
 
-    // 3600ms: control 3 -- meter 56%
-    { delay: 3600, run: function() { activateCard('cache');      setMeter(56); }},
+    // 3800ms: control 2 -- meter 68%
+    { delay: 3800, run: function() { activateCard('routing');    setMeter(68); }},
 
-    // 4400ms: control 4 -- meter 46%
-    { delay: 4400, run: function() { activateCard('bounded');    setMeter(46); }},
+    // 4600ms: control 3 -- meter 56%
+    { delay: 4600, run: function() { activateCard('cache');      setMeter(56); }},
 
-    // 5200ms: control 5 -- meter 38%, trade-off note
-    { delay: 5200, run: function() {
+    // 5400ms: control 4 -- meter 46%
+    { delay: 5400, run: function() { activateCard('bounded');    setMeter(46); }},
+
+    // 6200ms: control 5 -- meter 38%, trade-off note
+    { delay: 6200, run: function() {
       activateCard('exception');
       setMeter(38);
       showTradeoff('Quality: sampling only');
     }},
 
-    // 6000ms: control 6 -- meter 30%, label LOWER + complete
-    { delay: 6000, run: function() {
+    // 7000ms: control 6 -- meter 30%, label LOWER + complete
+    { delay: 7000, run: function() {
       activateCard('shared');
       setMeter(30);
       setLevel('LOWER', 'var(--green)');
@@ -321,15 +376,18 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       var mt = container.querySelector('#ue-meter');
       var cp = container.querySelector('#ue-controls');
       if (st) st.style.opacity = '1';
-      if (p > 0.15 && mt) {
+      if (p > 0.1 && mt) {
         mt.style.opacity = '1';
-        var pctHigh = 90 - Math.floor(p * 60);
-        setMeter(Math.max(30, pctHigh));
-        setLevel(pctHigh > 50 ? 'HIGH' : 'LOWER', pctHigh > 50 ? 'var(--pink)' : 'var(--green)');
+        setMeter(90);
+        setLevel('HIGH', 'var(--pink)');
       }
-      if (p > 0.3 && cp) {
-        cp.style.opacity = '1';
-        var ctrlCount = Math.floor((p - 0.3) / 0.7 * controls.length);
+      if (p > 0.2 && cp) { cp.style.opacity = '1'; }
+      if (p > 0.35) {
+        switchToPass2();
+        var ctrlCount = Math.floor((p - 0.35) / 0.65 * controls.length);
+        var meterVal = 90 - Math.round(ctrlCount / controls.length * 60);
+        setMeter(Math.max(30, meterVal));
+        if (meterVal <= 50) { setLevel('LOWER', 'var(--green)'); }
         controls.slice(0, ctrlCount).forEach(function(ctrl) { activateRow(ctrl.id); });
       }
     },
