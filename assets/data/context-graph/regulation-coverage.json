@@ -1,0 +1,98 @@
+{
+  "version": "16",
+  "provenance": "source-backed",
+  "sourceId": "regulation-coverage",
+  "nodes": [
+    {
+      "id": "reg-001",
+      "type": "regulation",
+      "label": "Regulation clause",
+      "sublabel": "Basel IV CRR III Art. 7(3)",
+      "status": "source-backed",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "obl-001",
+      "type": "obligation",
+      "label": "Obligation",
+      "sublabel": "OBL-27: Coverage mapping",
+      "status": "source-backed",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "pol-001",
+      "type": "policy",
+      "label": "Policy",
+      "sublabel": "Coverage assessment policy",
+      "status": "illustrative",
+      "row": 0,
+      "col": 2
+    },
+    {
+      "id": "ctl-001",
+      "type": "control",
+      "label": "Control",
+      "sublabel": "Quarterly coverage review",
+      "status": "illustrative",
+      "row": 0,
+      "col": 3
+    },
+    {
+      "id": "prc-001",
+      "type": "process",
+      "label": "Process",
+      "sublabel": "Obligation-to-evidence workflow",
+      "status": "illustrative",
+      "row": 1,
+      "col": 1
+    },
+    {
+      "id": "sys-001",
+      "type": "system",
+      "label": "System",
+      "sublabel": "GRC and risk platform",
+      "status": "illustrative",
+      "row": 1,
+      "col": 2
+    },
+    {
+      "id": "own-001",
+      "type": "owner",
+      "label": "Owner",
+      "sublabel": "Control owner, risk function",
+      "status": "illustrative",
+      "row": 1,
+      "col": 3
+    },
+    {
+      "id": "evd-001",
+      "type": "evidence",
+      "label": "Evidence",
+      "sublabel": "Approved coverage record",
+      "status": "source-backed",
+      "row": 2,
+      "col": 1
+    },
+    {
+      "id": "iss-001",
+      "type": "issue",
+      "label": "Issue or action",
+      "sublabel": "Gap remediation record",
+      "status": "hypothesis",
+      "row": 2,
+      "col": 2
+    }
+  ],
+  "edges": [
+    { "source": "reg-001", "target": "obl-001", "relationship": "contains",       "status": "source-backed" },
+    { "source": "obl-001", "target": "pol-001", "relationship": "interpreted as",  "status": "illustrative"  },
+    { "source": "pol-001", "target": "ctl-001", "relationship": "implemented by",  "status": "illustrative"  },
+    { "source": "ctl-001", "target": "prc-001", "relationship": "tested by",       "status": "illustrative"  },
+    { "source": "prc-001", "target": "sys-001", "relationship": "executed in",     "status": "illustrative"  },
+    { "source": "prc-001", "target": "own-001", "relationship": "owned by",        "status": "illustrative"  },
+    { "source": "prc-001", "target": "evd-001", "relationship": "produces",        "status": "illustrative"  },
+    { "source": "evd-001", "target": "iss-001", "relationship": "remediated by",   "status": "hypothesis"    }
+  ]
+}
