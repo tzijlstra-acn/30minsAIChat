@@ -363,11 +363,11 @@ for (const vp of V15_VIEWPORTS) {
 
 // ── V16 RELEASE HARDENING ──
 
-test('V16: build fingerprint is v16', async ({ page }) => {
+test('V16: build fingerprint is v16 or later', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
   await page.goto('/pitch.html');
   const content = await page.locator('meta[name="nfr-build"]').getAttribute('content');
-  expect(content).toMatch(/^v16-[0-9a-f]{7}$/);
+  expect(content).toMatch(/^v1[6-9]-[0-9a-f]{7}$/);
 });
 
 test('V16: story-manifest.json version is 16 or later', async ({ page }) => {
@@ -606,4 +606,29 @@ test('V17: no em-dash in cover-flow.js', async ({ page }) => {
   const res = await page.goto('/assets/js/story/scenes/cover-flow.js');
   const body = await res.text();
   expect((body.match(/—/g) || []).length, 'Em-dash in cover-flow.js').toBe(0);
+});
+
+// ── V17 RELEASE HARDENING (v17/4) ──
+
+test('V17/4: build fingerprint is v17', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  await page.goto('/pitch.html');
+  const content = await page.locator('meta[name="nfr-build"]').getAttribute('content');
+  expect(content).toMatch(/^v17-[0-9a-f]{7}$/);
+});
+
+test('V17/4: proof-loop Compare step uses ti-git-compare icon', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
+  const body = await res.text();
+  expect(body).toContain('ti-git-compare');
+  expect(body).not.toContain('ti-git-diff');
+});
+
+test('V17/4: proof-loop Decide step uses ti-scale icon', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
+  const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
+  const body = await res.text();
+  expect(body).toContain('ti-scale');
+  expect(body).not.toContain('ti-gate');
 });
