@@ -9,46 +9,51 @@
    Dense grids:   12px ok for supporting cell text in a labelled table
 */
 
-/* Screen layout */
+/* Screen layout — V17 geometry contract */
 .scene-screen {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  height: 100%;
+  --screen-gap: 12px;
+  flex: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--screen-gap);
+  padding-block: 14px 16px;
+  min-height: 0;
+  overflow: hidden;
 }
 
-.screen-hdr {
-  flex-shrink: 0;
-}
+.screen-hdr { min-height: 0; flex-shrink: 0; }
 
 .scene-stage {
   position: relative;
-  width: min(100%, 1180px);
-  margin: 12px auto 0;
-  overflow: visible;
-  flex: 0 0 auto;
-}
-
-.scene-stage[data-size="compact"] {
-  flex: 0 0 auto;
-  width: min(1120px, 100%);
-  height: clamp(250px, 34vh, 320px);
-  max-height: 320px;
-  min-height: 250px;
-  margin-inline: auto;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
   overflow: hidden;
 }
-.scene-stage[data-size="compact"] > svg,
-.scene-stage[data-size="compact"] > canvas,
-.scene-stage[data-size="compact"] > .scene-root {
+
+.scene-stage[data-size="compact"],
+.scene-stage[data-size="standard"],
+.scene-stage[data-size="wide"],
+.scene-stage[data-size="hero"] {
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+}
+
+.scene-stage > svg,
+.scene-stage > canvas,
+.scene-stage > .scene-root {
   display: block;
   width: 100%;
   height: 100%;
-  max-height: 320px;
 }
-.scene-stage[data-size="standard"] { height: clamp(300px, 42vh, 450px); max-height: 450px; }
-.scene-stage[data-size="wide"]     { height: clamp(320px, 46vh, 490px); max-height: 490px; }
-.scene-stage[data-size="hero"]     { height: clamp(250px, 34vh, 360px); max-height: 360px; }
+
+@media (max-height: 800px) {
+  .scene-screen { --screen-gap: 9px; padding-block: 10px 12px; }
+  .scene-insight { min-height: 36px; padding: 7px 12px; font-size: 14px; }
+}
 
 .scene-stage svg {
   width: 100%;
