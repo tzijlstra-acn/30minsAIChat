@@ -319,6 +319,9 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
       drawPath('pc-outpath', 600);
       show('pc-outlbl1', 400);
       show('pc-outlbl2', 400);
+      _timers.push(setTimeout(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 700));
     }}
   ];
 
@@ -341,6 +344,9 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
       _timers.forEach(clearTimeout); _timers = [];
       build();
       showAll();
+    },
+    getAccessibleSummary: function() {
+      return 'Three pressure streams -- rising obligation volume, tighter economics, and more capable AI -- converge on a manual bottleneck. Cases queue. The bottleneck gives way to an evidence-led operating model.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout); _timers = [];

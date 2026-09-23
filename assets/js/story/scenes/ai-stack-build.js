@@ -248,7 +248,7 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
     impl.style.cssText = 'flex-shrink:0;text-align:center;padding:7px 0 2px;'
       + 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-style:italic;'
       + 'color:var(--text-3);opacity:0;transition:opacity .5s ease;';
-    impl.textContent = 'More advanced does not automatically mean more suitable.';
+    impl.textContent = 'More advanced is not automatically more suitable.';
     root.appendChild(impl);
 
     container.appendChild(root);
@@ -294,7 +294,12 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
     { delay: 2200, run: function() { revealBeat('rail-left');   } },  // 7 left rail fades in
     { delay: 2600, run: function() { revealBeat('rail-right');  } },  // 8 right rail fades in
     { delay: 3400, run: function() { revealBeat('tokens');      } },  // 9 token routing table
-    { delay: 5000, run: function() { revealBeat('implication'); } }   // 10 implication text
+    { delay: 5000, run: function() {
+      revealBeat('implication');
+      setTimeout(function() {
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 600);
+    }}   // 10 implication text
   ];
 
   var tl = createTimeline(steps);
@@ -322,6 +327,9 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       tl.finish();    // also flush step functions (belt-and-suspenders)
     },
 
+    getAccessibleSummary: function() {
+      return 'The AI terrain shows five technology layers from Rules and workflow at the base to Agents at the apex. Foundation services run underneath. Human accountability and security rails bound the terrain. Four task tokens route to the least complex suitable layer. More advanced is not automatically more suitable.';
+    },
     destroy: function() {
       _timers.forEach(clearTimeout);
       _timers = [];

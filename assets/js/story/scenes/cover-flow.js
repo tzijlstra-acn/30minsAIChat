@@ -68,6 +68,7 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
   var _graphG, _nodes, _edges, _gapEdge, _gapBadge, _gapText, _connArrow;
   var _gateG, _diamond;
   var _evidenceG;
+  var _aiPropG, _titleEl;
 
   // ── Header reveal ─────────────────────────────────────────────────────────
   function revealHeader(show) {
@@ -107,6 +108,8 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     _buildGraph();
     _buildGate();
     _buildEvidence();
+    _buildAiProposal();
+    _buildTitle();
 
     container.appendChild(_svg);
   }
@@ -399,6 +402,65 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     _rootG.appendChild(_evidenceG);
   }
 
+  function _buildAiProposal() {
+    _aiPropG = svgEl('g', {});
+    _aiPropG.style.cssText = 'opacity:0;transition:opacity 350ms ease;';
+
+    var px = 540, py = 268, pw = 220, ph = 46;
+
+    _aiPropG.appendChild(svgEl('rect', {
+      x: px, y: py, width: pw, height: ph, rx: 5,
+      fill: 'rgba(180,76,255,0.08)',
+      stroke: C.accent, 'stroke-width': '1.5'
+    }));
+
+    // "AI" badge
+    _aiPropG.appendChild(svgEl('rect', {
+      x: px + 8, y: py + 8, width: 22, height: 13, rx: 3,
+      fill: C.accent
+    }));
+    var badgeTxt = svgEl('text', {
+      x: px + 19, y: py + 17,
+      'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      fill: '#fff', 'font-size': '8',
+      'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '0.5'
+    });
+    badgeTxt.textContent = 'AI';
+    _aiPropG.appendChild(badgeTxt);
+
+    var propTxt = svgEl('text', {
+      x: px + 36, y: py + 17,
+      'dominant-baseline': 'middle',
+      fill: C.text1, 'font-size': '11',
+      'font-family': 'Space Grotesk,sans-serif'
+    });
+    propTxt.textContent = 'Link OBL-27 to evidence record';
+    _aiPropG.appendChild(propTxt);
+
+    var subTxt = svgEl('text', {
+      x: px + 8, y: py + 37,
+      fill: C.text3, 'font-size': '9',
+      'font-family': 'JetBrains Mono,monospace'
+    });
+    subTxt.textContent = 'confidence high -- auto-linked';
+    _aiPropG.appendChild(subTxt);
+
+    _rootG.appendChild(_aiPropG);
+  }
+
+  function _buildTitle() {
+    _titleEl = svgEl('text', {
+      x: '600', y: '46',
+      'text-anchor': 'middle',
+      fill: C.text1, 'font-size': '26',
+      'font-family': 'Space Grotesk,sans-serif',
+      'font-weight': '700'
+    });
+    _titleEl.textContent = 'AI changes risk work.';
+    _titleEl.style.cssText = 'opacity:0;transition:opacity 800ms ease;';
+    _rootG.appendChild(_titleEl);
+  }
+
   // ── Show final static frame (reduced mode + finish) ───────────────────────
   function showFinal() {
     // Page
@@ -452,6 +514,12 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     _evidenceG.style.transition = 'none';
     _evidenceG.style.opacity    = '1';
     _evidenceG.style.transform  = 'scale(1)';
+
+    // AI proposal
+    if (_aiPropG) { _aiPropG.style.transition = 'none'; _aiPropG.style.opacity = '1'; }
+
+    // Title
+    if (_titleEl) { _titleEl.style.transition = 'none'; _titleEl.style.opacity = '1'; }
 
     revealHeader(true);
   }
@@ -579,12 +647,12 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     }, 220));
   }
 
-  function _beat7() {
-    // Subtle pull-back on root group
-    _rootG.style.transition      = 'transform 600ms ease';
-    _rootG.style.transformOrigin = '600px 280px';
-    _rootG.style.transform       = 'scale(0.95)';
+  function _beat5b() {
+    _aiPropG.style.opacity = '1';
+  }
 
+  function _beat7() {
+    _titleEl.style.opacity = '1';
     revealHeader(true);
   }
 
@@ -609,7 +677,8 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     { delay:  4000, run: function() { _beat3(); } },
     { delay:  5800, run: function() { _beat4(); } },
     { delay:  7000, run: function() { _beat5(); } },
-    { delay:  8200, run: function() { _beat6(); } },
+    { delay:  7800, run: function() { _beat5b(); } },
+    { delay:  8400, run: function() { _beat6(); } },
     { delay:  9300, run: function() { _beat7(); } },
     { delay: 10500, run: function() {
       _addControlStrip();
@@ -636,6 +705,9 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
       revealHeader(false);
     },
     finish:  function() { build(); showFinal(); },
+    getAccessibleSummary: function() {
+      return 'A regulatory clause is parsed into a structured obligation. AI detects a gap in the evidence chain and proposes a link. After human review, the obligation connects to a verified evidence record. AI changes risk work.';
+    },
     destroy: function() {
       _alive = false;
       _timers.forEach(clearTimeout);

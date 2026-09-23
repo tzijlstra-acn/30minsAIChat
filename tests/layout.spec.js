@@ -1351,3 +1351,61 @@ test('V25: visual-grammar.js documents V25 semantic colour map', async ({ page }
   expect(body).toContain('Amber');
   expect(body).toContain('human judgement and control');
 });
+
+// ── V25/4 scene additions: cover-flow, pressure-convergence, ai-stack-build ──
+
+test('V25/4: cover-flow.js has title reveal "AI changes risk work."', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/cover-flow.js');
+  const body = await res.text();
+  expect(body).toContain('AI changes risk work.');
+  expect(body).toContain('_buildTitle');
+  expect(body).toContain('_titleEl');
+});
+
+test('V25/4: cover-flow.js has AI proposal beat', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/cover-flow.js');
+  const body = await res.text();
+  expect(body).toContain('_buildAiProposal');
+  expect(body).toContain('_aiPropG');
+  expect(body).toContain('Link OBL-27');
+});
+
+test('V25/4: cover-flow.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/cover-flow.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('AI changes risk work');
+});
+
+test('V25/4: pressure-convergence.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/pressure-convergence.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/4: pressure-convergence.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/pressure-convergence.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('evidence-led operating model');
+});
+
+test('V25/4: ai-stack-build.js implication wording is correct', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/ai-stack-build.js');
+  const body = await res.text();
+  expect(body).toContain('More advanced is not automatically more suitable.');
+  expect(body).not.toContain('More advanced does not automatically mean more suitable.');
+});
+
+test('V25/4: ai-stack-build.js dispatches scene:complete', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/ai-stack-build.js');
+  const body = await res.text();
+  expect(body).toContain('scene:complete');
+});
+
+test('V25/4: ai-stack-build.js exposes getAccessibleSummary', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/ai-stack-build.js');
+  const body = await res.text();
+  expect(body).toContain('getAccessibleSummary');
+  expect(body).toContain('not automatically more suitable');
+});
