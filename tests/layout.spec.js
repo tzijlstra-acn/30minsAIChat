@@ -1020,3 +1020,106 @@ test('V21: no console errors on pitch.html load at 1440x900', async ({ page }) =
   });
   expect(critical.length).toBe(0);
 });
+
+// ── V23 regression gates ──────────────────────────────────────────────────────
+
+test('V23: SVG sprite file is accessible', async ({ page }) => {
+  const res = await page.goto('/assets/icons/tabler-sprite.svg');
+  expect(res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('symbol id="ti-menu-2"');
+  expect(body).toContain('symbol id="ti-user-check"');
+  expect(body).toContain('symbol id="ti-shield-check"');
+});
+
+test('V23: icon-registry.js is accessible', async ({ page }) => {
+  const res = await page.goto('/assets/js/icon-registry.js');
+  expect(res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('NFRIconRegistry');
+  expect(body).toContain('SPRITE_PATH');
+});
+
+test('V23: screens 04-09 contain screen-hdr-row', async ({ page }) => {
+  await gotoPage(page, BASE);
+  const hdrRows = await page.locator('.screen-hdr-row').count();
+  expect(hdrRows).toBeGreaterThanOrEqual(6);
+});
+
+test('V23: obligation-thread elements exist on page', async ({ page }) => {
+  await gotoPage(page, BASE);
+  const threads = await page.locator('.obligation-thread').count();
+  expect(threads).toBeGreaterThanOrEqual(1);
+});
+
+test('V23: work-role-shift.js has three-lane accountability design', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/work-role-shift.js');
+  expect(res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('ACCOUNTABILITY REMAINS HUMAN THROUGHOUT');
+  expect(body).toContain('RISK OWNER: NAMED -- ACCOUNTABLE');
+  expect(body).toContain('Human judgement');
+  expect(body).toContain('Evidence and accountability');
+});
+
+test('V23: work-role-shift.js has no em-dash', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/work-role-shift.js');
+  const body = await res.text();
+  expect(body).not.toContain('—');
+});
+
+test('V23: scene-director.js has seek, resize, renderFallback in createTimeline', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scene-director.js');
+  expect(res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('function seek');
+  expect(body).toContain('function resize');
+  expect(body).toContain('function renderFallback');
+  expect(body).toContain('_attachResizeObserver');
+  expect(body).toContain('document.fonts');
+});
+
+test('V23: scene-director.js has no em-dash', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scene-director.js');
+  const body = await res.text();
+  expect(body).not.toContain('—');
+});
+
+test('V23: pitch.html has no em-dash', async ({ page }) => {
+  const res = await page.goto('/pitch.html');
+  const body = await res.text();
+  expect(body).not.toContain('—');
+});
+
+test('V23: obligation-thread max-height constraint in scenes.css', async ({ page }) => {
+  const res = await page.goto('/assets/css/scenes.css');
+  expect(res.status()).toBe(200);
+  const body = await res.text();
+  expect(body).toContain('max-height');
+  expect(body).toContain('.screen-hdr-row');
+  expect(body).toContain('.obligation-thread');
+});
+
+test('V23: ref-room section has ea-loading-hint element', async ({ page }) => {
+  await gotoPage(page, BASE);
+  const hint = await page.locator('#ea-loading-hint').count();
+  expect(hint).toBeGreaterThanOrEqual(1);
+});
+
+test('V23: pitch.html loads at 1920x1080 without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await gotoPage(page, BASE);
+  const overflow = await page.evaluate(function() {
+    return document.body.scrollWidth > document.body.clientWidth + 2;
+  });
+  expect(overflow).toBe(false);
+});
+
+test('V23: pitch.html loads at 1024x768 without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await gotoPage(page, BASE);
+  const overflow = await page.evaluate(function() {
+    return document.body.scrollWidth > document.body.clientWidth + 2;
+  });
+  expect(overflow).toBe(false);
+});

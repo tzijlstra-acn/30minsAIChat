@@ -19,6 +19,6 @@
     "audit:all": "node scripts/audit-all.js"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.0"
+    "@playwright/test": "^1.63.0"
   }
 }
