@@ -1993,10 +1993,20 @@ var REF_GROUPS=[
 ];
 
 function renderRefRoom(sec){
+  // Remove section padding so atlas fills edge-to-edge
+  sec.style.padding='0';
   if(window.EvidenceAtlas){
     var inner=sec.querySelector('.inner')||sec;
-    inner.style.cssText='padding:0;height:100%;display:flex;flex-direction:column;';
+    // Override .inner constraints so it grows to fill the flex-column section
+    inner.style.cssText='padding:0;flex:1;min-height:0;display:flex;flex-direction:column;max-width:none;margin:0;width:100%;box-sizing:border-box;';
     window.EvidenceAtlas.init(inner);
+  } else {
+    // Fallback if atlas failed to load
+    var fb=document.createElement('div');
+    fb.style.cssText='padding:48px;font-family:"Space Grotesk",sans-serif;font-size:16px;color:#A4A9B7;';
+    fb.textContent='Evidence Atlas is loading...';
+    sec.appendChild(fb);
+    console.error('[renderRefRoom] window.EvidenceAtlas is not defined -- check evidence-atlas.js loaded without errors');
   }
 }
 
