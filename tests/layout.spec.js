@@ -1876,3 +1876,72 @@ test('V26/8: evidence-atlas.js theatre uses 2-column row layout (not 3x2 grid)',
   // Must NOT use the old fixed 3-column grid
   expect(body).not.toContain('grid-template-columns:repeat(3,1fr)');
 });
+
+// ── V26/9 viewport, density, fallback, connector and replay QA ──
+
+test('V26/9: every scene file has a _timers array declared', async ({ page }) => {
+  const sceneFiles = [
+    'cover','pressure-rising','ai-stack-build','task-route','regulation-process',
+    'transformation-system','work-role-shift','proof-loop',
+    'scale-architecture','unit-economics','dual-engine','next-move'
+  ];
+  for (const name of sceneFiles) {
+    const res = await page.goto('/assets/js/story/scenes/' + name + '.js');
+    const body = await res.text();
+    expect(body, name + ' missing _timers').toContain('var _timers');
+  }
+});
+
+test('V26/9: every scene file dispatches scene:complete', async ({ page }) => {
+  const sceneFiles = [
+    'cover','pressure-rising','ai-stack-build','task-route','regulation-process',
+    'transformation-system','work-role-shift','proof-loop',
+    'scale-architecture','unit-economics','dual-engine','next-move'
+  ];
+  for (const name of sceneFiles) {
+    const res = await page.goto('/assets/js/story/scenes/' + name + '.js');
+    const body = await res.text();
+    expect(body, name + ' missing scene:complete').toContain("'scene:complete'");
+  }
+});
+
+test('V26/9: every scene file has getAccessibleSummary', async ({ page }) => {
+  const sceneFiles = [
+    'cover','pressure-rising','ai-stack-build','task-route','regulation-process',
+    'transformation-system','work-role-shift','proof-loop',
+    'scale-architecture','unit-economics','dual-engine','next-move'
+  ];
+  for (const name of sceneFiles) {
+    const res = await page.goto('/assets/js/story/scenes/' + name + '.js');
+    const body = await res.text();
+    expect(body, name + ' missing getAccessibleSummary').toContain('getAccessibleSummary');
+  }
+});
+
+test('V26/9: no em-dash (U+2014) in any scene file', async ({ page }) => {
+  const sceneFiles = [
+    'cover','pressure-rising','ai-stack-build','task-route','regulation-process',
+    'transformation-system','work-role-shift','proof-loop',
+    'scale-architecture','unit-economics','dual-engine','next-move'
+  ];
+  for (const name of sceneFiles) {
+    const res = await page.goto('/assets/js/story/scenes/' + name + '.js');
+    const body = await res.text();
+    expect(body, name + ' contains em-dash').not.toContain('—');
+  }
+});
+
+test('V26/9: composition-linter.js is present and exposes CompositionLinter', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/composition-linter.js');
+  const body = await res.text();
+  expect(body).toContain('CompositionLinter');
+  expect(body).toContain('window.CompositionLinter');
+});
+
+test('V26/9: visual-grammar.js has SystemField, WorkLane, and MetricStrip', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/visual-grammar.js');
+  const body = await res.text();
+  expect(body).toContain('SystemField');
+  expect(body).toContain('WorkLane');
+  expect(body).toContain('MetricStrip');
+});
