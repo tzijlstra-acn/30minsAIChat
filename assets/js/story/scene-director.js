@@ -35,6 +35,27 @@ var SceneDirector = (function() {
     }
   }
 
+  var _resizeObserver = null;
+
+  function _attachResizeObserver(container, instance) {
+    if (_resizeObserver) { _resizeObserver.disconnect(); _resizeObserver = null; }
+    if (!window.ResizeObserver || !instance.resize) return;
+    var debounceTimer = null;
+    _resizeObserver = new ResizeObserver(function(entries) {
+      var entry = entries[0];
+      if (!entry) return;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function() {
+        if (!_current) return;
+        try {
+          instance.pause();
+          instance.resize({ width: entry.contentRect.width, height: entry.contentRect.height });
+        } catch(e) {}
+      }, 120);
+    });
+    _resizeObserver.observe(container);
+  }
+
   function enter(sectionEl, manifestEntry) {
     cancel();
     if (!manifestEntry || !manifestEntry.scene) return;
@@ -50,25 +71,37 @@ var SceneDirector = (function() {
     } catch (e) {
       console.error('[scene:' + manifestEntry.scene + '] init error', e);
       _showFallback(container, manifestEntry.scene);
+      if (instance && typeof instance.renderFallback === 'function') {
+        try { instance.renderFallback(e); } catch(_) {}
+      }
       return;
     }
     _current = { sceneId: manifestEntry.scene, instance: instance, manifest: manifestEntry };
     _paused = false;
-    requestAnimationFrame(function() {
-      try {
-        if (_reduced) {
-          instance.finish();
-        } else {
-          instance.play();
+    _attachResizeObserver(container, instance);
+    var readyPromise = document.fonts ? document.fonts.ready : Promise.resolve();
+    readyPromise.then(function() {
+      if (!_current || _current.instance !== instance) return;
+      requestAnimationFrame(function() {
+        try {
+          if (_reduced) {
+            instance.finish();
+          } else {
+            instance.play();
+          }
+        } catch (e) {
+          console.error('[scene:' + manifestEntry.scene + '] play error', e);
+          _showFallback(container, manifestEntry.scene);
+          if (typeof instance.renderFallback === 'function') {
+            try { instance.renderFallback(e); } catch(_) {}
+          }
         }
-      } catch (e) {
-        console.error('[scene:' + manifestEntry.scene + '] play error', e);
-        _showFallback(container, manifestEntry.scene);
-      }
+      });
     });
   }
 
   function cancel() {
+    if (_resizeObserver) { _resizeObserver.disconnect(); _resizeObserver = null; }
     if (_current) {
       try { _current.instance.destroy(); } catch(e) {}
       _current = null;
@@ -115,16 +148,18 @@ var SceneDirector = (function() {
 }());
 
 // ── BASE SCENE HELPER ──
-// All scene factories can use this to manage a sequence of timed steps
-// and respect the contract interface without boilerplate.
+// V23 lifecycle contract: mount, play, pause, resume, seek, finish, resize, destroy, renderFallback.
+// All are optional except play/finish/destroy -- SceneDirector calls only what exists.
 function createTimeline(steps) {
   // steps: array of { delay: ms, run: function }
   var timers = [];
   var finished = false;
+  var _startedAt = 0;
 
   function play() {
     reset();
     finished = false;
+    _startedAt = Date.now();
     steps.forEach(function(step) {
       timers.push(setTimeout(function() {
         if (!finished) try { step.run(); } catch(e) {}
@@ -133,29 +168,46 @@ function createTimeline(steps) {
   }
 
   function pause() {
-    // Timers already scheduled -- cancel remaining, record position
     timers.forEach(clearTimeout);
     timers = [];
   }
 
   function resume() {
-    // Simplified: replay from start (full resume requires checkpoint tracking)
+    // Simplified: replay from start (checkpoint tracking would require per-step state)
     play();
+  }
+
+  function seek(progress) {
+    // Run all steps up to progress (0-1) synchronously, skip the rest
+    pause();
+    var totalDuration = steps.length ? steps[steps.length - 1].delay : 0;
+    var targetMs = progress * totalDuration;
+    steps.forEach(function(step) {
+      if (step.delay <= targetMs) try { step.run(); } catch(e) {}
+    });
   }
 
   function reset() {
     timers.forEach(clearTimeout);
     timers = [];
     finished = false;
+    _startedAt = 0;
   }
 
   function finish() {
     reset();
     finished = true;
-    // Run all steps immediately in order
     steps.forEach(function(step) {
       try { step.run(); } catch(e) {}
     });
+  }
+
+  function resize() {
+    // Default resize: noop. Scenes that need geometry recalculation override this.
+  }
+
+  function renderFallback() {
+    // Default renderFallback: noop. Scenes override to show a designed final state.
   }
 
   function destroy() {
@@ -163,7 +215,11 @@ function createTimeline(steps) {
     finished = true;
   }
 
-  return { play: play, pause: pause, resume: resume, reset: reset, finish: finish, destroy: destroy };
+  return {
+    play: play, pause: pause, resume: resume, seek: seek,
+    reset: reset, finish: finish, resize: resize,
+    renderFallback: renderFallback, destroy: destroy
+  };
 }
 
 // ── FADE HELPER ──

@@ -9,6 +9,19 @@
    Dense grids:   12px ok for supporting cell text in a labelled table
 */
 
+/* ── Screen layout -- V23 geometry contract (3-row grid, no separate badge rows) ── */
+
+/* Header meta row: chapter tag + obligation thread on one line, max 24px */
+.screen-hdr-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 0;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
+}
+
 /* Screen layout -- V19 geometry contract */
 .scene-screen {
   --screen-gap: 12px;
@@ -175,17 +188,18 @@
   padding: 3px 8px;
 }
 
-/* ── Obligation thread ── compact sub-header in screen-hdr (screens 04-09) ── */
+/* ── Obligation thread ── inline in .screen-hdr-row beside the chapter tag ── */
 .obligation-thread {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 12px 5px 10px;
+  gap: 7px;
+  padding: 3px 10px 3px 8px;
   background: rgba(161,0,255,.07);
   border: 1px solid rgba(161,0,255,.35);
   border-radius: 4px;
-  margin: 8px 0 10px;
   flex-shrink: 0;
+  max-height: 24px;
+  overflow: hidden;
 }
 
 .obligation-thread-dot {
@@ -199,8 +213,8 @@
 
 .obligation-thread-tag {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: .12em;
+  font-size: 10px;
+  letter-spacing: .10em;
   text-transform: uppercase;
   color: var(--accent);
   white-space: nowrap;
@@ -223,10 +237,10 @@
 
 .obligation-thread-status {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: .08em;
+  font-size: 10px;
+  letter-spacing: .07em;
   text-transform: uppercase;
-  padding: 2px 7px;
+  padding: 1px 6px;
   border-radius: 3px;
   white-space: nowrap;
 }
