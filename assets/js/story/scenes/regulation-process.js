@@ -186,6 +186,24 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
     });
 
     wrap.appendChild(spine);
+
+    // ── Context teaser (prepares knowledge graph on Screen 05) ──
+    var ctxRow = document.createElement('div');
+    ctxRow.className = 'scene-node';
+    ctxRow.dataset.beat = 'ctx-teaser';
+    ctxRow.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:6px;padding:6px 12px;'
+      + 'background:var(--surface-2);border:1px solid var(--border-1);border-radius:6px;';
+    ctxRow.innerHTML =
+      '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);flex-shrink:0">Connected to:</span>'
+      + ['Policy','Control','Owner'].map(function(label, i) {
+          var colors = ['var(--accent)','var(--green)','var(--amber)'];
+          return '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;'
+            + 'background:var(--surface-1);border:1px solid ' + colors[i] + ';border-radius:20px;'
+            + 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;font-weight:600;color:' + colors[i] + '">'
+            + label + '</span>';
+        }).join('<span style="color:var(--border-2);font-size:12px;flex-shrink:0">&#183;</span>');
+    wrap.appendChild(ctxRow);
+
     container.appendChild(wrap);
   }
 
@@ -255,6 +273,10 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
         tw.style.borderColor = 'var(--green)';
         tw.style.background = 'rgba(88,201,148,.06)';
       }
+    }},
+    { delay: 6400, run: function() {
+      var ctx = container.querySelector('[data-beat="ctx-teaser"]');
+      if (ctx) ctx.classList.add('visible');
     }}
   ];
 
