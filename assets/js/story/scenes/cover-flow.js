@@ -32,12 +32,12 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
 
   // ── Graph data ────────────────────────────────────────────────────────────
   var NODES = [
-    { id: 'obligation', cx: 780, cy: 250, r: 18, fill: C.accent, label: 'OBL-27', ldy: 24 },
-    { id: 'policy',     cx: 860, cy: 200, r: 12, fill: C.text2,  label: 'policy',  ldy: 18 },
-    { id: 'control',    cx: 940, cy: 250, r: 12, fill: C.green,  label: 'control', ldy: 18 },
-    { id: 'process',    cx: 900, cy: 330, r: 12, fill: C.cyan,   label: 'process', ldy: 18 },
-    { id: 'system',     cx: 820, cy: 390, r: 10, fill: C.text2,  label: 'system',  ldy: 16 },
-    { id: 'owner',      cx: 740, cy: 340, r: 10, fill: C.amber,  label: 'owner',   ldy: 16 }
+    { id: 'obligation', cx: 780, cy: 250, r: 22, fill: C.accent, label: 'OBL-27', ldy: 28 },
+    { id: 'policy',     cx: 860, cy: 200, r: 16, fill: C.text2,  label: 'policy',  ldy: 22 },
+    { id: 'control',    cx: 940, cy: 250, r: 16, fill: C.green,  label: 'control', ldy: 22 },
+    { id: 'process',    cx: 900, cy: 330, r: 16, fill: C.cyan,   label: 'process', ldy: 22 },
+    { id: 'system',     cx: 820, cy: 390, r: 13, fill: C.text2,  label: 'system',  ldy: 19 },
+    { id: 'owner',      cx: 740, cy: 340, r: 13, fill: C.amber,  label: 'owner',   ldy: 19 }
   ];
 
   var EDGES = [
@@ -91,7 +91,7 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     _edges  = [];
     _gapEdge = null;
 
-    revealHeader(false);
+    revealHeader(true);
 
     _svg = svgEl('svg', {
       viewBox: '0 0 1200 560',
@@ -198,9 +198,9 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     glt.textContent = 'OBLIGATION OBJECT';
     _bracketG.appendChild(glt);
 
-    // Arrow to graph
-    var arrowX1 = bx - bw;
-    var arrowX2 = 520;
+    // Arrow to graph -- starts at right opening of bracket (bx+bw), not left tip
+    var arrowX1 = bx + bw + 4;
+    var arrowX2 = 540;
     var arrowY  = bmid;
     _bracketG.appendChild(svgEl('line', {
       x1: arrowX1, y1: arrowY, x2: arrowX2 - 8, y2: arrowY,
@@ -248,19 +248,38 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     // Gap edge ref
     _edges.forEach(function(e) { if (e.data.id === 'e-ctl-prc') _gapEdge = e.el; });
 
-    // Nodes
+    // Nodes -- 3-layer globe: outer glow + solid sphere + specular highlight
     var nodeLayer = svgEl('g', {});
     NODES.forEach(function(n) {
       var g = svgEl('g', {});
       g.style.cssText = 'opacity:0;transition:opacity 300ms ease;';
+
+      // Outer glow halo
+      g.appendChild(svgEl('circle', {
+        cx: n.cx, cy: n.cy,
+        r: Math.round(n.r * 1.55),
+        fill: n.fill,
+        opacity: n.id === 'obligation' ? '0.18' : '0.12'
+      }));
+
+      // Main sphere body
       g.appendChild(svgEl('circle', {
         cx: n.cx, cy: n.cy, r: n.r,
-        fill: n.fill, opacity: '0.88'
+        fill: n.fill, opacity: '0.92'
       }));
+
+      // Specular highlight (top-left quarter)
+      g.appendChild(svgEl('circle', {
+        cx: Math.round(n.cx - n.r * 0.28),
+        cy: Math.round(n.cy - n.r * 0.28),
+        r: Math.round(n.r * 0.36),
+        fill: '#ffffff', opacity: '0.30'
+      }));
+
       var lbl = svgEl('text', {
         x: n.cx, y: n.cy + n.r + n.ldy,
         'text-anchor': 'middle',
-        fill: C.text2, 'font-size': '9',
+        fill: C.text2, 'font-size': '10',
         'font-family': 'JetBrains Mono,monospace', 'letter-spacing': '0.5'
       });
       lbl.textContent = n.label;
@@ -269,16 +288,6 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
       _nodes.push({ el: g, data: n });
     });
     _graphG.appendChild(nodeLayer);
-
-    // Connection arrow from obligation-object group to obligation node
-    _connArrow = svgEl('g', { id: 'conn-arrow' });
-    _connArrow.style.cssText = 'opacity:0;transition:opacity 400ms ease;';
-    _connArrow.appendChild(svgEl('line', {
-      x1: 480, y1: 320, x2: 780 - 20, y2: 252,
-      stroke: C.text3, 'stroke-width': '1',
-      'stroke-dasharray': '3 3', opacity: '0.5'
-    }));
-    _graphG.appendChild(_connArrow);
 
     // Gap badge
     var gmx = (940 + 900) / 2;
@@ -429,10 +438,6 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
       }
     });
 
-    // Connection arrow
-    _connArrow.style.transition = 'none';
-    _connArrow.style.opacity    = '1';
-
     // Gap
     _gapBadge.style.transition = 'none';
     _gapBadge.style.opacity    = '1';
@@ -530,10 +535,6 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
       }, edgeStart + i * 400));
     });
 
-    _timers.push(setTimeout(function() {
-      if (!_alive) return;
-      _connArrow.style.opacity = '1';
-    }, edgeStart));
   }
 
   function _beat4() {
