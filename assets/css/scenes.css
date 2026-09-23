@@ -9,7 +9,7 @@
    Dense grids:   12px ok for supporting cell text in a labelled table
 */
 
-/* Screen layout -- V17 geometry contract */
+/* Screen layout -- V19 geometry contract */
 .scene-screen {
   --screen-gap: 12px;
   flex: 1;
@@ -18,7 +18,8 @@
   gap: var(--screen-gap);
   padding-block: 14px 16px;
   min-height: 0;
-  overflow: hidden;
+  overflow: clip;
+  contain: layout;
 }
 
 .screen-hdr { min-height: 0; flex-shrink: 0; }
@@ -28,7 +29,8 @@
   width: 100%;
   min-height: 0;
   height: 100%;
-  overflow: hidden;
+  overflow: clip;
+  contain: layout paint size;
 }
 
 .scene-stage[data-size="compact"],
@@ -48,11 +50,74 @@
   display: block;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Aspect ratio budgets for .scene-root inside each stage size */
+.scene-stage[data-size="compact"] > .scene-root {
+  width: min(920px, 100%);
+  aspect-ratio: 16 / 5.2;
+  max-height: 100%;
+}
+.scene-stage[data-size="standard"] > .scene-root {
+  width: min(1080px, 100%);
+  aspect-ratio: 16 / 6.5;
+  max-height: 100%;
+}
+.scene-stage[data-size="wide"] > .scene-root {
+  width: min(1180px, 100%);
+  aspect-ratio: 16 / 7.2;
+  max-height: 100%;
 }
 
 @media (max-height: 800px) {
   .scene-screen { --screen-gap: 9px; padding-block: 10px 12px; }
-  .scene-insight { min-height: 36px; padding: 7px 12px; font-size: 14px; }
+  .scene-footer { font-size: 14px; }
+}
+
+/* ── Scene footer -- unified evidence badge + insight row ── */
+.scene-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  min-height: 0;
+  max-height: 44px;
+  overflow: clip;
+}
+
+.scene-footer-evidence {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--amber, #F3B34C);
+  background: rgba(243,179,76,.08);
+  border: 1px solid rgba(243,179,76,.2);
+  border-radius: 4px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.scene-footer-insight {
+  flex: 1;
+  border-left: 3px solid var(--accent);
+  background: rgba(161,0,255,.08);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-1);
+  padding: 7px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-height: 800px) {
+  .scene-footer-insight { font-size: 13px; padding: 5px 10px; }
 }
 
 .scene-stage svg {
@@ -369,13 +434,15 @@
   .scene-stage {
     display: none;
   }
-  .evidence-badge {
+  .evidence-badge,
+  .scene-footer-evidence {
     display: block;
   }
   .obligation-token {
     display: none;
   }
-  .scene-insight {
+  .scene-insight,
+  .scene-footer-insight {
     border-left: 2px solid #333;
     background: none;
     font-size: 13px;
