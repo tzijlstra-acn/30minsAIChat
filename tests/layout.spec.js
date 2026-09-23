@@ -900,3 +900,123 @@ test('V19: audit:all passes (no em dash, no external deps, icon manifest complet
   const body = await res.text();
   expect(body).not.toContain('—');
 });
+
+// --- V21 tests: connector engine, cinematic cover, Evidence Atlas, bug fixes ---
+
+test('V21: connectors.css is served and contains .ce-path', async ({ page }) => {
+  const res = await page.goto('/assets/css/connectors.css');
+  const body = await res.text();
+  expect(body).toContain('.ce-path');
+});
+
+test('V21: connector engine visual-system files are accessible', async ({ page }) => {
+  const files = [
+    '/assets/js/visual-system/connector-engine.js',
+    '/assets/js/visual-system/connector-debug.js',
+    '/assets/js/visual-system/geometry.js',
+    '/assets/js/visual-system/ports.js',
+    '/assets/js/visual-system/connector-routing.js',
+  ];
+  for (var i = 0; i < files.length; i++) {
+    const res = await page.goto(files[i]);
+    expect(res.status()).toBe(200);
+  }
+});
+
+test('V21: evidence-atlas.js is accessible and exposes EvidenceAtlas', async ({ page }) => {
+  const res = await page.goto('/assets/js/evidence-atlas.js');
+  const body = await res.text();
+  expect(body).toContain('EvidenceAtlas');
+  expect(body).toContain('switchView');
+});
+
+test('V21: cover-flow.js contains cinematic cold open (10500ms beat + viewBox 1200 560)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/cover-flow.js');
+  const body = await res.text();
+  expect(body).toContain('10500');
+  expect(body).toContain('1200 560');
+});
+
+test('V21: dual-engine.js has hand-off cost groups and preserved-context row', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/dual-engine.js');
+  const body = await res.text();
+  expect(body).toContain('de-gap1-costs');
+  expect(body).toContain('de-gap2-costs');
+  expect(body).toContain('de-preserved');
+  expect(body).toContain('PRESERVED THROUGH ALL STAGES');
+  expect(body).toContain('Context rebuilt');
+  expect(body).toContain('Ownership changed');
+});
+
+test('V21: index.html footer is Executive Introduction, not Internal use', async ({ page }) => {
+  const res = await page.goto('/index.html');
+  const body = await res.text();
+  expect(body).toContain('Executive Introduction');
+  expect(body).toContain('NFR AI Risk Practice');
+  expect(body).not.toContain('Internal use');
+});
+
+test('V21: regulation-process.js viewBox width is 1240 (last card has right margin)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/regulation-process.js');
+  const body = await res.text();
+  expect(body).toContain('W = 1240');
+});
+
+test('V21: ai-stack-build.js uses flex row for terrain+rails (not CSS grid)', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/ai-stack-build.js');
+  const body = await res.text();
+  expect(body).toContain('flex-direction:row');
+  expect(body).not.toContain('grid-template-columns:56px 1fr 56px');
+});
+
+test('V21: pressure-convergence.js bottleneck box starts at y=95', async ({ page }) => {
+  const res = await page.goto('/assets/js/story/scenes/pressure-convergence.js');
+  const body = await res.text();
+  expect(body).toContain("y: '95'");
+  expect(body).toContain("height: '215'");
+});
+
+test('V21: pitch.html loads at 1280x720 without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await gotoPage(page, BASE);
+  const overflow = await page.evaluate(function() {
+    return document.body.scrollWidth > document.body.clientWidth + 2;
+  });
+  expect(overflow).toBe(false);
+});
+
+test('V21: pitch.html loads at 1366x768 without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await gotoPage(page, BASE);
+  const overflow = await page.evaluate(function() {
+    return document.body.scrollWidth > document.body.clientWidth + 2;
+  });
+  expect(overflow).toBe(false);
+});
+
+test('V21: Evidence Atlas section renders ea-shell on scroll into view', async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await gotoPage(page, BASE);
+  await page.evaluate(function() {
+    var s = document.querySelector('section[data-render="atlasMain"]');
+    if (s) s.scrollIntoView({ behavior: 'instant' });
+  });
+  await page.waitForTimeout(1200);
+  const shellCount = await page.locator('.ea-shell').count();
+  expect(shellCount).toBeGreaterThanOrEqual(1);
+});
+
+test('V21: no console errors on pitch.html load at 1440x900', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  var errors = [];
+  page.on('console', function(msg) {
+    if (msg.type() === 'error') errors.push(msg.text());
+  });
+  await gotoPage(page, BASE);
+  await page.waitForTimeout(500);
+  // Filter known-acceptable console errors (missing fonts from vendor bundle etc.)
+  var critical = errors.filter(function(e) {
+    return !e.includes('favicon') && !e.includes('font');
+  });
+  expect(critical.length).toBe(0);
+});
