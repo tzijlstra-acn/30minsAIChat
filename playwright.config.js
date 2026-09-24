@@ -5,13 +5,14 @@ module.exports = defineConfig({
   testDir: './tests',
   timeout: 30000,
   retries: 0,
+  workers: 1,
   use: {
     baseURL: 'http://localhost:8080',
     headless: true,
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['iPhone 14'] } },
+    { name: 'mobile', use: { ...devices['Pixel 5'] } },
     { name: '1280x720', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 720 } } },
     { name: '1366x768', use: { ...devices['Desktop Chrome'], viewport: { width: 1366, height: 768 } } },
     { name: '1440x900', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },

@@ -111,13 +111,9 @@ function updateNav(idx){
   if(typeof window.edgeRailHighlight==='function'&&sec&&sec.id)window.edgeRailHighlight(sec.id);
   // Render
   if(!rendered.has(idx)){rendered.add(idx);renderSection(sec);}
-  // V13: fire scene director for the incoming screen
-  if(typeof SceneDirector!=='undefined'&&sec&&sec.dataset.scene){
-    var manifestEntry=getManifestEntry(sec.id);
-    SceneDirector.enter(sec,manifestEntry||{scene:sec.dataset.scene,id:sec.id});
-  } else if(typeof SceneDirector!=='undefined'){
-    SceneDirector.cancel();
-  }
+  // V28: delegate scene activation to SceneActivationController via event.
+  // SceneDirector is no longer called directly from here.
+  window.dispatchEvent(new CustomEvent('nfr:slide-enter',{detail:{section:sec,index:idx,id:sec?sec.id:''}}));
   // Reset pause button icon
   var pb=document.getElementById('scenePauseBtn');
   if(pb){var pi=pb.querySelector('i');if(pi)pi.className='ti ti-player-pause';}
@@ -126,7 +122,7 @@ function updateNav(idx){
 function setupObservers(){
   var slideObs=new IntersectionObserver(function(entries){
     entries.forEach(function(e){if(e.isIntersecting){var idx=sections.indexOf(e.target);if(idx>-1)updateNav(idx);}});
-  },{threshold:0.5});
+  },{threshold:0.8});
   sections.forEach(function(s){slideObs.observe(s);});
   var revObs=new IntersectionObserver(function(entries){
     entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target);}});
