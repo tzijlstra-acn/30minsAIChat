@@ -22,6 +22,13 @@ SceneDirector.register('task-route', function(container, manifest, reduced) {
       layerColor: '#55C7E8'
     },
     {
+      label: 'Route a review request',
+      sub: null,
+      dims: { rule: 75, input: 70, ambig: 20, action: 35, control: 45 },
+      layer: 1,
+      layerColor: '#55C7E8'
+    },
+    {
       label: 'Detect an unusual pattern',
       sub: null,
       dims: { rule: 55, input: 50, ambig: 45, action: 30, control: 35 },
@@ -105,7 +112,7 @@ SceneDirector.register('task-route', function(container, manifest, reduced) {
 
     _taskIdx = document.createElement('div');
     _taskIdx.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-bottom:10px;';
-    _taskIdx.textContent = '01 OF 04';
+    _taskIdx.textContent = '01 OF 05';
     leftPanel.appendChild(_taskIdx);
 
     _taskLbl = document.createElement('div');
@@ -183,7 +190,7 @@ SceneDirector.register('task-route', function(container, manifest, reduced) {
 
   function _setExample(idx) {
     var ex = EXAMPLES[idx];
-    _taskIdx.textContent = '0' + (idx + 1) + ' OF 04';
+    _taskIdx.textContent = '0' + (idx + 1) + ' OF 05';
     _taskLbl.style.color = ex.layerColor;
     _taskLbl.textContent = ex.label;
     _taskSub.textContent = ex.sub || '';
@@ -219,10 +226,11 @@ SceneDirector.register('task-route', function(container, manifest, reduced) {
     { delay: 200,  run: function() { _show('tr-header'); }},
     { delay: 500,  run: function() { _show('tr-main'); }},
     { delay: 800,  run: function() { _setExample(0); }},
-    { delay: 3000, run: function() { _setExample(1); }},
-    { delay: 5200, run: function() { _setExample(2); }},
-    { delay: 7400, run: function() { _setExample(3); }},
-    { delay: 9000, run: function() {
+    { delay: 2800, run: function() { _setExample(1); }},
+    { delay: 4800, run: function() { _setExample(2); }},
+    { delay: 6800, run: function() { _setExample(3); }},
+    { delay: 8800, run: function() { _setExample(4); }},
+    { delay: 10400, run: function() {
       var insight = container.querySelector('[data-beat="insight"]');
       if (insight) insight.style.opacity = '1';
       _t(function() {
@@ -286,7 +294,7 @@ SceneDirector.register('task-route', function(container, manifest, reduced) {
       }
     },
     getAccessibleSummary: function() {
-      return 'A Work Pattern Scanner cycles through four task examples. Five dimensions -- Rule stability, Input structure, Ambiguity, Action complexity, and Control sensitivity -- illuminate as bars. Each task maps to an AI terrain layer. The final example, Regulation Coverage, maps to the Agents layer.';
+      return 'A Work Pattern Scanner cycles through five task examples. Five dimensions -- Rule stability, Input structure, Ambiguity, Action complexity, and Control sensitivity -- illuminate as bars. Each task maps to an AI terrain layer. The final example, Regulation Coverage, maps to the Agents layer.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout); _timers = [];
