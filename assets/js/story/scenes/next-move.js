@@ -260,39 +260,6 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
       build();
       showAll();
     },
-    renderStatic: function() {
-      _timers.forEach(clearTimeout); _timers = [];
-      build();
-      showAll();
-    },
-    renderError: function(err) {
-      container.innerHTML = '';
-      var w = document.createElement('div');
-      w.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;';
-      var m = document.createElement('div');
-      m.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);text-align:center;';
-      m.textContent = 'Scene unavailable';
-      var s = document.createElement('div');
-      s.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--border-2);text-align:center;';
-      s.textContent = err && err.message ? err.message : 'render error';
-      w.appendChild(m); w.appendChild(s); container.appendChild(w);
-    },
-    resize: function() {
-      _timers.forEach(clearTimeout); _timers = [];
-      build();
-      showAll();
-    },
-    seek: function(p) {
-      _timers.forEach(clearTimeout); _timers = [];
-      build();
-      if (p >= 1) { showAll(); return; }
-      show('nm-hdr');
-      for (var i = 0; i < 4; i++) { show('nm-lane-' + i); }
-      if (p > 0.2) { show('nm-div1'); show('nm-div2'); }
-      var gatesShown = Math.floor(p / 0.33);
-      for (var g = 0; g < Math.min(gatesShown, 3); g++) { showGate(g); }
-      if (p > 0.9) { show('nm-footer'); for (var a = 0; a < 4; a++) { stamp('nm-art-' + a); } }
-    },
     getAccessibleSummary: function() {
       return 'Three decision gates -- Frame the evidence, Prove on real work, Decide the next move -- are shown as a runway with four work lanes. Each gate contains work items across business, process, data and people dimensions. Four artefacts stamp in at the end: proof contract, architecture view, economics view, and next-step recommendation.';
     },

@@ -328,36 +328,6 @@ SceneDirector.register('ai-stack-build', function(container, manifest, reduced) 
       tl.finish();    // also flush step functions (belt-and-suspenders)
     },
 
-    renderStatic: function() {
-      _timers.forEach(clearTimeout); _timers = [];
-      build();
-      showAll(true);
-    },
-    renderError: function(err) {
-      container.innerHTML = '';
-      var w = document.createElement('div');
-      w.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;';
-      var m = document.createElement('div');
-      m.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);text-align:center;';
-      m.textContent = 'Scene unavailable';
-      var s = document.createElement('div');
-      s.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--border-2);text-align:center;';
-      s.textContent = err && err.message ? err.message : 'render error';
-      w.appendChild(m); w.appendChild(s); container.appendChild(w);
-    },
-    resize: function() {
-      _timers.forEach(clearTimeout); _timers = [];
-      build();
-      showAll(true);
-    },
-    seek: function(p) {
-      _timers.forEach(clearTimeout); _timers = [];
-      build();
-      if (p >= 1) { showAll(true); return; }
-      var beatCount = BEAT_ORDER.length;
-      var beatIdx = Math.floor(p * beatCount);
-      for (var i = 0; i <= beatIdx; i++) { revealBeat(BEAT_ORDER[i]); }
-    },
     getAccessibleSummary: function() {
       return 'The AI terrain shows five technology layers from Rules and workflow at the base to Agents at the apex. Foundation services run underneath. Human accountability and security rails bound the terrain. Four task tokens route to the least complex suitable layer. More advanced is not automatically more suitable.';
     },

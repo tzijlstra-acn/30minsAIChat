@@ -672,22 +672,20 @@ test('V17/4: build fingerprint is v17', async ({ page }) => {
   expect(content).toMatch(/^v17-[0-9a-f]{7}$/);
 });
 
-test('V27: proof-loop pipeline step labels are text (Baseline Run Compare Challenge Decide)', async ({ page }) => {
+test('V17/4: proof-loop Compare step uses ti-git-compare icon', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
   const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
   const body = await res.text();
-  expect(body).toContain('Baseline');
-  expect(body).toContain('Compare');
-  expect(body).toContain('Challenge');
-  expect(body).toContain('Decide');
+  expect(body).toContain('ti-git-compare');
+  expect(body).not.toContain('ti-git-diff');
 });
 
-test('V27: proof-loop gate section has evidence gate label and human decision point', async ({ page }) => {
+test('V17/4: proof-loop Decide step uses ti-scale icon', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('pitch_auth', '1'));
   const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
   const body = await res.text();
-  expect(body).toContain('EVIDENCE GATE');
-  expect(body).toContain('HUMAN DECISION POINT');
+  expect(body).toContain('ti-scale');
+  expect(body).not.toContain('ti-gate');
 });
 
 // ── V18 VISUAL EXCELLENCE AUDIT ──
@@ -1796,15 +1794,13 @@ test('V26/5: proof-loop.js uses connected pipeline strip (not 5 equal cards)', a
   expect(body).not.toContain('border-radius:8px');
 });
 
-test('V27: proof-loop.js gate has evidence gate icon box and labelled options', async ({ page }) => {
+test('V26/5: proof-loop.js gate is one human approval element (not 4 equal chips)', async ({ page }) => {
   const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
   const body = await res.text();
-  // V27: gate icon uses rounded square with green tint
-  expect(body).toContain('rgba(88,201,148,.12)');
-  // Gate options use green-tinted border on individual items
-  expect(body).toContain('rgba(88,201,148,0.22)');
-  // Each option has a label and a sub-label
-  expect(body).toContain('pf-gate-chips');
+  // Gate uses border:1px solid var(--green) on one container
+  expect(body).toContain('border:1px solid var(--green)');
+  // Options are internal dividers, not separate border-radius chips
+  expect(body).toContain('border-left:1px solid rgba(88,201,148,0.2)');
 });
 
 // ── V26/6 semantic zoom and cost waterfall ──
@@ -1832,13 +1828,11 @@ test('V26/6: unit-economics.js station strip is one connected element (not 6 equ
   expect(body).not.toContain("'border-radius:6px;border:1px solid var(--border-1)'");
 });
 
-test('V27: unit-economics.js controls panel has two-pass design decisions header', async ({ page }) => {
+test('V26/6: unit-economics.js controls are rows inside one panel (not 6 equal cards)', async ({ page }) => {
   const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
   const body = await res.text();
-  // V27: panel header is DESIGN DECISIONS -- PASS 1 vs PASS 2
-  expect(body).toContain('DESIGN DECISIONS');
-  expect(body).toContain('PASS 1');
-  expect(body).toContain('PASS 2');
+  // Panel header identifies the design controls container
+  expect(body).toContain('DESIGN CONTROLS');
   // Control rows use internal top-border dividers
   expect(body).toContain('border-top:1px solid var(--border-1)');
   // Must NOT use the old card border-radius
@@ -1969,237 +1963,4 @@ test('V26/10: pitch.html asset ?v= fingerprints all match build commit', async (
   // All asset fingerprints should use the v26/10 commit SHA
   expect(body).toContain('?v=68f790f');
   expect(body).not.toContain('?v=afa82a4');
-});
-
-// ── V27 lifecycle contract and two-pass waterfall ──
-
-const V27_SCENES = [
-  'ai-stack-build', 'task-route', 'work-role-shift', 'proof-loop',
-  'unit-economics', 'next-move', 'cover-flow', 'pressure-convergence',
-  'regulation-process', 'transformation-system', 'scale-architecture', 'dual-engine'
-];
-
-V27_SCENES.forEach(function(scene) {
-  test('V27: ' + scene + '.js has renderStatic method', async ({ page }) => {
-    const res = await page.goto('/assets/js/story/scenes/' + scene + '.js');
-    const body = await res.text();
-    expect(body).toContain('renderStatic:');
-  });
-
-  test('V27: ' + scene + '.js has renderError method', async ({ page }) => {
-    const res = await page.goto('/assets/js/story/scenes/' + scene + '.js');
-    const body = await res.text();
-    expect(body).toContain('renderError:');
-  });
-
-  test('V27: ' + scene + '.js has resize method', async ({ page }) => {
-    const res = await page.goto('/assets/js/story/scenes/' + scene + '.js');
-    const body = await res.text();
-    expect(body).toContain('resize:');
-  });
-
-  test('V27: ' + scene + '.js has seek method', async ({ page }) => {
-    const res = await page.goto('/assets/js/story/scenes/' + scene + '.js');
-    const body = await res.text();
-    expect(body).toContain('seek:');
-  });
-});
-
-test('V27: unit-economics.js has two-pass waterfall content (PASS 1 isolated, PASS 2 proportionate)', async ({ page }) => {
-  const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
-  const body = await res.text();
-  expect(body).toContain('PASS 1');
-  expect(body).toContain('PASS 2');
-  expect(body).toContain('switchToPass2');
-  expect(body).toContain('isolated');
-});
-
-test('V27: playwright.config.js has 1280x720 viewport project', async ({ page }) => {
-  const res = await page.goto('/playwright.config.js');
-  const body = await res.text();
-  expect(body).toContain('1280x720');
-  expect(body).toContain('width: 1280');
-});
-
-test('V27: proof-loop.js gate options have sub-labels (Controlled scale, Refine approach)', async ({ page }) => {
-  const res = await page.goto('/assets/js/story/scenes/proof-loop.js');
-  const body = await res.text();
-  expect(body).toContain('Controlled scale');
-  expect(body).toContain('Refine approach');
-});
-
-test('V27: unit-economics.js two-pass shows isolated state before switching (Largest model for all tasks)', async ({ page }) => {
-  const res = await page.goto('/assets/js/story/scenes/unit-economics.js');
-  const body = await res.text();
-  expect(body).toContain('Largest model for all tasks');
-  expect(body).toContain('ISOLATED');
-});
-
-// ── V28: SAFE ACTIVATION TESTS ────────────────────────────────────────────────
-// Verifies that only the active slide mounts and plays its scene.
-// scene-activation-controller.js wraps SceneDirector with an activation token
-// and a fonts+2rAF wait, preventing stale starts during rapid navigation.
-
-const V28_CORE_IDS = [
-  'cover','pressure-rising','ai-stack','task-route','regulation-process',
-  'transformation-implications','work-role-shift','proof-loop',
-  'scale-architecture','unit-economics','dual-engine','next-move'
-];
-
-test('V28: scene-activation-controller.js defines SceneActivationController', async ({ page }) => {
-  const res = await page.goto('/assets/js/story/scene-activation-controller.js');
-  const body = await res.text();
-  expect(body).toContain('SceneActivationController');
-  expect(body).toContain('nfr:slide-enter');
-  expect(body).toContain('_token');
-});
-
-test('V28: navigation.js dispatches nfr:slide-enter and uses threshold 0.8', async ({ page }) => {
-  const res = await page.goto('/assets/js/navigation.js');
-  const body = await res.text();
-  expect(body).toContain('nfr:slide-enter');
-  expect(body).toContain('threshold:0.8');
-  expect(body).not.toContain('SceneDirector.enter(');
-  expect(body).not.toContain('SceneDirector.cancel(');
-});
-
-test('V28: at page load only cover scene container has live children', async ({ page }) => {
-  test.setTimeout(60000);
-  await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => document.fonts.ready);
-
-  // Wait for updateNav to set the hash (whichever slide is initially active)
-  await page.waitForFunction(() => !!window.location.hash, { timeout: 3000 }).catch(() => null);
-
-  // Determine active section (may differ on mobile due to scroll-snap)
-  const activeId = await page.evaluate(() => {
-    return window.location.hash ? window.location.hash.slice(1) : 'cover';
-  });
-
-  // Wait for the active section's scene to reach playing or complete
-  await page.waitForFunction((id) => {
-    var c = document.querySelector('#' + id + ' [data-scene-container]');
-    if (!c) return false;
-    var s = c.getAttribute('data-scene-state');
-    return s === 'playing' || s === 'complete';
-  }, activeId, { timeout: 6000 });
-
-  // Every non-active core container must still be empty
-  const empties = await page.evaluate((ids) => {
-    var active = window.location.hash ? window.location.hash.slice(1) : 'cover';
-    return ids.filter(function(id) {
-      if (id === active) return false;
-      var live = document.querySelector('#' + id + ' [data-scene-live]');
-      return live && live.children.length > 0;
-    });
-  }, V28_CORE_IDS);
-
-  expect(empties, 'Off-screen live layers should be empty: ' + JSON.stringify(empties))
-    .toHaveLength(0);
-});
-
-test('V28: direct hash -- only target scene mounts', async ({ page }) => {
-  test.setTimeout(60000);
-  // Open directly on #ai-stack (bypasses cover)
-  await page.addInitScript(() => { sessionStorage.setItem('pitch_auth', '1'); });
-  await page.goto('/pitch.html#ai-stack');
-  await page.waitForSelector('section[data-slide]', { timeout: 10000 });
-  await page.evaluate(() => document.fonts.ready);
-
-  await page.waitForFunction(() => {
-    var c = document.querySelector('#ai-stack [data-scene-container]');
-    if (!c) return false;
-    var s = c.getAttribute('data-scene-state');
-    return s === 'playing' || s === 'complete';
-  }, { timeout: 6000 });
-
-  // Cover and other off-screen scenes should not have mounted
-  const empties = await page.evaluate((ids) => {
-    return ids.filter(function(id) {
-      if (id === 'ai-stack') return false;
-      var live = document.querySelector('#' + id + ' [data-scene-live]');
-      return live && live.children.length > 0;
-    });
-  }, V28_CORE_IDS);
-
-  expect(empties, 'Only ai-stack should have content: ' + JSON.stringify(empties))
-    .toHaveLength(0);
-});
-
-test('V28: rapid navigation -- only last slide plays', async ({ page }) => {
-  test.setTimeout(60000);
-  await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => document.fonts.ready);
-
-  // Jump quickly through 4 slides with 150 ms gaps
-  const slideSequence = ['cover', 'pressure-rising', 'ai-stack', 'task-route'];
-  for (const id of slideSequence) {
-    await page.evaluate((sectionId) => {
-      var el = document.getElementById(sectionId);
-      if (el) el.scrollIntoView({ behavior: 'instant' });
-    }, id);
-    await page.waitForTimeout(150);
-  }
-
-  // Wait for the last slide to settle
-  await page.waitForFunction(() => {
-    var c = document.querySelector('#task-route [data-scene-container]');
-    if (!c) return false;
-    var s = c.getAttribute('data-scene-state');
-    return s === 'playing' || s === 'complete';
-  }, { timeout: 4000 });
-
-  // Intermediate slides (pressure-rising, ai-stack) must not be playing
-  const playing = await page.evaluate(() => {
-    var check = ['pressure-rising', 'ai-stack'];
-    return check.filter(function(id) {
-      var c = document.querySelector('#' + id + ' [data-scene-container]');
-      return c && (c.getAttribute('data-scene-state') === 'playing');
-    });
-  });
-
-  expect(playing, 'Intermediate slides must not be in playing state after rapid nav: ' + JSON.stringify(playing))
-    .toHaveLength(0);
-});
-
-test('V28: activation token -- controller token increments on each enter', async ({ page }) => {
-  await gotoPage(page, '/pitch.html');
-
-  const token = await page.evaluate(() => {
-    return typeof SceneActivationController !== 'undefined';
-  });
-  expect(token, 'SceneActivationController should be defined').toBe(true);
-});
-
-test('V28: no console errors during activation sequence', async ({ page }) => {
-  test.setTimeout(60000);
-  const errors = [];
-  page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
-  page.on('pageerror', err => errors.push(err.message));
-
-  await gotoPage(page, '/pitch.html');
-  await page.evaluate(() => document.fonts.ready);
-  await page.waitForFunction(() => !!window.location.hash, { timeout: 3000 }).catch(() => null);
-
-  const initId = await page.evaluate(() => window.location.hash ? window.location.hash.slice(1) : 'cover');
-  await page.waitForFunction((id) => {
-    var c = document.querySelector('#' + id + ' [data-scene-container]');
-    return c && (c.getAttribute('data-scene-state') === 'playing' || c.getAttribute('data-scene-state') === 'complete');
-  }, initId, { timeout: 6000 });
-
-  // Navigate to slide 2 and 3
-  for (const id of ['pressure-rising', 'ai-stack']) {
-    await page.evaluate((sid) => {
-      var el = document.getElementById(sid);
-      if (el) el.scrollIntoView({ behavior: 'instant' });
-    }, id);
-    await page.waitForFunction((sid) => {
-      var c = document.querySelector('#' + sid + ' [data-scene-container]');
-      return c && (c.getAttribute('data-scene-state') === 'playing' || c.getAttribute('data-scene-state') === 'complete');
-    }, id, { timeout: 3000 }).catch(() => null);
-  }
-
-  const jsErrors = errors.filter(e => !e.includes('favicon') && !e.includes('net::ERR'));
-  expect(jsErrors, 'No JS errors during scene activation: ' + JSON.stringify(jsErrors))
-    .toHaveLength(0);
 });

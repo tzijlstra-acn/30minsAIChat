@@ -702,39 +702,6 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       _alive = true;
       applyFinalState();
     },
-    renderStatic: function() {
-      _timers.forEach(clearTimeout); _timers = [];
-      if (typeof _clearAll === 'function') _clearAll();
-      tl.reset();
-      build();
-      if (typeof _alive !== 'undefined') _alive = true;
-      applyFinalState();
-    },
-    renderError: function(err) {
-      container.innerHTML = '';
-      var w = document.createElement('div');
-      w.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;';
-      var m = document.createElement('div');
-      m.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);text-align:center;';
-      m.textContent = 'Scene unavailable';
-      var s = document.createElement('div');
-      s.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--border-2);text-align:center;';
-      s.textContent = err && err.message ? err.message : 'render error';
-      w.appendChild(m); w.appendChild(s); container.appendChild(w);
-    },
-    resize: function() {
-      _timers.forEach(clearTimeout); _timers = [];
-      if (typeof _clearAll === 'function') _clearAll();
-      tl.reset();
-      build();
-      if (typeof _alive !== 'undefined') _alive = true;
-      applyFinalState();
-    },
-    seek: function(p) {
-      _timers.forEach(clearTimeout); _timers = [];
-      build();
-      if (p >= 1) { applyFinalState(); }
-    },
     getAccessibleSummary: function() {
       return 'Two acts: an obligation token crosses fragmented delivery islands, accumulating hand-off cost at each gap. The islands give way to a continuous delivery spine. The integrated token travels the full path without dimming. Three proof outcomes appear: faster evidence, lower avoidable effort, more value retained through reuse.';
     },

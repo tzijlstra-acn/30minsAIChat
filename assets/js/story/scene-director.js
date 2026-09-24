@@ -72,7 +72,6 @@ var SceneDirector = (function() {
   function _setState(state) {
     if (!_current) return;
     _current.state = state;
-    if (_current.container) _current.container.setAttribute('data-scene-state', state);
   }
 
   function _injectAccessibleSummary(container, instance) {
@@ -109,8 +108,7 @@ var SceneDirector = (function() {
       }
       return;
     }
-    _current = { sceneId: manifestEntry.scene, instance: instance, manifest: manifestEntry, state: 'loading', container: container };
-    container.setAttribute('data-scene-state', 'loading');
+    _current = { sceneId: manifestEntry.scene, instance: instance, manifest: manifestEntry, state: 'loading' };
     _paused = false;
     _attachResizeObserver(container, instance);
     _injectAccessibleSummary(container, instance);
@@ -148,7 +146,6 @@ var SceneDirector = (function() {
     if (_resizeObserver) { _resizeObserver.disconnect(); _resizeObserver = null; }
     if (_current) {
       try { _current.instance.destroy(); } catch(e) {}
-      if (_current.container) _current.container.removeAttribute('data-scene-state');
       _current = null;
     }
     _paused = false;
@@ -371,19 +368,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // ── Direct-hash fallback ──
-  // If the browser doesn't deliver an initial IO callback for the hashed
-  // section, route through the activation controller via the same event that
-  // updateNav() uses.  The activation token prevents double-entry if the IO
-  // already fired.
+  // ── Direct-hash rendering ──
+  // When the page loads with a hash (e.g. #transformation-implications), the
+  // IntersectionObserver fires for the visible section on its first tick.
+  // However, if the section is already fully in view AND the browser does not
+  // deliver an initial IO callback, we force-enter the scene here.
   var hash = window.location.hash && window.location.hash.slice(1);
   if (hash) {
     setTimeout(function() {
       var sec = document.getElementById(hash);
       if (!sec || !sec.dataset.scene) return;
-      window.dispatchEvent(new CustomEvent('nfr:slide-enter', {
-        detail: { section: sec, index: -1, id: hash }
-      }));
+      if (typeof getManifestEntry === 'function') {
+        var entry = getManifestEntry(hash);
+        SceneDirector.enter(sec, entry || { scene: sec.dataset.scene, id: hash });
+      }
     }, 200);
   }
 });
