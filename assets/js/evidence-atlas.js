@@ -184,12 +184,12 @@
       /* architecture */
       '.ea-arch-wrap{width:100%;height:100%;overflow-y:auto;padding:14px 18px;box-sizing:border-box}',
       '.ea-arch-hd{font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:' + C.text1 + ';margin-bottom:14px}',
-      '.ea-arch-layer{height:44px;margin-bottom:5px;border-radius:6px;border:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding:0 14px;gap:14px;transition:height 0.3s ease;overflow:hidden;box-sizing:border-box}',
+      '.ea-arch-layer{min-height:44px;max-height:44px;margin-bottom:5px;border-radius:6px;border:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding:0 14px;gap:14px;transition:max-height 0.3s ease;overflow:hidden;box-sizing:border-box;flex-wrap:nowrap}',
       '.ea-arch-layer:hover{border-color:rgba(255,255,255,0.16)}',
       '.ea-arch-name{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:600;white-space:nowrap;min-width:210px}',
-      '.ea-arch-desc{font-size:12px;color:' + C.text2 + ';flex:1;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+      '.ea-arch-desc{font-size:13px;color:' + C.text2 + ';flex:1;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.ea-arch-comps{display:none;padding:8px 0 2px;flex-wrap:wrap;gap:4px;width:100%;flex-shrink:0}',
-      '.ea-arch-chip{display:inline-block;padding:2px 8px;border-radius:3px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);font-size:11px;font-family:"Space Grotesk",sans-serif;color:' + C.text2 + ';margin-right:3px;margin-bottom:3px}',
+      '.ea-arch-chip{display:inline-block;padding:2px 8px;border-radius:3px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);font-size:12px;font-family:"Space Grotesk",sans-serif;color:' + C.text2 + ';margin-right:3px;margin-bottom:3px}',
       /* method */
       '.ea-method-wrap{width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:14px;box-sizing:border-box;overflow-y:auto}',
       '.ea-method-col-hd{font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:' + C.text1 + ';margin-bottom:12px}',
@@ -201,7 +201,7 @@
       '.ea-mat-lvl{font-family:"JetBrains Mono",monospace;font-size:9px}',
       '.ea-mat-name{font-family:"Space Grotesk",sans-serif;font-size:13px;font-weight:600;color:' + C.text1 + '}',
       '.ea-mat-desc{font-size:11px;color:' + C.text2 + ';line-height:1.4}',
-      '.ea-note{font-size:11px;color:' + C.text3 + ';margin-top:10px;line-height:1.5}',
+      '.ea-note{font-size:12px;color:' + C.text3 + ';margin-top:10px;line-height:1.5}',
       /* map legend */
       '.ea-legend{position:absolute;bottom:10px;left:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}',
       '.ea-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:' + C.text2 + ';font-family:"Space Grotesk",sans-serif}',
@@ -809,7 +809,7 @@
   // ── VIEW 4: ARCHITECTURE ───────────────────────────────────────
   function buildArchitecture(canvas) {
     var wrap = mk('div', { className: 'ea-arch-wrap' });
-    wrap.appendChild(mk('div', { className: 'ea-arch-hd', textContent: 'AI risk function -- reference architecture' }));
+    wrap.appendChild(mk('div', { className: 'ea-arch-hd', textContent: 'AI risk function: reference architecture' }));
 
     ARCH_LAYERS.forEach(function (layer) {
       var layerEl = mk('div', {
@@ -829,14 +829,14 @@
       layerEl.addEventListener('click', function () {
         expanded = !expanded;
         if (expanded) {
-          layerEl.style.height = '100px';
+          layerEl.style.maxHeight = '220px';
           layerEl.style.flexWrap = 'wrap';
           layerEl.style.alignItems = 'flex-start';
           layerEl.style.paddingTop = '10px';
           comps.style.display = 'flex';
         } else {
-          layerEl.style.height = '44px';
-          layerEl.style.flexWrap = '';
+          layerEl.style.maxHeight = '44px';
+          layerEl.style.flexWrap = 'nowrap';
           layerEl.style.alignItems = 'center';
           layerEl.style.paddingTop = '';
           comps.style.display = 'none';
@@ -846,7 +846,7 @@
       wrap.appendChild(layerEl);
     });
 
-    wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Click any layer to expand component detail. Architecture is indicative -- validate against the client technology landscape.' }));
+    wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Click any layer to expand component detail. Architecture is indicative: validate against the client technology landscape.' }));
     canvas.appendChild(wrap);
   }
 
