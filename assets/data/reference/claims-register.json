@@ -1,0 +1,5 @@
+{
+  "_schema": "1.0",
+  "_note": "Claims register for Evidence Atlas. Each entry records a claim shown in the pitch, its source, and its validation status. Status must be one of: validated, working-hypothesis, unvalidated. Do not delete entries; mark as superseded instead.",
+  "claims": []
+}

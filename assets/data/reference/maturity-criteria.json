@@ -1,0 +1,47 @@
+[
+  {
+    "id": "assist",
+    "label": "Assist",
+    "number": 1,
+    "desc": "AI finds and surfaces relevant information. Human does all analysis and decides.",
+    "humanRole": "All analysis and decision making",
+    "controlFocus": "Quality of information surfaced",
+    "example": "AI retrieves relevant regulation; analyst reads and interprets"
+  },
+  {
+    "id": "augment",
+    "label": "Augment",
+    "number": 2,
+    "desc": "AI drafts, summarises, and recommends. Human reviews, edits, and decides.",
+    "humanRole": "Review, judgement, and sign-off",
+    "controlFocus": "Review quality and completeness",
+    "example": "AI drafts RCSA risk assessment; risk officer approves or modifies"
+  },
+  {
+    "id": "automate",
+    "label": "Automate",
+    "number": 3,
+    "desc": "AI performs defined tasks end-to-end within controlled scope. Human handles exceptions.",
+    "humanRole": "Exception handling and oversight",
+    "controlFocus": "Scope boundaries and exception routing",
+    "example": "AI extracts and validates data; human reviews exceptions above threshold"
+  },
+  {
+    "id": "orchestrate",
+    "label": "Orchestrate",
+    "number": 4,
+    "desc": "AI coordinates multiple systems and agents across a multi-step workflow.",
+    "humanRole": "Scope-setting, gate decisions, and audit",
+    "controlFocus": "Agent boundaries, permissions, and observability",
+    "example": "AI agent manages RCSA end-to-end; human approves at defined gates"
+  },
+  {
+    "id": "bounded-autonomy",
+    "label": "Bounded autonomy",
+    "number": 5,
+    "desc": "AI acts within explicit boundaries; humans set scope, rules, and review material exceptions.",
+    "humanRole": "Rule design, exception review, and continuous governance",
+    "controlFocus": "Autonomy boundaries, monitoring, and rollback",
+    "example": "AI monitors controls and self-remediates defined exception types"
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "id": "risk-portfolio",
+    "name": "Risk service and capability portfolio",
+    "icon": "briefcase",
+    "color": "#A100FF",
+    "position": "top",
+    "executiveQuestion": "Which risk services and decisions should exist, who owns them, and where is there duplication?",
+    "why": "Without clear ownership and scope, risk capabilities sprawl, duplicate, and create inconsistent outputs and evidence.",
+    "failureModes": [
+      "Duplicate risk assessments across first and second line",
+      "No single owner for material risk decisions",
+      "Tools and workflows built locally for every team"
+    ],
+    "diagnosticQuestions": [
+      "Do you have a single catalogue of risk services and accountable owners?",
+      "Where do first-line and second-line capabilities overlap or conflict?",
+      "Which risk services are differentiating versus common?"
+    ],
+    "targetPrinciples": [
+      "One accountable owner per risk service",
+      "Productised risk services with defined inputs, outputs, and SLAs",
+      "Invest, consolidate, reuse, retire, or source decisions made explicitly"
+    ],
+    "kpis": ["Service ownership coverage (%)", "Duplicate capability reduction", "Time to onboard new capability"]
+  },
+  {
+    "id": "work-decisions-controls",
+    "name": "End-to-end work, decisions and controls",
+    "icon": "route",
+    "color": "#0891B2",
+    "position": "middle-left",
+    "executiveQuestion": "How does work move from signal to decision to evidence, and where must a human remain in the lead?",
+    "why": "Without clear process and decision design, AI is inserted into fragmented work that cannot scale safely.",
+    "failureModes": [
+      "Approval gates undefined or bypassed",
+      "Human accountability unclear in AI-assisted workflows",
+      "Controls embedded in spreadsheets rather than the workflow"
+    ],
+    "diagnosticQuestions": [
+      "Which decisions require human sign-off and why?",
+      "Where are the main handoffs and rework loops?",
+      "Which controls are embedded in the workflow versus manual checks?"
+    ],
+    "targetPrinciples": [
+      "Every consequential decision has a named human accountable",
+      "Controls embedded in the workflow, not layered on top",
+      "Exception and fallback paths designed and tested"
+    ],
+    "kpis": ["Process cycle time", "Rework and exception rate", "Control evidence completeness (%)", "Human gate completion rate"]
+  },
+  {
+    "id": "data-knowledge-evidence",
+    "name": "Data, knowledge and evidence",
+    "icon": "database",
+    "color": "#0F8A62",
+    "position": "foundation-left",
+    "executiveQuestion": "What context must be available for reliable decisions, and how is evidence generated and traced?",
+    "why": "AI without quality data and traceable evidence produces confident wrong outputs and fails regulatory scrutiny.",
+    "failureModes": [
+      "AI context assembled from stale or incomplete sources",
+      "No evidence of what data was used for a decision",
+      "Regulatory knowledge embedded in human memory rather than structured data"
+    ],
+    "diagnosticQuestions": [
+      "What data sources are required for the top three priority capabilities?",
+      "Can you trace the data lineage for a recent regulatory submission?",
+      "Where is institutional knowledge held that AI would need access to?"
+    ],
+    "targetPrinciples": [
+      "All AI context has documented provenance and freshness",
+      "Every decision has a traceable evidence log",
+      "Risk and regulatory knowledge managed as structured data products"
+    ],
+    "kpis": ["Data freshness by source", "Evidence completeness (%)", "Lineage coverage", "Knowledge base coverage for priority capabilities"]
+  },
+  {
+    "id": "ai-automation-platforms",
+    "name": "AI, automation, integration and platforms",
+    "icon": "cpu",
+    "color": "#A100FF",
+    "position": "foundation-right",
+    "executiveQuestion": "Which technology pattern is appropriate, and what shared platform capabilities prevent every team from building its own stack?",
+    "why": "Without shared platform services, every use case builds its own AI stack, creating cost, security, and governance debt.",
+    "failureModes": [
+      "Multiple disconnected AI tools deployed without governance",
+      "No model gateway or routing: every team calls models directly",
+      "Evaluation and observability absent until a failure occurs"
+    ],
+    "diagnosticQuestions": [
+      "What AI and automation tools are currently deployed and by whom?",
+      "Is there a model gateway or routing layer?",
+      "Who owns evaluation, observability, and model lifecycle?"
+    ],
+    "targetPrinciples": [
+      "Use the least complex technology that can own the work safely and economically",
+      "Shared platform services used by all use cases",
+      "Evaluation and observability built in from the start"
+    ],
+    "kpis": ["Platform reuse rate (%)", "Cost per task/decision", "Model evaluation coverage", "Incident and failure rate", "Mean time to detect and recover"]
+  },
+  {
+    "id": "org-roles-adoption",
+    "name": "Organisation, roles, workforce and adoption",
+    "icon": "users",
+    "color": "#B46A00",
+    "position": "middle-right",
+    "executiveQuestion": "Which roles change, what new skills are needed, and how is capacity actually redeployed or captured?",
+    "why": "Automation without adoption planning frees capacity that is not captured, and creates risk when humans disengage from oversight.",
+    "failureModes": [
+      "Capacity freed by AI not redeployed or captured",
+      "Analysts disengaged from AI outputs they do not understand",
+      "New roles such as context engineering and AgentOps not designed or hired"
+    ],
+    "diagnosticQuestions": [
+      "Do you have a task-level view of what changes in the priority roles?",
+      "What is the plan for redeploying capacity freed by automation?",
+      "Which skills must be built and which can be sourced?"
+    ],
+    "targetPrinciples": [
+      "Capacity capture is planned and governed before deployment",
+      "Every role with AI-assisted work has a clear human gate and accountability",
+      "New roles designed at the start, not after deployment"
+    ],
+    "kpis": ["Capacity captured (percentage of freed time redeployed)", "Adoption rate", "Human gate completion rate", "Skills gap closure"]
+  },
+  {
+    "id": "governance-security",
+    "name": "Governance, security, resilience and assurance",
+    "icon": "shield",
+    "color": "#B46A00",
+    "position": "rail-left",
+    "executiveQuestion": "What must be proven before autonomy increases?",
+    "why": "Without proportionate governance, AI in risk functions creates new model risk, accountability gaps, and regulatory exposure.",
+    "failureModes": [
+      "AI models deployed without validation or documented accountability",
+      "Agent access not controlled: can act beyond intended scope",
+      "No audit trail for AI-assisted decisions presented to regulators"
+    ],
+    "diagnosticQuestions": [
+      "What is the current AI model risk governance framework?",
+      "Are agent identities and permissions documented and controlled?",
+      "Can you produce an evidence pack for an AI-assisted decision within 24 hours?"
+    ],
+    "targetPrinciples": [
+      "Proportionate controls by use-case risk tier: not one size fits all",
+      "Audit trail is automatic, not assembled post-hoc",
+      "Autonomy increases only as evidence, controls, and adoption mature"
+    ],
+    "kpis": ["RAI assessment coverage (%)", "Evidence pack readiness time", "Model validation completion rate", "Regulatory finding rate related to AI"]
+  },
+  {
+    "id": "value-cost-performance",
+    "name": "Value, cost and performance management",
+    "icon": "chart-bar",
+    "color": "#0E7490",
+    "position": "rail-right",
+    "executiveQuestion": "How do we know value is real, and how do we keep AI unit cost proportional to the outcome?",
+    "why": "Without value governance, AI programmes produce effort and technology cost without demonstrated business return.",
+    "failureModes": [
+      "No baseline before deployment: value cannot be measured",
+      "Cost per task unknown until cloud bills arrive",
+      "Capacity freed but not captured in headcount or output plan"
+    ],
+    "diagnosticQuestions": [
+      "Do you have a baseline for the processes in scope?",
+      "Who owns the benefit case and the realisation plan?",
+      "What is the current cost per task for the priority workflow?"
+    ],
+    "targetPrinciples": [
+      "Baseline before build. No exceptions.",
+      "One benefit owner per use case and a value gate before scale",
+      "AI unit cost tracked per outcome, not per token"
+    ],
+    "kpis": ["Capacity captured", "Cycle-time improvement", "Quality and risk improvement", "Cost per task/decision", "Value per euro invested", "Realised vs. theoretical value (%)"]
+  },
+  {
+    "id": "business-risk-tech",
+    "name": "Business, risk and technology interface",
+    "icon": "arrows-exchange",
+    "color": "#6366F1",
+    "position": "bridge",
+    "executiveQuestion": "Who owns the outcome, the risk decision, the platform, the data, and the investment?",
+    "why": "When business, risk, and technology work in separate programmes with separate backlogs and budgets, AI use cases fail at handoff points.",
+    "failureModes": [
+      "Risk function builds use cases on technology that cannot scale",
+      "Technology builds platforms that risk teams cannot use",
+      "Finance approves use-case funding but not the shared platform beneath it"
+    ],
+    "diagnosticQuestions": [
+      "Is there a single backlog and roadmap owned jointly by risk and technology?",
+      "Who decides the target architecture for risk AI?",
+      "How are shared platform costs and benefits allocated?"
+    ],
+    "targetPrinciples": [
+      "Joint product ownership for every AI-enabled risk service",
+      "One backlog, one target architecture, one value model",
+      "Funding decisions include the shared foundation, not only the use case"
+    ],
+    "kpis": ["Joint backlog health", "Decision cycle time", "Architecture compliance rate", "Shared platform adoption rate"]
+  }
+]
