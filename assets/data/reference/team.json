@@ -1,0 +1,9 @@
+[
+  {"id":"thomas-zijlstra","name":"Thomas Zijlstra","mail":"thomas.zijlstra@accenture.com","photo":"assets/team/thomas-zijlstra.jpg","approvedTitle":null,"approvedFocus":[],"clientVisible":true},
+  {"id":"marcel-frater","name":"Marcel Frater","mail":"marcel.frater@accenture.com","photo":"assets/team/marcel-frater.jpg","approvedTitle":null,"approvedFocus":[],"clientVisible":true},
+  {"id":"tobias-drouin","name":"Tobias Drouin","mail":"tobias.drouin@accenture.com","photo":"assets/team/tobias-drouin.jpg","approvedTitle":null,"approvedFocus":[],"clientVisible":true},
+  {"id":"oliver-moine","name":"Oliver Moine","mail":"oliver.moine@accenture.com","photo":"assets/team/oliver-moine.jpg","approvedTitle":null,"approvedFocus":[],"clientVisible":true},
+  {"id":"janik-jugl","name":"Janik Jugl","mail":"janik.jugl@accenture.com","photo":"assets/team/janik-jugl.jpg","approvedTitle":null,"approvedFocus":[],"clientVisible":true},
+  {"id":"nicola-jenni","name":"Nicola Jenni","mail":"nicola.jenni@accenture.com","photo":"assets/team/nicola-jenni.jpg","approvedTitle":null,"approvedFocus":[],"clientVisible":true},
+  {"id":"marek-polak","name":"Marek Polak","mail":"marek.polak@accenture.com","photo":"assets/team/marek-polak.jpg","approvedTitle":null,"approvedFocus":[],"clientVisible":true}
+]
