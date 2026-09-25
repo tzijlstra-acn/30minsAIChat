@@ -223,7 +223,7 @@
       '.ea-method-arr{color:' + C.text3 + ';font-size:14px;padding-top:22px;flex-shrink:0}',
       '.ea-method-bottom{display:flex;flex-direction:row;gap:14px;flex:1;min-height:0}',
       '.ea-mat-col{flex:1;overflow-y:auto}',
-      '.ea-team-col{flex:0 0 260px;overflow:hidden}',
+      '.ea-team-col{flex:0 0 190px;overflow:hidden}',
       '.ea-mat-row{padding:7px 13px;margin-bottom:5px;border-radius:6px;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-left-width:3px;border-left-style:solid}',
       '.ea-mat-label{display:flex;align-items:center;gap:6px;margin-bottom:2px}',
       '.ea-mat-lvl{font-family:"JetBrains Mono",monospace;font-size:11px}',
@@ -1018,7 +1018,7 @@
     var teamCol = mk('div', { className: 'ea-team-col' });
     teamCol.appendChild(mk('div', { className: 'ea-method-col-hd', textContent: 'Delivery team' }));
 
-    var teamWrap = mk('div', { style: { width: '100%', maxWidth: '240px' } });
+    var teamWrap = mk('div', { style: { width: '100%', maxWidth: '170px' } });
     var TEAM_ROLES = [
       { ring: 0, label: 'Lead',     color: C.accent },
       { ring: 1, label: 'Risk SME', color: C.cyan   },
@@ -1029,17 +1029,17 @@
     ];
 
     if (typeof d3 !== 'undefined') {
-      var W2 = 220, H2 = 220, CX2 = 110, CY2 = 110;
+      var W2 = 160, H2 = 160, CX2 = 80, CY2 = 80;
       var teamSvg = d3.select(teamWrap).append('svg')
         .attr('viewBox', '0 0 ' + W2 + ' ' + H2).attr('width', '100%').attr('height', '100%')
         .attr('role', 'img').attr('aria-label', 'Delivery team cell diagram');
 
-      teamSvg.append('circle').attr('cx', CX2).attr('cy', CY2).attr('r', 30).attr('fill', C.surface).attr('stroke', C.accent).attr('stroke-width', 1.5).attr('stroke-opacity', 0.7);
-      teamSvg.append('text').attr('x', CX2).attr('y', CY2 - 4).attr('text-anchor', 'middle').attr('font-size', '9').attr('font-family', '"Space Grotesk",sans-serif').attr('fill', C.accent).attr('font-weight', '700').text('Proof');
-      teamSvg.append('text').attr('x', CX2).attr('y', CY2 + 8).attr('text-anchor', 'middle').attr('font-size', '8').attr('font-family', '"Space Grotesk",sans-serif').attr('fill', C.text3).text('objective');
+      teamSvg.append('circle').attr('cx', CX2).attr('cy', CY2).attr('r', 22).attr('fill', C.surface).attr('stroke', C.accent).attr('stroke-width', 1.5).attr('stroke-opacity', 0.7);
+      teamSvg.append('text').attr('x', CX2).attr('y', CY2 - 3).attr('text-anchor', 'middle').attr('font-size', '8').attr('font-family', '"Space Grotesk",sans-serif').attr('fill', C.accent).attr('font-weight', '700').text('Proof');
+      teamSvg.append('text').attr('x', CX2).attr('y', CY2 + 7).attr('text-anchor', 'middle').attr('font-size', '7').attr('font-family', '"Space Grotesk",sans-serif').attr('fill', C.text3).text('objective');
 
       [1, 2, 3].forEach(function (r3) {
-        teamSvg.append('circle').attr('cx', CX2).attr('cy', CY2).attr('r', r3 * 30 + 4).attr('fill', 'none').attr('stroke', 'rgba(255,255,255,0.05)').attr('stroke-width', 1);
+        teamSvg.append('circle').attr('cx', CX2).attr('cy', CY2).attr('r', r3 * 22 + 3).attr('fill', 'none').attr('stroke', 'rgba(255,255,255,0.05)').attr('stroke-width', 1);
       });
 
       var byRing = [[], [], []];
@@ -1047,11 +1047,11 @@
       byRing.forEach(function (rr2, ri) {
         rr2.forEach(function (role, idx) {
           var angle2 = (2 * Math.PI * idx / Math.max(rr2.length, 1)) - Math.PI / 2;
-          var radius3 = (ri + 1) * 30 + 4;
+          var radius3 = (ri + 1) * 22 + 3;
           var rx = CX2 + radius3 * Math.cos(angle2);
           var ry = CY2 + radius3 * Math.sin(angle2);
-          teamSvg.append('circle').attr('cx', rx).attr('cy', ry).attr('r', 16).attr('fill', C.surf2).attr('stroke', role.color).attr('stroke-width', 1.5).attr('stroke-opacity', 0.8);
-          teamSvg.append('text').attr('x', rx).attr('y', ry + 1).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('font-size', '8').attr('font-family', '"Space Grotesk",sans-serif').attr('fill', role.color).text(role.label);
+          teamSvg.append('circle').attr('cx', rx).attr('cy', ry).attr('r', 12).attr('fill', C.surf2).attr('stroke', role.color).attr('stroke-width', 1.5).attr('stroke-opacity', 0.8);
+          teamSvg.append('text').attr('x', rx).attr('y', ry + 1).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('font-size', '7').attr('font-family', '"Space Grotesk",sans-serif').attr('fill', role.color).text(role.label);
         });
       });
     } else {
