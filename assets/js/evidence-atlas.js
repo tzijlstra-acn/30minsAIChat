@@ -49,12 +49,24 @@
   ];
 
   var THEATRE_DEMOS = [
-    { id: 'reg-coverage', name: 'Regulation Coverage',        desc: 'Regulation to obligation to control evidence',                   sourceBacked: true  },
-    { id: 'tprm-agent',   name: 'TPRM Agent',                 desc: 'Third-party risk monitoring and escalation',                     sourceBacked: true  },
-    { id: 'rcsa-agent',   name: 'RCSA Agent',                  desc: 'AI-assisted RCSA workflow with human review gates',              sourceBacked: true  },
-    { id: 'vaas',         name: 'Validation as a Service',    desc: 'Model validation support and documentation',                     sourceBacked: false },
-    { id: 'risk-report',  name: 'Agentic Risk Reporting',     desc: 'Automated regulatory report drafting and validation',            sourceBacked: true  },
-    { id: 'credit-dec',   name: 'Credit Decision Rationale',  desc: 'Credit assessment copilot and memo drafting',                    sourceBacked: false }
+    { id: 'reg-coverage', name: 'Regulation Coverage',       sourceBacked: true,
+      desc: 'Regulation to obligation to control evidence',
+      steps: [{ l: 'Regulation', c: '#55C7E8' }, { l: 'Obligation', c: '#B44CFF' }, { l: 'Match', c: '#F3B34C' }, { l: 'Gate (SME)', c: '#F0758A' }, { l: 'Evidence', c: '#58C994' }] },
+    { id: 'tprm-agent',   name: 'TPRM Agent',               sourceBacked: true,
+      desc: 'Third-party risk monitoring and escalation',
+      steps: [{ l: 'Monitor', c: '#55C7E8' }, { l: 'Score', c: '#B44CFF' }, { l: 'Flag', c: '#F3B34C' }, { l: 'Gate', c: '#F0758A' }, { l: 'Record', c: '#58C994' }] },
+    { id: 'rcsa-agent',   name: 'RCSA Agent',               sourceBacked: true,
+      desc: 'AI-assisted RCSA workflow with human review gates',
+      steps: [{ l: 'Draft', c: '#55C7E8' }, { l: 'Review', c: '#B44CFF' }, { l: 'Gate', c: '#F3B34C' }, { l: 'Sign-off', c: '#58C994' }] },
+    { id: 'vaas',         name: 'Validation as a Service',  sourceBacked: false,
+      desc: 'Model validation support and documentation',
+      steps: [{ l: 'Submit', c: '#55C7E8' }, { l: 'Validate', c: '#B44CFF' }, { l: 'Report', c: '#58C994' }] },
+    { id: 'risk-report',  name: 'Agentic Risk Reporting',   sourceBacked: true,
+      desc: 'Automated regulatory report drafting and validation',
+      steps: [{ l: 'Collect', c: '#55C7E8' }, { l: 'Draft', c: '#B44CFF' }, { l: 'Review', c: '#F3B34C' }, { l: 'Publish', c: '#58C994' }] },
+    { id: 'credit-dec',   name: 'Credit Decision Rationale',sourceBacked: false,
+      desc: 'Credit assessment copilot and memo drafting',
+      steps: [{ l: 'Input', c: '#55C7E8' }, { l: 'Score', c: '#B44CFF' }, { l: 'Explain', c: '#58C994' }] }
   ];
 
   var METHOD_STEPS = [
@@ -183,7 +195,7 @@
       '.ea-theatre-badge{font-size:8px;font-family:"JetBrains Mono",monospace;padding:1px 5px;border-radius:2px;border-width:1px;border-style:solid;display:inline-block;margin-bottom:8px}',
       '.ea-theatre-title{font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:' + C.text1 + ';margin-bottom:5px}',
       '.ea-theatre-desc{font-size:13px;color:' + C.text2 + ';line-height:1.4;flex:1}',
-      '.ea-theatre-anim{margin-top:10px;height:48px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:5px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);flex-shrink:0}',
+      '.ea-theatre-anim{margin-top:10px;min-height:48px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;border-radius:5px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);flex-shrink:0;padding:6px 8px}',
       '.ea-theatre-step{display:flex;flex-direction:column;align-items:center;gap:3px;transition:opacity 0.3s}',
       '.ea-theatre-step-lbl{font-size:9px;font-family:"JetBrains Mono",monospace}',
       '.ea-play-btn{margin-top:8px;background:none;border:1px solid rgba(255,255,255,0.13);border-radius:5px;color:' + C.text2 + ';font-family:"Space Grotesk",sans-serif;font-size:12px;padding:5px 0;width:100%;flex-shrink:0}',
@@ -835,27 +847,38 @@
       animArea.innerHTML = '<span style="font-size:11px;color:' + C.text3 + ';font-family:\'Space Grotesk\',sans-serif">Press Play to preview</span>';
       card.appendChild(animArea);
 
-      var STEPS = [
-        { icon: 'doc',  label: 'Source',        color: C.cyan   },
-        { icon: 'ai',   label: 'AI processing', color: C.accent },
-        { icon: 'chk',  label: 'Evidence',      color: C.green  }
-      ];
-
-      function iconSvg(type, col) {
-        if (type === 'doc') return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
-        if (type === 'ai')  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>';
-        return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
-      }
+      var STEPS = demo.steps;
 
       function renderStep(s) {
         animArea.innerHTML = '';
         STEPS.forEach(function (st, i) {
-          var stepEl = mk('div', { className: 'ea-theatre-step', style: { opacity: (i === s ? '1' : '0.25') } });
-          stepEl.innerHTML = iconSvg(st.icon, st.color);
-          stepEl.appendChild(mk('div', { className: 'ea-theatre-step-lbl', textContent: st.label, style: { color: st.color } }));
+          var active = (i === s);
+          var dot = mk('div', {
+            style: {
+              width: '18px', height: '18px', borderRadius: '50%', flexShrink: '0',
+              background: active ? st.c : 'transparent',
+              border: '2px solid ' + (active ? st.c : 'rgba(255,255,255,0.15)'),
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '9px', fontFamily: '"JetBrains Mono",monospace',
+              color: active ? '#000' : 'rgba(255,255,255,0.25)',
+              transition: 'all .2s'
+            },
+            textContent: (i + 1).toString()
+          });
+          var lbl = mk('div', {
+            className: 'ea-theatre-step-lbl',
+            textContent: st.l,
+            style: { color: active ? st.c : C.text3, fontSize: '11px', marginTop: '2px', transition: 'color .2s' }
+          });
+          var stepEl = mk('div', {
+            className: 'ea-theatre-step',
+            style: { opacity: active ? '1' : '0.3', alignItems: 'center', transition: 'opacity .2s' }
+          });
+          stepEl.appendChild(dot);
+          stepEl.appendChild(lbl);
           animArea.appendChild(stepEl);
           if (i < STEPS.length - 1) {
-            animArea.appendChild(mk('span', { style: { color: C.text3, fontSize: '14px', paddingBottom: '12px' }, textContent: '→' }));
+            animArea.appendChild(mk('span', { style: { color: C.text3, fontSize: '11px' }, textContent: '→' }));
           }
         });
       }
