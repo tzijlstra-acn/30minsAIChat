@@ -1,5 +1,5 @@
 // Scene: dual-engine (Screen 10)
-// V26: Hand-off tax demonstration. Fragmented islands reveal the cost of context loss
+// V30: Hand-off tax demonstration. Fragmented islands reveal the cost of context loss
 // at each boundary. Integrated system fields and a delivery spine show the continuous route.
 SceneDirector.register('dual-engine', function(container, manifest, reduced) {
 
@@ -251,10 +251,24 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
     });
     svg.appendChild(gap2CostsG);
 
-    // Waste summary
+    // Waste summary with HAND-OFF TAX heading
+    var wasteLblEl = svgEl('text', {
+      id: 'de-waste-hdr',
+      x: 600, y: 306,
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': '9',
+      'letter-spacing': '0.12em',
+      fill: AMBER,
+      'font-weight': '700',
+      'text-anchor': 'middle',
+      opacity: '0'
+    });
+    wasteLblEl.textContent = 'HAND-OFF TAX';
+    svg.appendChild(wasteLblEl);
+
     var wasteEl = svgEl('text', {
       id: 'de-waste',
-      x: 600, y: 320,
+      x: 600, y: 322,
       'font-family': 'JetBrains Mono, monospace',
       'font-size': '10',
       fill: AMBER,
@@ -542,8 +556,10 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
                   tok.setAttribute('opacity', '0.9');
                   // Show waste summary after token settles
                   later(380, function() {
-                    var waste = $id('de-waste');
-                    if (waste) waste.setAttribute('opacity', '1');
+                    var waste    = $id('de-waste');
+                    var wasteHdr = $id('de-waste-hdr');
+                    if (waste)    waste.setAttribute('opacity', '1');
+                    if (wasteHdr) wasteHdr.setAttribute('opacity', '1');
                   });
                 });
               });
@@ -557,7 +573,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
   // Apply full final state (for finish / reduced motion)
   function applyFinalState() {
     // Hide Act 1 elements
-    ['de-islands', 'de-token', 'de-waste', 'de-gap1-costs', 'de-gap2-costs'].forEach(function(id) {
+    ['de-islands', 'de-token', 'de-waste', 'de-waste-hdr', 'de-gap1-costs', 'de-gap2-costs'].forEach(function(id) {
       var el = $id(id);
       if (el) el.setAttribute('opacity', '0');
     });
@@ -617,9 +633,11 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       var isl   = $id('de-islands');
       var tok   = $id('de-token');
       var waste = $id('de-waste');
-      if (isl)   isl.setAttribute('opacity', '0.2');
-      if (tok)   tok.setAttribute('opacity', '0');
-      if (waste) waste.setAttribute('opacity', '0');
+      var wasteHdr = $id('de-waste-hdr');
+      if (isl)      isl.setAttribute('opacity', '0.2');
+      if (tok)      tok.setAttribute('opacity', '0');
+      if (waste)    waste.setAttribute('opacity', '0');
+      if (wasteHdr) wasteHdr.setAttribute('opacity', '0');
       ['de-gap1-line','de-gap1-lbl','de-gap2-line','de-gap2-lbl'].forEach(function(id) {
         var el = $id(id);
         if (el) el.setAttribute('opacity', '0');
