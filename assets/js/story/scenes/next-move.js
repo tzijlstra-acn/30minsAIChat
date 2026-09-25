@@ -87,6 +87,8 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
     }
     show('nm-footer');
     for (var m = 0; m < 4; m++) { stamp('nm-art-' + m); }
+    show('nm-evref');
+    show('nm-decision');
   }
 
   function build() {
@@ -212,6 +214,62 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
 
     footer.appendChild(artPanel);
     root.appendChild(footer);
+
+    // ── Evidence reference strip (connects back to slide 07 proof) ─────────
+    var evRef = document.createElement('div');
+    evRef.id = 'nm-evref';
+    evRef.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:8px;'
+      + 'padding:0 14px;opacity:0;transition:opacity .4s;';
+
+    var evLbl = document.createElement('div');
+    evLbl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8.5px;'
+      + 'letter-spacing:.10em;color:var(--text-3);flex-shrink:0;';
+    evLbl.textContent = 'EVIDENCE DIMENSIONS FROM PROOF:';
+    evRef.appendChild(evLbl);
+
+    var evDims = [
+      { label: 'Speed',    color: CYAN   },
+      { label: 'Quality',  color: ACCENT },
+      { label: 'Control',  color: GREEN  },
+      { label: 'Adoption', color: AMBER  },
+      { label: 'Economics',color: GREEN  }
+    ];
+
+    evDims.forEach(function(d, i) {
+      if (i > 0) {
+        var sep = document.createElement('div');
+        sep.style.cssText = 'width:3px;height:3px;border-radius:2px;background:rgba(255,255,255,.14);flex-shrink:0;';
+        evRef.appendChild(sep);
+      }
+      var chip = document.createElement('div');
+      chip.style.cssText = 'display:flex;align-items:center;gap:4px;flex-shrink:0;';
+      chip.innerHTML = '<div style="width:6px;height:6px;border-radius:3px;background:' + d.color + ';flex-shrink:0"></div>'
+        + '<span style="font-family:\'JetBrains Mono\',monospace;font-size:8.5px;color:' + d.color + '">' + d.label + '</span>';
+      evRef.appendChild(chip);
+    });
+    root.appendChild(evRef);
+
+    // ── Decision outcomes row (echoes slide 07 gate) ──────────────────────
+    var decRow = document.createElement('div');
+    decRow.id = 'nm-decision';
+    decRow.style.cssText = 'flex-shrink:0;display:flex;flex-direction:row;gap:6px;'
+      + 'padding:0 14px 4px;opacity:0;transition:opacity .4s;';
+
+    [
+      { label: 'Stop',             color: '#F0758A' },
+      { label: 'Refine',           color: AMBER     },
+      { label: 'Repeat',           color: CYAN      },
+      { label: 'Controlled scale', color: GREEN     }
+    ].forEach(function(opt) {
+      var chip = document.createElement('div');
+      chip.style.cssText = 'flex:1;padding:5px 8px;border-radius:4px;'
+        + 'border:1px solid ' + rgba(opt.color, 0.28) + ';background:' + rgba(opt.color, 0.05) + ';';
+      chip.innerHTML = '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:11px;'
+        + 'font-weight:700;color:' + opt.color + '">' + opt.label + '</div>';
+      decRow.appendChild(chip);
+    });
+    root.appendChild(decRow);
+
     container.appendChild(root);
   }
 
@@ -235,12 +293,16 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
       stamp('nm-art-0');
       _t(function() { stamp('nm-art-1'); }, 400);
       _t(function() { stamp('nm-art-2'); }, 800);
+      _t(function() { stamp('nm-art-3'); }, 1200);
+    }},
+    // 9. Evidence reference strip appears (connects back to slide 07)
+    { delay: 5900, run: function() { show('nm-evref'); }},
+    // 10. Decision outcome chips appear
+    { delay: 6700, run: function() {
+      show('nm-decision');
       _t(function() {
-        stamp('nm-art-3');
-        _t(function() {
-          container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
-        }, 500);
-      }, 1200);
+        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+      }, 1000);
     }}
   ];
 
@@ -265,7 +327,7 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
       showAll();
     },
     getAccessibleSummary: function() {
-      return 'Three decision gates (Frame the evidence, Prove on real work, Decide the next move) are shown as a runway with four work lanes. Each gate contains work items across business, process, data and people dimensions. Four artefacts stamp in at the end: proof contract, architecture view, economics view, and next-step recommendation.';
+      return 'Three decision gates (Frame the evidence, Prove on real work, Decide the next move) form a runway with four work lanes. Each gate contains work items across business, process, data and people dimensions. Four artefacts stamp in: proof contract, architecture view, economics view, and next-step recommendation. An evidence reference strip then shows the five proof dimensions from slide 07: Speed, Quality, Control, Adoption, and Economics. Four decision outcomes follow: Stop, Refine, Repeat, and Controlled scale.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout); _timers = [];
