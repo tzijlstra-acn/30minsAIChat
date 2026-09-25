@@ -321,6 +321,8 @@ section[data-density="long"]{height:auto;min-height:100dvh;overflow:visible;padd
 .arch-layer.ai-layer{background:var(--accent-soft);border-color:rgba(161,0,255,.3);}
 .arch-layer-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);width:18px;flex-shrink:0;}
 .arch-layer-name{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text-1);flex:1;}
+#app-blocks .arch-layer-num{width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+#app-blocks .arch-layer-num i{font-size:22px;display:block;line-height:1;}
 .arch-layer-chips{display:flex;gap:5px;flex-wrap:wrap;}
 .arch-chip{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:5px;background:var(--surface-2);border:1px solid var(--border-1);color:var(--text-2);}
 .arch-conn-v{text-align:center;font-size:11px;color:rgba(161,0,255,.4);animation:flowPulse 1.6s ease-in-out infinite;}

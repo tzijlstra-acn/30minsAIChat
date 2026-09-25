@@ -167,8 +167,8 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
     svg.removeChild(tMeasure);
 
     var pillW = Math.max(MIN_W, Math.ceil(tw) + PAD_X * 2);
-    // Centre-left of the header bar -- avoids the far-right clip zone
-    var pillX = Math.round(W * 0.68) - Math.round(pillW / 2);
+    // Right-aligned in the header bar with SAFE_R gap from viewBox edge
+    var pillX = W - SAFE_R - pillW;
 
     var pg = svgEl('g', {});
 
@@ -508,7 +508,7 @@ SceneDirector.register('regulation-process', function(container, manifest, reduc
       'letter-spacing': '0.08em',
       fill: C.text3, opacity: '0.7'
     });
-    tt.textContent = 'SOURCE-BACKED FLOW -- ILLUSTRATIVE TIMING -- NOT CLIENT DATA';
+    tt.textContent = 'SOURCE-BACKED FLOW / ILLUSTRATIVE TIMING / NOT CLIENT DATA';
     tg.appendChild(tt);
     svg.appendChild(tg);
   }

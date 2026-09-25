@@ -29,10 +29,14 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
   ];
 
   var ARTEFACTS = [
-    { label: 'Proof contract',           color: CYAN,   icon: 'ti-file-check'        },
-    { label: 'Architecture view',        color: ACCENT, icon: 'ti-sitemap'           },
-    { label: 'Economics view',           color: GREEN,  icon: 'ti-chart-bar'         },
-    { label: 'Next-step recommendation', color: AMBER,  icon: 'ti-arrow-right-circle'}
+    { label: 'Proof contract',           color: CYAN,
+      svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg>' },
+    { label: 'Architecture view',        color: ACCENT,
+      svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="7" height="6" rx="1"/><rect x="15" y="2" width="7" height="6" rx="1"/><rect x="8.5" y="15" width="7" height="6" rx="1"/><path d="M5.5 8v3.5c0 1 .5 2 2 2h9c1.5 0 2-1 2-2V8"/><line x1="12" y1="8" x2="12" y2="15"/></svg>' },
+    { label: 'Economics view',           color: GREEN,
+      svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="12" width="4" height="8" rx="1"/><rect x="10" y="6" width="4" height="14" rx="1"/><rect x="16" y="9" width="4" height="11" rx="1"/></svg>' },
+    { label: 'Next-step recommendation', color: AMBER,
+      svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>' }
   ];
 
   var LABEL_W = '140px';
@@ -200,9 +204,9 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
         + 'background:' + rgba(a.color, 0.04) + ';'
         + 'opacity:0;transition:opacity .3s;';
       item.innerHTML =
-        '<i class="ti ' + a.icon + '" style="color:' + a.color + ';font-size:15px;"></i>'
-        + '<div style="font-size:14px;font-weight:700;font-family:\'Space Grotesk\',sans-serif;'
-        + 'color:' + a.color + ';line-height:1.3">' + a.label + '</div>';
+        '<span style="display:block;color:' + a.color + ';line-height:1">' + a.svg + '</span>'
+        + '<div style="font-size:13px;font-weight:700;font-family:\'Space Grotesk\',sans-serif;'
+        + 'color:' + a.color + ';line-height:1.25;margin-top:4px">' + a.label + '</div>';
       artPanel.appendChild(item);
     });
 
@@ -261,7 +265,7 @@ SceneDirector.register('next-move', function(container, manifest, reduced) {
       showAll();
     },
     getAccessibleSummary: function() {
-      return 'Three decision gates -- Frame the evidence, Prove on real work, Decide the next move -- are shown as a runway with four work lanes. Each gate contains work items across business, process, data and people dimensions. Four artefacts stamp in at the end: proof contract, architecture view, economics view, and next-step recommendation.';
+      return 'Three decision gates (Frame the evidence, Prove on real work, Decide the next move) are shown as a runway with four work lanes. Each gate contains work items across business, process, data and people dimensions. Four artefacts stamp in at the end: proof contract, architecture view, economics view, and next-step recommendation.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout); _timers = [];

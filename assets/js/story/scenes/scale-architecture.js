@@ -184,7 +184,7 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
           'font-family': "'JetBrains Mono',monospace",
           'font-size': 11, fill: C_GREEN
         });
-        sep.textContent = '--';
+        sep.textContent = '/';
         sep.style.opacity = '0';
         sep.setAttribute('data-ent', '1');
         g.appendChild(sep);

@@ -261,7 +261,7 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
       'text-anchor': 'middle',
       opacity: '0'
     });
-    wasteEl.textContent = '3 hand-offs  --  context rebuilt twice  --  evidence disconnected';
+    wasteEl.textContent = '3 hand-offs, context rebuilt twice, evidence disconnected';
     svg.appendChild(wasteEl);
 
     // ── Act 1 obligation token ─────────────────────────────────────────
@@ -350,17 +350,17 @@ SceneDirector.register('dual-engine', function(container, manifest, reduced) {
 
     var fieldDefs = [
       {
-        x: 30,  y: 80, w: 320, h: 200, color: CYAN,
+        x: 30,  y: 30, w: 320, h: 280, color: CYAN,
         label: 'RISK AND REGULATORY DESIGN',
         caps: ['Obligation mapping and interpretation', 'Risk and control design', 'Regulatory evidence standard']
       },
       {
-        x: 440, y: 80, w: 320, h: 200, color: ACCENT,
+        x: 440, y: 30, w: 320, h: 280, color: ACCENT,
         label: 'AI BUILD AND INTEGRATION',
         caps: ['Context-aware model design', 'Knowledge graph and retrieval', 'Security and provenance']
       },
       {
-        x: 850, y: 80, w: 320, h: 200, color: GREEN,
+        x: 850, y: 30, w: 320, h: 280, color: GREEN,
         label: 'PRODUCTION RUN AND SCALE',
         caps: ['Shared platform and reuse', 'Cost per case optimisation', 'Risk-based human review']
       }

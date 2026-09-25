@@ -349,19 +349,24 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
     _evidenceG.appendChild(ck);
 
     var evLbl = svgEl('text', {
-      x: ex + 32, y: ey + 20,
-      fill: C.text1, 'font-size': '12', 'font-weight': '600',
+      x: ex + 32, y: ey + 15,
+      fill: C.text1, 'font-size': '11', 'font-weight': '600',
       'font-family': 'Space Grotesk,sans-serif'
     });
-    evLbl.textContent = 'Control linkage confirmed';
+    var ts1 = svgEl('tspan', { x: ex + 32, dy: '0' });
+    ts1.textContent = 'Control linkage';
+    var ts2 = svgEl('tspan', { x: ex + 32, dy: '13' });
+    ts2.textContent = 'confirmed';
+    evLbl.appendChild(ts1);
+    evLbl.appendChild(ts2);
     _evidenceG.appendChild(evLbl);
 
     var evDate = svgEl('text', {
-      x: ex + 32, y: ey + 38,
+      x: ex + 32, y: ey + 43,
       fill: C.green, 'font-size': '9',
       'font-family': 'JetBrains Mono,monospace'
     });
-    evDate.textContent = '2025-06-18 -- auto-linked';
+    evDate.textContent = '2025-06-18, auto-linked';
     _evidenceG.appendChild(evDate);
 
     _rootG.appendChild(_evidenceG);
@@ -409,7 +414,7 @@ SceneDirector.register('cover-flow', function(container, manifest, reduced) {
       fill: C.text3, 'font-size': '9',
       'font-family': 'JetBrains Mono,monospace'
     });
-    subTxt.textContent = 'confidence high -- auto-linked';
+    subTxt.textContent = 'confidence high, auto-linked';
     _aiPropG.appendChild(subTxt);
 
     // Arrow pointing from box center-bottom down to the GAP badge

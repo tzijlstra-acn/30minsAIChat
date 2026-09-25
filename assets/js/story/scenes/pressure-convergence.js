@@ -52,6 +52,9 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
 
     // Stream 1 (pink) -- obligation
     var grp1 = svgEl('g', { id: 'pc-grp1', opacity: '0' });
+    // Icon: upward arrow (rising volume)
+    grp1.appendChild(svgEl('polygon', { points: '8,62 22,62 15,50', fill: C_PINK }));
+    grp1.appendChild(svgEl('rect', { x: '12', y: '62', width: '6', height: '13', rx: '1', fill: C_PINK }));
     var l1 = svgEl('text', { x: '30', y: '56', fill: C_PINK,
       'font-family': "'Space Grotesk',sans-serif", 'font-size': '15', 'font-weight': '700' });
     l1.textContent = 'Rising obligation volume';
@@ -63,6 +66,11 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
 
     // Stream 2 (amber) -- cost
     var grp2 = svgEl('g', { id: 'pc-grp2', opacity: '0' });
+    // Icon: shrinking bars (tighter economics / cost squeeze)
+    grp2.appendChild(svgEl('rect', { x: '7', y: '190', width: '16', height: '3', rx: '1', fill: C_AMBER }));
+    grp2.appendChild(svgEl('rect', { x: '9', y: '197', width: '12', height: '3', rx: '1', fill: C_AMBER }));
+    grp2.appendChild(svgEl('rect', { x: '11', y: '204', width: '8', height: '3', rx: '1', fill: C_AMBER }));
+    grp2.appendChild(svgEl('rect', { x: '13', y: '211', width: '4', height: '3', rx: '1', fill: C_AMBER }));
     var l2 = svgEl('text', { x: '30', y: '192', fill: C_AMBER,
       'font-family': "'Space Grotesk',sans-serif", 'font-size': '15', 'font-weight': '700' });
     l2.textContent = 'Tighter economics';
@@ -74,6 +82,13 @@ SceneDirector.register('pressure-convergence', function(container, manifest, red
 
     // Stream 3 (purple) -- AI
     var grp3 = svgEl('g', { id: 'pc-grp3', opacity: '0' });
+    // Icon: circuit node (AI capability)
+    grp3.appendChild(svgEl('circle', { cx: '15', cy: '349', r: '6', fill: 'none', stroke: C_PURPLE, 'stroke-width': '1.5' }));
+    grp3.appendChild(svgEl('circle', { cx: '15', cy: '349', r: '2', fill: C_PURPLE }));
+    grp3.appendChild(svgEl('line', { x1: '15', y1: '339', x2: '15', y2: '335', stroke: C_PURPLE, 'stroke-width': '1.5' }));
+    grp3.appendChild(svgEl('line', { x1: '15', y1: '359', x2: '15', y2: '363', stroke: C_PURPLE, 'stroke-width': '1.5' }));
+    grp3.appendChild(svgEl('line', { x1: '5', y1: '349', x2: '1', y2: '349', stroke: C_PURPLE, 'stroke-width': '1.5' }));
+    grp3.appendChild(svgEl('line', { x1: '25', y1: '349', x2: '29', y2: '349', stroke: C_PURPLE, 'stroke-width': '1.5' }));
     var l3 = svgEl('text', { x: '30', y: '340', fill: C_PURPLE,
       'font-family': "'Space Grotesk',sans-serif", 'font-size': '15', 'font-weight': '700' });
     l3.textContent = 'More capable AI available';
