@@ -22,11 +22,13 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     { id: 'shared',     label: 'Shared services',             meter: 30 }
   ];
 
-  var _timers    = [];
-  var _meterFill  = null;
-  var _levelLabel = null;
-  var _tradeoffEl = null;
-  var _rowEls     = {};
+  var _timers      = [];
+  var _meterFill   = null;
+  var _levelLabel  = null;
+  var _tradeoffEl  = null;
+  var _rowEls      = {};
+  var _scenBadge   = null;
+  var _scenDesc    = null;
 
   function build() {
     container.innerHTML = '';
@@ -34,6 +36,9 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     _meterFill  = null;
     _levelLabel = null;
     _tradeoffEl = null;
+
+    _scenBadge  = null;
+    _scenDesc   = null;
 
     var root = document.createElement('div');
     root.className = 'scene-root';
@@ -112,10 +117,32 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
 
     var meterNote = document.createElement('div');
     meterNote.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--text-3);';
-    meterNote.textContent = 'Generic cost units -- illustrative only';
+    meterNote.textContent = 'Generic cost units, illustrative only';
     meterSec.appendChild(meterNote);
 
     root.appendChild(meterSec);
+
+    // ── Scenario indicator ─────────────────────────────────────────────────
+    var scenRow = document.createElement('div');
+    scenRow.id = 'ue-scenario';
+    scenRow.style.cssText = 'display:flex;align-items:center;gap:10px;flex-shrink:0;'
+      + 'opacity:0;transition:opacity 400ms ease;';
+
+    _scenBadge = document.createElement('div');
+    _scenBadge.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;font-weight:700;'
+      + 'letter-spacing:.10em;color:var(--cyan);background:rgba(77,217,224,.10);'
+      + 'border:1px solid rgba(77,217,224,.30);border-radius:10px;padding:2px 8px;'
+      + 'flex-shrink:0;transition:color 400ms ease,background 400ms ease,border-color 400ms ease;';
+    _scenBadge.textContent = 'ISOLATED RUN';
+    scenRow.appendChild(_scenBadge);
+
+    _scenDesc = document.createElement('div');
+    _scenDesc.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
+      + 'color:var(--text-3);transition:color 400ms ease;';
+    _scenDesc.textContent = 'Each run absorbs full fixed cost';
+    scenRow.appendChild(_scenDesc);
+
+    root.appendChild(scenRow);
 
     // ── Section 3: Design controls panel (one panel, rows inside, not 6 equal cards) ──
     // V26 box rule: this panel is one system boundary for the control levers.
@@ -204,19 +231,45 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
     _timers.push(t);
   }
 
+  function switchScenario(badge, desc, meterPct, levelText, levelColor) {
+    if (_scenBadge) {
+      _scenBadge.textContent = badge;
+      _scenBadge.style.color           = levelColor;
+      _scenBadge.style.background      = levelColor === 'var(--green)' ? 'rgba(88,201,148,.10)' : 'rgba(77,217,224,.10)';
+      _scenBadge.style.borderColor     = levelColor === 'var(--green)' ? 'rgba(88,201,148,.30)' : 'rgba(77,217,224,.30)';
+    }
+    if (_scenDesc) { _scenDesc.textContent = desc; }
+    setMeter(meterPct);
+    setLevel(levelText, levelColor);
+  }
+
+  function showScenario() {
+    var el = container.querySelector('#ue-scenario');
+    if (el) el.style.opacity = '1';
+  }
+
   function showFinal() {
-    var stStrip  = container.querySelector('#ue-stations');
-    var meterSec = container.querySelector('#ue-meter');
+    var stStrip   = container.querySelector('#ue-stations');
+    var meterSec  = container.querySelector('#ue-meter');
     var ctrlPanel = container.querySelector('#ue-controls');
+    var scenRow   = container.querySelector('#ue-scenario');
     if (stStrip)   stStrip.style.opacity   = '1';
     if (meterSec)  meterSec.style.opacity  = '1';
     if (ctrlPanel) ctrlPanel.style.opacity = '1';
+    if (scenRow)   scenRow.style.opacity   = '1';
     if (_meterFill) {
       _meterFill.style.transition = 'none';
-      _meterFill.style.width      = '30%';
+      _meterFill.style.width      = '18%';
     }
-    setLevel('LOWER', 'var(--green)');
+    setLevel('MINIMUM FLOOR', 'var(--green)');
     controls.forEach(function(ctrl) { activateRow(ctrl.id); });
+    if (_scenBadge) {
+      _scenBadge.textContent = 'PROPORTIONATE SHARE';
+      _scenBadge.style.color       = 'var(--green)';
+      _scenBadge.style.background  = 'rgba(88,201,148,.10)';
+      _scenBadge.style.borderColor = 'rgba(88,201,148,.30)';
+    }
+    if (_scenDesc) { _scenDesc.textContent = 'Platform cost distributed across case volume'; }
   }
 
   var steps = [
@@ -259,11 +312,26 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       showTradeoff('Quality: sampling only');
     }},
 
-    // 6000ms: control 6 -- meter 30%, label LOWER + complete
+    // 6000ms: control 6 -- meter 30%, label LOWER
     { delay: 6000, run: function() {
       activateCard('shared');
       setMeter(30);
       setLevel('LOWER', 'var(--green)');
+    }},
+
+    // 6800ms: Scenario 1 badge appears (Isolated Run)
+    { delay: 6800, run: function() {
+      switchScenario('ISOLATED RUN', 'Each run absorbs full fixed cost', 30, 'LOWER', 'var(--cyan)');
+      showScenario();
+    }},
+
+    // 7800ms: Auto-switch to Scenario 2 (Proportionate Share)
+    { delay: 7800, run: function() {
+      switchScenario('PROPORTIONATE SHARE', 'Platform cost distributed across case volume', 18, 'MINIMUM FLOOR', 'var(--green)');
+    }},
+
+    // 9800ms: complete
+    { delay: 9800, run: function() {
       _timers.push(setTimeout(function() {
         container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
       }, 500));
@@ -292,7 +360,7 @@ SceneDirector.register('unit-economics', function(container, manifest, reduced) 
       showFinal();
     },
     getAccessibleSummary: function() {
-      return 'Six cost stations are shown: Data and context, Model reasoning, Orchestration, Retries, Human review, and Platform assurance. Six design controls activate one by one, each reducing the cost meter. The meter ends at LOWER. One control notes a quality trade-off. No client data, no validated percentages.';
+      return 'Six cost stations are shown: Data and context, Model reasoning, Orchestration, Retries, Human review, and Platform assurance. Six design controls activate one by one, each reducing the cost meter. Scenario 1 (Isolated run) shows each run absorbing full fixed cost. Scenario 2 (Proportionate share) shows platform cost distributed across volume, reducing the meter further to minimum floor. No client data, no validated percentages.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout); _timers = [];
