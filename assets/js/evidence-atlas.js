@@ -11,12 +11,13 @@
 
   // ── PRIVATE STATE ──────────────────────────────────────────────
   var _container = null;
-  var _currentView = 'map';
+  var _currentView = 'risk-map';
   var _drawer = null;
   var _paletteOverlay = null;
   var _paletteInput = null;
   var _playingCard = null;
   var _keyListener = null;
+  var _hashListener = null;
 
   // ── DESIGN TOKENS ─────────────────────────────────────────────
   var C = {
@@ -130,12 +131,18 @@
     s.textContent = [
       /* shell */
       '.ea-shell{display:flex;flex-direction:column;width:100%;height:100%;background:' + C.canvas + ';color:' + C.text1 + ';position:relative;box-sizing:border-box;overflow:hidden}',
-      '.ea-topbar{display:flex;align-items:center;gap:0;padding:0 16px;height:44px;background:' + C.surface + ';border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;overflow-x:auto}',
-      '.ea-tab{padding:0 14px;height:44px;display:inline-flex;align-items:center;font-size:13px;font-family:"Space Grotesk",sans-serif;color:' + C.text2 + ';background:none;border:none;border-bottom:2px solid transparent;white-space:nowrap}',
-      '.ea-tab.active{color:' + C.text1 + ';border-bottom-color:' + C.accent + '}',
-      '.ea-tab:hover:not(.active){color:' + C.text1 + '}',
-      '.ea-search-btn{margin-left:auto;flex-shrink:0;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:5px;color:' + C.text2 + ';font-family:"JetBrains Mono",monospace;font-size:11px;padding:4px 10px;display:inline-flex;align-items:center;gap:6px}',
+      '.ea-topbar{display:flex;align-items:center;gap:8px;padding:0 14px;height:44px;background:' + C.surface + ';border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0}',
+      '.ea-topbar-title{font-family:"Space Grotesk",sans-serif;font-size:13px;font-weight:700;color:' + C.text1 + ';letter-spacing:0.02em;margin-right:auto}',
+      '.ea-body{display:flex;flex-direction:row;flex:1;min-height:0}',
+      '.ea-left-rail{width:182px;flex-shrink:0;display:flex;flex-direction:column;background:' + C.surface + ';border-right:1px solid rgba(255,255,255,0.07);padding:8px 0;overflow-y:auto}',
+      '.ea-rail-btn{display:block;width:100%;text-align:left;padding:9px 16px;font-size:13px;font-family:"Space Grotesk",sans-serif;font-weight:500;color:' + C.text2 + ';background:none;border:none;border-left:3px solid transparent;line-height:1.3;white-space:normal;box-sizing:border-box}',
+      '.ea-rail-btn.active{color:' + C.text1 + ';border-left-color:' + C.accent + ';background:rgba(180,76,255,0.07)}',
+      '.ea-rail-btn:hover:not(.active){color:' + C.text1 + ';background:rgba(255,255,255,0.03)}',
+      '.ea-rail-sep{height:1px;background:rgba(255,255,255,0.06);margin:6px 0}',
+      '.ea-search-btn{flex-shrink:0;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:5px;color:' + C.text2 + ';font-family:"JetBrains Mono",monospace;font-size:11px;padding:4px 10px;display:inline-flex;align-items:center;gap:6px}',
       '.ea-search-btn:hover{color:' + C.text1 + ';border-color:rgba(255,255,255,0.25)}',
+      '.ea-back-btn{flex-shrink:0;background:none;border:1px solid rgba(255,255,255,0.10);border-radius:5px;color:' + C.text2 + ';font-family:"Space Grotesk",sans-serif;font-size:11px;padding:4px 10px;white-space:nowrap}',
+      '.ea-back-btn:hover{color:' + C.text1 + ';border-color:rgba(255,255,255,0.22)}',
       '.ea-canvas{flex:1;position:relative;overflow:hidden}',
       /* tooltip */
       '.ea-tip{position:absolute;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.14);border-radius:6px;padding:8px 12px;font-size:13px;font-family:"Space Grotesk",sans-serif;color:' + C.text1 + ';pointer-events:none;opacity:0;transition:opacity 0.12s;max-width:200px;z-index:40;line-height:1.5}',
@@ -377,23 +384,23 @@
       return { label: c.name, sub: cat ? cat.name : '', id: c.id };
     }), function (item) {
       closePalette();
-      if (_currentView !== 'map') switchView('map');
-      setTimeout(function () { openCapabilityDrawer(item.id); }, _currentView !== 'map' ? 400 : 50);
+      if (_currentView !== 'risk-map') switchView('risk-map');
+      setTimeout(function () { openCapabilityDrawer(item.id); }, _currentView !== 'risk-map' ? 400 : 50);
     });
 
     section('SOLUTIONS', sols.map(function (s) {
       return { label: s.displayName, sub: 'Source ' + s.sourceNumber, id: s.id };
     }), function (item) {
       closePalette();
-      if (_currentView !== 'constellation') switchView('constellation');
-      setTimeout(function () { openSolDrawer(item.id); }, _currentView !== 'constellation' ? 400 : 50);
+      if (_currentView !== 'solutions') switchView('solutions');
+      setTimeout(function () { openSolDrawer(item.id); }, _currentView !== 'solutions' ? 400 : 50);
     });
 
     section('ARCHITECTURE', archs.map(function (l) {
       return { label: l.name, sub: l.desc.slice(0, 42) + (l.desc.length > 42 ? '..' : ''), id: l.id };
     }), function () {
       closePalette();
-      switchView('architecture');
+      switchView('toolkit');
     });
   }
 
@@ -933,13 +940,30 @@
     canvas.appendChild(wrap);
   }
 
+  // ── PLACEHOLDER VIEWS (PR3-PR8 will replace these) ────────────
+  function buildOperating(canvas) {
+    buildMethod(canvas);
+  }
+
+  function buildToolkit(canvas) {
+    buildArchitecture(canvas);
+  }
+
+  function buildDelivery(canvas) {
+    var wrap = mk('div', { className: 'ea-arch-wrap' });
+    wrap.appendChild(mk('div', { className: 'ea-arch-hd', textContent: 'Delivery and Credentials' }));
+    wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Team profiles, delivery cell structure, and engagement credentials. Available in a subsequent release.' }));
+    canvas.appendChild(wrap);
+  }
+
   // ── SHELL + TABS ───────────────────────────────────────────────
   var _TABS = [
-    { id: 'map',          label: 'Risk map'       },
-    { id: 'constellation',label: 'Solutions'      },
-    { id: 'theatre',      label: 'Process theatre'},
-    { id: 'architecture', label: 'Architecture'   },
-    { id: 'method',       label: 'Method'         }
+    { id: 'risk-map',  label: 'Risk Map'          },
+    { id: 'solutions', label: 'Solution Portfolio' },
+    { id: 'theatre',   label: 'Process Theatre'   },
+    { id: 'operating', label: 'Operating System'  },
+    { id: 'toolkit',   label: 'Proof Toolkit'     },
+    { id: 'delivery',  label: 'Delivery'          }
   ];
 
   function buildShell() {
@@ -951,12 +975,30 @@
 
     var shell = mk('div', { className: 'ea-shell' });
 
-    // Top bar -- ARIA tablist
-    var topbar = mk('div', { className: 'ea-topbar', role: 'tablist', 'aria-label': 'Evidence Atlas views' });
+    // ─ Top bar: title + search + back
+    var topbar = mk('div', { className: 'ea-topbar' });
+    topbar.appendChild(mk('span', { className: 'ea-topbar-title', textContent: 'Evidence Atlas' }));
+
+    var searchBtn = mk('button', { className: 'ea-search-btn' });
+    searchBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span>Ctrl+K</span>';
+    searchBtn.addEventListener('click', function () { if (_paletteOverlay) closePalette(); else openPalette(); });
+    topbar.appendChild(searchBtn);
+
+    var backBtn = mk('button', { className: 'ea-back-btn' });
+    backBtn.textContent = '← Presentation';
+    backBtn.addEventListener('click', function () { window.location.hash = '#next-move'; });
+    topbar.appendChild(backBtn);
+
+    shell.appendChild(topbar);
+
+    // ─ Body: left rail + canvas
+    var body = mk('div', { className: 'ea-body' });
+
+    var leftRail = mk('nav', { className: 'ea-left-rail', 'aria-label': 'Evidence Atlas views' });
     _TABS.forEach(function (tab, idx) {
       var isActive = tab.id === _currentView;
       var btn = mk('button', {
-        className: 'ea-tab' + (isActive ? ' active' : ''),
+        className: 'ea-rail-btn' + (isActive ? ' active' : ''),
         textContent: tab.label,
         role: 'tab',
         id: 'ea-tab-' + tab.id,
@@ -966,21 +1008,17 @@
       btn._tabId = tab.id;
       btn._tabIdx = idx;
       btn.addEventListener('click', function () { switchView(tab.id); });
-      topbar.appendChild(btn);
+      leftRail.appendChild(btn);
     });
-
-    var searchBtn = mk('button', { className: 'ea-search-btn' });
-    searchBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span>Ctrl+K</span>';
-    searchBtn.addEventListener('click', function () { if (_paletteOverlay) closePalette(); else openPalette(); });
-    topbar.appendChild(searchBtn);
-
-    shell.appendChild(topbar);
+    body.appendChild(leftRail);
 
     var canvas = mk('div', { className: 'ea-canvas', role: 'tabpanel', 'aria-labelledby': 'ea-tab-' + _currentView });
-    shell.appendChild(canvas);
+    body.appendChild(canvas);
+
+    shell.appendChild(body);
     _container.appendChild(shell);
 
-    // Keyboard handler -- Ctrl+K palette, Escape, and tab arrow navigation
+    // ─ Keyboard: Ctrl+K, Escape, arrow-up/down for rail navigation
     _keyListener = function (e) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
@@ -988,17 +1026,28 @@
         return;
       }
       if (e.key === 'Escape') { closePalette(); closeDrawer(); return; }
-      // Arrow key tab navigation only when focus is within the topbar
-      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-      var focusedTab = document.activeElement;
-      if (!focusedTab || focusedTab._tabIdx === undefined) return;
-      var delta = e.key === 'ArrowRight' ? 1 : -1;
-      var nextIdx = (focusedTab._tabIdx + delta + _TABS.length) % _TABS.length;
-      var allTabs = Array.from(topbar.querySelectorAll('[role="tab"]'));
-      var nextBtn = allTabs[nextIdx];
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      var focusedBtn = document.activeElement;
+      if (!focusedBtn || focusedBtn._tabIdx === undefined) return;
+      var delta = e.key === 'ArrowDown' ? 1 : -1;
+      var nextIdx = (focusedBtn._tabIdx + delta + _TABS.length) % _TABS.length;
+      var allBtns = Array.from(leftRail.querySelectorAll('[role="tab"]'));
+      var nextBtn = allBtns[nextIdx];
       if (nextBtn) { e.preventDefault(); nextBtn.focus(); switchView(_TABS[nextIdx].id); }
     };
     document.addEventListener('keydown', _keyListener);
+
+    // ─ Hash routing
+    _hashListener = function () {
+      if (!_container) return;
+      var hash = window.location.hash;
+      var m = hash.match(/^#ref\/([a-z-]+)/);
+      if (m && m[1] !== _currentView) {
+        var validIds = _TABS.map(function (t) { return t.id; });
+        if (validIds.indexOf(m[1]) >= 0) switchView(m[1]);
+      }
+    };
+    window.addEventListener('hashchange', _hashListener);
 
     return canvas;
   }
@@ -1009,9 +1058,15 @@
     closePalette();
     closeDrawer();
 
-    var shell = _container.querySelector('.ea-shell');
+    // Update URL hash without triggering hashchange
+    var newHash = '#ref/' + name;
+    if (window.location.hash !== newHash) {
+      history.replaceState(null, '', newHash);
+    }
+
+    var shell = _container ? _container.querySelector('.ea-shell') : null;
     if (!shell) return;
-    shell.querySelectorAll('.ea-tab').forEach(function (btn) {
+    shell.querySelectorAll('.ea-rail-btn').forEach(function (btn) {
       var active = btn._tabId === name;
       btn.classList.toggle('active', active);
       btn.setAttribute('aria-selected', active ? 'true' : 'false');
@@ -1024,11 +1079,12 @@
     canvas.innerHTML = '';
 
     switch (name) {
-      case 'map':           buildRiskMap(canvas);       break;
-      case 'constellation': buildConstellation(canvas); break;
-      case 'theatre':       buildTheatre(canvas);       break;
-      case 'architecture':  buildArchitecture(canvas);  break;
-      case 'method':        buildMethod(canvas);        break;
+      case 'risk-map':  buildRiskMap(canvas);      break;
+      case 'solutions': buildConstellation(canvas); break;
+      case 'theatre':   buildTheatre(canvas);       break;
+      case 'operating': buildOperating(canvas);     break;
+      case 'toolkit':   buildToolkit(canvas);       break;
+      case 'delivery':  buildDelivery(canvas);      break;
     }
   }
 
@@ -1036,12 +1092,20 @@
   var EvidenceAtlas = {
     init: function (container) {
       _container = container;
-      _currentView = 'map';
-      var canvas = buildShell();
-      buildRiskMap(canvas);
+      // Resolve starting view from URL hash, fall back to 'risk-map'
+      _currentView = 'risk-map';
+      var hash = window.location.hash;
+      var m = hash.match(/^#ref\/([a-z-]+)/);
+      if (m) {
+        var validIds = _TABS.map(function (t) { return t.id; });
+        if (validIds.indexOf(m[1]) >= 0) _currentView = m[1];
+      }
+      buildShell();
+      switchView(_currentView);
     },
     destroy: function () {
       if (_keyListener) { document.removeEventListener('keydown', _keyListener); _keyListener = null; }
+      if (_hashListener) { window.removeEventListener('hashchange', _hashListener); _hashListener = null; }
       closePalette();
       closeDrawer();
       if (_container) _container.innerHTML = '';
