@@ -202,6 +202,14 @@
       '.ea-mat-name{font-family:"Space Grotesk",sans-serif;font-size:13px;font-weight:600;color:' + C.text1 + '}',
       '.ea-mat-desc{font-size:11px;color:' + C.text2 + ';line-height:1.4}',
       '.ea-note{font-size:11px;color:' + C.text3 + ';margin-top:10px;line-height:1.5}',
+      '.ea-delivery-wrap{width:100%;height:100%;overflow-y:auto;padding:14px 18px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px}',
+      '.ea-delivery-section-hd{font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:' + C.text1 + ';margin-bottom:4px}',
+      '.ea-delivery-principle{padding:12px 16px;border-radius:6px;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-left-width:3px;border-left-style:solid;margin-bottom:6px}',
+      '.ea-delivery-label{font-family:"Space Grotesk",sans-serif;font-size:14px;font-weight:700;margin-bottom:4px}',
+      '.ea-delivery-desc{font-size:13px;color:' + C.text2 + ';line-height:1.5}',
+      '.ea-delivery-contact{padding:14px 16px;border-radius:6px;border:1px solid rgba(88,201,148,0.25);background:rgba(88,201,148,0.04);display:flex;flex-direction:column;gap:4px}',
+      '.ea-delivery-contact-name{font-family:"Space Grotesk",sans-serif;font-size:14px;font-weight:700;color:' + C.green + '}',
+      '.ea-delivery-contact-role{font-size:13px;color:' + C.text2 + '}',
       /* map legend */
       '.ea-legend{position:absolute;bottom:10px;left:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}',
       '.ea-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:' + C.text2 + ';font-family:"Space Grotesk",sans-serif}',
@@ -930,6 +938,46 @@
     col3.appendChild(mk('div', { className: 'ea-note', textContent: 'Cell structure: one lead, two or three capability SMEs per ring. Scales to engagement size.' }));
     wrap.appendChild(col3);
 
+    canvas.appendChild(wrap);
+  }
+
+  // ── VIEW 6: DELIVERY ──────────────────────────────────────────
+  var DELIVERY_PRINCIPLES = [
+    { label: 'Evidence-first',    color: C.cyan,
+      desc: 'Every AI intervention is defined by its proof criteria before work begins. We scope to what can be demonstrated, not what sounds ambitious.' },
+    { label: 'Gate-controlled',   color: C.amber,
+      desc: 'Human review gates at each transition point. No AI decision is operationalised without a documented control and sign-off trail.' },
+    { label: 'Transferable',      color: C.green,
+      desc: 'We build for your team to operate. Knowledge transfer, documentation, and control design are deliverables, not afterthoughts.' },
+    { label: 'Economics-tracked', color: C.accent,
+      desc: 'Cost and value are measured from day one. We track what changes against the baseline agreed at the start of the engagement.' }
+  ];
+
+  function buildDelivery(canvas) {
+    var wrap = mk('div', { className: 'ea-delivery-wrap' });
+
+    // Principles section
+    var princSection = mk('div');
+    princSection.appendChild(mk('div', { className: 'ea-delivery-section-hd', textContent: 'How we deliver' }));
+    DELIVERY_PRINCIPLES.forEach(function (p) {
+      var row = mk('div', { className: 'ea-delivery-principle', style: { borderLeftColor: p.color } });
+      row.appendChild(mk('div', { className: 'ea-delivery-label', textContent: p.label, style: { color: p.color } }));
+      row.appendChild(mk('div', { className: 'ea-delivery-desc', textContent: p.desc }));
+      princSection.appendChild(row);
+    });
+    wrap.appendChild(princSection);
+
+    // Contact section
+    var contactSection = mk('div');
+    contactSection.appendChild(mk('div', { className: 'ea-delivery-section-hd', textContent: 'Get in touch' }));
+    var contactCard = mk('div', { className: 'ea-delivery-contact' });
+    contactCard.appendChild(mk('div', { className: 'ea-delivery-contact-name', textContent: 'Thomas Zijlstra' }));
+    contactCard.appendChild(mk('div', { className: 'ea-delivery-contact-role', textContent: 'AI Risk Lead, Financial Services' }));
+    contactCard.appendChild(mk('div', { className: 'ea-delivery-contact-role', textContent: 'thomas.zijlstra@accenture.com' }));
+    contactSection.appendChild(contactCard);
+    wrap.appendChild(contactSection);
+
+    wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Engagement scope and team composition are agreed at the start of each engagement. Credentials available on request.' }));
     canvas.appendChild(wrap);
   }
 
