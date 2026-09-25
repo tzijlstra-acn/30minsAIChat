@@ -211,7 +211,7 @@
       '.ea-note{font-size:11px;color:' + C.text3 + ';margin-top:10px;line-height:1.5}',
       /* map legend */
       '.ea-legend{position:absolute;bottom:10px;left:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}',
-      '.ea-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:' + C.text2 + ';font-family:"Space Grotesk",sans-serif}',
+      '.ea-legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:' + C.text2 + ';font-family:"Space Grotesk",sans-serif}',
       '.ea-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}',
       '@keyframes ea-pulse{0%,100%{r:3;opacity:0.9}50%{r:5;opacity:0.45}}'
     ].join('');
@@ -279,7 +279,7 @@
       : '<div style="color:' + C.text3 + ';font-size:13px">No linked solutions mapped.</div>';
 
     var html = '<div class="ea-dr-label">OUTCOME</div>'
-      + '<div class="ea-dr-text">' + (cap.outcome || '--') + '</div>'
+      + '<div class="ea-dr-text">' + (cap.outcome || 'Not yet specified.') + '</div>'
       + '<div class="ea-dr-label">LINKED SOLUTIONS</div>'
       + solRows;
 
@@ -416,7 +416,7 @@
     var svg = svgMk('svg', {
       viewBox: '-300 -300 600 600',
       width: '100%', height: '100%',
-      role: 'img', 'aria-label': 'Evidence Atlas -- risk domain radial map'
+      role: 'img', 'aria-label': 'Evidence Atlas: risk domain radial map'
     });
     var defs = svgMk('defs', {});
     svg.appendChild(defs);
@@ -458,7 +458,7 @@
     var ct1 = svgMk('text', { x: '0', y: '-5', 'text-anchor': 'middle', 'font-size': '14', 'font-family': '"Space Grotesk",sans-serif', fill: C.text1, 'font-weight': '600' });
     ct1.textContent = 'Risk function';
     cg.appendChild(ct1);
-    var ct2 = svgMk('text', { x: '0', y: '11', 'text-anchor': 'middle', 'font-size': '10', 'font-family': '"JetBrains Mono",monospace', fill: C.text3 });
+    var ct2 = svgMk('text', { x: '0', y: '11', 'text-anchor': 'middle', 'font-size': '11', 'font-family': '"JetBrains Mono",monospace', fill: C.text3 });
     ct2.textContent = totalCaps + ' capabilities';
     cg.appendChild(ct2);
     svg.appendChild(cg);
@@ -488,8 +488,8 @@
       var lx = labelR * Math.cos(midA), ly = labelR * Math.sin(midA);
       var words = cm.cat.name.split(' '), half = Math.ceil(words.length / 2);
       var lt = svgMk('text', {
-        x: lx.toFixed(1), y: (half > 1 ? ly - 6 : ly + 5).toFixed(1),
-        'text-anchor': 'middle', 'font-size': '10', 'font-family': '"Space Grotesk",sans-serif',
+        x: lx.toFixed(1), y: (half > 1 ? ly - 7 : ly + 5).toFixed(1),
+        'text-anchor': 'middle', 'font-size': '11', 'font-family': '"Space Grotesk",sans-serif',
         fill: 'white', 'font-weight': '600'
       });
       lt.style.opacity = '0';
@@ -542,7 +542,7 @@
         var capLbl = svgMk('text', {
           x: (lR2 * Math.cos(midA2)).toFixed(1),
           y: (lR2 * Math.sin(midA2)).toFixed(1),
-          'text-anchor': 'middle', 'font-size': '8',
+          'text-anchor': 'middle', 'font-size': '9',
           'font-family': '"Space Grotesk",sans-serif', fill: 'white'
         });
         capLbl.style.opacity = '0';
@@ -773,7 +773,7 @@
           stepEl.appendChild(mk('div', { className: 'ea-theatre-step-lbl', textContent: st.label, style: { color: st.color } }));
           animArea.appendChild(stepEl);
           if (i < STEPS.length - 1) {
-            animArea.appendChild(mk('span', { style: { color: C.text3, fontSize: '14px', paddingBottom: '12px' }, textContent: '--' }));
+            animArea.appendChild(mk('span', { style: { color: C.text3, fontSize: '14px', paddingBottom: '12px' }, textContent: '→' }));
           }
         });
       }
@@ -816,7 +816,7 @@
   // ── VIEW 4: ARCHITECTURE ───────────────────────────────────────
   function buildArchitecture(canvas) {
     var wrap = mk('div', { className: 'ea-arch-wrap' });
-    wrap.appendChild(mk('div', { className: 'ea-arch-hd', textContent: 'AI risk function -- reference architecture' }));
+    wrap.appendChild(mk('div', { className: 'ea-arch-hd', textContent: 'AI risk function: reference architecture' }));
 
     ARCH_LAYERS.forEach(function (layer) {
       var layerEl = mk('div', {
@@ -853,7 +853,7 @@
       wrap.appendChild(layerEl);
     });
 
-    wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Click any layer to expand component detail. Architecture is indicative -- validate against the client technology landscape.' }));
+    wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Click any layer to expand component detail. Architecture is indicative: validate against the client technology landscape.' }));
     canvas.appendChild(wrap);
   }
 
@@ -867,7 +867,7 @@
     col1.appendChild(mk('div', { className: 'ea-method-col-hd', textContent: 'Evidence-to-design' }));
     METHOD_STEPS.forEach(function (step, i) {
       var s = mk('div', { className: 'ea-method-step', style: { borderLeftColor: C.accent } });
-      s.appendChild(mk('div', { className: 'ea-method-num', textContent: (i + 1).toString().padStart(2, '0') + ' -- ' + step.label.toUpperCase(), style: { color: C.accent } }));
+      s.appendChild(mk('div', { className: 'ea-method-num', textContent: (i + 1).toString().padStart(2, '0') + ': ' + step.label.toUpperCase(), style: { color: C.accent } }));
       s.appendChild(mk('div', { className: 'ea-method-desc', textContent: step.desc }));
       col1.appendChild(s);
     });
@@ -930,7 +930,7 @@
         });
       });
     } else {
-      teamWrap.innerHTML = '<div style="font-size:12px;color:' + C.text2 + ';line-height:2">' + TEAM_ROLES.map(function (r5) { return r5.label; }).join(' -- ') + '</div>';
+      teamWrap.innerHTML = '<div style="font-size:12px;color:' + C.text2 + ';line-height:2">' + TEAM_ROLES.map(function (r5) { return r5.label; }).join(' / ') + '</div>';
     }
 
     col3.appendChild(teamWrap);
