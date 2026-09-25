@@ -1,340 +1,344 @@
 // Scene: proof-loop (Screen 07)
-// V26: Evidence test rig. Five stages run as one connected pipeline strip.
-// Five evidence tracks fill as MetricStrips. Gate is a human approval element --
-// displayed alongside the tracks so the decision context is always visible.
-// No fictional results. No preselected outcome.
+// V30: Evidence test bench. Obligation runs through five stages.
+// Validation-as-a-Service pattern: AI first pass surfaces findings,
+// expert challenge resolves open items, evidence pack assembles stage by stage.
 SceneDirector.register('proof-loop', function(container, manifest, reduced) {
 
-  var _timers = [];
+  var C_CYAN   = '#55C7E8';
+  var C_ACCENT = '#B44CFF';
+  var C_AMBER  = '#F3B34C';
+  var C_GREEN  = '#58C994';
+  var C_PINK   = '#F0758A';
+  var C_GREY   = '#4A5064';
+  var C_TEXT2  = 'var(--text-2)';
+  var C_TEXT3  = 'var(--text-3)';
+  var C_SURF1  = 'var(--surface-1)';
+  var C_SURF2  = 'var(--surface-2)';
+  var C_BDR1   = 'var(--border-1)';
 
-  var nodes = [
-    { id: 'baseline',  label: 'Baseline',  color: '#4A5064',  labelColor: 'var(--text-2)' },
-    { id: 'run',       label: 'Run',        color: '#B44CFF',  labelColor: 'var(--accent)' },
-    { id: 'compare',   label: 'Compare',    color: '#B44CFF',  labelColor: 'var(--accent)' },
-    { id: 'challenge', label: 'Challenge',  color: '#F3B34C',  labelColor: 'var(--amber)'  },
-    { id: 'decide',    label: 'Decide',     color: '#58C994',  labelColor: 'var(--green)'  }
+  var stages = [
+    { id: 'baseline',  label: 'BASELINE',        color: C_GREY,   lcol: C_TEXT2   },
+    { id: 'aipass',    label: 'AI FIRST PASS',   color: C_ACCENT, lcol: C_ACCENT  },
+    { id: 'challenge', label: 'EXPERT CHALLENGE', color: C_AMBER,  lcol: C_AMBER   },
+    { id: 'evidence',  label: 'EVIDENCE',         color: C_GREEN,  lcol: C_GREEN   },
+    { id: 'decision',  label: 'DECISION',         color: C_GREEN,  lcol: C_GREEN   }
+  ];
+
+  var findings = [
+    { id: 'f0', text: 'Clause scope',      stateA: 'confirmed',  colA: C_GREEN, stateB: 'confirmed',  colB: C_GREEN },
+    { id: 'f1', text: 'Evidence standard', stateA: 'unresolved', colA: C_AMBER, stateB: 'defined',    colB: C_GREEN },
+    { id: 'f2', text: 'Policy link',       stateA: 'incomplete', colA: C_AMBER, stateB: 'completed',  colB: C_GREEN }
   ];
 
   var tracks = [
-    { id: 'speed',     label: 'Speed',     color: 'var(--cyan)',   barText: 'Processing time recorded'  },
-    { id: 'quality',   label: 'Quality',   color: 'var(--accent)', barText: 'Expert agreement: logged'  },
-    { id: 'control',   label: 'Control',   color: 'var(--green)',  barText: 'Provenance: complete'       },
-    { id: 'adoption',  label: 'Adoption',  color: 'var(--amber)',  barText: 'Reviewer log: complete'     },
-    { id: 'economics', label: 'Economics', color: 'var(--pink)',   barText: 'Run cost: recorded'         }
+    { id: 'speed',     label: 'Speed',                    color: C_CYAN,   fillText: 'Processing time recorded'  },
+    { id: 'quality',   label: 'Quality',                  color: C_ACCENT, fillText: 'Expert agreement logged'   },
+    { id: 'control',   label: 'Control and traceability', color: C_GREEN,  fillText: 'Provenance complete'       },
+    { id: 'adoption',  label: 'Adoption',                 color: C_AMBER,  fillText: 'Reviewer log complete'     },
+    { id: 'economics', label: 'Economics',                color: C_PINK,   fillText: 'Run cost recorded'         }
   ];
 
   var gateOptions = [
-    {
-      label: 'Stop and review',
-      sub:   'Evidence does not support continuation. Pause and investigate the gap.'
-    },
-    {
-      label: 'Refine approach',
-      sub:   'Sufficient signal but model or process needs adjustment before re-running.'
-    },
-    {
-      label: 'Repeat proof',
-      sub:   'Promising result but sample or scope is insufficient. Run again with more data.'
-    },
-    {
-      label: 'Controlled scale',
-      sub:   'Evidence supports expansion to wider scope under defined governance conditions.'
-    }
+    { label: 'Stop',             sub: 'Evidence does not support continuation. Pause and investigate.' },
+    { label: 'Refine',           sub: 'Adjust the model or process and re-test.'                      },
+    { label: 'Repeat',           sub: 'Expand sample or scope and run again.'                         },
+    { label: 'Controlled scale', sub: 'Evidence supports expansion under defined governance.'         }
   ];
 
-  // ── DOM construction ──────────────────────────────────────────────────────
+  var _timers = [];
+
+  function _t(fn, delay) { var id = setTimeout(fn, delay); _timers.push(id); return id; }
+  function q(id) { return container.querySelector('#pl-' + id); }
+  function show(id) { var el = q(id); if (el) el.style.opacity = '1'; }
+
+  function activateStage(stageId) {
+    var s = stages.filter(function(x) { return x.id === stageId; })[0];
+    if (!s) return;
+    var el = q('stage-' + stageId);
+    if (el) el.style.background = s.color + '1A';
+    var lbl = q('stlabel-' + stageId);
+    if (lbl) lbl.style.color = s.lcol;
+    stages.forEach(function(other) {
+      var od = q('dot-' + other.id);
+      if (od) od.style.opacity = other.id === stageId ? '1' : '0';
+    });
+  }
+
+  function showFinding(fId, stateKey) {
+    var f = findings.filter(function(x) { return x.id === fId; })[0];
+    if (!f) return;
+    var chip = q('finding-' + fId); if (!chip) return;
+    chip.style.opacity = '1';
+    var isB  = stateKey === 'B';
+    var col  = isB ? f.colB : f.colA;
+    var text = isB ? f.stateB : f.stateA;
+    var dot  = q('fdot-' + fId);   if (dot)  dot.style.background  = col;
+    var stEl = q('fstate-' + fId); if (stEl) { stEl.style.color = col; stEl.textContent = text; }
+    if (isB || col === C_GREEN) {
+      chip.style.borderColor = 'rgba(88,201,148,.30)';
+      chip.style.background  = 'rgba(88,201,148,.06)';
+    } else {
+      chip.style.borderColor = 'rgba(243,179,76,.30)';
+      chip.style.background  = 'rgba(243,179,76,.06)';
+    }
+  }
+
+  function fillTrack(trackId) {
+    var ph   = q('ph-' + trackId);   if (ph)   ph.style.opacity = '0';
+    var fill = q('fill-' + trackId);
+    if (fill) {
+      fill.style.transition = 'width 650ms cubic-bezier(.25,1,.25,1)';
+      requestAnimationFrame(function() { fill.style.width = '100%'; });
+    }
+    var ftxt = q('ftxt-' + trackId); if (ftxt) ftxt.style.opacity = '1';
+  }
+
+  function showAll() {
+    show('flow');
+    stages.forEach(function(s) { activateStage(s.id); });
+    show('findings');
+    findings.forEach(function(f) { showFinding(f.id, 'B'); });
+    tracks.forEach(function(t) { fillTrack(t.id); });
+    show('gate-hdr');
+    show('gate-chips');
+  }
 
   function build() {
     container.innerHTML = '';
 
     var root = document.createElement('div');
-    root.className = 'scene-root';
-    root.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;gap:12px;padding:8px 0;';
+    root.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;gap:8px;'
+      + 'padding:4px 0;box-sizing:border-box;';
 
-    // -- Process pipeline: one connected strip --------------------------------
-    var pipeWrap = document.createElement('div');
-    pipeWrap.id = 'pf-flow-row';
-    pipeWrap.style.cssText = 'display:flex;flex-direction:row;height:46px;flex-shrink:0;'
-      + 'background:var(--surface-1);border:1px solid var(--border-1);border-radius:4px;'
+    // ── Process flow strip ─────────────────────────────────────────────────
+    var flowRow = document.createElement('div');
+    flowRow.id = 'pl-flow';
+    flowRow.style.cssText = 'display:flex;flex-direction:row;height:46px;flex-shrink:0;'
+      + 'background:' + C_SURF1 + ';border:1px solid ' + C_BDR1 + ';border-radius:4px;'
       + 'overflow:hidden;opacity:0;transition:opacity 400ms ease;';
 
-    nodes.forEach(function(node, i) {
-      var stepEl = document.createElement('div');
-      stepEl.id = 'pf-node-' + node.id;
-      stepEl.style.cssText = 'flex:1;display:flex;flex-direction:column;'
-        + 'align-items:center;justify-content:center;gap:4px;position:relative;'
-        + (i > 0 ? 'border-left:1px solid var(--border-1);' : '')
+    stages.forEach(function(s, i) {
+      var el = document.createElement('div');
+      el.id = 'pl-stage-' + s.id;
+      el.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;'
+        + 'justify-content:center;gap:3px;'
+        + (i > 0 ? 'border-left:1px solid ' + C_BDR1 + ';' : '')
         + 'transition:background 400ms ease;';
 
-      var labelEl = document.createElement('div');
-      labelEl.id = 'pf-label-' + node.id;
-      labelEl.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:14px;'
-        + 'font-weight:700;color:var(--text-3);transition:color 400ms ease;';
-      labelEl.textContent = node.label;
-      stepEl.appendChild(labelEl);
+      var lbl = document.createElement('div');
+      lbl.id = 'pl-stlabel-' + s.id;
+      lbl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8.5px;font-weight:700;'
+        + 'letter-spacing:.09em;color:' + C_TEXT3 + ';transition:color 400ms ease;text-align:center;';
+      lbl.textContent = s.label;
+      el.appendChild(lbl);
 
-      var token = document.createElement('div');
-      token.id = 'pf-token-' + node.id;
-      token.style.cssText = 'width:8px;height:8px;border-radius:4px;background:#7C4DFF;'
-        + 'opacity:0;transition:opacity 280ms ease;flex-shrink:0;';
-      stepEl.appendChild(token);
+      var dot = document.createElement('div');
+      dot.id = 'pl-dot-' + s.id;
+      dot.style.cssText = 'width:5px;height:5px;border-radius:3px;background:' + s.color + ';'
+        + 'opacity:0;transition:opacity 300ms ease;flex-shrink:0;';
+      el.appendChild(dot);
 
-      pipeWrap.appendChild(stepEl);
+      flowRow.appendChild(el);
     });
+    root.appendChild(flowRow);
 
-    root.appendChild(pipeWrap);
+    // ── AI findings strip ──────────────────────────────────────────────────
+    var findingsRow = document.createElement('div');
+    findingsRow.id = 'pl-findings';
+    findingsRow.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:8px;'
+      + 'flex-shrink:0;opacity:0;transition:opacity 400ms ease;';
 
-    // -- Body row: tracks (left) + gate (right) side by side ------------------
+    var flbl = document.createElement('div');
+    flbl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8.5px;'
+      + 'letter-spacing:.12em;color:' + C_TEXT3 + ';white-space:nowrap;flex-shrink:0;';
+    flbl.textContent = 'AI FINDINGS';
+    findingsRow.appendChild(flbl);
+
+    findings.forEach(function(f) {
+      var chip = document.createElement('div');
+      chip.id = 'pl-finding-' + f.id;
+      chip.style.cssText = 'display:flex;align-items:center;gap:5px;padding:3px 9px;'
+        + 'border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);'
+        + 'opacity:0;transition:opacity 300ms ease,border-color 400ms ease,background 400ms ease;flex-shrink:0;';
+
+      var dot = document.createElement('div');
+      dot.id = 'pl-fdot-' + f.id;
+      dot.style.cssText = 'width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.18);'
+        + 'flex-shrink:0;transition:background 400ms ease;';
+      chip.appendChild(dot);
+
+      var txt = document.createElement('span');
+      txt.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:12px;font-weight:600;'
+        + 'color:' + C_TEXT2 + ';white-space:nowrap;';
+      txt.textContent = f.text;
+      chip.appendChild(txt);
+
+      var stEl = document.createElement('span');
+      stEl.id = 'pl-fstate-' + f.id;
+      stEl.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8.5px;'
+        + 'color:rgba(255,255,255,.28);white-space:nowrap;transition:color 400ms ease;';
+      stEl.textContent = f.stateA;
+      chip.appendChild(stEl);
+
+      findingsRow.appendChild(chip);
+    });
+    root.appendChild(findingsRow);
+
+    // ── Body: evidence tracks left, gate right ────────────────────────────
     var bodyRow = document.createElement('div');
-    bodyRow.style.cssText = 'display:flex;flex-direction:row;gap:0;flex:1;min-height:0;';
+    bodyRow.style.cssText = 'display:flex;flex-direction:row;flex:1;min-height:0;gap:0;';
 
     // Left: evidence tracks
-    var tracksSection = document.createElement('div');
-    tracksSection.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:8px;padding-right:18px;';
+    var tracksDiv = document.createElement('div');
+    tracksDiv.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:8px;padding-right:20px;';
 
-    var tracksHeading = document.createElement('div');
-    tracksHeading.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
-      + 'letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:2px;';
-    tracksHeading.textContent = 'EVIDENCE COLLECTED';
-    tracksSection.appendChild(tracksHeading);
+    var tracksHdr = document.createElement('div');
+    tracksHdr.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:8.5px;'
+      + 'letter-spacing:.14em;color:' + C_TEXT3 + ';flex-shrink:0;margin-bottom:2px;';
+    tracksHdr.textContent = 'EVIDENCE COLLECTED';
+    tracksDiv.appendChild(tracksHdr);
 
-    tracks.forEach(function(track) {
+    tracks.forEach(function(t) {
       var row = document.createElement('div');
-      row.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:10px;';
+      row.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:10px;flex:1;min-height:0;';
 
-      var labelEl = document.createElement('div');
-      labelEl.style.cssText = 'width:92px;font-family:\'Space Grotesk\',sans-serif;'
-        + 'font-size:14px;font-weight:700;color:' + track.color + ';flex-shrink:0;';
-      labelEl.textContent = track.label;
-      row.appendChild(labelEl);
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'width:158px;font-family:\'Space Grotesk\',sans-serif;font-size:13px;'
+        + 'font-weight:700;color:' + t.color + ';flex-shrink:0;line-height:1.2;';
+      lbl.textContent = t.label;
+      row.appendChild(lbl);
 
-      var barWrap = document.createElement('div');
-      barWrap.style.cssText = 'flex:1;background:var(--surface-2);border-radius:4px;'
-        + 'height:30px;position:relative;overflow:hidden;';
+      var bar = document.createElement('div');
+      bar.style.cssText = 'flex:1;background:' + C_SURF2 + ';border-radius:4px;height:28px;'
+        + 'position:relative;overflow:hidden;';
 
-      var placeholder = document.createElement('div');
-      placeholder.id = 'pf-placeholder-' + track.id;
-      placeholder.style.cssText = 'position:absolute;left:10px;top:50%;transform:translateY(-50%);'
-        + 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-3);'
-        + 'z-index:1;white-space:nowrap;transition:opacity 250ms ease;';
-      placeholder.textContent = 'Not yet measured';
-      barWrap.appendChild(placeholder);
+      var ph = document.createElement('div');
+      ph.id = 'pl-ph-' + t.id;
+      ph.style.cssText = 'position:absolute;left:10px;top:50%;transform:translateY(-50%);'
+        + 'font-family:\'JetBrains Mono\',monospace;font-size:9.5px;color:' + C_TEXT3 + ';'
+        + 'z-index:1;white-space:nowrap;transition:opacity 250ms ease;letter-spacing:.04em;';
+      ph.textContent = 'NOT YET MEASURED';
+      bar.appendChild(ph);
 
       var fill = document.createElement('div');
-      fill.id = 'pf-fill-' + track.id;
+      fill.id = 'pl-fill-' + t.id;
       fill.style.cssText = 'position:absolute;left:0;top:0;height:100%;width:0;'
-        + 'border-radius:4px;background:' + track.color + ';opacity:0.25;'
-        + 'transition:width 600ms ease;';
-      barWrap.appendChild(fill);
+        + 'border-radius:4px;opacity:.22;background:' + t.color + ';';
+      bar.appendChild(fill);
 
-      var evidenceEl = document.createElement('div');
-      evidenceEl.id = 'pf-evidence-' + track.id;
-      evidenceEl.style.cssText = 'position:absolute;left:10px;top:50%;transform:translateY(-50%);'
-        + 'font-family:\'JetBrains Mono\',monospace;font-size:11px;color:' + track.color + ';'
-        + 'z-index:2;white-space:nowrap;opacity:0;transition:opacity 300ms ease 280ms;';
-      evidenceEl.textContent = track.barText;
-      barWrap.appendChild(evidenceEl);
+      var ftxt = document.createElement('div');
+      ftxt.id = 'pl-ftxt-' + t.id;
+      ftxt.style.cssText = 'position:absolute;left:10px;top:50%;transform:translateY(-50%);'
+        + 'font-family:\'JetBrains Mono\',monospace;font-size:9.5px;color:' + t.color + ';'
+        + 'z-index:2;white-space:nowrap;opacity:0;transition:opacity 300ms ease 280ms;letter-spacing:.04em;';
+      ftxt.textContent = t.fillText;
+      bar.appendChild(ftxt);
 
-      row.appendChild(barWrap);
-      tracksSection.appendChild(row);
+      row.appendChild(bar);
+      tracksDiv.appendChild(row);
     });
+    bodyRow.appendChild(tracksDiv);
 
-    bodyRow.appendChild(tracksSection);
+    // Right: gate panel
+    var gateDiv = document.createElement('div');
+    gateDiv.style.cssText = 'flex:0 0 256px;display:flex;flex-direction:column;gap:10px;'
+      + 'padding-left:18px;border-left:1px solid ' + C_BDR1 + ';';
 
-    // Right: gate section -- always visible alongside the tracks
-    var gateWrap = document.createElement('div');
-    gateWrap.style.cssText = 'flex:0 0 270px;display:flex;flex-direction:column;gap:10px;'
-      + 'padding-left:18px;border-left:1px solid var(--border-1);';
+    var gateHdr = document.createElement('div');
+    gateHdr.id = 'pl-gate-hdr';
+    gateHdr.style.cssText = 'display:flex;flex-direction:column;gap:8px;opacity:0;'
+      + 'transition:opacity 500ms ease;flex-shrink:0;';
 
-    // Gate header
-    var gateHeaderWrap = document.createElement('div');
-    gateHeaderWrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity 500ms ease;';
-    gateHeaderWrap.id = 'pf-gate-header';
+    var iconRow = document.createElement('div');
+    iconRow.style.cssText = 'display:flex;align-items:center;gap:8px;';
 
-    var gateIconRow = document.createElement('div');
-    gateIconRow.style.cssText = 'display:flex;align-items:center;gap:8px;';
+    var iconBox = document.createElement('div');
+    iconBox.style.cssText = 'width:32px;height:32px;border-radius:7px;flex-shrink:0;'
+      + 'background:rgba(88,201,148,.12);border:1px solid rgba(88,201,148,.28);'
+      + 'display:flex;align-items:center;justify-content:center;color:' + C_GREEN + ';';
+    iconBox.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>';
 
-    var gateIcon = document.createElement('div');
-    gateIcon.style.cssText = 'width:32px;height:32px;border-radius:7px;background:rgba(88,201,148,.12);'
-      + 'border:1px solid rgba(88,201,148,.30);display:flex;align-items:center;justify-content:center;flex-shrink:0;';
-    gateIcon.innerHTML = '<i class="ti ti-user-check" style="font-size:17px;color:var(--green)"></i>';
+    var gateLbls = document.createElement('div');
+    gateLbls.innerHTML = '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8.5px;'
+      + 'letter-spacing:.12em;color:' + C_GREEN + ';line-height:1.2">EVIDENCE GATE</div>'
+      + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.06em;'
+      + 'color:' + C_TEXT3 + ';margin-top:2px">HUMAN DECISION POINT</div>';
 
-    var gateLabel = document.createElement('div');
-    gateLabel.id = 'pf-gate-label';
-    gateLabel.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:9px;'
-      + 'letter-spacing:.12em;text-transform:uppercase;color:var(--green);line-height:1.2;';
-    gateLabel.innerHTML = 'EVIDENCE GATE<br><span style="color:var(--text-3);font-size:8px;letter-spacing:.06em">HUMAN DECISION POINT</span>';
-
-    gateIconRow.appendChild(gateIcon);
-    gateIconRow.appendChild(gateLabel);
-    gateHeaderWrap.appendChild(gateIconRow);
+    iconRow.appendChild(iconBox);
+    iconRow.appendChild(gateLbls);
+    gateHdr.appendChild(iconRow);
 
     var gateSub = document.createElement('div');
-    gateSub.style.cssText = 'font-size:12px;color:var(--text-2);line-height:1.5;'
-      + 'border-left:2px solid rgba(88,201,148,.30);padding-left:8px;';
-    gateSub.textContent = 'Once the evidence above is assembled, a decision-maker reviews each dimension and selects the next move. The AI does not determine the outcome.';
-    gateHeaderWrap.appendChild(gateSub);
+    gateSub.style.cssText = 'font-size:11px;color:' + C_TEXT2 + ';line-height:1.5;'
+      + 'border-left:2px solid rgba(88,201,148,.28);padding-left:8px;';
+    gateSub.textContent = 'Analyst reviews each dimension and selects the next move. No outcome is preselected.';
+    gateHdr.appendChild(gateSub);
+    gateDiv.appendChild(gateHdr);
 
-    gateWrap.appendChild(gateHeaderWrap);
+    var gateChips = document.createElement('div');
+    gateChips.id = 'pl-gate-chips';
+    gateChips.style.cssText = 'display:flex;flex-direction:column;gap:5px;opacity:0;transition:opacity 500ms ease;';
 
-    // Gate options
-    var gateOptions_el = document.createElement('div');
-    gateOptions_el.id = 'pf-gate-chips';
-    gateOptions_el.style.cssText = 'display:flex;flex-direction:column;gap:6px;'
-      + 'opacity:0;transition:opacity 500ms ease;';
-
-    gateOptions.forEach(function(opt, i) {
+    gateOptions.forEach(function(opt) {
       var item = document.createElement('div');
-      item.style.cssText = 'padding:8px 10px;border-radius:5px;'
-        + 'border:1px solid rgba(88,201,148,0.22);background:rgba(88,201,148,0.04);';
-
-      var itemLabel = document.createElement('div');
-      itemLabel.style.cssText = 'font-family:\'Space Grotesk\',sans-serif;font-size:13px;'
-        + 'font-weight:700;color:var(--text-1);margin-bottom:2px;';
-      itemLabel.textContent = opt.label;
-
-      var itemSub = document.createElement('div');
-      itemSub.style.cssText = 'font-family:\'JetBrains Mono\',monospace;font-size:10px;'
-        + 'color:var(--text-3);line-height:1.4;';
-      itemSub.textContent = opt.sub;
-
-      item.appendChild(itemLabel);
-      item.appendChild(itemSub);
-      gateOptions_el.appendChild(item);
+      item.style.cssText = 'padding:7px 10px;border-radius:5px;'
+        + 'border:1px solid rgba(88,201,148,.20);background:rgba(88,201,148,.04);';
+      item.innerHTML = '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;'
+        + 'font-weight:700;color:var(--text-1);margin-bottom:2px">' + opt.label + '</div>'
+        + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8.5px;color:' + C_TEXT3 + ';line-height:1.45">'
+        + opt.sub + '</div>';
+      gateChips.appendChild(item);
     });
+    gateDiv.appendChild(gateChips);
 
-    gateWrap.appendChild(gateOptions_el);
-
-    bodyRow.appendChild(gateWrap);
+    bodyRow.appendChild(gateDiv);
     root.appendChild(bodyRow);
-
     container.appendChild(root);
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-
-  function highlightNode(nodeId, bgColor, labelColor) {
-    var nodeEl = container.querySelector('#pf-node-' + nodeId);
-    if (nodeEl) nodeEl.style.background = bgColor + '18';
-    var labelEl = container.querySelector('#pf-label-' + nodeId);
-    if (labelEl) labelEl.style.color = labelColor || bgColor;
-  }
-
-  function placeToken(nodeId) {
-    nodes.forEach(function(n) {
-      var t = container.querySelector('#pf-token-' + n.id);
-      if (t) t.style.opacity = '0';
-    });
-    var token = container.querySelector('#pf-token-' + nodeId);
-    if (token) token.style.opacity = '1';
-  }
-
-  function fillTrack(trackId) {
-    var fill = container.querySelector('#pf-fill-' + trackId);
-    var placeholder = container.querySelector('#pf-placeholder-' + trackId);
-    var evidenceEl = container.querySelector('#pf-evidence-' + trackId);
-    if (placeholder) placeholder.style.opacity = '0';
-    if (fill) requestAnimationFrame(function() { fill.style.width = '100%'; });
-    if (evidenceEl) evidenceEl.style.opacity = '1';
-  }
-
-  function showFinalFrame() {
-    var flowRow = container.querySelector('#pf-flow-row');
-    if (flowRow) { flowRow.style.transition = 'none'; flowRow.style.opacity = '1'; }
-
-    nodes.forEach(function(node) {
-      var nodeEl = container.querySelector('#pf-node-' + node.id);
-      if (nodeEl) { nodeEl.style.transition = 'none'; nodeEl.style.background = node.color + '18'; }
-      var labelEl = container.querySelector('#pf-label-' + node.id);
-      if (labelEl) { labelEl.style.transition = 'none'; labelEl.style.color = node.labelColor; }
-    });
-
-    placeToken('decide');
-
-    tracks.forEach(function(track) {
-      var fill = container.querySelector('#pf-fill-' + track.id);
-      var placeholder = container.querySelector('#pf-placeholder-' + track.id);
-      var evidenceEl = container.querySelector('#pf-evidence-' + track.id);
-      if (fill) { fill.style.transition = 'none'; fill.style.width = '100%'; }
-      if (placeholder) { placeholder.style.transition = 'none'; placeholder.style.opacity = '0'; }
-      if (evidenceEl) { evidenceEl.style.transition = 'none'; evidenceEl.style.opacity = '1'; }
-    });
-
-    var gateHeader = container.querySelector('#pf-gate-header');
-    if (gateHeader) { gateHeader.style.transition = 'none'; gateHeader.style.opacity = '1'; }
-    var chipsRow = container.querySelector('#pf-gate-chips');
-    if (chipsRow) { chipsRow.style.transition = 'none'; chipsRow.style.opacity = '1'; }
-  }
-
-  // ── Timeline steps ────────────────────────────────────────────────────────
+  // ── Timeline ──────────────────────────────────────────────────────────────
 
   var steps = [
-    // 1. 200ms: pipeline appears
-    { delay: 200, run: function() {
-      var el = container.querySelector('#pf-flow-row');
-      if (el) el.style.opacity = '1';
-    }},
-    // 2. 600ms: Baseline activates
-    { delay: 600, run: function() {
-      highlightNode('baseline', '#4A5064', 'var(--text-2)');
-    }},
-    // 3. 1000ms: token at Baseline
-    { delay: 1000, run: function() {
-      placeToken('baseline');
-    }},
-    // 4. 1400ms: Run activates
-    { delay: 1400, run: function() {
-      highlightNode('run', '#B44CFF', 'var(--accent)');
-      placeToken('run');
-    }},
-    // 5. 1800ms: Compare activates
-    { delay: 1800, run: function() {
-      highlightNode('compare', '#B44CFF', 'var(--accent)');
-      placeToken('compare');
-    }},
-    // 6. 2200ms: Challenge activates
+    { delay: 200,  run: function() { show('flow'); }},
+    { delay: 500,  run: function() { activateStage('baseline'); }},
+    { delay: 1300, run: function() { activateStage('aipass'); }},
     { delay: 2200, run: function() {
-      highlightNode('challenge', '#F3B34C', 'var(--amber)');
-      placeToken('challenge');
+      show('findings');
+      _t(function() { showFinding('f0', 'A'); }, 0);
+      _t(function() { showFinding('f1', 'A'); }, 200);
+      _t(function() { showFinding('f2', 'A'); }, 420);
     }},
-    // 7. 2600ms: Decide activates; gate header appears alongside
-    { delay: 2600, run: function() {
-      highlightNode('decide', '#58C994', 'var(--green)');
-      placeToken('decide');
-      var gh = container.querySelector('#pf-gate-header');
-      if (gh) gh.style.opacity = '1';
+    { delay: 4000, run: function() { activateStage('challenge'); }},
+    { delay: 4650, run: function() {
+      _t(function() { showFinding('f0', 'B'); }, 0);
+      _t(function() { showFinding('f1', 'B'); }, 260);
+      _t(function() { showFinding('f2', 'B'); }, 540);
     }},
-    // 8. 3200ms: Speed fills
-    { delay: 3200, run: function() { fillTrack('speed'); }},
-    // 9. 3800ms: Quality fills
-    { delay: 3800, run: function() { fillTrack('quality'); }},
-    // 10. 4400ms: Control fills
-    { delay: 4400, run: function() { fillTrack('control'); }},
-    // 11. 5000ms: Adoption fills
-    { delay: 5000, run: function() { fillTrack('adoption'); }},
-    // 12. 5600ms: Economics fills; gate options appear
-    { delay: 5600, run: function() {
-      fillTrack('economics');
-      var el = container.querySelector('#pf-gate-chips');
-      if (el) el.style.opacity = '1';
+    { delay: 5200, run: function() {
+      activateStage('evidence');
+      _t(function() { fillTrack('speed');     }, 0);
+      _t(function() { fillTrack('quality');   }, 440);
+      _t(function() { fillTrack('control');   }, 880);
+      _t(function() { fillTrack('adoption');  }, 1320);
+      _t(function() { fillTrack('economics'); }, 1760);
     }},
-    // 13. 6400ms: complete
-    { delay: 6400, run: function() {
-      _timers.push(setTimeout(function() {
-        container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
-      }, 400));
+    { delay: 7350, run: function() {
+      activateStage('decision');
+      show('gate-hdr');
+    }},
+    { delay: 8500, run: function() { show('gate-chips'); }},
+    { delay: 9300, run: function() {
+      container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
     }}
   ];
 
   var tl = createTimeline(steps);
 
-  // ── Public API ────────────────────────────────────────────────────────────
-
   return {
     play: function() {
       _timers.forEach(clearTimeout); _timers = [];
       build();
-      if (reduced) { showFinalFrame(); return; }
+      if (reduced) { showAll(); return; }
       tl.play();
     },
     pause:  tl.pause,
@@ -347,10 +351,14 @@ SceneDirector.register('proof-loop', function(container, manifest, reduced) {
     finish: function() {
       _timers.forEach(clearTimeout); _timers = [];
       build();
-      showFinalFrame();
+      showAll();
     },
     getAccessibleSummary: function() {
-      return 'A proof pipeline runs an obligation through five stages: Baseline, Run, Compare, Challenge, and Decide. Five evidence tracks fill progressively. An evidence gate presents four human-selected paths -- Stop and review, Refine approach, Repeat proof, or Controlled scale -- with no outcome preselected. A human decision-maker reviews the evidence and chooses.';
+      return 'An evidence test bench runs an obligation through five stages: Baseline, AI First Pass, Expert Challenge, Evidence, and Decision. '
+        + 'Three AI findings appear at the first pass: clause scope confirmed, evidence standard unresolved, policy link incomplete. '
+        + 'Expert challenge resolves both open items. '
+        + 'Five evidence channels fill in sequence: Speed, Quality, Control and traceability, Adoption, and Economics. '
+        + 'A human decision gate presents four options: Stop, Refine, Repeat, or Controlled scale. No outcome is preselected.';
     },
     destroy: function() {
       _timers.forEach(clearTimeout); _timers = [];
