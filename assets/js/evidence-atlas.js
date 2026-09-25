@@ -191,11 +191,20 @@
       '.ea-arch-comps{display:none;padding:8px 0 2px;flex-wrap:wrap;gap:4px;width:100%;flex-shrink:0}',
       '.ea-arch-chip{display:inline-block;padding:2px 8px;border-radius:3px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);font-size:11px;font-family:"Space Grotesk",sans-serif;color:' + C.text2 + ';margin-right:3px;margin-bottom:3px}',
       /* method */
-      '.ea-method-wrap{width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:14px;box-sizing:border-box;overflow-y:auto}',
+      '.ea-method-wrap{width:100%;height:100%;display:flex;flex-direction:column;gap:14px;padding:14px;box-sizing:border-box;overflow-y:auto}',
       '.ea-method-col-hd{font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:' + C.text1 + ';margin-bottom:12px}',
       '.ea-method-step{padding:11px 13px;margin-bottom:8px;border-radius:6px;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-left-width:3px;border-left-style:solid}',
       '.ea-method-num{font-family:"JetBrains Mono",monospace;font-size:9px;margin-bottom:3px}',
       '.ea-method-desc{font-size:13px;color:' + C.text2 + ';line-height:1.5}',
+      '.ea-method-flow{display:flex;flex-direction:row;align-items:flex-start;gap:6px;flex-shrink:0}',
+      '.ea-method-flow-step{flex:1;padding:12px 14px;border-radius:6px;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-left:3px solid ' + C.accent + '}',
+      '.ea-method-step-num{font-family:"JetBrains Mono",monospace;font-size:11px;color:' + C.accent + ';margin-bottom:4px;letter-spacing:.06em}',
+      '.ea-method-step-name{font-family:"Space Grotesk",sans-serif;font-size:14px;font-weight:700;color:' + C.text1 + ';margin-bottom:5px}',
+      '.ea-method-step-desc{font-size:13px;color:' + C.text2 + ';line-height:1.5}',
+      '.ea-method-arr{color:' + C.text3 + ';font-size:14px;padding-top:22px;flex-shrink:0}',
+      '.ea-method-bottom{display:flex;flex-direction:row;gap:14px;flex:1;min-height:0}',
+      '.ea-mat-col{flex:1;overflow-y:auto}',
+      '.ea-team-col{flex:0 0 260px;overflow:hidden}',
       '.ea-mat-row{padding:7px 13px;margin-bottom:5px;border-radius:6px;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-left-width:3px;border-left-style:solid}',
       '.ea-mat-label{display:flex;align-items:center;gap:6px;margin-bottom:2px}',
       '.ea-mat-lvl{font-family:"JetBrains Mono",monospace;font-size:9px}',
@@ -850,25 +859,31 @@
     canvas.appendChild(wrap);
   }
 
-  // ── VIEW 5: METHOD ─────────────────────────────────────────────
+  // ── VIEW 5: METHOD / OPERATING SYSTEM ─────────────────────────
+  // V31: Horizontal process flow (not equal-column grid) + maturity / team bottom section.
   function buildMethod(canvas) {
     var wrap = mk('div', { className: 'ea-method-wrap' });
     var matColors = [C.text3, C.cyan, C.green, C.amber, C.accent];
 
-    // Column 1: Evidence to design
-    var col1 = mk('div');
-    col1.appendChild(mk('div', { className: 'ea-method-col-hd', textContent: 'Evidence-to-design' }));
+    // Process flow: numbered steps with arrow connectors
+    var flow = mk('div', { className: 'ea-method-flow' });
     METHOD_STEPS.forEach(function (step, i) {
-      var s = mk('div', { className: 'ea-method-step', style: { borderLeftColor: C.accent } });
-      s.appendChild(mk('div', { className: 'ea-method-num', textContent: (i + 1).toString().padStart(2, '0') + ' -- ' + step.label.toUpperCase(), style: { color: C.accent } }));
-      s.appendChild(mk('div', { className: 'ea-method-desc', textContent: step.desc }));
-      col1.appendChild(s);
+      var stepEl = mk('div', { className: 'ea-method-flow-step' });
+      stepEl.appendChild(mk('div', { className: 'ea-method-step-num', textContent: (i + 1).toString().padStart(2, '0') + ': ' + step.label.toUpperCase() }));
+      stepEl.appendChild(mk('div', { className: 'ea-method-step-name', textContent: step.label }));
+      stepEl.appendChild(mk('div', { className: 'ea-method-step-desc', textContent: step.desc }));
+      flow.appendChild(stepEl);
+      if (i < METHOD_STEPS.length - 1) {
+        flow.appendChild(mk('div', { className: 'ea-method-arr', textContent: '→' }));
+      }
     });
-    wrap.appendChild(col1);
+    wrap.appendChild(flow);
 
-    // Column 2: Maturity criteria
-    var col2 = mk('div');
-    col2.appendChild(mk('div', { className: 'ea-method-col-hd', textContent: 'Maturity criteria' }));
+    // Bottom: Maturity criteria | Delivery team
+    var bottom = mk('div', { className: 'ea-method-bottom' });
+
+    var matCol = mk('div', { className: 'ea-mat-col' });
+    matCol.appendChild(mk('div', { className: 'ea-method-col-hd', textContent: 'Maturity criteria' }));
     MATURITY_LEVELS.forEach(function (lvl, i) {
       var r = mk('div', { className: 'ea-mat-row', style: { borderLeftColor: matColors[i] } });
       var lbl = mk('div', { className: 'ea-mat-label' });
@@ -876,23 +891,21 @@
       lbl.appendChild(mk('span', { className: 'ea-mat-name', textContent: lvl.label }));
       r.appendChild(lbl);
       r.appendChild(mk('div', { className: 'ea-mat-desc', textContent: lvl.desc }));
-      col2.appendChild(r);
+      matCol.appendChild(r);
     });
-    wrap.appendChild(col2);
+    bottom.appendChild(matCol);
 
-    // Column 3: Team (D3 ring diagram)
-    var col3 = mk('div');
-    col3.appendChild(mk('div', { className: 'ea-method-col-hd', textContent: 'Delivery team' }));
+    var teamCol = mk('div', { className: 'ea-team-col' });
+    teamCol.appendChild(mk('div', { className: 'ea-method-col-hd', textContent: 'Delivery team' }));
 
     var teamWrap = mk('div', { style: { width: '100%', maxWidth: '240px' } });
-
     var TEAM_ROLES = [
-      { ring: 0, label: 'Lead',        color: C.accent },
-      { ring: 1, label: 'Risk SME',    color: C.cyan   },
-      { ring: 1, label: 'AI Eng',      color: C.cyan   },
-      { ring: 2, label: 'Data',        color: C.green  },
-      { ring: 2, label: 'Design',      color: C.green  },
-      { ring: 2, label: 'Change',      color: C.green  }
+      { ring: 0, label: 'Lead',     color: C.accent },
+      { ring: 1, label: 'Risk SME', color: C.cyan   },
+      { ring: 1, label: 'AI Eng',   color: C.cyan   },
+      { ring: 2, label: 'Data',     color: C.green  },
+      { ring: 2, label: 'Design',   color: C.green  },
+      { ring: 2, label: 'Change',   color: C.green  }
     ];
 
     if (typeof d3 !== 'undefined') {
@@ -901,7 +914,6 @@
         .attr('viewBox', '0 0 ' + W2 + ' ' + H2).attr('width', '100%').attr('height', '100%')
         .attr('role', 'img').attr('aria-label', 'Delivery team cell diagram');
 
-      // Centre
       teamSvg.append('circle').attr('cx', CX2).attr('cy', CY2).attr('r', 30).attr('fill', C.surface).attr('stroke', C.accent).attr('stroke-width', 1.5).attr('stroke-opacity', 0.7);
       teamSvg.append('text').attr('x', CX2).attr('y', CY2 - 4).attr('text-anchor', 'middle').attr('font-size', '9').attr('font-family', '"Space Grotesk",sans-serif').attr('fill', C.accent).attr('font-weight', '700').text('Proof');
       teamSvg.append('text').attr('x', CX2).attr('y', CY2 + 8).attr('text-anchor', 'middle').attr('font-size', '8').attr('font-family', '"Space Grotesk",sans-serif').attr('fill', C.text3).text('objective');
@@ -923,13 +935,14 @@
         });
       });
     } else {
-      teamWrap.innerHTML = '<div style="font-size:12px;color:' + C.text2 + ';line-height:2">' + TEAM_ROLES.map(function (r5) { return r5.label; }).join(' -- ') + '</div>';
+      teamWrap.innerHTML = '<div style="font-size:12px;color:' + C.text2 + ';line-height:2">' + TEAM_ROLES.map(function (r5) { return r5.label; }).join(' / ') + '</div>';
     }
 
-    col3.appendChild(teamWrap);
-    col3.appendChild(mk('div', { className: 'ea-note', textContent: 'Cell structure: one lead, two or three capability SMEs per ring. Scales to engagement size.' }));
-    wrap.appendChild(col3);
+    teamCol.appendChild(teamWrap);
+    teamCol.appendChild(mk('div', { className: 'ea-note', textContent: 'Cell structure: one lead, two or three capability SMEs per ring. Scales to engagement size.' }));
+    bottom.appendChild(teamCol);
 
+    wrap.appendChild(bottom);
     canvas.appendChild(wrap);
   }
 
