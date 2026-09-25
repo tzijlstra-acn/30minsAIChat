@@ -673,51 +673,133 @@
     var SOLS = (typeof SOLUTIONS !== 'undefined') ? SOLUTIONS : [];
     var CLUSTERS = (typeof PORTFOLIO_CLUSTERS !== 'undefined') ? PORTFOLIO_CLUSTERS : [];
 
+    var PATTERN_LABELS = {
+      'agents':            'Agent',
+      'genai-copilots':    'GenAI copilot',
+      'analytics-ml':      'Analytics / ML',
+      'rpa-orchestration': 'RPA / Orchestration'
+    };
+
     var wrap = mk('div', { className: 'ea-const-wrap' });
+
+    // Summary strip
+    var activeClusters = CLUSTERS.filter(function (cl) {
+      return SOLS.some(function (s) { return s.portfolioClusterId === cl.id; });
+    });
+    wrap.appendChild(mk('div', {
+      style: { fontFamily: '"JetBrains Mono",monospace', fontSize: '11.5px', color: C.text3,
+               paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: '16px' },
+      textContent: SOLS.length + ' solutions across ' + activeClusters.length + ' clusters. Click any row to inspect evidence status.'
+    }));
 
     CLUSTERS.forEach(function (cluster) {
       var clSols = SOLS.filter(function (s) { return s.portfolioClusterId === cluster.id; });
       if (!clSols.length) return;
 
       var section = mk('div', { className: 'ea-const-cluster' });
-      var hd = mk('div', { className: 'ea-const-cluster-hd', style: { color: cluster.color || C.text1 }, textContent: cluster.name });
+
+      // Header with count
+      var hd = mk('div', { className: 'ea-const-cluster-hd', style: { color: cluster.color || C.text1 } });
+      hd.appendChild(mk('span', {
+        style: { display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%',
+                 background: cluster.color || C.text2, flexShrink: '0' }
+      }));
+      hd.appendChild(mk('span', { textContent: cluster.name }));
+      hd.appendChild(mk('span', {
+        textContent: clSols.length + (clSols.length > 1 ? ' solutions' : ' solution'),
+        style: { marginLeft: 'auto', fontFamily: '"JetBrains Mono",monospace', fontSize: '11px', color: C.text3, fontWeight: '400' }
+      }));
       section.appendChild(hd);
 
-      var grid = mk('div', { className: 'ea-const-grid' });
-      clSols.forEach(function (sol) {
-        var ev = sol.evidenceFlags || {};
-        var card = mk('div', { className: 'ea-sol-card', style: { borderColor: (cluster.color || 'rgba(255,255,255,0.09)') + '55' } });
-        card.appendChild(mk('div', { className: 'ea-sol-name', textContent: sol.displayName }));
-        card.appendChild(mk('div', { className: 'ea-sol-src', textContent: 'Source ' + sol.sourceNumber }));
+      // List rows — not equal-width cards
+      var list = mk('div', { style: { border: '1px solid rgba(255,255,255,0.06)', borderRadius: '6px', overflow: 'hidden' } });
 
-        var badges = mk('div', { className: 'ea-sol-badges' });
-        function badge(label, col) {
+      clSols.forEach(function (sol, si) {
+        var ev = sol.evidenceFlags || {};
+        var row = mk('div', {
+          style: { display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 12px',
+                   borderTop: si > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                   background: 'transparent', transition: 'background 0.15s' }
+        });
+
+        // Name + meta
+        var info = mk('div', { style: { flex: '1', minWidth: '0' } });
+        info.appendChild(mk('div', {
+          textContent: sol.displayName,
+          style: { fontFamily: '"Space Grotesk",sans-serif', fontSize: '14px', fontWeight: '600',
+                   color: C.text1, lineHeight: '1.3', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }
+        }));
+        var meta = mk('div', { style: { display: 'flex', gap: '8px', marginTop: '2px', alignItems: 'center' } });
+        meta.appendChild(mk('span', {
+          textContent: 'Source ' + sol.sourceNumber,
+          style: { fontFamily: '"JetBrains Mono",monospace', fontSize: '11px', color: C.text3 }
+        }));
+        var pat = PATTERN_LABELS[sol.technologyPatternId];
+        if (pat) {
+          meta.appendChild(mk('span', { textContent: '·', style: { color: C.text3 } }));
+          meta.appendChild(mk('span', {
+            textContent: pat,
+            style: { fontFamily: '"Space Grotesk",sans-serif', fontSize: '11.5px', color: C.text2 }
+          }));
+        }
+        info.appendChild(meta);
+        row.appendChild(info);
+
+        // Evidence status dots (kept separate, not merged)
+        var dots = mk('div', { style: { display: 'flex', gap: '4px', alignItems: 'center', flexShrink: '0' } });
+        function evDot(val, label, col) {
           return mk('span', {
-            className: 'ea-dr-badge',
-            textContent: label,
-            style: { color: col, borderColor: col }
+            title: label + ': ' + (val === true ? 'confirmed' : val === false ? 'not found' : 'not inspected'),
+            style: { display: 'inline-block', width: '7px', height: '7px', borderRadius: '50%',
+                     background: val === true ? col : 'transparent',
+                     border: '1px solid ' + (val === true ? col : 'rgba(255,255,255,0.18)'),
+                     flexShrink: '0' }
           });
         }
-        if (ev.concept === true)   badges.appendChild(badge('CONCEPT',   C.text2));
-        if (ev.prototype === true) badges.appendChild(badge('PROTOTYPE', C.cyan));
-        if (ev.asset === true)     badges.appendChild(badge('ASSET',     C.green));
-        if (ev.demo === true)      badges.appendChild(badge('DEMO',      C.cyan));
-        var lr = sol.legalReview;
-        if (lr === true)  badges.appendChild(badge('LEGAL OK',      C.green));
-        if (lr === false) badges.appendChild(badge('LEGAL PENDING', C.amber));
-        var sc = sol.sharingStatus === 'shareable' ? C.green : sol.sharingStatus === 'nda-required' ? C.amber : sol.sharingStatus === 'team' ? C.cyan : C.text3;
-        badges.appendChild(badge((sol.sharingStatus || 'to confirm').replace(/-/g, ' ').toUpperCase(), sc));
-        card.appendChild(badges);
+        dots.appendChild(evDot(ev.concept,  'Concept',   C.text2));
+        dots.appendChild(evDot(ev.prototype, 'Prototype', C.cyan));
+        dots.appendChild(evDot(ev.asset,     'Asset',     C.green));
+        dots.appendChild(evDot(ev.demo,      'Demo',      C.accent));
 
-        card.addEventListener('click', function () { openSolDrawer(sol.id); });
-        card.addEventListener('mouseenter', function () { card.style.borderColor = cluster.color || C.text1; });
-        card.addEventListener('mouseleave', function () { card.style.borderColor = (cluster.color || 'rgba(255,255,255,0.09)') + '55'; });
+        // Sharing status badge
+        var sc = sol.sharingStatus === 'shareable' ? C.green
+                : sol.sharingStatus === 'nda-required' ? C.amber
+                : sol.sharingStatus === 'team' ? C.cyan : C.text3;
+        dots.appendChild(mk('span', {
+          className: 'ea-dr-badge',
+          textContent: (sol.sharingStatus || 'to confirm').replace(/-/g, ' ').toUpperCase(),
+          style: { color: sc, borderColor: sc, flexShrink: '0', marginLeft: '4px' }
+        }));
+        row.appendChild(dots);
 
-        grid.appendChild(card);
+        row.addEventListener('click', function () { openSolDrawer(sol.id); });
+        row.addEventListener('mouseenter', function () { row.style.background = 'rgba(255,255,255,0.03)'; });
+        row.addEventListener('mouseleave', function () { row.style.background = 'transparent'; });
+
+        list.appendChild(row);
       });
-      section.appendChild(grid);
+
+      section.appendChild(list);
       wrap.appendChild(section);
     });
+
+    // Evidence key below list
+    var key = mk('div', { style: { display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap', alignItems: 'center' } });
+    function keyItem(col, label, filled) {
+      var ki = mk('div', { style: { display: 'flex', alignItems: 'center', gap: '5px',
+                                    fontFamily: '"Space Grotesk",sans-serif', fontSize: '12px', color: C.text2 } });
+      ki.appendChild(mk('span', { style: { width: '7px', height: '7px', borderRadius: '50%', display: 'inline-block',
+                                           background: filled ? col : 'transparent',
+                                           border: '1px solid ' + col, flexShrink: '0' } }));
+      ki.appendChild(document.createTextNode(label));
+      return ki;
+    }
+    key.appendChild(keyItem(C.text2, 'Concept', true));
+    key.appendChild(keyItem(C.cyan,  'Prototype', true));
+    key.appendChild(keyItem(C.green, 'Asset', true));
+    key.appendChild(keyItem(C.accent,'Demo', true));
+    key.appendChild(mk('span', { textContent: 'Hollow dot = not yet inspected', style: { fontFamily: '"JetBrains Mono",monospace', fontSize: '11px', color: C.text3 } }));
+    wrap.appendChild(key);
 
     canvas.appendChild(wrap);
   }
