@@ -34,18 +34,21 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
   ];
 
   var FLOW = [
-    { id: 'fn0', label: 'Input',        x: 455, y: 260 },
-    { id: 'fn1', label: 'AI Analysis',  x: 535, y: 260 },
-    { id: 'fn2', label: 'Human Review', x: 615, y: 260 },
+    { id: 'fn0', label: 'Baseline',     x: 455, y: 260 },
+    { id: 'fn1', label: 'AI Pass',      x: 535, y: 260 },
+    { id: 'fn2', label: 'Expert Check', x: 615, y: 260 },
     { id: 'fn3', label: 'Evidence',     x: 695, y: 260 }
   ];
 
+  // Knowledge layer: obligation chain spanning the enterprise frame
   var ENT_SVCS = [
-    { x: 210, v: 'Context'       },
-    { x: 400, v: 'Orchestration' },
-    { x: 600, v: 'Security'      },
-    { x: 790, v: 'Evidence'      },
-    { x: 970, v: 'Cost'          }
+    { x: 155, v: 'Obligation' },
+    { x: 295, v: 'Policy'     },
+    { x: 435, v: 'Control'    },
+    { x: 572, v: 'Process'    },
+    { x: 708, v: 'System'     },
+    { x: 843, v: 'Owner'      },
+    { x: 975, v: 'Evidence'   }
   ];
 
   // ── Helpers ───────────────────────────────────
@@ -184,7 +187,7 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
           'font-family': "'JetBrains Mono',monospace",
           'font-size': 11, fill: C_GREEN
         });
-        sep.textContent = '/';
+        sep.textContent = '→';
         sep.style.opacity = '0';
         sep.setAttribute('data-ent', '1');
         g.appendChild(sep);
@@ -346,7 +349,7 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
       x: 600, y: 46, 'text-anchor': 'middle',
       'font-family': "'JetBrains Mono',monospace", 'font-size': 14, fill: C_GREEN
     });
-    t.textContent = 'Pattern reused: 6 shared services, 0 duplicated builds';
+    t.textContent = 'Obligation pattern routes through shared knowledge layer';
     g.appendChild(t);
 
     _svg.appendChild(g);
@@ -442,16 +445,32 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
       zoomTo(0.9);
     }},
 
-    // Beat 10 (5800ms): ENTERPRISE frame fades in, spine draws left-to-right
-    { delay: 5800, run: function() {
+    // Beat 10 (6200ms): ENTERPRISE frame fades in, spine draws left-to-right
+    { delay: 6200, run: function() {
       fadeInEl('ent-layer', 500);
       var t1 = setTimeout(drawSpine,     350);
-      var t2 = setTimeout(showEntLabels, 650);
+      var t2 = setTimeout(showEntLabels, 700);
       _timers.push(t1, t2);
     }},
 
-    // Beat 11 (6500ms): reuse badge + complete
-    { delay: 6500, run: function() {
+    // Beat 11 (8000ms): highlight knowledge-layer chain node by node
+    { delay: 8000, run: function() {
+      if (!_svg) return;
+      var items = _svg.querySelectorAll('[data-ent]');
+      Array.prototype.forEach.call(items, function(e, i) {
+        // only highlight term nodes (even indices) not arrows (odd indices)
+        if (i % 2 !== 0) return;
+        var t = setTimeout(function() {
+          e.style.transition = 'fill 200ms ease';
+          e.setAttribute('fill', '#58C994');
+          e.setAttribute('font-weight', '700');
+        }, (i / 2) * 200);
+        _timers.push(t);
+      });
+    }},
+
+    // Beat 12 (9200ms): reuse badge + complete
+    { delay: 9200, run: function() {
       fadeInEl('reuse-badge', 500);
       var t3 = setTimeout(function() {
         container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
@@ -490,7 +509,7 @@ SceneDirector.register('scale-architecture', function(container, manifest, reduc
       showAll();
     },
     getAccessibleSummary: function() {
-      return 'The scene zooms from a single proof run outward through three layers: Proof, Production, and Enterprise reuse. A failure and controlled fallback are shown inside the proof context. Six shared services span the enterprise layer with a reuse badge confirming zero duplicated builds.';
+      return 'The scene zooms from a single proof run outward through three layers: Proof, Production, and Enterprise reuse. Inside the proof boundary, the obligation moves through Baseline, AI Pass, Expert Check, and Evidence stages. A failure and controlled fallback are shown. The production ring adds six governance controls. The enterprise frame reveals a knowledge layer chain: Obligation, Policy, Control, Process, System, Owner, and Evidence. The pattern is confirmed as routing through a shared knowledge layer.';
     },
     destroy: function() {
       _cleanup();
