@@ -53,6 +53,13 @@
     { "name": "user",                 "class": "ti-user",                 "semantic": "people-roles" },
     { "name": "user-check",           "class": "ti-user-check",           "semantic": "human-judgement" },
     { "name": "users",                "class": "ti-users",                "semantic": "people-roles" },
-    { "name": "x",                    "class": "ti-x",                    "semantic": "control" }
+    { "name": "x",                    "class": "ti-x",                    "semantic": "control" },
+    { "name": "category",             "class": "ti-category",             "semantic": "ai-work" },
+    { "name": "layout-dashboard",     "class": "ti-layout-dashboard",     "semantic": "workspace" },
+    { "name": "lock",                 "class": "ti-lock",                 "semantic": "control" },
+    { "name": "building-bank",        "class": "ti-building-bank",        "semantic": "organisation" },
+    { "name": "eye",                  "class": "ti-eye",                  "semantic": "insight" },
+    { "name": "pencil",               "class": "ti-pencil",               "semantic": "draft" },
+    { "name": "bolt",                 "class": "ti-bolt",                 "semantic": "automation" }
   ]
 }

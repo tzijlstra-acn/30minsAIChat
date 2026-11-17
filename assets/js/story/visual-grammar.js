@@ -1,5 +1,6 @@
-// -- VISUAL GRAMMAR -- V26 --
+// -- VISUAL GRAMMAR -- V27 --
 // Reusable visual primitive factories for scene composition.
+// V27 adds the story kit (StoryKit) for the TPRM transition story, at the end of this file.
 // V26 semantic colours:
 //   Cyan   (#55C7E8) -- data and context
 //   Purple (#B44CFF) -- AI work
@@ -637,6 +638,259 @@
     }
   };
 
+  // ══ V27 STORY KIT ══════════════════════════════════════════════
+  // Primitives for the TPRM transition story. Colours come from CSS classes in
+  // scenes.css (ts-c-data, ts-c-ai, ts-c-human, ts-c-proof, ts-c-gap), never from
+  // inline hex values. Case facts come from window.TPRM_CASE.
+  // Exposes: StoryKit.canvas, el, svg, path, on, complete, CaseBadge, EvidenceChip,
+  //          UncertaintyBadge, DecisionGate, ReceiptState, ProofGate
+
+  // Element helper: el('div', 'ts-obj ts-c-ai', 'Text', { left: 10, top: 20, width: 100 })
+  // Numeric geometry keys become absolute px positions inside the design canvas.
+  var _GEOM = ['left', 'top', 'width', 'height', 'right', 'bottom'];
+  function el(tag, cls, text, geom) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined && text !== null) node.textContent = text;
+    if (geom) {
+      node.style.position = 'absolute';
+      _GEOM.forEach(function(k) { if (geom[k] !== undefined) node.style[k] = geom[k] + 'px'; });
+    }
+    return node;
+  }
+
+  function svg(tag, attrs, cls) {
+    var node = _svgEl(tag, attrs);
+    if (cls) node.setAttribute('class', cls);
+    return node;
+  }
+
+  // Icon as a span with the local Tabler icon font. A span (not <i>) keeps the icon
+  // registry from swapping it for a sprite SVG that the stage-wide svg rule would stretch.
+  function icon(name, cls) {
+    var node = document.createElement('span');
+    node.className = 'ti ' + name + (cls ? ' ' + cls : '');
+    node.setAttribute('aria-hidden', 'true');
+    return node;
+  }
+
+  // Connector path that draws itself when it gains ts-on. pathLength=1 avoids measuring.
+  function path(parent, d, cls, markerId) {
+    var p = svg('path', { d: d, pathLength: '1' }, 'ts-draw ' + (cls || ''));
+    if (markerId) p.setAttribute('marker-end', 'url(#' + markerId + ')');
+    parent.appendChild(p);
+    return p;
+  }
+
+  function on(node) {
+    if (!node) return;
+    if (node.length !== undefined && !node.classList) {
+      Array.prototype.forEach.call(node, on);
+      return;
+    }
+    if (node.classList) node.classList.add('ts-on');
+    else node.setAttribute('class', (node.getAttribute('class') || '') + ' ts-on');
+  }
+
+  function complete(container) {
+    container.dispatchEvent(new CustomEvent('scene:complete', { bubbles: true }));
+  }
+
+  // Design canvas: a fixed w x h coordinate space scaled to fit the stage, centred.
+  // The scene's static fallback SVG is detached and kept, so renderError can restore it.
+  function canvas(container, w, h, opts) {
+    opts = opts || {};
+    var fallback = container.querySelector('[data-scene-fallback]');
+    if (fallback) container._tsFallback = fallback;
+    // Keep the accessible summary the director injected before the scene built
+    var summary = container.querySelector(':scope > .scene-accessible-summary');
+    container.innerHTML = '';
+    if (summary) container.appendChild(summary);
+
+    var root = el('div', 'scene-root ts-root');
+    var cv = el('div', 'ts-canvas');
+    cv.style.width = w + 'px';
+    cv.style.height = h + 'px';
+    var overlay = svg('svg', { width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, 'aria-hidden': 'true' }, 'ts-svg');
+    var defs = svg('defs');
+    ['data', 'ai', 'human', 'proof', 'gap', 'neutral'].forEach(function(c) {
+      var m = svg('marker', { id: 'ts-arrow-' + (opts.id || 'x') + '-' + c, viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' });
+      m.appendChild(svg('path', { d: 'M0,0 L10,5 L0,10 z' }, 'ts-fill-' + c));
+      defs.appendChild(m);
+    });
+    overlay.appendChild(defs);
+    cv.appendChild(overlay);
+    root.appendChild(cv);
+    container.appendChild(root);
+
+    function fit() {
+      var r = root.getBoundingClientRect();
+      var s = Math.min(r.width / w, r.height / h, opts.maxScale || 1.3);
+      if (!isFinite(s) || s <= 0) s = 1;
+      cv.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+      cv.dataset.scale = s.toFixed(3);
+    }
+    fit();
+
+    var ro = null;
+    if (window.ResizeObserver) {
+      ro = new ResizeObserver(function() { fit(); });
+      ro.observe(root);
+    }
+
+    return {
+      root: root, el: cv, svg: overlay,
+      marker: function(c) { return 'ts-arrow-' + (opts.id || 'x') + '-' + c; },
+      fit: fit,
+      setStatic: function(isStatic) { root.classList.toggle('ts-static', !!isStatic); },
+      destroy: function() { if (ro) ro.disconnect(); ro = null; }
+    };
+  }
+
+  // Restore the static fallback after a render error. Never leaves the stage blank.
+  function restoreFallback(container) {
+    // The scene may have failed before it built, so the fallback can still be in place
+    var fb = container._tsFallback || container.querySelector('[data-scene-fallback]');
+    var summary = container.querySelector(':scope > .scene-accessible-summary');
+    container.innerHTML = '';
+    if (fb) {
+      container.appendChild(fb);
+      fb.style.display = 'block';
+      fb.removeAttribute('hidden');
+    }
+    if (summary) container.appendChild(summary);
+  }
+
+  function _case() { return window.TPRM_CASE || null; }
+
+  function _stateLabel(stateId) {
+    var c = _case();
+    if (!c) return stateId || '';
+    var s = c.states.filter(function(x) { return x.id === stateId; })[0];
+    return s ? s.label : (stateId || '');
+  }
+
+  // ── CaseBadge ── persistent synthetic-case identity, read from TPRM_CASE
+  var CaseBadge = {
+    create: function(parent, opts) {
+      opts = opts || {};
+      var c = _case();
+      var node = el('div', 'ts-case' + (opts.compact ? ' ts-case-compact' : ''));
+      node.setAttribute('data-visual-object', 'case-badge');
+      node.setAttribute('data-case-id', c ? c.id : '');
+      node.appendChild(el('span', 'ts-case-tag', c ? c.label : 'Synthetic case'));
+      node.appendChild(el('span', 'ts-case-id', c ? c.id : ''));
+      if (!opts.compact && c) node.appendChild(el('span', 'ts-case-meta', c.providerShort));
+      var state = el('span', 'ts-case-state', _stateLabel(opts.state));
+      if (opts.state) state.setAttribute('data-state', opts.state);
+      node.appendChild(state);
+      if (parent) parent.appendChild(node);
+      return {
+        el: node,
+        setState: function(id) { state.textContent = _stateLabel(id); state.setAttribute('data-state', id); }
+      };
+    }
+  };
+
+  // ── EvidenceChip ── one authorised evidence object and its state
+  var EvidenceChip = {
+    create: function(parent, opts) {
+      opts = opts || {};
+      var st = (opts.state || 'verified').toLowerCase();
+      var node = el('div', 'ts-evidence s-' + st);
+      node.setAttribute('data-visual-object', 'evidence-chip');
+      node.appendChild(icon(st === 'missing' ? 'ti-alert-triangle' : 'ti-file-check'));
+      var body = el('div', 'ts-evidence-body');
+      body.appendChild(el('div', 'ts-evidence-name', opts.label || ''));
+      if (opts.detail) body.appendChild(el('div', 'ts-evidence-detail', opts.detail));
+      node.appendChild(body);
+      node.appendChild(el('span', 'ts-evidence-state', opts.stateLabel || st));
+      if (parent) parent.appendChild(node);
+      return { el: node };
+    }
+  };
+
+  // ── UncertaintyBadge ── a named gap. Amber, dashed, always visible.
+  var UncertaintyBadge = {
+    create: function(parent, opts) {
+      opts = opts || {};
+      var node = el('div', 'ts-uncertain');
+      node.setAttribute('data-visual-object', 'uncertainty');
+      node.appendChild(icon('ti-alert-triangle'));
+      node.appendChild(el('span', 'ts-uncertain-text', opts.label || ''));
+      if (opts.note) node.appendChild(el('span', 'ts-uncertain-note', opts.note));
+      if (parent) parent.appendChild(node);
+      return { el: node };
+    }
+  };
+
+  // ── DecisionGate ── amber human decision gate. activate() marks it as waiting.
+  var DecisionGate = {
+    create: function(parent, opts) {
+      opts = opts || {};
+      var node = el('div', 'ts-gate' + (opts.size === 'small' ? ' ts-gate-small' : ''));
+      node.setAttribute('data-visual-object', 'decision-gate');
+      node.appendChild(el('div', 'ts-gate-mark'));
+      if (opts.label) node.appendChild(el('div', 'ts-gate-label', opts.label));
+      if (opts.sub) node.appendChild(el('div', 'ts-gate-sub', opts.sub));
+      if (parent) parent.appendChild(node);
+      return {
+        el: node,
+        activate: function() { node.classList.add('is-active'); },
+        pass: function() { node.classList.remove('is-active'); node.classList.add('is-passed'); }
+      };
+    }
+  };
+
+  // ── ReceiptState ── pending, writing, acknowledged. Green only on acknowledgement.
+  var _RECEIPT = {
+    pending: { icon: 'ti-clock', text: 'Not written' },
+    blocked: { icon: 'ti-lock-check', text: 'Write blocked until approval' },
+    writing: { icon: 'ti-plug', text: 'Connector writing' },
+    acknowledged: { icon: 'ti-circle-check', text: 'Acknowledged, receipt recorded' }
+  };
+  var ReceiptState = {
+    create: function(parent, opts) {
+      opts = opts || {};
+      var node = el('div', 'ts-receipt');
+      node.setAttribute('data-visual-object', 'receipt');
+      var glyph = icon('');
+      var text = el('span', 'ts-receipt-text');
+      node.appendChild(glyph);
+      node.appendChild(text);
+      function set(state, label) {
+        var info = _RECEIPT[state] || _RECEIPT.pending;
+        node.setAttribute('data-state', state);
+        glyph.className = 'ti ' + info.icon;
+        text.textContent = label || info.text;
+      }
+      set(opts.state || 'pending', opts.label);
+      if (parent) parent.appendChild(node);
+      return { el: node, set: set };
+    }
+  };
+
+  // ── ProofGate ── a delivery or evidence gate: decide continue, adjust or stop.
+  var ProofGate = {
+    create: function(parent, opts) {
+      opts = opts || {};
+      var node = el('div', 'ts-proofgate');
+      node.setAttribute('data-visual-object', 'proof-gate');
+      node.appendChild(el('div', 'ts-proofgate-mark'));
+      if (opts.label) node.appendChild(el('div', 'ts-proofgate-label', opts.label));
+      if (opts.sub) node.appendChild(el('div', 'ts-proofgate-sub', opts.sub));
+      if (parent) parent.appendChild(node);
+      return { el: node, pass: function() { node.classList.add('is-passed'); } };
+    }
+  };
+
+  window.StoryKit = {
+    el: el, svg: svg, icon: icon, path: path, on: on, complete: complete,
+    canvas: canvas, restoreFallback: restoreFallback,
+    CaseBadge: CaseBadge, EvidenceChip: EvidenceChip, UncertaintyBadge: UncertaintyBadge,
+    DecisionGate: DecisionGate, ReceiptState: ReceiptState, ProofGate: ProofGate
+  };
+
   window.VisualGrammar = {
     Signal:          Signal,
     ContextNode:     ContextNode,
@@ -647,6 +901,7 @@
     SystemField:     SystemField,
     WorkLane:        WorkLane,
     MetricStrip:     MetricStrip,
+    StoryKit:        window.StoryKit,
   };
 
 }());
