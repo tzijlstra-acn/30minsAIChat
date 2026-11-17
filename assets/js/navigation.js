@@ -16,8 +16,47 @@ function buildNav(){
   buildChapterTabs();
   buildAgendaDrawer();
   setupRouteMode();
-  // V12 continuity
-  setTimeout(function(){buildHandoffCues();updateCandidateToken();},0);
+  buildCaseThreads();
+  buildAtlasLinks();
+  loadStoryManifest();
+  var ctr=document.getElementById('counter');
+  if(ctr)ctr.textContent='1 / '+sections.filter(function(s){return s.dataset.route==='core';}).length;
+}
+
+// ── CASE THREAD ──
+// Header chip on case screens. Text comes from window.TPRM_CASE, never from the HTML.
+function buildCaseThreads(){
+  var c=window.TPRM_CASE;if(!c)return;
+  var states={};c.states.forEach(function(s){states[s.id]=s.label;});
+  document.querySelectorAll('.case-thread[data-case-state]').forEach(function(el){
+    var st=el.dataset.caseState;
+    el.innerHTML='<span class="case-thread-dot"></span><span class="case-thread-tag">'+c.label+'</span>'
+      +'<span class="case-thread-text">'+c.id+'</span><span class="case-thread-sep"></span>'
+      +'<span class="case-thread-status s-'+st+'">'+(states[st]||st)+'</span>';
+    el.setAttribute('aria-label',c.label+' '+c.id+': '+(states[st]||st));
+  });
+}
+
+// ── EVIDENCE ATLAS LINKS ──
+// Core screens link to one atlas view. The atlas remembers which screen to return to.
+function buildAtlasLinks(){
+  document.querySelectorAll('[data-atlas-view]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var sec=a.closest('section');
+      openAtlasView(a.dataset.atlasView,sec&&sec.id);
+    });
+  });
+}
+
+function openAtlasView(view,fromId){
+  try{if(fromId)sessionStorage.setItem('nfr_atlas_return',fromId);}catch(e){}
+  window.NFR_ATLAS_PENDING_VIEW=view;
+  if(window.EvidenceAtlas&&window.EvidenceAtlas.isReady&&window.EvidenceAtlas.isReady()){
+    window.EvidenceAtlas.switchView(view);
+    window.NFR_ATLAS_PENDING_VIEW=null;
+  }
+  goToId('ref-room');
 }
 
 function buildChapterTabs(){
@@ -36,27 +75,19 @@ function buildAgendaDrawer(){
       return '<a class="agenda-slide-link" data-sidx="'+s.idx+'" href="#'+s.id+'" onclick="goToIndex('+s.idx+');closeAgenda();return false;"><div class="agenda-slide-dot"></div>'+s.title+'</a>';
     }).join('');
     return '<div class="agenda-chapter"><div class="agenda-ch-head"><div class="agenda-ch-name">'+c.title+'</div><div class="agenda-ch-method">'+method+'</div></div><div class="agenda-slides">'+slides+'</div></div>';
-  }).join('');
-  // Questions tab
-  var qs=document.getElementById('agendaQuestions');
-  if(qs){
-    var quickJumps=[
-      {label:'WHY NOW? Pressure is rising on both sides.',id:'pressure-rising'},
-      {label:'WHAT AI IS? AI is a stack, not one tool.',id:'ai-stack'},
-      {label:'WHAT AI IS? Start with the task, not the model.',id:'task-route'},
-      {label:'WHERE IT APPLIES? See one obligation move.',id:'regulation-process'},
-      {label:'WHERE IT APPLIES? The use case changes the system.',id:'transformation-implications'},
-      {label:'WHERE IT APPLIES? Humans move toward judgement.',id:'work-role-shift'},
-      {label:'HOW TO PROVE? Prove one outcome on real work.',id:'proof-loop'},
-      {label:'HOW TO SCALE? Scale the pattern, not the pilot.',id:'scale-architecture'},
-      {label:'HOW TO SCALE? Manage cost per successful case.',id:'unit-economics'},
-      {label:'HOW TO SCALE? Use AI twice.',id:'dual-engine'},
-      {label:'WHAT NEXT? Begin with one evidence-led move.',id:'next-move'}
-    ];
-    qs.innerHTML=quickJumps.map(function(q){
-      return '<a class="agenda-qjump" href="#'+q.id+'" onclick="goToId(\''+q.id+'\');closeAgenda();return false;"><i class="ti ti-arrow-right" style="font-size:11px"></i>'+q.label+'</a>';
-    }).join('');
-  }
+  }).join('')
+  // Quick jump: straight to the business-case assumptions drawer
+  +'<div class="agenda-chapter"><div class="agenda-ch-head"><div class="agenda-ch-name">QUICK JUMP</div></div><div class="agenda-slides">'
+  +'<a class="agenda-slide-link" id="agendaRoiJump" href="#business-case" onclick="closeAgenda();openRoiAssumptions();return false;"><div class="agenda-slide-dot"></div>Business-case assumptions</a>'
+  +'</div></div>';
+}
+
+// Opens the ROI assumptions drawer from anywhere: scrolls to the business case first.
+function openRoiAssumptions(){
+  goToId('business-case');
+  setTimeout(function(){
+    if(window.BusinessCaseScene&&typeof window.BusinessCaseScene.openAssumptions==='function')window.BusinessCaseScene.openAssumptions();
+  },450);
 }
 
 function setupRouteMode(){
@@ -164,27 +195,39 @@ function toggleTheme(){
 }
 
 // ── MANIFEST LOOKUP ──
+// The DOM is the source of truth for which scene a screen plays (data-scene).
+// story-manifest.json enriches entries with duration, handoff token and case state.
 var _storyManifest=null;
 function getManifestEntry(screenId){
-  if(!_storyManifest){
-    // Inline V13 manifest for quick lookup (matches story-manifest.json)
-    _storyManifest={};
-    var screens=[
-      {id:'cover',scene:'cover-flow'},{id:'pressure-rising',scene:'pressure-convergence'},
-      {id:'ai-stack',scene:'ai-stack-build'},{id:'task-route',scene:'task-route'},
-      {id:'regulation-process',scene:'regulation-process'},{id:'transformation-implications',scene:'transformation-system'},
-      {id:'work-role-shift',scene:'work-role-shift'},{id:'proof-loop',scene:'proof-loop'},
-      {id:'scale-architecture',scene:'scale-architecture'},{id:'unit-economics',scene:'unit-economics'},
-      {id:'dual-engine',scene:'dual-engine'},{id:'next-move',scene:'next-move'}
-    ];
-    screens.forEach(function(s){_storyManifest[s.id]=s;});
+  if(!_storyManifest)_storyManifest={};
+  if(!_storyManifest[screenId]){
+    var sec=document.getElementById(screenId);
+    if(!sec||!sec.dataset.scene)return null;
+    _storyManifest[screenId]={id:screenId,scene:sec.dataset.scene};
   }
-  return _storyManifest[screenId]||null;
+  return _storyManifest[screenId];
+}
+
+function loadStoryManifest(){
+  if(!window.fetch)return;
+  fetch('assets/data/story-manifest.json').then(function(r){return r.ok?r.json():null;}).then(function(m){
+    if(!m||!m.screens)return;
+    if(!_storyManifest)_storyManifest={};
+    m.screens.forEach(function(s){
+      var sec=document.getElementById(s.id);
+      // A manifest entry never overrides the scene the DOM declares
+      if(sec&&sec.dataset.scene)s.scene=sec.dataset.scene;
+      _storyManifest[s.id]=s;
+    });
+  }).catch(function(){});
 }
 
 // ── KEYBOARD + SWIPE ──
 document.addEventListener('keydown',function(e){
-  if(['INPUT','TEXTAREA'].indexOf(e.target.tagName)>-1)return;
+  var tag=e.target&&e.target.tagName;
+  if(['INPUT','TEXTAREA','SELECT'].indexOf(tag)>-1)return;
+  // Let focused buttons and links activate with Space and Enter
+  if((tag==='BUTTON'||tag==='A')&&(e.key===' '||e.key==='Enter'))return;
   if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();goToIndex(current+1);}
   else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();goToIndex(current-1);}
   else if((e.key==='g'||e.key==='G')&&!e.metaKey&&!e.ctrlKey){e.preventDefault();openAgenda();}
@@ -219,68 +262,3 @@ function copyTakeaway(){
 
 // ── RESET ──
 function resetSession(){if(confirm('Reset all session selections?')){resetState();location.reload();}}
-
-// ── V12 CANDIDATE TOKEN ──
-// Screens that should carry the proof-candidate identity badge
-var CANDIDATE_SCREENS=['process-twin','transformation-system','work-workforce-workbench',
-  'proof-value-capture','industrialization-arch','run-economics','accenture-edge',
-  'lean-transition','decision-next-step'];
-
-function updateCandidateToken(){
-  var candidateId=typeof store!=='undefined'?store.getState().proofCandidateId:null;
-  var candidateName=null;
-  if(candidateId&&typeof USE_CASES!=='undefined'){
-    var uc=USE_CASES.find(function(u){return u.id===candidateId;});
-    if(uc)candidateName=uc.name;
-  }
-  CANDIDATE_SCREENS.forEach(function(secId){
-    var sec=document.getElementById(secId);if(!sec)return;
-    var tok=sec.querySelector('.v12-candidate-token');
-    if(!tok){
-      tok=document.createElement('div');tok.className='v12-candidate-token';
-      var inner=sec.querySelector('.inner');if(inner)inner.insertBefore(tok,inner.firstChild);
-    }
-    if(candidateName){
-      tok.innerHTML='<span class="v12-ct-label">Proof candidate</span><span class="v12-ct-name">'+candidateName+'</span>';
-      tok.classList.add('v12-ct-active');
-    } else {
-      tok.innerHTML='<span class="v12-ct-label">Proof candidate</span><span class="v12-ct-pending">Select one on screen 04</span>';
-      tok.classList.remove('v12-ct-active');
-    }
-  });
-}
-
-// ── V12 HANDOFF CUES ──
-var HANDOFF_MAP={
-  'setting-scene':'WHERE TO START?','ai-landscape':'WHERE TO START?',
-  'capability-hotspots':'WHERE TO START?','exec-shortlist':'WHAT CHANGES?',
-  'process-twin':'WHAT CHANGES?','transformation-system':'WHAT CHANGES?',
-  'work-workforce-workbench':'HOW TO PROVE?','proof-value-capture':'HOW TO SCALE?',
-  'industrialization-arch':'HOW TO SCALE?','run-economics':'HOW TO SCALE?',
-  'accenture-edge':'WHAT NEXT?','lean-transition':'WHAT NEXT?'
-};
-
-function buildHandoffCues(){
-  Object.keys(HANDOFF_MAP).forEach(function(secId){
-    var sec=document.getElementById(secId);if(!sec)return;
-    if(sec.querySelector('.v12-handoff'))return;
-    var cue=document.createElement('div');
-    cue.className='v12-handoff';
-    cue.innerHTML='<span class="v12-hf-label">Next question</span><button class="v12-hf-btn" onclick="goToId(\''+nextSectionId(secId)+'\')">'
-      +HANDOFF_MAP[secId]+'<i class="ti ti-arrow-down" style="margin-left:5px;font-size:11px"></i></button>';
-    sec.appendChild(cue);
-  });
-}
-
-function nextSectionId(fromId){
-  var coreSecs=sections.filter(function(s){return s.dataset.route==='core';});
-  for(var i=0;i<coreSecs.length-1;i++){if(coreSecs[i].id===fromId)return coreSecs[i+1].id;}
-  return fromId;
-}
-
-// Listen for candidate changes
-document.addEventListener('nfr:statechange',function(e){
-  if(e.detail&&e.detail.action&&e.detail.action.type==='SET_PROOF_CANDIDATE'){
-    updateCandidateToken();
-  }
-});

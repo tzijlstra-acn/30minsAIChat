@@ -50,18 +50,21 @@ var SceneDirector = (function() {
 
   var _resizeObserver = null;
 
+  // Resize is layout-only: it never pauses the timeline. The first observation is the
+  // initial size, which the scene has already laid out for, so it is skipped.
   function _attachResizeObserver(container, instance) {
     if (_resizeObserver) { _resizeObserver.disconnect(); _resizeObserver = null; }
     if (!window.ResizeObserver || !instance.resize) return;
     var debounceTimer = null;
+    var initial = true;
     _resizeObserver = new ResizeObserver(function(entries) {
       var entry = entries[0];
       if (!entry) return;
+      if (initial) { initial = false; return; }
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(function() {
-        if (!_current) return;
+        if (!_current || _current.instance !== instance) return;
         try {
-          instance.pause();
           instance.resize({ width: entry.contentRect.width, height: entry.contentRect.height });
         } catch(e) {}
       }, 120);
@@ -110,6 +113,12 @@ var SceneDirector = (function() {
     }
     _current = { sceneId: manifestEntry.scene, instance: instance, manifest: manifestEntry, state: 'loading' };
     _paused = false;
+    var onComplete = function() {
+      if (_current && _current.instance === instance) _setState('complete');
+    };
+    container.removeEventListener('scene:complete', container._sdOnComplete || onComplete);
+    container._sdOnComplete = onComplete;
+    container.addEventListener('scene:complete', onComplete);
     _attachResizeObserver(container, instance);
     _injectAccessibleSummary(container, instance);
     var readyPromise = document.fonts ? document.fonts.ready : Promise.resolve();
@@ -202,39 +211,53 @@ var SceneDirector = (function() {
 // mount() is implicit: the factory call itself is mount. renderError(err) replaces renderFallback.
 function createTimeline(steps) {
   // steps: array of { delay: ms, run: function }
+  // Checkpointed: pause records elapsed time and which steps have run; resume
+  // schedules only the remaining steps, offset by the time already played.
   var timers = [];
   var finished = false;
-  var _startedAt = 0;
+  var _startedAt = 0;   // wall-clock start of the running segment, 0 when not running
+  var _elapsed = 0;     // timeline ms played before the running segment
+  var _ran = [];        // _ran[i] is true once step i has run
 
-  function play() {
-    reset();
-    finished = false;
+  function _runStep(i) {
+    if (finished || _ran[i]) return;
+    _ran[i] = true;
+    try { steps[i].run(); } catch(e) {}
+  }
+
+  function _schedule(fromMs) {
     _startedAt = Date.now();
-    steps.forEach(function(step) {
-      timers.push(setTimeout(function() {
-        if (!finished) try { step.run(); } catch(e) {}
-      }, step.delay));
+    steps.forEach(function(step, i) {
+      if (_ran[i]) return;
+      timers.push(setTimeout(function() { _runStep(i); }, Math.max(0, step.delay - fromMs)));
     });
   }
 
+  function play() {
+    reset();
+    _schedule(0);
+  }
+
   function pause() {
+    if (_startedAt) { _elapsed += Date.now() - _startedAt; _startedAt = 0; }
     timers.forEach(clearTimeout);
     timers = [];
   }
 
   function resume() {
-    // Simplified: replay from start (checkpoint tracking would require per-step state)
-    play();
+    if (finished || _startedAt) return;
+    _schedule(_elapsed);
   }
 
   function seek(progress) {
-    // Run all steps up to progress (0-1) synchronously, skip the rest
+    // Run every step up to progress (0-1) synchronously; later steps wait for resume()
     pause();
     var totalDuration = steps.length ? steps[steps.length - 1].delay : 0;
     var targetMs = progress * totalDuration;
-    steps.forEach(function(step) {
-      if (step.delay <= targetMs) try { step.run(); } catch(e) {}
+    steps.forEach(function(step, i) {
+      if (step.delay <= targetMs) _runStep(i);
     });
+    _elapsed = targetMs;
   }
 
   function reset() {
@@ -242,14 +265,14 @@ function createTimeline(steps) {
     timers = [];
     finished = false;
     _startedAt = 0;
+    _elapsed = 0;
+    _ran = [];
   }
 
   function finish() {
     reset();
+    steps.forEach(function(step, i) { _runStep(i); });
     finished = true;
-    steps.forEach(function(step) {
-      try { step.run(); } catch(e) {}
-    });
   }
 
   function resize() {
@@ -343,11 +366,11 @@ window.sceneUtils = {
 // Runs after all scene scripts are parsed (DOMContentLoaded fires after inline scripts).
 // Logs and marks any missing registrations so they surface before deployment.
 document.addEventListener('DOMContentLoaded', function() {
-  var REQUIRED_SCENES = [
-    'cover-flow', 'pressure-convergence', 'ai-stack-build', 'task-route',
-    'regulation-process', 'transformation-system', 'work-role-shift',
-    'proof-loop', 'scale-architecture', 'unit-economics', 'dual-engine', 'next-move'
-  ];
+  // Every scene a section declares must be registered. The DOM is the source of truth.
+  var REQUIRED_SCENES = Array.prototype.map.call(
+    document.querySelectorAll('section[data-scene]'),
+    function(sec) { return sec.dataset.scene; }
+  );
 
   var missing = REQUIRED_SCENES.filter(function(id) { return !SceneDirector.hasScene(id); });
   if (missing.length) {
