@@ -1,4 +1,4 @@
-# AUDIT BASELINE — NFR AI Pitch V11
+# AUDIT BASELINE - NFR AI Pitch V11
 
 Created: 2026-09-22
 Commit baseline: 4f45f74 (V9 Phase 9 complete)
@@ -69,7 +69,7 @@ Note: V11 plan adds `maturity-matrix` (currently reference M1) to core route as 
 
 | Control | Element | Current behaviour | State updated | Visual change |
 |---------|---------|-----------------|---------------|---------------|
-| Route start buttons (Executive / Working session) | `[data-start-route]` | Calls `setRouteMode()` + `goToIndex(1)` | `CLIENT_STATE.route` | None visible — `setRouteMode` is a stub |
+| Route start buttons (Executive / Working session) | `[data-start-route]` | Calls `setRouteMode()` + `goToIndex(1)` | `CLIENT_STATE.route` | None visible - `setRouteMode` is a stub |
 | Archetype toggle A/B | `[data-arch]` | Calls `setArchetype()`, re-renders role bars | `CLIENT_STATE.archetype` | Role bars re-render |
 | Lens toggle Joint/CRO/CFO | `[data-lens]` | Calls `setLens()`, re-renders shortlist | `CLIENT_STATE.lens` | Shortlist re-renders |
 | Pressure cards | `[data-pid]` | Calls `togglePressure()`, updates card opacity | `CLIENT_STATE.pressures` | Card opacity/selection |
@@ -94,7 +94,7 @@ Note: V11 plan adds `maturity-matrix` (currently reference M1) to core route as 
 
 ## 4. State variables
 
-### Current state (state.js — CLIENT_STATE)
+### Current state (state.js - CLIENT_STATE)
 
 ```js
 {

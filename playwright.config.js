@@ -18,8 +18,9 @@ module.exports = defineConfig({
     { name: '1024x768', use: { ...devices['Desktop Chrome'], viewport: { width: 1024, height: 768 } } },
   ],
   webServer: {
-    command: 'python -m http.server 8080',
-    url: 'http://localhost:8080',
+    // Node static server: python -m http.server refuses connections under parallel workers
+    command: 'node scripts/serve.js 8080',
+    url: 'http://localhost:8080/pitch.html',
     reuseExistingServer: true,
     timeout: 10000,
   },

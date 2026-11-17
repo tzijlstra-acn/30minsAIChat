@@ -2,7 +2,7 @@
 /**
  * audit:story -- checks screen count, title/subtitle word counts, causal logic markers
  * Fails (exit 1) when any P0 story condition is detected:
- *   - more than 12 core screens
+ *   - more than 13 core screens (V27: 13-screen TPRM transition story)
  *   - any core h2 over 10 words
  *   - any core subtitle over 22 words
  *   - any core h2 that starts with a definite article (weak framing)
@@ -55,10 +55,11 @@ var refScreens  = sections.filter(function(s) { return s.route === 'reference'; 
 console.log('Story audit: ' + sections.length + ' total sections (' + coreScreens.length + ' core, ' + refScreens.length + ' reference)');
 
 // P0: core screen count
-if (coreScreens.length > 12) {
-  fail('P0: ' + coreScreens.length + ' core screens found; maximum is 12');
+var MAX_CORE = 13;
+if (coreScreens.length > MAX_CORE) {
+  fail('P0: ' + coreScreens.length + ' core screens found; maximum is ' + MAX_CORE);
 } else {
-  console.log('  Core screen count: ' + coreScreens.length + '/12 -- OK');
+  console.log('  Core screen count: ' + coreScreens.length + '/' + MAX_CORE + ' -- OK');
 }
 
 // P0: title word count (core route only)

@@ -38,7 +38,7 @@ var RISK_CAPABILITIES=[
   {id:'balance-sheet-opt',cat:'financial-risk',name:'Balance Sheet Optimization',outcome:'Capital and funding deployed efficiently across business lines and risk constraints',process:'ALM, NII analysis, hedging strategy, FTP management',opps:['balance-sheet-ai']},
   {id:'frtb',cat:'financial-risk',name:'FRTB / Regulatory Readiness',outcome:'FRTB requirements implemented on time with validated models and controls',process:'Model development, SA/IMA application, backtesting, reporting',opps:['frtb-reporting-ai']},
   {id:'stress-testing',cat:'financial-risk',name:'Stress Testing / DFAST',outcome:'Stress scenarios credible, computed efficiently, and defensible to supervisors',process:'Scenario design, model execution, result aggregation, disclosure',opps:['stress-scenario-ai']},
-  {id:'capital-rwa',cat:'financial-risk',name:'Capital & RWA Optimization',outcome:'Capital allocated to highest-return uses within regulatory limits',process:'RWA calculation, capital planning, optimization analysis',opps:['capital-ai']},
+  {id:'capital-rwa',cat:'financial-risk',name:'Capital & RWA Optimization',outcome:'Capital allocated to the uses with the strongest return within regulatory limits',process:'RWA calculation, capital planning, optimization analysis',opps:['capital-ai']},
   {id:'icaap-ccar',cat:'financial-risk',name:'ICAAP / CCAR',outcome:'Internal capital adequacy assessed robustly and documented for supervisory review',process:'Internal model governance, ICAAP narrative, board approval',opps:['icaap-document-ai']},
   {id:'resolution-recovery',cat:'financial-risk',name:'Resolution & Recovery Planning',outcome:'Recovery and resolution plans current, credible, and executable',process:'RRP development, playbook testing, regulatory submission',opps:['rrp-document-ai']},
   // Financial Crime (5)
@@ -123,7 +123,7 @@ var TRANSFORMATION_BLOCKS=[
   },
   {
     id:'work-decisions-controls',name:'End-to-end work, decisions & controls',icon:'route',color:'#0891B2',position:'middle-left',
-    executiveQuestion:'How does work move from signal to decision to evidence, and where must a human remain in the lead?',
+    executiveQuestion:'How does work move from signal to decision to evidence, and where does a human stay in the lead?',
     why:'Without clear process and decision design, AI is inserted into fragmented work that cannot scale safely.',
     failureModes:['Approval gates undefined or bypassed','Human accountability unclear in AI-assisted workflows','Controls embedded in spreadsheets rather than the workflow'],
     diagnosticQuestions:['Which decisions require human sign-off and why?','Where are the main handoffs and rework loops?','Which controls are embedded in the workflow versus manual checks?'],
@@ -133,7 +133,7 @@ var TRANSFORMATION_BLOCKS=[
   },
   {
     id:'data-knowledge-evidence',name:'Data, knowledge & evidence',icon:'database',color:'#0F8A62',position:'foundation-left',
-    executiveQuestion:'What context must be available for reliable decisions, and how is evidence generated and traced?',
+    executiveQuestion:'What context needs to be available for reliable decisions, and how is evidence generated and traced?',
     why:'AI without quality data and traceable evidence produces confident wrong outputs and fails regulatory scrutiny.',
     failureModes:['AI context assembled from stale or incomplete sources','No evidence of what data was used for a decision','Regulatory knowledge embedded in human memory rather than structured data'],
     diagnosticQuestions:['What data sources are required for the top three priority capabilities?','Can you trace the data lineage for a recent regulatory submission?','Where is institutional knowledge held that AI would need access to?'],
@@ -156,14 +156,14 @@ var TRANSFORMATION_BLOCKS=[
     executiveQuestion:'Which roles change, what new skills are needed, and how is capacity actually redeployed or captured?',
     why:'Automation without adoption planning frees capacity that is not captured, and creates risk when humans disengage from oversight.',
     failureModes:['Capacity freed by AI not redeployed or captured','Analysts disengaged from AI outputs they do not understand','New roles such as context engineering and AgentOps not designed or hired'],
-    diagnosticQuestions:['Do you have a task-level view of what changes in the priority roles?','What is the plan for redeploying capacity freed by automation?','Which skills must be built and which can be sourced?'],
+    diagnosticQuestions:['Do you have a task-level view of what changes in the priority roles?','What is the plan for redeploying capacity freed by automation?','Which skills need building and which can be sourced?'],
     targetPrinciples:['Capacity capture is planned and governed before deployment','Every role with AI-assisted work has a clear human gate and accountability','New roles designed at the start, not after deployment'],
     interventions:{noRegret:['Task decomposition for priority roles','Capacity-capture hypothesis'],lighthouse:['Change plan for lighthouse pod'],industrialize:['Workforce transition programme and new-role design'],scale:['Continuous workforce optimization and skills monitoring']},
     kpis:['Capacity captured (%age of freed time redeployed)','Adoption rate','Human gate completion rate','Skills gap closure']
   },
   {
     id:'governance-security',name:'Governance, security, resilience & assurance',icon:'shield',color:'#B46A00',position:'rail-left',
-    executiveQuestion:'What must be proven before autonomy increases?',
+    executiveQuestion:'What needs proof before autonomy increases?',
     why:'Without proportionate governance, AI in risk functions creates new model risk, accountability gaps, and regulatory exposure.',
     failureModes:['AI models deployed without validation or documented accountability','Agent access not controlled: can act beyond intended scope','No audit trail for AI-assisted decisions presented to regulators'],
     diagnosticQuestions:['What is the current AI model risk governance framework?','Are agent identities and permissions documented and controlled?','Can you produce an evidence pack for an AI-assisted decision within 24 hours?'],
@@ -182,7 +182,7 @@ var TRANSFORMATION_BLOCKS=[
     kpis:['Capacity captured','Cycle-time improvement','Quality and risk improvement','Cost per task/decision','Value per euro invested','Realized vs. theoretical value (%)']
   },
   {
-    id:'business-risk-tech',name:'Business–risk–technology interface',icon:'arrows-exchange',color:'#6366F1',position:'bridge',
+    id:'business-risk-tech',name:'Business-risk-technology interface',icon:'arrows-exchange',color:'#6366F1',position:'bridge',
     executiveQuestion:'Who owns the outcome, the risk decision, the platform, the data, and the investment?',
     why:'When business, risk, and technology work in separate programmes with separate backlogs and budgets, AI use cases fail at handoff points.',
     failureModes:['Risk function builds use cases on technology that cannot scale','Technology builds platforms that risk teams cannot use','Finance approves use-case funding but not the shared platform beneath it'],
@@ -204,11 +204,11 @@ var MATURITY_LEVELS=[
 
 // ── DELIVERY PHASES ──
 var DELIVERY_PHASES=[
-  {id:'align-mobilize',name:'Align & mobilise',duration:'Weeks 1–2',output:'Scope, team, and baseline agreed',aiAccelerate:'AI-assisted stakeholder map and dependency analysis',humanDecision:'Scope sign-off by CRO/CFO/CTO'},
-  {id:'measure-current',name:'Measure current state',duration:'Weeks 2–6',output:'Fact base and minimum evidence pack',aiAccelerate:'AI ingestion and mapping of policies, processes, controls, and data landscape',humanDecision:'Evidence accepted as sufficient to proceed'},
-  {id:'validate-design',name:'Validate & design target',duration:'Weeks 4–10',output:'Target-state design and maturity roadmap',aiAccelerate:'AI-assisted gap analysis, design option generation, and requirements drafting',humanDecision:'Target-state design accepted by all owners'},
-  {id:'prove-real-work',name:'Prove on real work',duration:'Weeks 6–14',output:'Lighthouse MVP with evidence log live',aiAccelerate:'AI-assisted code, test generation, and evidence pack',humanDecision:'Gate: value, control, adoption, and economics evidenced'},
-  {id:'industrialize',name:'Industrialise foundations',duration:'Weeks 12–24',output:'Shared platform, controls, and workforce transition underway',aiAccelerate:'AI-assisted architecture, documentation, and operational runbook generation',humanDecision:'Gate: shared platform accepted; scale decision made'},
+  {id:'align-mobilize',name:'Align & mobilise',duration:'Weeks 1-2',output:'Scope, team, and baseline agreed',aiAccelerate:'AI-assisted stakeholder map and dependency analysis',humanDecision:'Scope sign-off by CRO/CFO/CTO'},
+  {id:'measure-current',name:'Measure current state',duration:'Weeks 2-6',output:'Fact base and minimum evidence pack',aiAccelerate:'AI ingestion and mapping of policies, processes, controls, and data landscape',humanDecision:'Evidence accepted as sufficient to proceed'},
+  {id:'validate-design',name:'Validate & design target',duration:'Weeks 4-10',output:'Target-state design and maturity roadmap',aiAccelerate:'AI-assisted gap analysis, design option generation, and requirements drafting',humanDecision:'Target-state design accepted by all owners'},
+  {id:'prove-real-work',name:'Prove on real work',duration:'Weeks 6-14',output:'Lighthouse MVP with evidence log live',aiAccelerate:'AI-assisted code, test generation, and evidence pack',humanDecision:'Gate: value, control, adoption, and economics evidenced'},
+  {id:'industrialize',name:'Industrialise foundations',duration:'Weeks 12-24',output:'Shared platform, controls, and workforce transition underway',aiAccelerate:'AI-assisted architecture, documentation, and operational runbook generation',humanDecision:'Gate: shared platform accepted; scale decision made'},
   {id:'scale-run-optimize',name:'Scale, run & optimise',duration:'Month 6+',output:'Enterprise rollout, value capture, and continuous optimization',aiAccelerate:'Automated monitoring, evaluation, FinOps, and benefit tracking',humanDecision:'Continuous: value gates and governance reviews'}
 ];
 

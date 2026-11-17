@@ -14,6 +14,10 @@ BANNED = {
 }
 REVIEW = {'will', 'must', 'never', 'always'}
 
+# JavaScript and CSS operators are code, not copy: !==, !=, !important and the
+# negation operator before an identifier, call, member or another negation.
+CODE_BANG = re.compile(r'!==?|!important|(?<=[\s(&|=,?:;{\[!])!(?=[\w$(.!\[])|^!(?=[\w$(.!\[])')
+
 hits = []
 
 def check_file(path):
@@ -29,9 +33,10 @@ def check_file(path):
         if EM_DASH in line:
             hits.append((rel, i, 'em-dash', line.rstrip()))
         # Exclamation mark in non-comment, non-code lines
-        if '!' in line and not re.match(r'\s*(//|<!--|/\*)', line):
+        copy_line = CODE_BANG.sub('', line)
+        if '!' in copy_line and not re.match(r'\s*(//|<!--|/\*)', copy_line):
             # Only flag if in a text string (between quotes)
-            for m in re.finditer(r'["\']([^"\']*![^"\']*)["\']', line):
+            for m in re.finditer(r'["\']([^"\']*![^"\']*)["\']', copy_line):
                 hits.append((rel, i, 'exclamation-in-string', m.group(0)[:80]))
         # Banned terms (only in quoted strings or HTML text)
         for m in re.finditer(r'["\']([^"\']{0,200})["\']|>([^<]{1,200})<', line):

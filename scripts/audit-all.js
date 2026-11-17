@@ -38,7 +38,7 @@ function runCheck(label, fn) {
 // ── 1. EM DASH ──────────────────────────────────────────────
 section('1. Em dash check');
 runCheck('em-dash', function() {
-  var EM = '—';
+  var EM = String.fromCharCode(0x2014);
   var dirs = ['pitch.html', 'index.html', 'assets/js', 'assets/css'];
   var found = 0;
   function scan(p) {
