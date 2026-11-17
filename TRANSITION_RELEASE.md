@@ -13,6 +13,8 @@ The core route now follows one synthetic TPRM periodic review (`TPRM-PR-042`) fr
 - THE BUSINESS CASE: interactive calculator
 - SCALE AND START: reuse core (closing the loop back to the north star), integrated delivery, first move
 
+Slide types mark the transitions: the cover is a landing slide (hero title, tagline, compact animated visual, clickable six-chapter route); each chapter opens with a full-screen divider (numeral, guiding question, the chapter's screens, six-step progress marker) that counts as "Ch n / 6" rather than a screen; the appendix opens with its own landing. Divider lists and the landing route are built from the DOM.
+
 Titles, subtitles, closing lines, durations and handoff tokens are in `assets/data/story-manifest.json`; a test keeps them equal to the HTML.
 
 Everything after the core route is a marked appendix: an index screen, the Evidence Atlas, then A1 to A12 in story order, each tagged with the part of the story it supports ("Appendix A8 · Behind the business case"). The nav tab and counter read "Appendix". Appendix copy that contradicted the story (a link to a removed screen, FTE redeployment and penalty avoidance as KPIs) was rewritten.
@@ -43,7 +45,7 @@ Each scene draws on a fixed 1040 x 520 canvas (480 for the authority screen) sca
 
 ## Results
 
-- Playwright, desktop projects (chromium, 1366x768, 1440x900, 1920x1080, 1024x768): all pass (318 tests run; 312 story tests skip outside chromium because they set their own viewports).
+- Playwright, desktop projects (chromium, 1366x768, 1440x900, 1920x1080, 1024x768): all pass (326 tests run; 344 story tests skip outside chromium because they set their own viewports).
 - The `mobile` project (iPhone 14, WebKit) cannot run on this machine: WebKit is not installed (`npx playwright install webkit`).
 - `lint-copy`, `check-emdash`, `audit:story`, `audit:motion`, `audit:offline`, `audit:icons`, `audit:all`, `validate-data`: all pass.
 - Screenshots (initial, midpoint, final at 1440x900 and 1366x768): `artifacts/baseline/transition-after/` (gitignored).

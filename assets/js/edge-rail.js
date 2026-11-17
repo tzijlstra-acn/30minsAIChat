@@ -85,6 +85,8 @@
       var ctitle = sec.dataset.chapterTitle || cid;
       if (!chapters[cid]) { chapters[cid] = { id: cid, title: ctitle, slides: [] }; chapterOrder.push(cid); }
       var route = sec.dataset.route || 'core';
+      // Dividers open a chapter but are not listed as screens
+      if (route === 'divider') return;
       chapters[cid].slides.push({
         id: sec.id,
         navTitle: sec.dataset.navTitle || sec.id,
@@ -94,8 +96,8 @@
     });
 
     var html = '<div class="er-header">'
-      + '<div class="er-title">NFR AI</div>'
-      + '<div class="er-subtitle">Executive Conversation</div>'
+      + '<div class="er-title">NFR OS</div>'
+      + '<div class="er-subtitle">TPRM transition story</div>'
       + '</div>'
       + '<div class="er-candidate-chip" id="erCandidateChip" style="display:none">'
       + '<span class="er-chip-label" id="erCandidateLabel"></span>'

@@ -51,7 +51,7 @@ function sceneFiles() {
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
   test('fifteen scene files, one per core screen, all registered', () => {
-    const declared = [...read('pitch.html').matchAll(/data-route="core" data-scene="([a-z0-9-]+)"/g)].map((m) => m[1] + '.js').sort();
+    const declared = [...read('pitch.html').matchAll(/data-route="core"[^>]*? data-scene="([a-z0-9-]+)"/g)].map((m) => m[1] + '.js').sort();
     expect(declared).toHaveLength(15);
     expect(sceneFiles()).toEqual(declared);
   });
@@ -76,12 +76,13 @@ test.describe('Scene contract', () => {
     }
   });
 
-  test('every core screen has a static fallback SVG on the 1040 x 520 canvas', () => {
+  test('every core screen has a static fallback SVG on its design canvas', () => {
     const html = read('pitch.html');
     for (const id of CORE) {
       const start = html.indexOf('<section id="' + id + '"');
       const chunk = html.slice(start, html.indexOf('</section>', start));
-      expect(chunk, id).toContain('<svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet"');
+      const box = id === 'cover' ? '0 0 560 440' : '0 0 1040 520';
+      expect(chunk, id).toContain('<svg data-scene-fallback viewBox="' + box + '" preserveAspectRatio="xMidYMid meet"');
     }
   });
 
@@ -250,7 +251,8 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1280, 720], [1920, 1080], [1024
         await page.evaluate((sid) => document.getElementById(sid).scrollIntoView({ behavior: 'instant' }), id);
         const r = await page.evaluate((sid) => {
           const s = document.getElementById(sid);
-          const f = s.querySelector('.scene-footer').getBoundingClientRect();
+          const footer = s.querySelector('.scene-footer') || s.querySelector('.landing-route');
+          const f = footer.getBoundingClientRect();
           return { overflow: s.scrollWidth > s.clientWidth + 2, footerBottom: f.bottom, vh: window.innerHeight };
         }, id);
         expect(r.overflow, id).toBe(false);
@@ -496,7 +498,7 @@ test.describe('Appendix', () => {
 
   test('the nav tab and counter say Appendix', async ({ page }) => {
     await open(page);
-    await expect(page.locator('.nav-ch-btn[data-chid="reference"]')).toHaveText('Appendix');
+    await expect(page.locator('.nav-ch-btn[data-chid="reference"] .nav-ch-name')).toHaveText('Appendix');
     await page.evaluate(() => document.getElementById('appendix').scrollIntoView({ behavior: 'instant' }));
     await expect(page.locator('#counter')).toHaveText('Appendix', { timeout: 4000 });
   });
@@ -504,5 +506,98 @@ test.describe('Appendix', () => {
   test('appendix copy stays consistent with the business-case rules', () => {
     const html = read('pitch.html');
     ['FTE redeployment rate', 'Penalty avoidance', 'five executive systems', 'transformation systems screen'].forEach((t) => expect(html).not.toContain(t));
+  });
+});
+
+// ── LANDING AND CHAPTER DIVIDERS ──
+const CHAPTERS = ['setting-scene', 'today', 'new-workday', 'six-months', 'business-case', 'scale-start'];
+
+test.describe('Landing and dividers', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('the first slide is a landing, not a standard screen', async ({ page }) => {
+    await open(page);
+    const r = await page.evaluate(() => {
+      const c = document.getElementById('cover');
+      return { kind: c.dataset.kind, footer: !!c.querySelector('.scene-footer'), header: !!c.querySelector('.screen-hdr'),
+        route: [...c.querySelectorAll('.landing-chapter')].map((b) => b.textContent) };
+    });
+    expect(r.kind).toBe('landing');
+    expect(r.footer).toBe(false);
+    expect(r.header).toBe(false);
+    expect(r.route).toHaveLength(6);
+  });
+
+  test('landing chapter buttons jump to their dividers', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await page.locator('#cover .landing-chapter').nth(3).click();
+    await page.waitForFunction(() => sections[current].id === 'ch-six-months', null, { timeout: 6000 });
+  });
+
+  test('one divider opens each chapter, right before its first screen', async ({ page }) => {
+    await open(page);
+    const order = await page.$$eval('section[data-slide]', (s) => s.map((x) => ({ id: x.id, route: x.dataset.route, ch: x.dataset.chapterId })));
+    const dividers = order.filter((o) => o.route === 'divider');
+    expect(dividers.map((d) => d.ch)).toEqual(CHAPTERS);
+    dividers.forEach((d) => {
+      const i = order.findIndex((o) => o.id === d.id);
+      expect(order[i + 1].route, d.id).toBe('core');
+      expect(order[i + 1].ch, d.id).toBe(d.ch);
+      const before = order.slice(0, i).filter((o) => o.route === 'core' && o.ch === d.ch).map((o) => o.id);
+      expect(before.filter((id) => id !== 'cover'), d.id + ' has chapter screens before it').toEqual([]);
+    });
+  });
+
+  test('each divider lists the screens that follow it and marks where we are', async ({ page }) => {
+    await open(page);
+    const r = await page.evaluate(() => [...document.querySelectorAll('section[data-route="divider"]')].map((d, i) => ({
+      listed: [...d.querySelectorAll('[data-divider-screens] a')].map((a) => a.getAttribute('href').slice(1)),
+      expected: [...document.querySelectorAll('section[data-route="core"][data-chapter-id="' + d.dataset.chapterId + '"]')].map((s) => s.id).filter((id) => id !== 'cover'),
+      here: [...d.querySelectorAll('.divider-step')].findIndex((s) => s.classList.contains('is-here')),
+      index: i
+    })));
+    r.forEach((d) => {
+      expect(d.listed).toEqual(d.expected);
+      expect(d.here).toBe(d.index);
+    });
+  });
+
+  test('dividers are not counted as screens: the counter shows the chapter', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await page.evaluate(() => document.getElementById('ch-business-case').scrollIntoView({ behavior: 'instant' }));
+    await expect(page.locator('#counter')).toHaveText('Ch 5 / 6', { timeout: 4000 });
+    await enter(page, 'business-case');
+    // The counter includes the landing, so the business case (tag 11) is screen 12 of 15
+    await expect(page.locator('#counter')).toHaveText('12 / 15');
+  });
+
+  test('dividers stay out of the agenda and edge-rail screen lists', async ({ page }) => {
+    await open(page);
+    const agenda = await page.$$eval('#agendaStory .agenda-slide-link', (a) => a.map((x) => x.getAttribute('href')));
+    expect(agenda.filter((h) => h.startsWith('#ch-'))).toEqual([]);
+    const rail = await page.$$eval('#edgePanel [data-sid]', (a) => a.map((x) => x.dataset.sid));
+    expect(rail.filter((s) => s.startsWith('ch-'))).toEqual([]);
+  });
+
+  test('dividers and the landing fill one viewport without overflow at every supported size', async ({ page }) => {
+    for (const [w, h] of [[1440, 900], [1366, 768], [1280, 720], [1920, 1080], [1024, 768]]) {
+      await page.setViewportSize({ width: w, height: h });
+      await open(page);
+      const bad = await page.evaluate(() => [...document.querySelectorAll('section[data-route="divider"], #cover')]
+        .filter((s) => s.scrollWidth > s.clientWidth + 2 || s.scrollHeight > s.clientHeight + 2 || Math.abs(s.offsetHeight - window.innerHeight) > 2)
+        .map((s) => s.id));
+      expect(bad, w + 'x' + h).toEqual([]);
+    }
+  });
+
+  test('the appendix opens with its own landing', async ({ page }) => {
+    await open(page);
+    const r = await page.evaluate(() => {
+      const a = document.getElementById('appendix');
+      return { kind: a.dataset.kind, letter: (a.querySelector('.apx-letter') || {}).textContent, eyebrow: (a.querySelector('.divider-eyebrow') || {}).textContent };
+    });
+    expect(r).toEqual({ kind: 'appendix-landing', letter: 'A', eyebrow: 'End of the core route' });
   });
 });

@@ -10,6 +10,8 @@ function buildNav(){
     sec._slideIdx=i;
     var cid=sec.dataset.chapterId||'unknown';
     if(!chapters[cid]){chapters[cid]={id:cid,title:sec.dataset.chapterTitle||cid,firstIdx:i,slides:[]};chapterOrder.push(cid);}
+    // Dividers open a chapter (firstIdx) but are not listed as screens
+    if(sec.dataset.route==='divider')return;
     chapters[cid].slides.push({idx:i,title:sec.dataset.navTitle||'Slide '+(i+1),id:sec.id,routes:(sec.dataset.routes||'').split(' ').filter(Boolean)});
   });
   chapterMap=chapterOrder.map(function(cid){return chapters[cid];});
@@ -18,9 +20,46 @@ function buildNav(){
   setupRouteMode();
   buildCaseThreads();
   buildAtlasLinks();
+  buildDividers();
+  buildLandingRoute();
   loadStoryManifest();
   var ctr=document.getElementById('counter');
   if(ctr)ctr.textContent='1 / '+sections.filter(function(s){return s.dataset.route==='core';}).length;
+}
+
+// ── CHAPTER DIVIDERS AND LANDING ROUTE ──
+// Divider screen lists and the landing's chapter route are read from the DOM, so a
+// renamed or moved screen updates everywhere it is listed.
+function chapterDividers(){
+  return sections.filter(function(s){return s.dataset.route==='divider';});
+}
+
+function buildDividers(){
+  var dividers=chapterDividers();
+  dividers.forEach(function(d,di){
+    var list=d.querySelector('[data-divider-screens]');
+    var at=sections.indexOf(d);
+    if(list){
+      // Only the screens that follow the divider (the landing precedes chapter one's divider)
+      list.innerHTML=sections.filter(function(s,si){return si>at&&s.dataset.route==='core'&&s.dataset.chapterId===d.dataset.chapterId;})
+        .map(function(s){return '<li><a href="#'+s.id+'" onclick="goToId(\''+s.id+'\');return false;">'+(s.dataset.navTitle||s.id)+'</a></li>';}).join('');
+    }
+    var prog=d.querySelector('[data-divider-progress]');
+    if(prog){
+      prog.innerHTML=dividers.map(function(o,oi){
+        return '<span class="divider-step'+(oi<di?' is-done':'')+(oi===di?' is-here':'')+'"><b>'+o.dataset.chapterNum+'</b>'
+          +'<span class="divider-step-name">'+(o.querySelector('.divider-title')||{}).textContent+'</span></span>';
+      }).join('');
+    }
+  });
+}
+
+function buildLandingRoute(){
+  var nav=document.querySelector('[data-landing-route]');if(!nav)return;
+  nav.innerHTML=chapterDividers().map(function(d){
+    return '<button type="button" class="landing-chapter" onclick="goToId(\''+d.id+'\')"><span class="landing-chapter-num">'+d.dataset.chapterNum+'</span>'
+      +'<span class="landing-chapter-title">'+(d.querySelector('.divider-title')||{}).textContent+'</span></button>';
+  }).join('');
 }
 
 // ── CASE THREAD ──
@@ -62,9 +101,13 @@ function openAtlasView(view,fromId){
 function buildChapterTabs(){
   var navCh=document.getElementById('navChapters');if(!navCh)return;
   var coreChapters=chapterMap.filter(function(c){return c.id!=='reference';});
-  navCh.innerHTML=coreChapters.map(function(c){
-    return '<button class="nav-ch-btn" data-chid="'+c.id+'" onclick="goToIndex('+c.firstIdx+')" title="'+c.title+'">'+c.title+'</button>';
-  }).join('')+'<button class="nav-ch-btn" data-chid="reference" onclick="goToId(\'appendix\')" title="Appendix">Appendix</button>';
+  // Narrow screens show the chapter number only (CSS); the full name stays in the title
+  navCh.innerHTML=coreChapters.map(function(c,ci){
+    var num=(ci<9?'0':'')+(ci+1);
+    return '<button class="nav-ch-btn" data-chid="'+c.id+'" onclick="goToIndex('+c.firstIdx+')" title="'+c.title+'">'
+      +'<span class="nav-ch-num">'+num+'</span><span class="nav-ch-name">'+c.title+'</span></button>';
+  }).join('')+'<button class="nav-ch-btn" data-chid="reference" onclick="goToId(\'appendix\')" title="Appendix">'
+    +'<span class="nav-ch-num">A</span><span class="nav-ch-name">Appendix</span></button>';
 }
 
 function buildAgendaDrawer(){
@@ -120,12 +163,21 @@ function updateNav(idx){
   current=idx;
   var sec=sections[idx];
   var isRef=sec&&(sec.dataset.chapterId==='reference'||sec.dataset.route==='reference');
+  var isDivider=sec&&sec.dataset.route==='divider';
   var coreSections=sections.filter(function(s){return s.dataset.route==='core';});
   var coreIdx=coreSections.indexOf(sec);
+  // A divider sits just before its chapter's first screen
+  if(isDivider)coreIdx=coreSections.indexOf(sections.slice(idx).filter(function(s){return s.dataset.route==='core';})[0]);
   var coreTotal=coreSections.length;
+  // The current section animates its divider or landing content
+  sections.forEach(function(s){s.classList.toggle('is-current',s===sec);});
   // Counter
   var ctr=document.getElementById('counter');
-  if(ctr){if(isRef){ctr.textContent='Appendix';}else{ctr.textContent=(coreIdx+1)+' / '+coreTotal;}}
+  if(ctr){
+    if(isRef){ctr.textContent='Appendix';}
+    else if(isDivider){ctr.textContent='Ch '+parseInt(sec.dataset.chapterNum,10)+' / '+chapterDividers().length;}
+    else{ctr.textContent=(coreIdx+1)+' / '+coreTotal;}
+  }
   // Chapter label
   var chl=document.getElementById('chapterLabel');if(chl&&sec)chl.textContent=sec.dataset.chapterTitle||'';
   // Progress (core only)
