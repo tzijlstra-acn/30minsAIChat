@@ -1,4 +1,6 @@
 // evidence-atlas.js -- Visual Evidence Atlas for NFR AI Pitch
+// V27: rail grouped by client question; adds controlled-write, workstreams, economics
+// and reuse views behind the TPRM core route, each with a way back to its screen.
 // V26: Risk map is a deterministic radial layout (angle-proportional, no force simulation).
 // Theatre view uses a 2-column list layout, not a fixed 3x2 card grid.
 // Exposes window.EvidenceAtlas with init / destroy / switchView
@@ -71,7 +73,7 @@
 
   var METHOD_STEPS = [
     { label: 'Scope',    desc: 'Define the risk domain and capability boundary. Agree the proof criteria and evidence requirements before any AI work begins.' },
-    { label: 'Baseline', desc: 'Measure current-state performance. Establish the counterfactual against which the AI intervention will be assessed.' },
+    { label: 'Baseline', desc: 'Measure current-state performance. Establish the counterfactual against which the AI intervention is assessed.' },
     { label: 'Prove',    desc: 'Run the intervention in a bounded scope with human oversight at every gate. Capture evidence at each decision point.' },
     { label: 'Scale',    desc: 'Expand only if gate criteria are met. Industrialise controls. Embed economics tracking and ongoing drift monitoring.' }
   ];
@@ -82,6 +84,67 @@
     { level: 3, label: 'Automated',         desc: 'AI executes routine tasks; human monitors and handles exceptions.' },
     { level: 4, label: 'Adaptive',          desc: 'AI learns from outcomes and adjusts within approved parameters.' },
     { level: 5, label: 'Bounded autonomy',  desc: 'AI acts end-to-end within a defined, auditable scope with human oversight at gates.' }
+  ];
+
+  // ── V27 TRANSITION STORY REFERENCE DATA ──
+  // Deep dives behind the TPRM core route. Each view links back to its core screen.
+
+  var WRITE_SEQUENCE = [
+    { from: 'User',            to: 'Role workspace',  step: 'Request outcome',                       c: C.accent },
+    { from: 'Role workspace',  to: 'Orchestrator',    step: 'Retrieve authorised data',              c: C.accent },
+    { from: 'Orchestrator',    to: 'Role workspace',  step: 'Prepare recommendation',                c: C.accent },
+    { from: 'User',            to: 'Role workspace',  step: 'Approve the exact change',              c: C.amber },
+    { from: 'Orchestrator',    to: 'Authority gate',  step: 'Check identity, scope and action class', c: C.amber },
+    { from: 'Authority gate',  to: 'Connector',       step: 'Execute the write',                     c: C.cyan },
+    { from: 'Connector',       to: 'System of record', step: 'Receive target acknowledgement',        c: C.green },
+    { from: 'System of record', to: 'Role workspace', step: 'Return receipt and audit event',         c: C.green }
+  ];
+
+  var AUTHORITY_LADDER = [
+    { label: 'Execute within policy',   c: C.cyan,   examples: 'Retrieve approved evidence; calculate a fixed threshold', rule: 'Runs without a person, inside an approved policy' },
+    { label: 'Prepare for review',      c: C.accent, examples: 'Compare evidence; draft a narrative', rule: 'A professional reviews before anything is used' },
+    { label: 'Named approval required', c: C.amber,  examples: 'Create an internal task; send an external request; update review status', rule: 'A named person approves the exact action before the write' },
+    { label: 'Human decision only',     c: C.amber,  examples: 'Accept a control exception; set residual risk; approve the provider', rule: 'The model may prepare; only a professional decides' }
+  ];
+
+  var DATA_ROUTING = [
+    { label: 'Profile',  items: 'Schema, access, freshness, completeness, anomalies' },
+    { label: 'Process',  items: 'Extract, normalise, resolve, compare, detect conflict' },
+    { label: 'Validate', items: 'Rules, cross-check, confidence, provenance, uncertainty' },
+    { label: 'Route',    items: 'Prepare, review or quarantine, by confidence and materiality' },
+    { label: 'Publish',  items: 'Evidence object, lineage, role workspace, semantic map' }
+  ];
+
+  var WORKSTREAMS = [
+    { name: 'Process and operating model', frame: 'Map stages, roles, decisions and pain points', build: 'Redesign the review flow and decision rights', test: 'Change operating routines with the cohort' },
+    { name: 'Experience and workspace',    frame: 'Co-design the officer and approver views', build: 'Build the role workspace and work queue', test: 'Tune on real reviews; measure usefulness' },
+    { name: 'Role App and backend',        frame: 'Write the product backlog', build: 'Persistent case and process state', test: 'Harden for daily use; support model' },
+    { name: 'Data and integration',        frame: 'Confirm sources and read access', build: 'Connect authorised read sources; evidence objects', test: 'Add one gated write if the read flow passes' },
+    { name: 'Models and evaluation',       frame: 'Pick test cases and evaluation criteria', build: 'Change detection, preparation tasks, routing', test: 'Evaluate on live cases; track exceptions' },
+    { name: 'Governance and resilience',   frame: 'Map authority boundaries and controls', build: 'Identity, approval, audit and monitoring', test: 'Control evidence; recovery and runbook' },
+    { name: 'Change, adoption and value',  frame: 'Baseline effort, elapsed time, rework, quality', build: 'Train the cohort; adoption plan', test: 'Measure against the baseline; next-wave case' }
+  ];
+
+  var GATES = [
+    { name: 'Ready-to-build gate', when: 'End of month 2', checks: ['Named sponsor and TPRM product owner', 'Agreed user cohort and process boundary', 'Current baseline and representative cases', 'Authorised sources and read access path', 'Decision rights mapped; write boundary agreed in principle', 'Security and platform owners; month-six measures accepted'] },
+    { name: 'Month-3 gate: useful and safe', when: 'Month 3', checks: ['A case enters the workspace', 'Authorised evidence retrieved and compared with the prior review', 'Missing sources stay visible', 'Preparation tasks meet agreed evaluation thresholds', 'Users can challenge the output', 'Identity, access, audit and monitoring active; no material action executed by the model'] },
+    { name: 'Month-6 evidence gate', when: 'Month 6', checks: ['Full trigger-to-receipt loop on real cases', 'Named users have used the workflow', 'Outcomes measured against the baseline; exceptions handled', 'One gated write works reliably, if in scope', 'Ownership, support, run cost and control evidence in place', 'Business case updated with measured data; reuse hypothesis for the next journey'] }
+  ];
+
+  var SHARED_CORE = [
+    { comp: 'Role workspace and work queue',        tprm: 'Officer queue and decision view', next: 'Reused; RCSA owner views configured' },
+    { comp: 'Persistent case and process state',    tprm: 'Periodic-review case model', next: 'Reused; RCSA stages added' },
+    { comp: 'Evidence objects and semantics',       tprm: 'Provider, contract, assurance, incident', next: 'Reused; risk and control objects added' },
+    { comp: 'Decisions and approvals',              tprm: 'Renewal decision and conditions', next: 'Reused; challenge and sign-off rules added' },
+    { comp: 'Connectors and receipts',              tprm: 'GRC read, one gated write', next: 'Reused; additional data feeds connected' },
+    { comp: 'Evaluation and routing',               tprm: 'Change detection, comparison, drafting', next: 'Reused; rating logic evaluated' },
+    { comp: 'Identity, authority, audit, monitoring', tprm: 'Built and evidenced', next: 'Reused as is' }
+  ];
+
+  var REUSE_DECISIONS = [
+    { label: 'Reuse',     c: C.green,  desc: 'The shared component serves the new journey unchanged.' },
+    { label: 'Configure', c: C.cyan,   desc: 'Same component, new rules, stages or views for the domain.' },
+    { label: 'Build',     c: C.accent, desc: 'Domain logic that does not exist yet, such as risk appetite and rating.' }
   ];
 
   // ── DOM HELPERS ────────────────────────────────────────────────
@@ -238,6 +301,32 @@
       '.ea-delivery-contact{padding:14px 16px;border-radius:6px;border:1px solid rgba(88,201,148,0.25);background:rgba(88,201,148,0.04);display:flex;flex-direction:column;gap:4px}',
       '.ea-delivery-contact-name{font-family:"Space Grotesk",sans-serif;font-size:14px;font-weight:700;color:' + C.green + '}',
       '.ea-delivery-contact-role{font-size:13px;color:' + C.text2 + '}',
+      /* V27 rail groups and story views */
+      '.ea-rail-group{padding:12px 16px 4px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:' + C.text3 + '}',
+      '.ea-story-wrap{width:100%;height:100%;overflow-y:auto;padding:14px 18px 24px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px}',
+      '.ea-story-top{display:flex;align-items:center;justify-content:space-between;gap:12px}',
+      '.ea-story-hd{font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:' + C.text1 + '}',
+      '.ea-story-q{font-size:13px;color:' + C.text2 + ';line-height:1.5;max-width:720px}',
+      '.ea-story-back{flex-shrink:0;background:none;border:1px solid rgba(255,255,255,0.14);border-radius:5px;color:' + C.text2 + ';font-family:"Space Grotesk",sans-serif;font-size:12px;padding:5px 10px;white-space:nowrap}',
+      '.ea-story-back:hover{color:' + C.text1 + ';border-color:rgba(255,255,255,0.28)}',
+      '.ea-story-sec{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:' + C.text3 + ';margin-bottom:6px}',
+      '.ea-story-row{display:grid;grid-template-columns:28px 150px 1fr;gap:10px;align-items:center;padding:7px 12px;border-radius:6px;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-left-width:3px;border-left-style:solid;margin-bottom:5px;font-size:13px;color:' + C.text1 + '}',
+      '.ea-story-num{font-family:"JetBrains Mono",monospace;font-size:12px}',
+      '.ea-story-route{font-family:"JetBrains Mono",monospace;font-size:12px;color:' + C.text2 + '}',
+      '.ea-story-fail{padding:9px 12px;border-radius:6px;border:1px solid rgba(240,117,138,0.35);background:rgba(240,117,138,0.05);font-size:13px;color:' + C.text1 + '}',
+      '.ea-story-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}',
+      '.ea-story-card{padding:10px 12px;border-radius:6px;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-top-width:3px;border-top-style:solid}',
+      '.ea-story-card-hd{font-family:"Space Grotesk",sans-serif;font-size:14px;font-weight:700;margin-bottom:4px}',
+      '.ea-story-card-tx{font-size:12.5px;color:' + C.text2 + ';line-height:1.45}',
+      '.ea-story-table{width:100%;border-collapse:collapse;font-size:12.5px}',
+      '.ea-story-table th{text-align:left;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:' + C.text3 + ';font-weight:400;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.1)}',
+      '.ea-story-table td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.05);color:' + C.text2 + ';vertical-align:top;line-height:1.4}',
+      '.ea-story-table td:first-child{color:' + C.text1 + ';font-weight:600}',
+      '.ea-story-code{font-family:"JetBrains Mono",monospace;font-size:12px;color:' + C.text2 + ';background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);border-radius:5px;padding:6px 9px;line-height:1.5}',
+      '.ea-story-claim{font-family:"JetBrains Mono",monospace;font-size:12px;color:' + C.amber + ';border:1px dashed rgba(243,179,76,0.5);border-radius:5px;padding:6px 10px;display:inline-block}',
+      '.ea-story-kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}',
+      '.ea-story-kv div{padding:8px 10px;border-radius:6px;background:' + C.surface + ';border:1px solid rgba(255,255,255,0.07);font-size:12.5px;color:' + C.text2 + '}',
+      '.ea-story-kv b{display:block;font-family:"Space Grotesk",sans-serif;font-size:15px;color:' + C.text1 + ';margin-top:2px}',
       /* map legend */
       '.ea-legend{position:absolute;bottom:10px;left:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}',
       '.ea-legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:' + C.text2 + ';font-family:"Space Grotesk",sans-serif}',
@@ -747,7 +836,7 @@
       }));
       section.appendChild(hd);
 
-      // List rows — not equal-width cards
+      // List rows, not equal-width cards
       var list = mk('div', { style: { border: '1px solid rgba(255,255,255,0.06)', borderRadius: '6px', overflow: 'hidden' } });
 
       clSols.forEach(function (sol, si) {
@@ -1122,14 +1211,207 @@
     canvas.appendChild(wrap);
   }
 
+  // ── V27 STORY VIEWS ────────────────────────────────────────────
+  // Header shared by the deep dives: title, the client question, and a way back
+  // to the core screen the view supports.
+  function storyHeader(wrap, title, question, screenId, screenLabel) {
+    var top = mk('div', { className: 'ea-story-top' });
+    top.appendChild(mk('div', { className: 'ea-story-hd', textContent: title }));
+    var back = mk('button', { className: 'ea-story-back', type: 'button', textContent: 'Back to ' + screenLabel });
+    back.addEventListener('click', function () { returnToScreen(screenId); });
+    top.appendChild(back);
+    wrap.appendChild(top);
+    wrap.appendChild(mk('div', { className: 'ea-story-q', textContent: question }));
+  }
+
+  function section(wrap, label) {
+    var sec = mk('div');
+    sec.appendChild(mk('div', { className: 'ea-story-sec', textContent: label }));
+    wrap.appendChild(sec);
+    return sec;
+  }
+
+  function buildControlledWrite(canvas) {
+    var wrap = mk('div', { className: 'ea-story-wrap' });
+    storyHeader(wrap, 'Controlled write and authority', 'How does an approved action reach a system of record, and what stops a write that was not approved?', 'authority-boundary', 'screen 06');
+
+    var seq = section(wrap, 'Write sequence: one contract for every write');
+    WRITE_SEQUENCE.forEach(function (s, i) {
+      var row = mk('div', { className: 'ea-story-row', style: { borderLeftColor: s.c } });
+      row.appendChild(mk('span', { className: 'ea-story-num', textContent: String(i + 1), style: { color: s.c } }));
+      row.appendChild(mk('span', { className: 'ea-story-route', textContent: s.from + ' to ' + s.to }));
+      row.appendChild(mk('span', { textContent: s.step }));
+      seq.appendChild(row);
+    });
+    seq.appendChild(mk('div', { className: 'ea-story-fail', textContent: 'Step 5 failure path: reason code, no write, audit event. Completion shows only after the target system acknowledges.' }));
+
+    var lad = section(wrap, 'Authority ladder');
+    var grid = mk('div', { className: 'ea-story-grid' });
+    AUTHORITY_LADDER.forEach(function (a) {
+      var card = mk('div', { className: 'ea-story-card', style: { borderTopColor: a.c } });
+      card.appendChild(mk('div', { className: 'ea-story-card-hd', textContent: a.label, style: { color: a.c } }));
+      card.appendChild(mk('div', { className: 'ea-story-card-tx', textContent: a.rule + '. ' + a.examples + '.' }));
+      grid.appendChild(card);
+    });
+    lad.appendChild(grid);
+
+    var dr = section(wrap, 'Imperfect data is a routing problem, not a blocker');
+    var grid2 = mk('div', { className: 'ea-story-grid' });
+    DATA_ROUTING.forEach(function (d, i) {
+      var card = mk('div', { className: 'ea-story-card', style: { borderTopColor: i === 3 ? C.amber : C.cyan } });
+      card.appendChild(mk('div', { className: 'ea-story-card-hd', textContent: (i + 1) + '. ' + d.label }));
+      card.appendChild(mk('div', { className: 'ea-story-card-tx', textContent: d.items }));
+      grid2.appendChild(card);
+    });
+    dr.appendChild(grid2);
+    wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Systems of record stay authoritative. AI can map, surface gaps and suggest reconciliation; it cannot invent evidence, choose authority or overwrite records.' }));
+    canvas.appendChild(wrap);
+  }
+
+  function buildWorkstreams(canvas) {
+    var wrap = mk('div', { className: 'ea-story-wrap' });
+    storyHeader(wrap, 'Seven workstreams, three acts, three gates', 'Who does what in each phase of the six months, and what needs to be true at each gate?', 'six-month-route', 'screen 07');
+
+    var sec = section(wrap, 'Workstreams by act');
+    var table = mk('table', { className: 'ea-story-table' });
+    var head = mk('tr');
+    ['Workstream', 'Months 0 to 2: frame', 'Months 2 to 4: build', 'Months 4 to 6: test in use'].forEach(function (h) { head.appendChild(mk('th', { textContent: h })); });
+    table.appendChild(head);
+    WORKSTREAMS.forEach(function (w) {
+      var tr = mk('tr');
+      [w.name, w.frame, w.build, w.test].forEach(function (t) { tr.appendChild(mk('td', { textContent: t })); });
+      table.appendChild(tr);
+    });
+    sec.appendChild(table);
+
+    var gs = section(wrap, 'Gate criteria: continue, adjust or stop');
+    var grid = mk('div', { className: 'ea-story-grid' });
+    GATES.forEach(function (g) {
+      var card = mk('div', { className: 'ea-story-card', style: { borderTopColor: C.amber } });
+      card.appendChild(mk('div', { className: 'ea-story-card-hd', textContent: g.name, style: { color: C.amber } }));
+      card.appendChild(mk('div', { className: 'ea-story-card-tx', textContent: g.when + ': ' + g.checks.join('; ') + '.' }));
+      grid.appendChild(card);
+    });
+    gs.appendChild(grid);
+    wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Missing gate inputs are surfaced as dependencies, not hidden in a delivery caveat.' }));
+    canvas.appendChild(wrap);
+  }
+
+  function buildEconomics(canvas) {
+    var wrap = mk('div', { className: 'ea-story-wrap' });
+    storyHeader(wrap, 'Economics: formulas and assumptions', 'How is the business case calculated, and what evidence stands behind each number?', 'business-case', 'screen 09');
+    var data = global.NFR_BUSINESS_CASE;
+    var state = global.BusinessCaseState;
+    var model = global.ROIModel;
+    if (!data || !model) {
+      wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Business-case data is not loaded.' }));
+      canvas.appendChild(wrap);
+      return;
+    }
+    wrap.appendChild(mk('div', { className: 'ea-story-claim', textContent: data.defaultLabel }));
+
+    // Current figures: the same session state as the core screen
+    if (state) {
+      var r = state.result();
+      var f = model.format;
+      var sc = data.scenarios[r.assumptions.scenario];
+      var now = section(wrap, 'Current session: ' + data.claimLabels[sc.claim]);
+      var kv = mk('div', { className: 'ea-story-kv' });
+      [['Net capacity per review', f.hours(r.capacity.netSavedHoursPerReview)],
+       ['Annual capacity', f.number(r.capacity.annualCapacityHours) + ' h'],
+       ['Annual net value', f.money(r.value.annualNetValue, data.currency)],
+       ['Payback', r.payback.positive ? r.payback.months.toFixed(1) + ' months' : r.payback.label],
+       ['One-time build', f.money(r.buildCost, data.currency)],
+       ['Annual run cost', f.money(r.value.annualRunCost, data.currency)]].forEach(function (p) {
+        var d = mk('div', { textContent: p[0] });
+        d.appendChild(mk('b', { textContent: p[1] }));
+        kv.appendChild(d);
+      });
+      now.appendChild(kv);
+    }
+
+    var fs = section(wrap, 'Formulas');
+    data.formulas.forEach(function (fm) {
+      var row = mk('div', { style: { marginBottom: '6px' } });
+      row.appendChild(mk('div', { className: 'ea-story-card-hd', textContent: fm[0] }));
+      row.appendChild(mk('div', { className: 'ea-story-code', textContent: fm[1] }));
+      fs.appendChild(row);
+    });
+
+    var ld = section(wrap, 'Scenario ladder');
+    var grid = mk('div', { className: 'ea-story-grid' });
+    Object.keys(data.scenarios).forEach(function (id) {
+      var s = data.scenarios[id];
+      var card = mk('div', { className: 'ea-story-card', style: { borderTopColor: id === 'conservative' ? C.cyan : id === 'expected' ? C.accent : C.amber } });
+      card.appendChild(mk('div', { className: 'ea-story-card-hd', textContent: s.label + ': ' + data.claimLabels[s.claim] }));
+      card.appendChild(mk('div', { className: 'ea-story-card-tx', textContent: s.description + '. Adoption ' + Math.round(s.adoption * 100) + '%, exception leakage ' + Math.round(s.exceptionLeakage * 100) + '%, capacity conversion ' + Math.round(s.capacityConversion * 100) + '%.' }));
+      grid.appendChild(card);
+    });
+    ld.appendChild(grid);
+
+    var gl = section(wrap, 'Claims guardrails');
+    ['Task preparation rate, direct effort reduction and net capacity release are reported separately.',
+     'Selected preparation steps may support 70 to 95 percent preparation; the effect on the full review comes from the actual task mix, validated in use.',
+     'Professional judgement has zero automation in every scenario.',
+     'Capacity is usable hours, not a headcount forecast.',
+     'Avoided regulatory findings stay outside every scenario.'].forEach(function (t) {
+      gl.appendChild(mk('div', { className: 'ea-story-card-tx', textContent: t, style: { marginBottom: '4px' } }));
+    });
+    canvas.appendChild(wrap);
+  }
+
+  function buildReuse(canvas) {
+    var wrap = mk('div', { className: 'ea-story-wrap' });
+    storyHeader(wrap, 'TPRM to RCSA: the shared core', 'What does the second journey reuse, what does it configure, and what does it still build?', 'reuse-core', 'screen 10');
+    var sec = section(wrap, 'Shared core components');
+    var table = mk('table', { className: 'ea-story-table' });
+    var head = mk('tr');
+    ['Component', 'Built in TPRM', 'RCSA or next journey'].forEach(function (h) { head.appendChild(mk('th', { textContent: h })); });
+    table.appendChild(head);
+    SHARED_CORE.forEach(function (row) {
+      var tr = mk('tr');
+      [row.comp, row.tprm, row.next].forEach(function (t) { tr.appendChild(mk('td', { textContent: t })); });
+      table.appendChild(tr);
+    });
+    sec.appendChild(table);
+    var dec = section(wrap, 'Reuse, configure or build');
+    var grid = mk('div', { className: 'ea-story-grid' });
+    REUSE_DECISIONS.forEach(function (d) {
+      var card = mk('div', { className: 'ea-story-card', style: { borderTopColor: d.c } });
+      card.appendChild(mk('div', { className: 'ea-story-card-hd', textContent: d.label, style: { color: d.c } }));
+      card.appendChild(mk('div', { className: 'ea-story-card-tx', textContent: d.desc }));
+      grid.appendChild(card);
+    });
+    dec.appendChild(grid);
+    wrap.appendChild(mk('div', { className: 'ea-note', textContent: 'Reuse is a second-wave benefit. It counts only in the stretch scenario, not as a first-wave saving.' }));
+    canvas.appendChild(wrap);
+  }
+
+  // Return to the core screen that opened the atlas (or the one a view supports)
+  function returnToScreen(screenId) {
+    var target = screenId;
+    if (!target) {
+      try { target = sessionStorage.getItem('nfr_atlas_return'); } catch (e) { target = null; }
+    }
+    target = target || 'first-move';
+    var sec = document.getElementById(target);
+    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+    else window.location.hash = '#' + target;
+  }
+
   // ── SHELL + TABS ───────────────────────────────────────────────
+  // V27: grouped by the questions a client asks after the core route.
   var _TABS = [
-    { id: 'risk-map',  label: 'Risk Map'          },
-    { id: 'solutions', label: 'Solution Portfolio' },
-    { id: 'theatre',   label: 'Process Theatre'   },
-    { id: 'operating', label: 'Operating System'  },
-    { id: 'toolkit',   label: 'Proof Toolkit'     },
-    { id: 'delivery',  label: 'Delivery'          }
+    { id: 'theatre',          label: 'Process Theatre',          group: 'Process and journey' },
+    { id: 'risk-map',         label: 'Risk Map',                 group: 'Process and journey' },
+    { id: 'reuse',            label: 'TPRM to RCSA reuse',       group: 'Process and journey' },
+    { id: 'toolkit',          label: 'Reference architecture',   group: 'Architecture and models' },
+    { id: 'solutions',        label: 'Solution Portfolio',       group: 'Architecture and models' },
+    { id: 'controlled-write', label: 'Controlled write',         group: 'Data and integration' },
+    { id: 'workstreams',      label: 'Workstreams and gates',    group: 'Control and delivery' },
+    { id: 'operating',        label: 'Operating System',         group: 'Control and delivery' },
+    { id: 'delivery',         label: 'Delivery',                 group: 'Control and delivery' },
+    { id: 'economics',        label: 'Formulas and assumptions', group: 'Economics and proof' }
   ];
 
   function buildShell() {
@@ -1152,7 +1434,7 @@
 
     var backBtn = mk('button', { className: 'ea-back-btn' });
     backBtn.textContent = '← Presentation';
-    backBtn.addEventListener('click', function () { window.location.hash = '#next-move'; });
+    backBtn.addEventListener('click', function () { returnToScreen(null); });
     topbar.appendChild(backBtn);
 
     shell.appendChild(topbar);
@@ -1161,7 +1443,12 @@
     var body = mk('div', { className: 'ea-body' });
 
     var leftRail = mk('nav', { className: 'ea-left-rail', 'aria-label': 'Evidence Atlas views' });
+    var lastGroup = null;
     _TABS.forEach(function (tab, idx) {
+      if (tab.group !== lastGroup) {
+        leftRail.appendChild(mk('div', { className: 'ea-rail-group', textContent: tab.group, 'aria-hidden': 'true' }));
+        lastGroup = tab.group;
+      }
       var isActive = tab.id === _currentView;
       var btn = mk('button', {
         className: 'ea-rail-btn' + (isActive ? ' active' : ''),
@@ -1251,6 +1538,10 @@
       case 'operating': buildOperating(canvas);     break;
       case 'toolkit':   buildToolkit(canvas);       break;
       case 'delivery':  buildDelivery(canvas);      break;
+      case 'controlled-write': buildControlledWrite(canvas); break;
+      case 'workstreams':      buildWorkstreams(canvas);     break;
+      case 'economics':        buildEconomics(canvas);       break;
+      case 'reuse':            buildReuse(canvas);           break;
     }
   }
 
@@ -1258,17 +1549,21 @@
   var EvidenceAtlas = {
     init: function (container) {
       _container = container;
-      // Resolve starting view from URL hash, fall back to 'risk-map'
-      _currentView = 'risk-map';
+      // Starting view: a view requested by a core-screen link, then the URL hash,
+      // then the first view in the rail
+      var validIds = _TABS.map(function (t) { return t.id; });
+      _currentView = _TABS[0].id;
       var hash = window.location.hash;
       var m = hash.match(/^#ref\/([a-z-]+)/);
-      if (m) {
-        var validIds = _TABS.map(function (t) { return t.id; });
-        if (validIds.indexOf(m[1]) >= 0) _currentView = m[1];
-      }
+      if (m && validIds.indexOf(m[1]) >= 0) _currentView = m[1];
+      var pending = global.NFR_ATLAS_PENDING_VIEW;
+      if (pending && validIds.indexOf(pending) >= 0) _currentView = pending;
+      global.NFR_ATLAS_PENDING_VIEW = null;
       buildShell();
       switchView(_currentView);
     },
+    isReady: function () { return !!_container; },
+    views: function () { return _TABS.map(function (t) { return t.id; }); },
     destroy: function () {
       if (_keyListener) { document.removeEventListener('keydown', _keyListener); _keyListener = null; }
       if (_hashListener) { window.removeEventListener('hashchange', _hashListener); _hashListener = null; }
