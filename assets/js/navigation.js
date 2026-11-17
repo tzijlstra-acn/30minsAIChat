@@ -64,7 +64,7 @@ function buildChapterTabs(){
   var coreChapters=chapterMap.filter(function(c){return c.id!=='reference';});
   navCh.innerHTML=coreChapters.map(function(c){
     return '<button class="nav-ch-btn" data-chid="'+c.id+'" onclick="goToIndex('+c.firstIdx+')" title="'+c.title+'">'+c.title+'</button>';
-  }).join('')+'<button class="nav-ch-btn" data-chid="reference" onclick="goToId(\'ref-room\')" title="Reference room">Ref</button>';
+  }).join('')+'<button class="nav-ch-btn" data-chid="reference" onclick="goToId(\'appendix\')" title="Appendix">Appendix</button>';
 }
 
 function buildAgendaDrawer(){
@@ -125,7 +125,7 @@ function updateNav(idx){
   var coreTotal=coreSections.length;
   // Counter
   var ctr=document.getElementById('counter');
-  if(ctr){if(isRef){ctr.textContent='Ref';}else{ctr.textContent=(coreIdx+1)+' / '+coreTotal;}}
+  if(ctr){if(isRef){ctr.textContent='Appendix';}else{ctr.textContent=(coreIdx+1)+' / '+coreTotal;}}
   // Chapter label
   var chl=document.getElementById('chapterLabel');if(chl&&sec)chl.textContent=sec.dataset.chapterTitle||'';
   // Progress (core only)

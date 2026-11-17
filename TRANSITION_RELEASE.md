@@ -4,7 +4,18 @@ The core route now follows one synthetic TPRM periodic review (`TPRM-PR-042`) fr
 
 ## Route
 
-13 core screens in five chapters: TODAY (cover, integration layer, connection work, pilot trap), THE NEW WORKDAY (prepared decision, role workspace, authority boundary), SIX MONTHS (six-month route, month-six proof), THE BUSINESS CASE (interactive calculator), SCALE AND START (reuse core, integrated delivery, first move). Titles, subtitles, closing lines, durations and handoff tokens are in `assets/data/story-manifest.json`; a test keeps them equal to the HTML.
+15 core screens in six chapters:
+
+- SETTING THE SCENE: cover; the hook (third-party risk is outgrowing the team: more dependence, higher expectations, faster change, an illustrative demand-against-capacity gap); the north star (one operating layer for all non-financial risk work, with TPRM as the first journey)
+- TODAY: the TPRM officer as the integration layer, connection work, the pilot trap
+- THE NEW WORKDAY: prepared decision, role workspace, authority boundary
+- SIX MONTHS: six-month route, month-six proof
+- THE BUSINESS CASE: interactive calculator
+- SCALE AND START: reuse core (closing the loop back to the north star), integrated delivery, first move
+
+Titles, subtitles, closing lines, durations and handoff tokens are in `assets/data/story-manifest.json`; a test keeps them equal to the HTML.
+
+Everything after the core route is a marked appendix: an index screen, the Evidence Atlas, then A1 to A12 in story order, each tagged with the part of the story it supports ("Appendix A8 · Behind the business case"). The nav tab and counter read "Appendix". Appendix copy that contradicted the story (a link to a removed screen, FTE redeployment and penalty avoidance as KPIs) was rewritten.
 
 ## Where things live
 
@@ -32,7 +43,7 @@ Each scene draws on a fixed 1040 x 520 canvas (480 for the authority screen) sca
 
 ## Results
 
-- Playwright, desktop projects (chromium, 1366x768, 1440x900, 1920x1080, 1024x768): all pass (313 tests run; 292 story tests skip outside chromium because they set their own viewports).
+- Playwright, desktop projects (chromium, 1366x768, 1440x900, 1920x1080, 1024x768): all pass (318 tests run; 312 story tests skip outside chromium because they set their own viewports).
 - The `mobile` project (iPhone 14, WebKit) cannot run on this machine: WebKit is not installed (`npx playwright install webkit`).
 - `lint-copy`, `check-emdash`, `audit:story`, `audit:motion`, `audit:offline`, `audit:icons`, `audit:all`, `validate-data`: all pass.
 - Screenshots (initial, midpoint, final at 1440x900 and 1366x768): `artifacts/baseline/transition-after/` (gitignored).

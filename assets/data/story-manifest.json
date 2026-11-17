@@ -4,6 +4,7 @@
   "anchorJourney": "TPRM periodic review",
   "caseId": "TPRM-PR-042",
   "chapters": [
+    { "id": "setting-scene", "label": "SETTING THE SCENE" },
     { "id": "today",         "label": "TODAY" },
     { "id": "new-workday",   "label": "THE NEW WORKDAY" },
     { "id": "six-months",    "label": "SIX MONTHS" },
@@ -14,7 +15,7 @@
     {
       "id": "cover",
       "order": 0,
-      "chapterId": "today",
+      "chapterId": "setting-scene",
       "title": "From firefighting to prepared judgement.",
       "subtitle": "A TPRM periodic review, rebuilt in six months.",
       "closingLine": "Start with the work. Prove one complete loop.",
@@ -25,13 +26,40 @@
       "handoffToken": "source-signals"
     },
     {
-      "id": "today-integration-layer",
+      "id": "pressure-gap",
       "order": 1,
+      "chapterId": "setting-scene",
+      "title": "Third-party risk is outgrowing the team.",
+      "subtitle": "More providers, deeper supply chains and tougher evidence expectations land on the same team with the same tools.",
+      "closingLine": "The gap gets filled with firefighting.",
+      "question": "Why does this need attention now?",
+      "evidenceLabel": "ILLUSTRATIVE SHAPE / NOT CLIENT DATA",
+      "scene": "pressure-gap",
+      "durationMs": 7000,
+      "autoplay": true,
+      "handoffToken": "firefighting-gap"
+    },
+    {
+      "id": "north-star",
+      "order": 2,
+      "chapterId": "setting-scene",
+      "title": "One operating layer for all non-financial risk.",
+      "subtitle": "Work arrives prepared, professionals decide with evidence, and every action leaves a record.",
+      "closingLine": "The destination is the NFR OS. The route starts with one journey.",
+      "question": "Where are we heading?",
+      "scene": "north-star",
+      "durationMs": 7200,
+      "autoplay": true,
+      "handoffToken": "first-journey"
+    },
+    {
+      "id": "today-integration-layer",
+      "order": 3,
       "chapterId": "today",
       "title": "Your team is the integration layer.",
-      "subtitle": "People connect systems, evidence, context, actions and deadlines by hand.",
+      "subtitle": "Follow one TPRM officer: systems, evidence, context, actions and deadlines are connected by hand.",
       "closingLine": "The professional is doing the integration before doing the risk work.",
-      "question": "What is the team actually doing today?",
+      "question": "What does the TPRM officer actually do today?",
       "scene": "today-integration-layer",
       "durationMs": 7500,
       "autoplay": true,
@@ -39,7 +67,7 @@
     },
     {
       "id": "connection-work",
-      "order": 2,
+      "order": 4,
       "chapterId": "today",
       "title": "Judgement waits behind connection work.",
       "subtitle": "Finding, reconciling, chasing and re-entering consume the review before challenge begins.",
@@ -54,7 +82,7 @@
     },
     {
       "id": "pilot-trap",
-      "order": 3,
+      "order": 5,
       "chapterId": "today",
       "title": "A useful AI tool is not yet a working process.",
       "subtitle": "Local pilots improve tasks, but the case, authority, handovers and outcome remain fragmented.",
@@ -69,7 +97,7 @@
     },
     {
       "id": "prepared-decision",
-      "order": 4,
+      "order": 6,
       "chapterId": "new-workday",
       "title": "What if the next decision arrived ready?",
       "subtitle": "The operating layer gathers the evidence, names the changes and keeps uncertainty visible.",
@@ -84,7 +112,7 @@
     },
     {
       "id": "role-workspace",
-      "order": 5,
+      "order": 7,
       "chapterId": "new-workday",
       "title": "The day starts with the next decision.",
       "subtitle": "One role workspace ranks the work, brings the evidence and carries the case forward.",
@@ -99,7 +127,7 @@
     },
     {
       "id": "authority-boundary",
-      "order": 6,
+      "order": 8,
       "chapterId": "new-workday",
       "title": "AI prepares. Professionals decide. Systems record.",
       "subtitle": "Capability may increase, but authority changes only through an explicit control decision.",
@@ -114,7 +142,7 @@
     },
     {
       "id": "six-month-route",
-      "order": 7,
+      "order": 9,
       "chapterId": "six-months",
       "title": "Six months to one complete working loop.",
       "subtitle": "Frame the journey, build the flow, then prove it on real cases.",
@@ -128,7 +156,7 @@
     },
     {
       "id": "m6-proof",
-      "order": 8,
+      "order": 10,
       "chapterId": "six-months",
       "title": "Not a demo. One controlled process in use.",
       "subtitle": "Five proof points define done at month six.",
@@ -142,7 +170,7 @@
     },
     {
       "id": "business-case",
-      "order": 9,
+      "order": 11,
       "chapterId": "business-case",
       "title": "Count hours returned, not model calls.",
       "subtitle": "Measure the completed review: effort, cycle time, quality, control and run cost.",
@@ -159,7 +187,7 @@
     },
     {
       "id": "reuse-core",
-      "order": 10,
+      "order": 12,
       "chapterId": "scale-start",
       "title": "Build TPRM once. Reuse the core.",
       "subtitle": "The first journey creates shared capabilities; the second adds mainly domain logic.",
@@ -173,7 +201,7 @@
     },
     {
       "id": "integrated-delivery",
-      "order": 11,
+      "order": 13,
       "chapterId": "scale-start",
       "title": "One team owns the whole loop.",
       "subtitle": "Process, product, data, engineering, control and change move together.",
@@ -186,7 +214,7 @@
     },
     {
       "id": "first-move",
-      "order": 12,
+      "order": 14,
       "chapterId": "scale-start",
       "title": "Start with one bounded review.",
       "subtitle": "Agree ownership, access, proof and the first six-month boundary.",

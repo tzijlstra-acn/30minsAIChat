@@ -99,6 +99,13 @@ SceneDirector.register('reuse-core', function(container, manifest, reduced) {
     n.e2 = e2;
     n.e2Label = S.el('div', 'ts-note ts-hide', 'Core reused + new domain logic', { left: R.x, top: 382, width: R.w });
     root.appendChild(n.e2Label);
+
+    // Back to the north star set at the start of the conversation
+    var star = S.el('div', 'rc-star ts-hide ts-up', null, { left: 16, top: 462, width: 1008, height: 44 });
+    star.appendChild(S.icon('ti-target'));
+    star.appendChild(S.el('span', 'rc-star-text', 'Toward the north star: each next NFR journey adds its domain logic to the same core'));
+    root.appendChild(star);
+    n.star = star;
   }
 
   function buildComp(i) {
@@ -130,7 +137,8 @@ SceneDirector.register('reuse-core', function(container, manifest, reduced) {
     } },
     { delay: 5300, run: function() { S.on(n.nextChips); } },
     { delay: 6200, run: function() { S.on([n.effortLabel2, n.e2, n.e2Label]); } },
-    { delay: 7000, run: complete }
+    { delay: 6900, run: function() { S.on(n.star); } },
+    { delay: 7600, run: complete }
   ];
   var tl = createTimeline(steps);
 

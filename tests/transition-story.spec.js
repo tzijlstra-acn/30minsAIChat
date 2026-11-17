@@ -13,7 +13,7 @@ const EM = String.fromCharCode(0x2014);
 const EN = String.fromCharCode(0x2013);
 
 const CORE = [
-  'cover', 'today-integration-layer', 'connection-work', 'pilot-trap',
+  'cover', 'pressure-gap', 'north-star', 'today-integration-layer', 'connection-work', 'pilot-trap',
   'prepared-decision', 'role-workspace', 'authority-boundary',
   'six-month-route', 'm6-proof', 'business-case',
   'reuse-core', 'integrated-delivery', 'first-move'
@@ -50,9 +50,9 @@ function sceneFiles() {
 
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
-  test('thirteen scene files, one per core screen, all registered', () => {
+  test('fifteen scene files, one per core screen, all registered', () => {
     const declared = [...read('pitch.html').matchAll(/data-route="core" data-scene="([a-z0-9-]+)"/g)].map((m) => m[1] + '.js').sort();
-    expect(declared).toHaveLength(13);
+    expect(declared).toHaveLength(15);
     expect(sceneFiles()).toEqual(declared);
   });
 
@@ -453,5 +453,56 @@ test.describe('Evidence Atlas links', () => {
       await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
       await page.waitForFunction(() => sections[current].id === 'ref-room');
     }
+  });
+});
+
+// ── OPENING ORDER ──
+test.describe('Opening', () => {
+  test('the route opens with the hook, then the north star, then the TPRM officer', () => {
+    const m = JSON.parse(read('assets/data/story-manifest.json'));
+    expect(m.screens.slice(0, 4).map((s) => s.id)).toEqual(['cover', 'pressure-gap', 'north-star', 'today-integration-layer']);
+    expect(m.screens[1].chapterId).toBe('setting-scene');
+    expect(m.screens[2].chapterId).toBe('setting-scene');
+    expect(m.screens[3].subtitle).toContain('TPRM officer');
+  });
+});
+
+// ── APPENDIX ──
+test.describe('Appendix', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('everything after the core route is labelled appendix, in story order', async ({ page }) => {
+    await open(page);
+    const ref = await page.$$eval('section[data-route="reference"]', (s) => s.map((x) => ({
+      id: x.id, chapter: x.dataset.chapterTitle,
+      tag: (x.querySelector('.sec-tag') || {}).textContent || ''
+    })));
+    expect(ref[0].id).toBe('appendix');
+    ref.forEach((r) => expect(r.chapter, r.id).toBe('APPENDIX'));
+    const tags = ref.filter((r) => r.id.startsWith('app-')).map((r) => r.tag);
+    expect(tags).toHaveLength(12);
+    tags.forEach((t, i) => expect(t).toMatch(new RegExp('^Appendix A' + (i + 1) + ' . Behind ')));
+    const allCore = await page.$$eval('section[data-slide]', (s) => s.map((x) => x.dataset.route));
+    expect(allCore.lastIndexOf('core')).toBeLessThan(allCore.indexOf('reference'));
+  });
+
+  test('the appendix index links every appendix page and atlas deep dive', async ({ page }) => {
+    await open(page);
+    const targets = await page.$$eval('#appendix .apx-link', (a) => a.map((x) => x.dataset.atlasView ? 'atlas:' + x.dataset.atlasView : x.getAttribute('href').slice(1)));
+    const pages = await page.$$eval('section[id^="app-"]', (s) => s.map((x) => x.id));
+    pages.forEach((p) => expect(targets, p).toContain(p));
+    ['reuse', 'controlled-write', 'workstreams', 'economics', 'toolkit'].forEach((v) => expect(targets).toContain('atlas:' + v));
+  });
+
+  test('the nav tab and counter say Appendix', async ({ page }) => {
+    await open(page);
+    await expect(page.locator('.nav-ch-btn[data-chid="reference"]')).toHaveText('Appendix');
+    await page.evaluate(() => document.getElementById('appendix').scrollIntoView({ behavior: 'instant' }));
+    await expect(page.locator('#counter')).toHaveText('Appendix', { timeout: 4000 });
+  });
+
+  test('appendix copy stays consistent with the business-case rules', () => {
+    const html = read('pitch.html');
+    ['FTE redeployment rate', 'Penalty avoidance', 'five executive systems', 'transformation systems screen'].forEach((t) => expect(html).not.toContain(t));
   });
 });

@@ -116,7 +116,7 @@
     });
 
     if (refChapters.length) {
-      html += '<div class="er-divider"></div><div class="er-chapter er-chapter-ref"><div class="er-ch-name">Reference</div><div class="er-slides">';
+      html += '<div class="er-divider"></div><div class="er-chapter er-chapter-ref"><div class="er-ch-name">Appendix</div><div class="er-slides">';
       refChapters.forEach(function(cid) {
         chapters[cid].slides.filter(function(s) { return s.route === 'reference'; }).forEach(function(slide) {
           html += '<a class="er-slide-link" href="#' + slide.id + '" data-sid="' + slide.id + '">' + slide.navTitle + '</a>';

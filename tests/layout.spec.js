@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Layout and platform tests -- NFR OS pitch, V27 (13-screen TPRM transition story)
+ * Layout and platform tests -- NFR OS pitch, V27 (15-screen TPRM transition story)
  * Run: npx playwright test tests/layout.spec.js
  * The suite's web server is node scripts/serve.js 8080 (see playwright.config.js).
  *
@@ -27,7 +27,7 @@ const VIEWPORTS = [
 ];
 
 const CORE_SLIDES = [
-  'cover', 'today-integration-layer', 'connection-work', 'pilot-trap',
+  'cover', 'pressure-gap', 'north-star', 'today-integration-layer', 'connection-work', 'pilot-trap',
   'prepared-decision', 'role-workspace', 'authority-boundary',
   'six-month-route', 'm6-proof', 'business-case',
   'reuse-core', 'integrated-delivery', 'first-move'
@@ -73,7 +73,7 @@ for (const vp of VIEWPORTS) {
       expect(overflowing).toEqual([]);
     });
 
-    test('all 13 core screens are attached to the DOM', async ({ page }) => {
+    test('all 15 core screens are attached to the DOM', async ({ page }) => {
       await gotoPage(page);
       for (const id of CORE_SLIDES) {
         await expect(page.locator(`#${id}`), `${id} missing at ${vp.name}`).toBeAttached();
@@ -143,7 +143,7 @@ test('store is initialised with defaults', async ({ page }) => {
   expect(state).not.toBeNull();
 });
 
-test('exactly 13 core screens, reference room excluded from the core route', async ({ page }) => {
+test('exactly 15 core screens, appendix excluded from the core route', async ({ page }) => {
   await gotoPage(page);
   const ids = await page.$$eval('section[data-route="core"]', (s) => s.map((x) => x.id));
   expect(ids).toEqual(CORE_SLIDES);
@@ -153,7 +153,7 @@ test('exactly 13 core screens, reference room excluded from the core route', asy
 test('counter total comes from the DOM', async ({ page }) => {
   await gotoPage(page);
   await page.waitForTimeout(500);
-  await expect(page.locator('#counter')).toHaveText('1 / 13');
+  await expect(page.locator('#counter')).toHaveText('1 / 15');
 });
 
 test('nav bar has an Evidence Atlas button', async ({ page }) => {
@@ -161,10 +161,10 @@ test('nav bar has an Evidence Atlas button', async ({ page }) => {
   await expect(page.locator('.nav button[title*="Evidence Atlas"]')).toBeAttached();
 });
 
-test('agenda lists the five chapters and a business-case quick jump', async ({ page }) => {
+test('agenda lists the six chapters, the appendix and a business-case quick jump', async ({ page }) => {
   await gotoPage(page);
   const chapters = await page.$$eval('#agendaStory .agenda-ch-name', (e) => e.map((x) => x.textContent));
-  for (const c of ['TODAY', 'THE NEW WORKDAY', 'SIX MONTHS', 'THE BUSINESS CASE', 'SCALE AND START']) {
+  for (const c of ['SETTING THE SCENE', 'TODAY', 'THE NEW WORKDAY', 'SIX MONTHS', 'THE BUSINESS CASE', 'SCALE AND START', 'APPENDIX']) {
     expect(chapters).toContain(c);
   }
   await expect(page.locator('#agendaRoiJump')).toBeAttached();
@@ -244,10 +244,10 @@ test.describe('Static checks', () => {
     expect([...shas]).toHaveLength(1);
   });
 
-  test('story manifest is version 27 with five chapters and thirteen screens', () => {
+  test('story manifest is version 27 with six chapters and fifteen screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.version).toBe('27');
-    expect(m.chapters.map((c) => c.id)).toEqual(['today', 'new-workday', 'six-months', 'business-case', 'scale-start']);
+    expect(m.chapters.map((c) => c.id)).toEqual(['setting-scene', 'today', 'new-workday', 'six-months', 'business-case', 'scale-start']);
     expect(m.screens.map((s) => s.id)).toEqual(CORE_SLIDES);
   });
 
