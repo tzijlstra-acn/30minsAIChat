@@ -21,7 +21,7 @@ SceneDirector.register('reuse-core', function(container, manifest, reduced) {
     { label: 'Identity, authority, audit and monitoring', icon: 'ti-shield-check' }
   ];
   var TPRM_DOMAIN = ['Provider objects', 'Due-diligence evidence', 'TPRM stages'];
-  var NEXT_DOMAIN = ['RCSA stages', 'Risk appetite and rating', 'Challenge and sign-off rules', 'Additional data feeds'];
+  var NEXT_DOMAIN = ['RCSA stages and ratings', 'Issue and action workflows', 'Incident and KRI logic', 'Regulatory change mapping'];
 
   var cv = null;
   var n = {};
@@ -39,7 +39,7 @@ SceneDirector.register('reuse-core', function(container, manifest, reduced) {
 
     // Journey one: TPRM periodic review
     var left = S.el('div', 'ts-obj ts-c-data rc-journey ts-hide ts-left', null, { left: L.x, top: 60, width: L.w, height: 230 });
-    left.appendChild(S.el('div', 'ts-label ts-ink', 'Journey 1'));
+    left.appendChild(S.el('div', 'ts-label ts-ink', 'First journey, the worked example'));
     left.appendChild(S.el('div', 'rc-journey-title', 'TPRM periodic review'));
     left.appendChild(S.el('div', 'ts-note', 'Adds domain logic'));
     TPRM_DOMAIN.forEach(function(d) { left.appendChild(S.el('div', 'ts-chip ts-c-data rc-domain', d)); });
@@ -66,10 +66,10 @@ SceneDirector.register('reuse-core', function(container, manifest, reduced) {
       n.reused.push(S.path(g, 'M' + (R.x - 2) + ' 175 C' + (R.x - 30) + ' 175 ' + (C.x + C.w + 26) + ' ' + y + ' ' + (C.x + C.w - 12) + ' ' + y, 'ts-s-proof rc-link'));
     });
 
-    // Journey two: RCSA or next journey, adds mainly domain logic
+    // The next NFR journeys add mainly domain logic
     var right = S.el('div', 'ts-obj ts-c-data ts-dash rc-journey ts-hide ts-right', null, { left: R.x, top: 60, width: R.w, height: 230 });
-    right.appendChild(S.el('div', 'ts-label ts-ink', 'Journey 2'));
-    right.appendChild(S.el('div', 'rc-journey-title', 'RCSA or next journey'));
+    right.appendChild(S.el('div', 'ts-label ts-ink', 'Next NFR journeys'));
+    right.appendChild(S.el('div', 'rc-journey-title', 'RCSA, issues, incidents, regulatory change'));
     right.appendChild(S.el('div', 'ts-note', 'Adds mainly domain logic'));
     NEXT_DOMAIN.forEach(function(d) {
       var chip = S.el('div', 'ts-chip ts-c-data rc-domain ts-hide ts-up', d);
@@ -154,8 +154,8 @@ SceneDirector.register('reuse-core', function(container, manifest, reduced) {
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
       return 'The TPRM periodic review builds seven shared components once: ' + CORE.map(function(c) { return c.label.toLowerCase(); }).join('; ')
-        + '. It adds TPRM domain logic: ' + TPRM_DOMAIN.join(', ').toLowerCase() + '. When RCSA or the next journey arrives, the shared core is reused and only new domain logic grows: '
-        + NEXT_DOMAIN.join(', ').toLowerCase() + '. Illustrative effort bars show journey two building mainly domain logic.';
+        + '. It adds TPRM domain logic: ' + TPRM_DOMAIN.join(', ').toLowerCase() + '. When the next NFR journeys arrive, RCSA, issues and actions, incidents and regulatory change, the shared core is reused and only new domain logic grows: '
+        + NEXT_DOMAIN.join(', ').toLowerCase() + '. Illustrative effort bars show the next journeys building mainly domain logic.';
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

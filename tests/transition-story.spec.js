@@ -178,7 +178,7 @@ test.describe('Synthetic case', () => {
     const r = await page.evaluate(() => ({ frozen: Object.isFrozen(window.TPRM_CASE) && Object.isFrozen(window.TPRM_CASE.changes[0]), synthetic: window.TPRM_CASE.synthetic }));
     expect(r).toEqual({ frozen: true, synthetic: true });
     const threads = await page.$$eval('.case-thread', (t) => t.map((x) => x.textContent));
-    threads.forEach((t) => expect(t).toContain('Synthetic case'));
+    threads.forEach((t) => expect(t).toContain('Synthetic example'));
   });
 
   test('the visible case state moves forward through the route', async ({ page }) => {
@@ -433,7 +433,7 @@ test.describe('Evidence Atlas links', () => {
       ['authority-boundary', 'Controlled write'],
       ['six-month-route', 'Workstreams and gates'],
       ['business-case', 'Formulas and assumptions'],
-      ['reuse-core', 'TPRM to RCSA reuse']
+      ['reuse-core', 'Reuse across NFR journeys']
     ];
     for (const [screen, label] of links) {
       await enter(page, screen);
@@ -465,7 +465,7 @@ test.describe('Opening', () => {
     expect(m.screens.slice(0, 4).map((s) => s.id)).toEqual(['cover', 'pressure-gap', 'north-star', 'today-integration-layer']);
     expect(m.screens[1].chapterId).toBe('setting-scene');
     expect(m.screens[2].chapterId).toBe('setting-scene');
-    expect(m.screens[3].subtitle).toContain('TPRM officer');
+    expect(m.screens[3].subtitle).toContain('Worked example: one TPRM officer');
   });
 });
 
@@ -482,7 +482,7 @@ test.describe('Appendix', () => {
     expect(ref[0].id).toBe('appendix');
     ref.forEach((r) => expect(r.chapter, r.id).toBe('APPENDIX'));
     const tags = ref.filter((r) => r.id.startsWith('app-')).map((r) => r.tag);
-    expect(tags).toHaveLength(12);
+    expect(tags).toHaveLength(6);
     tags.forEach((t, i) => expect(t).toMatch(new RegExp('^Appendix A' + (i + 1) + ' . Behind ')));
     const allCore = await page.$$eval('section[data-slide]', (s) => s.map((x) => x.dataset.route));
     expect(allCore.lastIndexOf('core')).toBeLessThan(allCore.indexOf('reference'));
@@ -493,7 +493,7 @@ test.describe('Appendix', () => {
     const targets = await page.$$eval('#appendix .apx-link', (a) => a.map((x) => x.dataset.atlasView ? 'atlas:' + x.dataset.atlasView : x.getAttribute('href').slice(1)));
     const pages = await page.$$eval('section[id^="app-"]', (s) => s.map((x) => x.id));
     pages.forEach((p) => expect(targets, p).toContain(p));
-    ['reuse', 'controlled-write', 'workstreams', 'economics', 'toolkit'].forEach((v) => expect(targets).toContain('atlas:' + v));
+    ['reuse', 'risk-map', 'solutions', 'controlled-write', 'workstreams', 'economics', 'toolkit'].forEach((v) => expect(targets).toContain('atlas:' + v));
   });
 
   test('the nav tab and counter say Appendix', async ({ page }) => {
@@ -510,7 +510,7 @@ test.describe('Appendix', () => {
 });
 
 // ── LANDING AND CHAPTER DIVIDERS ──
-const CHAPTERS = ['setting-scene', 'today', 'new-workday', 'six-months', 'business-case', 'scale-start'];
+const CHAPTERS = ['setting-scene', 'today', 'new-workday', 'six-months', 'scale-start'];
 
 test.describe('Landing and dividers', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
@@ -525,7 +525,7 @@ test.describe('Landing and dividers', () => {
     expect(r.kind).toBe('landing');
     expect(r.footer).toBe(false);
     expect(r.header).toBe(false);
-    expect(r.route).toHaveLength(6);
+    expect(r.route).toHaveLength(5);
   });
 
   test('landing chapter buttons jump to their dividers', async ({ page }) => {
@@ -566,8 +566,8 @@ test.describe('Landing and dividers', () => {
   test('dividers are not counted as screens: the counter shows the chapter', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
-    await page.evaluate(() => document.getElementById('ch-business-case').scrollIntoView({ behavior: 'instant' }));
-    await expect(page.locator('#counter')).toHaveText('Ch 5 / 6', { timeout: 4000 });
+    await page.evaluate(() => document.getElementById('ch-six-months').scrollIntoView({ behavior: 'instant' }));
+    await expect(page.locator('#counter')).toHaveText('Ch 4 / 5', { timeout: 4000 });
     await enter(page, 'business-case');
     // The counter includes the landing, so the business case (tag 11) is screen 12 of 15
     await expect(page.locator('#counter')).toHaveText('12 / 15');
@@ -599,5 +599,26 @@ test.describe('Landing and dividers', () => {
       return { kind: a.dataset.kind, letter: (a.querySelector('.apx-letter') || {}).textContent, eyebrow: (a.querySelector('.divider-eyebrow') || {}).textContent };
     });
     expect(r).toEqual({ kind: 'appendix-landing', letter: 'A', eyebrow: 'End of the core route' });
+  });
+});
+
+// ── WORKED-EXAMPLE FRAMING ──
+test.describe('Worked-example framing', () => {
+  test('the opening speaks for all of NFR; TPRM is introduced as the worked example', () => {
+    const m = JSON.parse(read('assets/data/story-manifest.json'));
+    const byId = Object.fromEntries(m.screens.map((s) => [s.id, s]));
+    ['cover', 'pressure-gap', 'north-star'].forEach((id) => {
+      expect(byId[id].title, id).not.toMatch(/TPRM|third-party/i);
+    });
+    expect(byId.cover.subtitle).toMatch(/every NFR domain/);
+    expect(byId['today-integration-layer'].subtitle).toMatch(/^Worked example/);
+    expect(byId['reuse-core'].subtitle).toMatch(/RCSA, issues, incidents and regulatory change/);
+  });
+
+  test('every chapter between the opening and the scale chapter marks the worked example', async ({ page }) => {
+    await open(page);
+    const r = await page.$$eval('section[data-route="divider"]', (d) => d.map((x) => ({ id: x.id, ex: (x.querySelector('.divider-example') || {}).textContent || '' })));
+    r.filter((x) => ['ch-today', 'ch-new-workday', 'ch-six-months'].includes(x.id)).forEach((x) => expect(x.ex, x.id).toContain('TPRM periodic review. The same pattern applies'));
+    expect(r.find((x) => x.id === 'ch-scale-start').ex).toContain('every NFR domain');
   });
 });

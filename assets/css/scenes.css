@@ -730,7 +730,11 @@ section[data-route="divider"] { background: radial-gradient(ellipse 55% 75% at 1
 .divider-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
 .divider-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(40px, 5vw, 68px); font-weight: 700; line-height: 1.04; letter-spacing: -.02em; color: var(--text-1); margin: 12px 0 14px; }
 .divider-question { font-size: clamp(17px, 1.6vw, 22px); color: var(--text-2); line-height: 1.45; max-width: 680px; }
-.divider-screens { list-style: none; margin-top: 26px; display: flex; flex-direction: column; gap: 2px; border-left: 2px solid rgba(180,76,255,.45); padding-left: 18px; counter-reset: dscreen; }
+.divider-example { margin-top: 16px; max-width: 680px; padding: 8px 14px; border-radius: 6px; border: 1px solid rgba(243,179,76,.4); background: rgba(243,179,76,.06); font-size: 14px; line-height: 1.45; color: var(--text-2); }
+.divider-example::before { content: 'Worked example'; margin-right: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); }
+.divider-example.divider-example-scale { border-color: rgba(88,201,148,.45); background: rgba(88,201,148,.06); }
+.divider-example.divider-example-scale::before { content: 'Scale'; color: var(--green); }
+.divider-screens { list-style: none; margin-top: 22px; display: flex; flex-direction: column; gap: 2px; border-left: 2px solid rgba(180,76,255,.45); padding-left: 18px; counter-reset: dscreen; }
 .divider-screens li { counter-increment: dscreen; }
 .divider-screens a { display: flex; gap: 14px; align-items: baseline; padding: 6px 0; font-size: 16px; color: var(--text-1); text-decoration: none; }
 .divider-screens a::before { content: counter(dscreen, decimal-leading-zero); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-3); }
@@ -765,7 +769,8 @@ section[data-route="divider"] { background: radial-gradient(ellipse 55% 75% at 1
 .is-current .divider-body > * { animation: ts-rise .7s cubic-bezier(.16,1,.3,1) both; }
 .is-current .divider-body > :nth-child(2) { animation-delay: .1s; }
 .is-current .divider-body > :nth-child(3) { animation-delay: .22s; }
-.is-current .divider-body > :nth-child(4) { animation-delay: .36s; }
+.is-current .divider-body > :nth-child(4) { animation-delay: .32s; }
+.is-current .divider-body > :nth-child(5) { animation-delay: .44s; }
 .is-current .divider-progress { animation: ts-rise .7s cubic-bezier(.16,1,.3,1) .5s both; }
 @media (prefers-reduced-motion: reduce) {
   .is-current .landing-main > *, .is-current .landing-route, .is-current .divider-num,

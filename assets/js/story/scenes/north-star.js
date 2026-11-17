@@ -91,10 +91,10 @@ SceneDirector.register('north-star', function(container, manifest, reduced) {
     var start = S.el('div', 'ns-start ts-hide ts-up', null, { left: 16, top: 420, width: 1008, height: 70 });
     start.appendChild(S.icon('ti-target'));
     var st = S.el('div', 'ns-start-text');
-    st.appendChild(S.el('div', 'ns-start-title', 'Start here: one TPRM periodic review, in six months'));
-    st.appendChild(S.el('div', 'ts-text', 'Prove the thread on one journey, then reuse it for the next'));
+    st.appendChild(S.el('div', 'ns-start-title', 'Start with one worked example: a TPRM periodic review'));
+    st.appendChild(S.el('div', 'ts-text', 'Prove the thread in six months, then reuse the core for RCSA, issues, incidents and regulatory change'));
     start.appendChild(st);
-    start.appendChild(S.el('span', 'ts-label ts-ink ts-c-human ns-next', 'Next: the TPRM officer today'));
+    start.appendChild(S.el('span', 'ts-label ts-ink ts-c-human ns-next', 'Next: the example, today'));
     root.appendChild(start);
     n.start = start;
   }
@@ -142,7 +142,7 @@ SceneDirector.register('north-star', function(container, manifest, reduced) {
       return 'The north star. Five non-financial risk journeys, ' + JOURNEYS.map(function(j) { return j.label.toLowerCase(); }).join(', ')
         + ', each need the same thread: prepared, decided, recorded. They sit on one operating layer, the NFR OS, with '
         + LAYER_CHIPS.join(', ').toLowerCase() + '. Three promises: ' + PROMISES.map(function(p) { return p.title.toLowerCase(); }).join('; ')
-        + '. The route starts with one journey: a TPRM periodic review, in six months.';
+        + '. The route starts with one worked example, a TPRM periodic review, and reuses the core for every next NFR journey.';
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

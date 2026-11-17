@@ -16,7 +16,7 @@
 
   var TPRM_CASE = deepFreeze({
     id: 'TPRM-PR-042',
-    label: 'Synthetic case',
+    label: 'Synthetic example',
     provider: 'Cloud hosting provider',
     providerShort: 'Cloud provider',
     criticality: 'Critical',

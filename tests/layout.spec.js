@@ -161,10 +161,10 @@ test('nav bar has an Evidence Atlas button', async ({ page }) => {
   await expect(page.locator('.nav button[title*="Evidence Atlas"]')).toBeAttached();
 });
 
-test('agenda lists the six chapters, the appendix and a business-case quick jump', async ({ page }) => {
+test('agenda lists the five chapters, the appendix and a business-case quick jump', async ({ page }) => {
   await gotoPage(page);
   const chapters = await page.$$eval('#agendaStory .agenda-ch-name', (e) => e.map((x) => x.textContent));
-  for (const c of ['SETTING THE SCENE', 'TODAY', 'THE NEW WORKDAY', 'SIX MONTHS', 'THE BUSINESS CASE', 'SCALE AND START', 'APPENDIX']) {
+  for (const c of ['SETTING THE SCENE', 'TODAY', 'THE NEW WORKDAY', 'SIX MONTHS AND PAYBACK', 'SCALE AND START', 'APPENDIX']) {
     expect(chapters).toContain(c);
   }
   await expect(page.locator('#agendaRoiJump')).toBeAttached();
@@ -244,10 +244,10 @@ test.describe('Static checks', () => {
     expect([...shas]).toHaveLength(1);
   });
 
-  test('story manifest is version 27 with six chapters and fifteen screens', () => {
+  test('story manifest is version 27 with five chapters and fifteen screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.version).toBe('27');
-    expect(m.chapters.map((c) => c.id)).toEqual(['setting-scene', 'today', 'new-workday', 'six-months', 'business-case', 'scale-start']);
+    expect(m.chapters.map((c) => c.id)).toEqual(['setting-scene', 'today', 'new-workday', 'six-months', 'scale-start']);
     expect(m.screens.map((s) => s.id)).toEqual(CORE_SLIDES);
   });
 

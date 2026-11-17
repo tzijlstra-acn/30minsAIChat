@@ -9,9 +9,9 @@ SceneDirector.register('pressure-gap', function(container, manifest, reduced) {
   var W = 1040, H = 520;
 
   var PRESSURES = [
-    { title: 'More dependence', icon: 'ti-sitemap', text: 'More critical providers, cloud concentration and the sub-processors behind them' },
-    { title: 'Higher expectations', icon: 'ti-gavel', text: 'Regulation such as DORA expects a complete register, ongoing monitoring and exit plans' },
-    { title: 'Faster change', icon: 'ti-clock', text: 'Incidents, assurance reports and sub-processor changes arrive all year, not once a year' }
+    { title: 'More dependence', icon: 'ti-sitemap', text: 'More critical third parties, cloud concentration and outsourced processes to oversee' },
+    { title: 'Higher expectations', icon: 'ti-gavel', text: 'Regulation such as DORA and operational-resilience rules expects evidence, not assertions' },
+    { title: 'Faster change', icon: 'ti-clock', text: 'Incidents, control changes, assessments and regulatory updates arrive all year, not once a year' }
   ];
   var SYMPTOMS = [
     { label: 'Reviews run late', icon: 'ti-clock' },
@@ -89,7 +89,7 @@ SceneDirector.register('pressure-gap', function(container, manifest, reduced) {
       root.appendChild(box);
       n.symptoms.push(box);
     });
-    n.bridge = S.el('div', 'ts-note pg-bridge ts-hide', 'Next: the north star, then the day of one TPRM officer', { left: 16, top: 470, width: 1008 });
+    n.bridge = S.el('div', 'ts-note pg-bridge ts-hide', 'Next: the north star, then one worked example from third-party risk', { left: 16, top: 470, width: 1008 });
     root.appendChild(n.bridge);
   }
 

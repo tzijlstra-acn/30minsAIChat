@@ -1213,11 +1213,19 @@
 
   // ── V27 STORY VIEWS ────────────────────────────────────────────
   // Header shared by the deep dives: title, the client question, and a way back
-  // to the core screen the view supports.
-  function storyHeader(wrap, title, question, screenId, screenLabel) {
+  // to the core screen the view supports. The screen number is read from that
+  // screen's own tag, so it stays right when screens are added or moved.
+  function screenNumber(screenId) {
+    var sec = document.getElementById(screenId);
+    var tag = sec ? sec.querySelector('.sec-tag') : null;
+    var m = tag ? tag.textContent.match(/\b(\d{2})\b/) : null;
+    return m ? 'screen ' + m[1] : 'the screen';
+  }
+
+  function storyHeader(wrap, title, question, screenId) {
     var top = mk('div', { className: 'ea-story-top' });
     top.appendChild(mk('div', { className: 'ea-story-hd', textContent: title }));
-    var back = mk('button', { className: 'ea-story-back', type: 'button', textContent: 'Back to ' + screenLabel });
+    var back = mk('button', { className: 'ea-story-back', type: 'button', textContent: 'Back to ' + screenNumber(screenId) });
     back.addEventListener('click', function () { returnToScreen(screenId); });
     top.appendChild(back);
     wrap.appendChild(top);
@@ -1233,7 +1241,7 @@
 
   function buildControlledWrite(canvas) {
     var wrap = mk('div', { className: 'ea-story-wrap' });
-    storyHeader(wrap, 'Controlled write and authority', 'How does an approved action reach a system of record, and what stops a write that was not approved?', 'authority-boundary', 'screen 06');
+    storyHeader(wrap, 'Controlled write and authority', 'How does an approved action reach a system of record, and what stops a write that was not approved?', 'authority-boundary');
 
     var seq = section(wrap, 'Write sequence: one contract for every write');
     WRITE_SEQUENCE.forEach(function (s, i) {
@@ -1270,7 +1278,7 @@
 
   function buildWorkstreams(canvas) {
     var wrap = mk('div', { className: 'ea-story-wrap' });
-    storyHeader(wrap, 'Seven workstreams, three acts, three gates', 'Who does what in each phase of the six months, and what needs to be true at each gate?', 'six-month-route', 'screen 07');
+    storyHeader(wrap, 'Seven workstreams, three acts, three gates', 'Who does what in each phase of the six months, and what needs to be true at each gate?', 'six-month-route');
 
     var sec = section(wrap, 'Workstreams by act');
     var table = mk('table', { className: 'ea-story-table' });
@@ -1299,7 +1307,7 @@
 
   function buildEconomics(canvas) {
     var wrap = mk('div', { className: 'ea-story-wrap' });
-    storyHeader(wrap, 'Economics: formulas and assumptions', 'How is the business case calculated, and what evidence stands behind each number?', 'business-case', 'screen 09');
+    storyHeader(wrap, 'Economics: formulas and assumptions', 'How is the business case calculated, and what evidence stands behind each number?', 'business-case');
     var data = global.NFR_BUSINESS_CASE;
     var state = global.BusinessCaseState;
     var model = global.ROIModel;
@@ -1362,11 +1370,11 @@
 
   function buildReuse(canvas) {
     var wrap = mk('div', { className: 'ea-story-wrap' });
-    storyHeader(wrap, 'TPRM to RCSA: the shared core', 'What does the second journey reuse, what does it configure, and what does it still build?', 'reuse-core', 'screen 10');
+    storyHeader(wrap, 'From TPRM to every NFR journey: the shared core', 'What does each next journey reuse, what does it configure, and what does it still build?', 'reuse-core');
     var sec = section(wrap, 'Shared core components');
     var table = mk('table', { className: 'ea-story-table' });
     var head = mk('tr');
-    ['Component', 'Built in TPRM', 'RCSA or next journey'].forEach(function (h) { head.appendChild(mk('th', { textContent: h })); });
+    ['Component', 'Built in the TPRM example', 'Next NFR journeys'].forEach(function (h) { head.appendChild(mk('th', { textContent: h })); });
     table.appendChild(head);
     SHARED_CORE.forEach(function (row) {
       var tr = mk('tr');
@@ -1404,7 +1412,7 @@
   var _TABS = [
     { id: 'theatre',          label: 'Process Theatre',          group: 'Process and journey' },
     { id: 'risk-map',         label: 'Risk Map',                 group: 'Process and journey' },
-    { id: 'reuse',            label: 'TPRM to RCSA reuse',       group: 'Process and journey' },
+    { id: 'reuse',            label: 'Reuse across NFR journeys', group: 'Process and journey' },
     { id: 'toolkit',          label: 'Reference architecture',   group: 'Architecture and models' },
     { id: 'solutions',        label: 'Solution Portfolio',       group: 'Architecture and models' },
     { id: 'controlled-write', label: 'Controlled write',         group: 'Data and integration' },
