@@ -125,8 +125,22 @@
       "caseState": "decision"
     },
     {
-      "id": "authority-boundary",
+      "id": "workspace-live",
       "order": 8,
+      "chapterId": "new-workday",
+      "title": "Already running. It feels like home.",
+      "subtitle": "NFR OS on a synthetic bank: the TPRM officer's day, and skills built in a sentence over data the role already sees.",
+      "closingLine": "Their data, their questions, one home.",
+      "question": "Does this exist beyond the slides?",
+      "evidenceLabel": "LIVE PRODUCT · SYNTHETIC INSTITUTION",
+      "scene": "workspace-live",
+      "durationMs": 9000,
+      "autoplay": true,
+      "handoffToken": "live-workspace"
+    },
+    {
+      "id": "authority-boundary",
+      "order": 9,
       "chapterId": "new-workday",
       "title": "AI prepares. Professionals decide. Systems record.",
       "subtitle": "Capability may increase, but authority changes only through an explicit control decision.",
@@ -141,7 +155,7 @@
     },
     {
       "id": "six-month-route",
-      "order": 9,
+      "order": 10,
       "chapterId": "six-months",
       "title": "Six months to one complete working loop.",
       "subtitle": "Frame the journey, build the flow, then prove it on real cases.",
@@ -155,7 +169,7 @@
     },
     {
       "id": "m6-proof",
-      "order": 10,
+      "order": 11,
       "chapterId": "six-months",
       "title": "Not a demo. One controlled process in use.",
       "subtitle": "Five proof points define done at month six.",
@@ -169,7 +183,7 @@
     },
     {
       "id": "business-case",
-      "order": 11,
+      "order": 12,
       "chapterId": "six-months",
       "title": "Count hours returned, not model calls.",
       "subtitle": "Measured on the worked example: effort, cycle time, quality, control and run cost of one review.",
@@ -186,7 +200,7 @@
     },
     {
       "id": "reuse-core",
-      "order": 12,
+      "order": 13,
       "chapterId": "scale-start",
       "title": "Build the first journey once. Reuse the core.",
       "subtitle": "TPRM builds the shared core; RCSA, issues, incidents and regulatory change add mainly domain logic.",
@@ -200,7 +214,7 @@
     },
     {
       "id": "integrated-delivery",
-      "order": 13,
+      "order": 14,
       "chapterId": "scale-start",
       "title": "One team owns the whole loop.",
       "subtitle": "Process, product, data, engineering, control and change move together.",
@@ -213,7 +227,7 @@
     },
     {
       "id": "first-move",
-      "order": 14,
+      "order": 15,
       "chapterId": "scale-start",
       "title": "Start with one bounded review.",
       "subtitle": "Agree ownership, access, proof and the first six-month boundary.",

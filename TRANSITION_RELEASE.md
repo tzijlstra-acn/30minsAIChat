@@ -4,20 +4,23 @@ The core route now follows one synthetic TPRM periodic review (`TPRM-PR-042`) fr
 
 ## Route
 
-15 core screens in six chapters:
+16 core screens in five chapters. TPRM is the worked example; the opening and the scale chapter speak for every NFR domain.
 
-- SETTING THE SCENE: cover; the hook (third-party risk is outgrowing the team: more dependence, higher expectations, faster change, an illustrative demand-against-capacity gap); the north star (one operating layer for all non-financial risk work, with TPRM as the first journey)
+- SETTING THE SCENE: cover; the hook (non-financial risk is outgrowing the team); the north star (one operating layer for all non-financial risk work, proven first on one TPRM periodic review)
 - TODAY: the TPRM officer as the integration layer, connection work, the pilot trap
-- THE NEW WORKDAY: prepared decision, role workspace, authority boundary
-- SIX MONTHS: six-month route, month-six proof
-- THE BUSINESS CASE: interactive calculator
+- THE NEW WORKDAY: prepared decision, role workspace, the workspace live (NFROS, the running product), authority boundary
+- SIX MONTHS AND PAYBACK: six-month route, month-six proof, interactive business case
 - SCALE AND START: reuse core (closing the loop back to the north star), integrated delivery, first move
 
-Slide types mark the transitions: the cover is a landing slide (hero title, tagline, compact animated visual, clickable six-chapter route); each chapter opens with a full-screen divider (numeral, guiding question, the chapter's screens, six-step progress marker) that counts as "Ch n / 6" rather than a screen; the appendix opens with its own landing. Divider lists and the landing route are built from the DOM.
+Slide types mark the transitions: the cover is a landing slide (hero title, tagline, compact animated visual, clickable five-chapter route); each chapter opens with a full-screen divider (numeral, guiding question, the chapter's screens, progress marker, the worked-example line) that counts as "Ch n / 5" rather than a screen; the appendix opens with its own landing. Divider lists and the landing route are built from the DOM.
+
+## The workspace, live
+
+Screen 08 shows NFROS, the running product, on its synthetic institution (Arcadia Bank AG), in three real captures stepped by the scene and selectable by the presenter: the Third-Party Risk Manager's workday; the AI Partner asked to build a skill in a sentence; and the Skills builder reading that skill back, previewing it on the role's own records and leaving saving to the person. The captures are in `assets/img/nfros/` and come from the NFROS branch `feat/tprm-skills-builder` (Skills on Processes, read only, scoped to the role's entity, every run audited through the `runSkill` READ tool, rule-based drafting when no model key is present). The screen carries no case thread: it shows the product, not the case. If a capture fails to load, the static fallback shows the Skills capture.
 
 Titles, subtitles, closing lines, durations and handoff tokens are in `assets/data/story-manifest.json`; a test keeps them equal to the HTML.
 
-Everything after the core route is a marked appendix: an index screen, the Evidence Atlas, then A1 to A12 in story order, each tagged with the part of the story it supports ("Appendix A8 · Behind the business case"). The nav tab and counter read "Appendix". Appendix copy that contradicted the story (a link to a removed screen, FTE redeployment and penalty avoidance as KPIs) was rewritten.
+Everything after the core route is a marked appendix: an index screen, the Evidence Atlas, then A1 to A6 in story order, each tagged with the part of the story it supports. The nav tab and counter read "Appendix". Appendix copy that contradicted the story (a link to a removed screen, FTE redeployment and penalty avoidance as KPIs) was rewritten.
 
 ## Where things live
 

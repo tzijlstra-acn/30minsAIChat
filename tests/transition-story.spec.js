@@ -14,7 +14,7 @@ const EN = String.fromCharCode(0x2013);
 
 const CORE = [
   'cover', 'pressure-gap', 'north-star', 'today-integration-layer', 'connection-work', 'pilot-trap',
-  'prepared-decision', 'role-workspace', 'authority-boundary',
+  'prepared-decision', 'role-workspace', 'workspace-live', 'authority-boundary',
   'six-month-route', 'm6-proof', 'business-case',
   'reuse-core', 'integrated-delivery', 'first-move'
 ];
@@ -50,9 +50,9 @@ function sceneFiles() {
 
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
-  test('fifteen scene files, one per core screen, all registered', () => {
+  test('sixteen scene files, one per core screen, all registered', () => {
     const declared = [...read('pitch.html').matchAll(/data-route="core"[^>]*? data-scene="([a-z0-9-]+)"/g)].map((m) => m[1] + '.js').sort();
-    expect(declared).toHaveLength(15);
+    expect(declared).toHaveLength(16);
     expect(sceneFiles()).toEqual(declared);
   });
 
@@ -569,8 +569,8 @@ test.describe('Landing and dividers', () => {
     await page.evaluate(() => document.getElementById('ch-six-months').scrollIntoView({ behavior: 'instant' }));
     await expect(page.locator('#counter')).toHaveText('Ch 4 / 5', { timeout: 4000 });
     await enter(page, 'business-case');
-    // The counter includes the landing, so the business case (tag 11) is screen 12 of 15
-    await expect(page.locator('#counter')).toHaveText('12 / 15');
+    // The counter includes the landing, so the business case (tag 12) is screen 13 of 16
+    await expect(page.locator('#counter')).toHaveText('13 / 16');
   });
 
   test('dividers stay out of the agenda and edge-rail screen lists', async ({ page }) => {
@@ -620,5 +620,46 @@ test.describe('Worked-example framing', () => {
     const r = await page.$$eval('section[data-route="divider"]', (d) => d.map((x) => ({ id: x.id, ex: (x.querySelector('.divider-example') || {}).textContent || '' })));
     r.filter((x) => ['ch-today', 'ch-new-workday', 'ch-six-months'].includes(x.id)).forEach((x) => expect(x.ex, x.id).toContain('TPRM periodic review. The same pattern applies'));
     expect(r.find((x) => x.id === 'ch-scale-start').ex).toContain('every NFR domain');
+  });
+});
+
+// ── THE WORKSPACE, LIVE ──
+test.describe('The workspace, live', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('sits in THE NEW WORKDAY after the role workspace and is labelled as the live product on synthetic data', async ({ page }) => {
+    const m = JSON.parse(read('assets/data/story-manifest.json'));
+    const ids = m.screens.map((s) => s.id);
+    expect(ids.indexOf('workspace-live')).toBe(ids.indexOf('role-workspace') + 1);
+    expect(m.screens.find((s) => s.id === 'workspace-live').chapterId).toBe('new-workday');
+    await open(page);
+    await expect(page.locator('#workspace-live .sec-tag')).toHaveText(/THE NEW WORKDAY . 08 . LIVE PRODUCT/);
+    await expect(page.locator('#workspace-live .scene-footer-evidence')).toContainText('SYNTHETIC INSTITUTION');
+  });
+
+  test('steps through three real captures, ends on the Skills builder, and each step can be shown again', async ({ page }) => {
+    await open(page);
+    await enter(page, 'workspace-live', 16000);
+    const shots = page.locator('#workspace-live .wl-shot');
+    await expect(shots).toHaveCount(3);
+    const srcs = await shots.evaluateAll((imgs) => imgs.map((i) => i.getAttribute('src')));
+    expect(srcs).toEqual(['./assets/img/nfros/nfros-home.jpg', './assets/img/nfros/nfros-partner.jpg', './assets/img/nfros/nfros-skills.jpg']);
+    for (const src of srcs) expect(fs.existsSync(path.join(ROOT, src))).toBe(true);
+    const loaded = await shots.evaluateAll((imgs) => imgs.every((i) => i.complete && i.naturalWidth >= 1600));
+    expect(loaded).toBe(true);
+    await expect(page.locator('#workspace-live .wl-shot.is-active')).toHaveAttribute('src', /nfros-skills/);
+    await page.locator('#workspace-live .wl-step').first().click();
+    await expect(page.locator('#workspace-live .wl-shot.is-active')).toHaveAttribute('src', /nfros-home/);
+    await expect(page.locator('#workspace-live .wl-step').first()).toHaveAttribute('aria-pressed', 'true');
+    const alts = await shots.evaluateAll((imgs) => imgs.map((i) => i.alt.length));
+    alts.forEach((n) => expect(n).toBeGreaterThan(40));
+  });
+
+  test('names the guardrails the product enforces', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await enter(page, 'workspace-live');
+    const text = await page.locator('#workspace-live [data-scene-container]').innerText();
+    ['Read only', "Scoped to the role's entity", 'Every run audited', 'Works without a model key'].forEach((g) => expect(text).toContain(g));
   });
 });

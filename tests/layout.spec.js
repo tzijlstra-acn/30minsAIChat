@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Layout and platform tests -- NFR OS pitch, V27 (15-screen TPRM transition story)
+ * Layout and platform tests -- NFR OS pitch, V27 (16-screen TPRM transition story)
  * Run: npx playwright test tests/layout.spec.js
  * The suite's web server is node scripts/serve.js 8080 (see playwright.config.js).
  *
@@ -28,7 +28,7 @@ const VIEWPORTS = [
 
 const CORE_SLIDES = [
   'cover', 'pressure-gap', 'north-star', 'today-integration-layer', 'connection-work', 'pilot-trap',
-  'prepared-decision', 'role-workspace', 'authority-boundary',
+  'prepared-decision', 'role-workspace', 'workspace-live', 'authority-boundary',
   'six-month-route', 'm6-proof', 'business-case',
   'reuse-core', 'integrated-delivery', 'first-move'
 ];
@@ -73,7 +73,7 @@ for (const vp of VIEWPORTS) {
       expect(overflowing).toEqual([]);
     });
 
-    test('all 15 core screens are attached to the DOM', async ({ page }) => {
+    test('all 16 core screens are attached to the DOM', async ({ page }) => {
       await gotoPage(page);
       for (const id of CORE_SLIDES) {
         await expect(page.locator(`#${id}`), `${id} missing at ${vp.name}`).toBeAttached();
@@ -143,7 +143,7 @@ test('store is initialised with defaults', async ({ page }) => {
   expect(state).not.toBeNull();
 });
 
-test('exactly 15 core screens, appendix excluded from the core route', async ({ page }) => {
+test('exactly 16 core screens, appendix excluded from the core route', async ({ page }) => {
   await gotoPage(page);
   const ids = await page.$$eval('section[data-route="core"]', (s) => s.map((x) => x.id));
   expect(ids).toEqual(CORE_SLIDES);
@@ -153,7 +153,7 @@ test('exactly 15 core screens, appendix excluded from the core route', async ({ 
 test('counter total comes from the DOM', async ({ page }) => {
   await gotoPage(page);
   await page.waitForTimeout(500);
-  await expect(page.locator('#counter')).toHaveText('1 / 15');
+  await expect(page.locator('#counter')).toHaveText('1 / 16');
 });
 
 test('nav bar has an Evidence Atlas button', async ({ page }) => {
@@ -244,7 +244,7 @@ test.describe('Static checks', () => {
     expect([...shas]).toHaveLength(1);
   });
 
-  test('story manifest is version 27 with five chapters and fifteen screens', () => {
+  test('story manifest is version 27 with five chapters and sixteen screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.version).toBe('27');
     expect(m.chapters.map((c) => c.id)).toEqual(['setting-scene', 'today', 'new-workday', 'six-months', 'scale-start']);
