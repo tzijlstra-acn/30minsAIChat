@@ -173,7 +173,9 @@ var SceneDirector = (function() {
       _current.instance.reset();
       if (_isReduced()) {
         _current.instance.finish();
+        _setState('complete');
       } else {
+        _setState('playing');
         _current.instance.play();
       }
     } catch (e) {

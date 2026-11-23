@@ -486,7 +486,7 @@ SceneDirector.register('workspace-builder', function(container, manifest, reduce
       return false;
     },
     getAccessibleSummary: function() {
-      return 'Agent Builder in the NFR Workspace. The request: ' + B.prompt + ' The Workspace interprets the goal, then shows the scope before anything runs: it can read '
+      return D.capabilities[3].product + ' in the ' + D.product + '. The request: ' + B.prompt + ' The Workspace interprets the goal, then shows the scope before anything runs: it can read '
         + B.scope.read.length + ' approved sources, can create ' + B.scope.create.join(', ').toLowerCase() + ', and cannot ' + B.scope.cannot.join(', ').toLowerCase() + '. '
         + B.scope.inherit + ' The plan has ' + B.plan.length + ' steps. The run produces a one-page, source-linked briefing for human review. '
         + 'Reuse options: ' + B.reuse.map(function(r) { return r.label; }).join(', ') + '. Promotion path: ' + B.promotion.join(', then ') + '.';

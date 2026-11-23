@@ -1,8 +1,8 @@
 {
   "name": "nfr-ai-pitch",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "private": true,
-  "description": "NFR AI Executive Conversation pitch: layout and quality tests",
+  "description": "NFR Workspace v2: client conversation, Workspace demo, layout and quality tests",
   "scripts": {
     "test": "playwright test",
     "test:layout": "playwright test tests/layout.spec.js",
@@ -16,7 +16,9 @@
     "audit:motion": "node scripts/audit-motion.js",
     "audit:offline": "node scripts/audit-offline.js",
     "audit:claims": "python scripts/lint-copy.py",
-    "audit:all": "node scripts/audit-all.js"
+    "audit:all": "node scripts/audit-all.js",
+    "qa:visual": "node scripts/visual-qa.js 8080",
+    "stamp": "node scripts/stamp-build.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0"

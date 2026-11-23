@@ -237,14 +237,15 @@
   function handleKey(e) {
     var k = e.key;
     if (e.metaKey || e.ctrlKey || e.altKey) return false;
-    // Overlays first
+    // Overlays first. While one is open the deck behind it does not move; other keys keep
+    // their browser default (Tab, arrows scrolling the panel).
     if (isOpen(_keys)) {
-      if (k === 'Escape' || k === '?') { e.preventDefault(); closeOverlay(_keys); return true; }
-      return false;
+      if (k === 'Escape' || k === '?') { e.preventDefault(); closeOverlay(_keys); }
+      return true;
     }
     if (isOpen(_tech)) {
-      if (k === 'Escape' || k === 't' || k === 'T') { e.preventDefault(); closeOverlay(_tech); return true; }
-      return false;
+      if (k === 'Escape' || k === 't' || k === 'T') { e.preventDefault(); closeOverlay(_tech); }
+      return true;
     }
     if (k === '?') { e.preventDefault(); toggleKeys(); return true; }
     if (k === 't' || k === 'T') { e.preventDefault(); showTech(); return true; }
@@ -281,6 +282,15 @@
     document.querySelectorAll('[data-tech-tab]').forEach(function(a) {
       a.addEventListener('click', function(e) { e.preventDefault(); showTech(a.dataset.techTab); });
     });
+    // A mouse click leaves focus on the button, and Space would then press it again
+    // (for example switching safe mode back off). Release focus after mouse clicks on
+    // presenter and demo controls; keyboard activation (detail 0) keeps its focus.
+    document.addEventListener('click', function(e) {
+      if (!e.detail) return;
+      var b = e.target.closest && e.target.closest('button');
+      if (!b) return;
+      if (b.closest('.nav') || b.classList.contains('ws-btn') || b.classList.contains('ws-nav-item') || b.classList.contains('landing-chapter') || b.classList.contains('wj-crumb')) b.blur();
+    }, true);  // capture phase: demo buttons stop propagation of their own clicks
     syncSafeButton();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

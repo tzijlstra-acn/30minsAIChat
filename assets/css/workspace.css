@@ -24,6 +24,11 @@ html.safe-mode .nav::after { content: 'SAFE MODE'; position: absolute; left: 50%
 .landing-principle span:nth-child(3) { color: var(--green); background: rgba(88,201,148,.08); }
 .landing-chapter-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .06em; color: var(--text-3); }
 
+/* ── Narrative screens: wider column, headlines on one line from 1024 px up ── */
+.inner.scene-screen { max-width: 1280px; }
+.scene-screen:not(.app-screen) .slide-h { font-size: clamp(26px, 3.1vw, 44px); }
+@media (max-height: 720px) { .scene-screen:not(.app-screen) .slide-h { font-size: clamp(22px, 2.8vw, 36px); } }
+
 /* ── App screens: compact header, wide stage ── */
 section[data-kind="app"] { padding-left: 16px; padding-right: 16px; background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(180,76,255,.05), transparent 70%); }
 .inner.scene-screen.app-screen { max-width: 1640px; padding-inline: 8px; padding-block: 10px 12px; --screen-gap: 10px; }
@@ -33,6 +38,10 @@ section[data-kind="app"] { padding-left: 16px; padding-right: 16px; background: 
 .app-screen .slide-sub { flex: 1 1 100%; font-size: clamp(13px, 1.02vw, 16px); line-height: 1.4; max-width: none; white-space: nowrap; overflow: hidden; }
 .app-screen .scene-footer-insight { font-size: 14px; padding: 6px 12px; }
 .app-screen .ts-canvas { font-size: 13px; }
+
+/* ── Appendix index: four groups side by side on presentation screens ── */
+.inner.appendix-landing { max-width: 1280px; }
+.appendix-landing .apx-index { grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); }
 
 /* ── Presenter overlays (keys, technical depth) ── */
 .pc-overlay { position: fixed; inset: 0; z-index: 450; display: none; align-items: center; justify-content: center; background: rgba(8,9,14,.62); backdrop-filter: blur(3px); }
@@ -439,30 +448,31 @@ section[data-kind="app"] { padding-left: 16px; padding-right: 16px; background: 
 .tc-bar { display: flex; align-items: center; gap: 9px; height: 40px; padding: 0 12px; border-bottom: 1px solid var(--border-1); background: var(--surface-1); }
 .tc-mark-sq { width: 20px; height: 20px; }
 .tc-brand { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-1); }
-.tc-role { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--amber); border: 1px solid rgba(243,179,76,.45); border-radius: 12px; padding: 2px 9px; }
+.tc-role { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--amber); border: 1px solid rgba(243,179,76,.45); border-radius: 12px; padding: 2px 9px; }
 .tc-nav { position: absolute; left: 0; top: 40px; bottom: 0; width: 96px; border-right: 1px solid var(--border-1); background: var(--surface-1); padding: 12px 10px; display: flex; flex-direction: column; gap: 8px; }
 .tc-nav-item { height: 28px; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; color: var(--text-3); font-size: 16px; }
 .tc-nav-item.is-active { background: var(--accent-soft); color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
 .tc-skel { border-radius: 9px; border: 1px solid var(--border-1); background: var(--surface-1); padding: 14px; display: flex; flex-direction: column; gap: 10px; transition: opacity .35s; }
 .tc-skel i { display: block; height: 9px; border-radius: 5px; background: rgba(255,255,255,.08); }
 .tc-skel.is-gone { opacity: 0; }
-.tc-card { border-radius: 9px; border: 1px solid var(--border-1); background: var(--surface-1); padding: 10px 12px; display: flex; flex-direction: column; gap: 3px; }
+.tc-card { border-radius: 9px; border: 1px solid var(--border-1); background: var(--surface-1); padding: 9px 12px; display: flex; flex-direction: column; gap: 2px; }
 .tc-card.is-next { border-color: rgba(180,76,255,.6); box-shadow: inset 3px 0 0 var(--accent); }
-.tc-card-journey { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
-.tc-card-title { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-1); }
-.tc-card-due { font-size: 12px; color: var(--text-3); }
+.tc-card-journey { font-size: 14px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+.tc-card-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-1); }
+.tc-card-due { font-size: 14px; color: var(--text-3); }
 .tc-card.is-next .tc-card-due { color: var(--amber); }
 .tc-assist { border-left: 1px solid var(--border-1); background: var(--surface-1); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
 .tc-assist-head { display: flex; align-items: center; gap: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: var(--text-1); }
 .tc-assist-head .ti { color: var(--accent); font-size: 16px; }
 .tc-pill { display: block; height: 26px; border-radius: 7px; border: 1px solid var(--border-1); background: var(--surface-0, #13151C); }
-.tc-foot { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; color: var(--green); text-align: center; }
+.tc-foot { font-size: 14px; font-weight: 600; color: var(--green); text-align: center; }
 
-/* 02 assistance-here */
+/* 02 assistance-here (the headline wraps at 1280 wide, so small labels are 13px) */
+#assistance-here .ts-canvas .ts-label { font-size: 13px; }
 .ah-tile { display: flex; flex-direction: column; gap: 6px; }
 .ah-head { display: flex; align-items: center; gap: 9px; }
 .ah-head .ti { font-size: 20px; }
-.ah-ok { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--green); }
+.ah-ok { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--green); }
 .ah-ok .ti { font-size: 15px; }
 .ah-link { stroke-width: 1.4; opacity: .7; }
 .ah-person { border-radius: 50%; border: 2px solid var(--amber); background: color-mix(in srgb, var(--amber) 12%, var(--surface-1)); display: flex; align-items: center; justify-content: center; }
@@ -472,7 +482,7 @@ section[data-kind="app"] { padding-left: 16px; padding-right: 16px; background: 
 .ah-node-text { font-size: 14px; font-weight: 600; color: var(--text-1); }
 .ah-gap { fill: none; stroke-width: 2; stroke-dasharray: 5 4; opacity: 0; transition: opacity .45s; }
 .ah-gap.ts-on { opacity: 1; }
-.ah-handoff { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--pink); }
+.ah-handoff { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--pink); }
 .ah-note { display: flex; align-items: baseline; gap: 14px; padding: 10px 14px; border-left: 3px solid var(--amber); background: rgba(243,179,76,.06); border-radius: 0 6px 6px 0; }
 .ah-note-strong { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: var(--text-1); white-space: nowrap; }
 
