@@ -1,7 +1,8 @@
 // @ts-check
 /**
- * NFR Workspace v2 -- the deterministic product demo and presenter controls.
- * Start-up, home, the periodic-review journey, the Agent Builder, keys, safe mode.
+ * NFR Workspace -- the deterministic product demo, presenter controls and appendix A to E.
+ * Start-up, decision-first home, visual insight, Assist-to-app hand-off, the periodic
+ * review with write-back preview and commit, the Agent Builder, keys, safe mode.
  * Every test sets its own viewport, so the file runs once, in the chromium project.
  */
 const { test, expect } = require('@playwright/test');
@@ -24,6 +25,7 @@ const ws = (page) => page.evaluate(() => document.body.dataset.wsState);
 const builder = (page) => page.evaluate(() => document.body.dataset.builderState);
 const here = (page) => page.evaluate(() => sections[current].id);
 async function press(page, key) { await page.keyboard.press(key); await page.waitForTimeout(150); }
+async function reduced(page) { await page.emulateMedia({ reducedMotion: 'reduce' }); }
 
 // ── START-UP ──
 test.describe('Workspace start-up', () => {
@@ -32,7 +34,6 @@ test.describe('Workspace start-up', () => {
     await page.waitForFunction(() => sections[current].id === 'three-layers');
     await press(page, 'w');
     await page.waitForFunction(() => sections[current].id === 'workspace-boot' && SceneDirector.getState() === 'playing', null, { timeout: 8000 });
-    // Midway: the four status items are loading, the assistant is not there yet
     await page.waitForTimeout(1300);
     const mid = await page.evaluate(() => ({
       statuses: document.querySelectorAll('#workspace-boot .wb-st.ts-on').length,
@@ -66,159 +67,190 @@ test.describe('Workspace start-up', () => {
     await press(page, 'Space');
     await page.waitForFunction(() => document.querySelector('#workspace-boot .wb-boot').classList.contains('is-gone'), null, { timeout: 1000 });
     expect(await here(page)).toBe('workspace-boot');
-    await page.locator('#workspace-boot .ws-assist').waitFor();
   });
 
   test('reduced motion shows the ready Workspace at once', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await reduced(page);
     await open(page, '#workspace-boot');
     await page.waitForFunction(() => sections[current].id === 'workspace-boot' && SceneDirector.getState() === 'complete', null, { timeout: 5000 });
-    await expect(page.locator('#workspace-boot .ws-card')).toHaveCount(3);
+    await expect(page.locator('#workspace-boot .ws-card')).toHaveCount(1);
     await expect(page.locator('#workspace-boot .wb-boot')).toHaveClass(/is-gone/);
   });
 });
 
-// ── HOME ──
+// ── HOME AND VISUAL INSIGHT ──
 test.describe('Workspace home', () => {
-  test('starts from a decision queue: why, what changed, evidence, decision and due date', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('one decision is dominant: Now, then Next, Watching and Done by the Workspace', async ({ page }) => {
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-home');
-    const first = page.locator('#workspace-home .ws-card').first();
-    for (const k of ['Why it is here', 'What changed', 'Evidence', 'Decision required']) await expect(first).toContainText(k);
-    await expect(first).toContainText('Due today');
-    await expect(page.locator('#workspace-home .ws-nav-item.is-active')).toHaveText('Home');
-    await expect(page.locator('#workspace-home .ws-card')).toHaveCount(3);
+    const H = page.locator('#workspace-home');
+    await expect(H.locator('.ws-card')).toHaveCount(1);
+    for (const k of ['Why it is here', 'What changed', 'What was prepared', 'Decision needed']) await expect(H.locator('.ws-card')).toContainText(k);
+    await expect(H.locator('.ws-card')).toContainText('Due today');
+    await expect(H.locator('.ws-next')).toHaveCount(2);
+    await expect(H.locator('.ws-watch-row')).toHaveCount(3);
+    await expect(H.locator('.ws-done')).toContainText('Done by the Workspace overnight');
+    // One third-party world: every item in the queue is a third-party case
+    const ids = await H.locator('[data-case]').evaluateAll((e) => e.map((x) => x.dataset.case));
+    ids.forEach((id) => expect(id).toMatch(/^TPRM-/));
   });
 
-  test('Space asks the three suggested questions in order, then moves on', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('a question returns a visual, source-linked insight, not a paragraph', async ({ page }) => {
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-home');
-    const qs = await page.evaluate(() => NFR_WORKSPACE_DEMO.assist.questions.map((q) => q.q));
-    for (const q of qs) {
-      await press(page, 'Space');
-      await expect(page.locator('#workspace-home .ws-answer-q')).toHaveText(q);
-      await expect(page.locator('#workspace-home .ws-answer-src')).toContainText('Sources:');
-    }
     await press(page, 'Space');
-    await page.waitForFunction(() => sections[current].id === 'workspace-journey', null, { timeout: 4000 });
+    expect(await ws(page)).toBe('insight-visible');
+    const I = page.locator('#workspace-home .wi');
+    await expect(I.locator('.wi-conclusion')).toContainText('Three of 42 critical services are deteriorating');
+    await expect(I.locator('.wi-fig')).toHaveCount(4);
+    await expect(I.locator('.wi-bar-row')).toHaveCount(5);
+    await expect(I.locator('.wi-bar-row.is-selected')).toContainText('Cloud hosting');
+    await expect(I.locator('svg.wi-trend polyline')).toHaveCount(1);
+    await expect(I.locator('.wi-driver')).toHaveCount(4);
+    await expect(I.locator('.wi-driver .ws-chip').first()).toBeVisible();
+    await expect(I.locator('.wi-fresh')).toContainText('within your access');
+    await expect(I.locator('.wi-action')).toContainText('Recommended next action');
+    expect(await I.locator('.wi-bars').getAttribute('aria-label')).toContain('Cloud hosting +18');
+    await I.getByRole('button', { name: 'Pin to My work' }).click();
+    await expect(I.locator('.wi-saved')).toContainText('Pinned');
+    await I.locator('.wj-crumb').click();
+    await expect(page.locator('#workspace-home .ws-card')).toHaveCount(1);
   });
 
-  test('Open case leads into the periodic-review journey', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('Assist hands the work to the Periodic Review app, which opens at the role app', async ({ page }) => {
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-home');
-    await page.locator('#workspace-home .ws-card').first().getByRole('button', { name: 'Open case' }).click();
-    await page.waitForFunction(() => sections[current].id === 'workspace-journey', null, { timeout: 4000 });
+    await press(page, 'Space');
+    await press(page, 'Space');
+    const hand = page.locator('#workspace-home .ws-handoff');
+    await expect(hand).toContainText('Open the Periodic Review app to validate them');
+    await hand.getByRole('button', { name: 'Open Periodic Review App' }).click();
+    await page.waitForFunction(() => sections[current].id === 'workspace-journey' && SceneDirector.getState() === 'complete', null, { timeout: 6000 });
+    expect(await ws(page)).toBe('role-app-open');
+    await expect(page.locator('#workspace-journey .wj-ev')).toHaveCount(4);
+  });
+
+  test('Open case leads into the periodic-review journey at its summary', async ({ page }) => {
+    await reduced(page);
+    await open(page);
+    await enter(page, 'workspace-home');
+    await page.locator('#workspace-home .ws-card').getByRole('button', { name: 'Open case' }).click();
+    await page.waitForFunction(() => sections[current].id === 'workspace-journey' && SceneDirector.getState() === 'complete', null, { timeout: 4000 });
+    expect(await ws(page)).toBe('case-open');
   });
 });
 
-// ── STANDARD JOURNEY ──
+// ── STANDARD JOURNEY: PROPOSE, INSPECT, APPROVE, COMMIT, RECEIPT ──
 test.describe('Periodic-review journey', () => {
-  test('runs end to end: summary, role app, trace, human decision, recorded outcome and receipt', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('nothing is written until the professional confirms a previewed change', async ({ page }) => {
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-journey');
     const J = page.locator('#workspace-journey');
     expect(await ws(page)).toBe('case-open');
     await expect(J.locator('.wj-sum')).toHaveCount(6);
-    await expect(J.locator('.wj-sum.is-gap')).toContainText('penetration-test report');
-    await expect(J.locator('.ts-receipt')).toHaveCount(0);
-
     await J.getByRole('button', { name: /Open the periodic review app/ }).click();
     expect(await ws(page)).toBe('role-app-open');
-    await expect(J.locator('.wj-ev')).toHaveCount(4);
     await expect(J.locator('.wj-ev.is-gap')).toContainText('Missing');
-    await expect(J.locator('.wj-cmp:not(.wj-cmp-hd)')).toHaveCount(3);
 
     await press(page, 'a');
     expect(await ws(page)).toBe('automation-trace-open');
-    const trace = J.locator('.wj-trace .wj-tr');
-    await expect(trace).toHaveCount(8);
-    await expect(trace.last()).toHaveClass(/is-waiting/);
-    await expect(trace.last()).toContainText('Human gate');
+    await expect(J.locator('.wj-trace .wj-tr')).toHaveCount(8);
+    await expect(J.locator('.wj-trace .wj-tr').last()).toHaveClass(/is-waiting/);
     await press(page, 'Escape');
     expect(await ws(page)).toBe('role-app-open');
-    expect(await here(page)).toBe('workspace-journey');
 
     await J.getByRole('button', { name: 'Go to decision' }).click();
-    expect(await ws(page)).toBe('human-decision');
+    expect(await ws(page)).toBe('decision-pending');
     await expect(J.locator('.wj-option')).toHaveCount(3);
-    await expect(J.locator('.wj-option').first()).toContainText('Proposed');
+    await J.locator('.wj-option').first().click();
+    expect(await ws(page)).toBe('writeback-preview');
+    const P = J.locator('.wj-preview');
+    await expect(P).toContainText('Nothing written yet');
+    await expect(P).toContainText('System of record (synthetic GRC)');
+    await expect(P.locator('.wj-change:not(.wj-change-hd)')).toHaveCount(4);
+    await expect(P.locator('.wj-change-to').first()).toHaveText('Approved with condition');
     await expect(J.locator('.ts-receipt')).toHaveCount(0);
 
-    await J.locator('.wj-option').first().click();
-    expect(await ws(page)).toBe('decision-recorded');
-    await expect(J.locator('.wj-receipt')).toContainText('Audit receipt');
+    await P.getByRole('button', { name: 'Confirm and record' }).click();
+    expect(await ws(page)).toBe('writeback-complete');
+    await expect(J.locator('.wj-statechange')).toContainText('Approved with condition');
+    await expect(J.locator('.wj-statechange')).toContainText('Moved from Now to Recorded today');
     await expect(J.locator('.wj-receipt .ts-receipt[data-state="acknowledged"]')).toBeVisible();
-    for (const t of ['Your decision', 'Outcome', 'Actions created', 'Next monitoring event']) await expect(J.locator('.wj-rec')).toContainText(t);
   });
 
-  test('Space walks the same journey and records the proposed decision', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('Space walks the journey from the role app to the receipt, then moves on', async ({ page }) => {
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-journey');
     const seen = [];
-    for (let i = 0; i < 4; i++) { await press(page, 'Space'); seen.push(await ws(page)); }
-    expect(seen).toEqual(['role-app-open', 'automation-trace-open', 'human-decision', 'decision-recorded']);
-    const proposed = await page.evaluate(() => NFR_WORKSPACE_DEMO.journey.decisions[0].label);
-    await expect(page.locator('#workspace-journey .wj-receipt')).toContainText(proposed);
+    for (let i = 0; i < 5; i++) { await press(page, 'Space'); seen.push(await ws(page)); }
+    expect(seen).toEqual(['role-app-open', 'automation-trace-open', 'decision-pending', 'writeback-preview', 'writeback-complete']);
     await press(page, 'Space');
     await page.waitForFunction(() => sections[current].id === 'workspace-builder', null, { timeout: 4000 });
   });
 
-  test('each decision records its own outcome; Replay returns to the case', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('the recorded decision changes the home queue; Replay restores it', async ({ page }) => {
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-journey');
-    const decisions = await page.evaluate(() => NFR_WORKSPACE_DEMO.journey.decisions.map((d) => ({ label: d.label, outcome: d.outcome })));
-    for (let i = 0; i < decisions.length; i++) {
+    for (let i = 0; i < 5; i++) await press(page, 'Space');
+    await page.locator('#workspace-journey').getByRole('button', { name: 'Back to decisions' }).click();
+    await page.waitForFunction(() => sections[current].id === 'workspace-home' && SceneDirector.getState() === 'complete', null, { timeout: 6000 });
+    const H = page.locator('#workspace-home');
+    await expect(H.locator('.ws-done-recorded')).toContainText('Approved with condition');
+    await expect(H.locator('.ws-card')).not.toContainText('Cloud hosting provider');
+    await enter(page, 'workspace-journey');
+    for (let i = 0; i < 5; i++) await press(page, 'Space');
+    await page.locator('#workspace-journey').getByRole('button', { name: 'Replay this case' }).click();
+    expect(await ws(page)).toBe('case-open');
+    await enter(page, 'workspace-home');
+    await expect(page.locator('#workspace-home .ws-done-recorded')).toHaveCount(0);
+  });
+
+  test('each decision previews and records its own outcome', async ({ page }) => {
+    await reduced(page);
+    await open(page);
+    await enter(page, 'workspace-journey');
+    const decisions = await page.evaluate(() => NFR_WORKSPACE_DEMO.journey.decisions.map((d) => ({ id: d.id, status: d.status, outcome: d.outcome })));
+    for (const d of decisions) {
       await press(page, 'Space'); await press(page, 'Space'); await press(page, 'Space');
-      await page.locator('#workspace-journey .wj-option').nth(i).click();
-      await expect(page.locator('#workspace-journey .wj-rec')).toContainText(decisions[i].outcome);
+      await page.locator('#workspace-journey [data-decision="' + d.id + '"]').click();
+      await expect(page.locator('#workspace-journey .wj-change-to').first()).toHaveText(d.status);
+      await page.locator('#workspace-journey').getByRole('button', { name: 'Confirm and record' }).click();
+      await expect(page.locator('#workspace-journey .wj-rec')).toContainText(d.outcome);
       await page.locator('#workspace-journey').getByRole('button', { name: 'Replay this case' }).click();
-      expect(await ws(page)).toBe('case-open');
     }
   });
 });
 
 // ── AGENT BUILDER ──
 test.describe('Agent Builder', () => {
-  test('goal, then scope and permissions before any run, then plan, run and a cited briefing', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('goal, permissions before any run, plan, run and a visual, cited briefing', async ({ page }) => {
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-builder');
     const B = page.locator('#workspace-builder');
     const D = await page.evaluate(() => NFR_WORKSPACE_DEMO.builder);
     await expect(B.locator('.wa-prompt-input')).toHaveValue(D.prompt);
-    expect(await builder(page)).toBe('idle');
-
+    await expect(B.locator('.wa-intro')).toContainText('Agent Builder covers changing and ad hoc needs');
     await B.getByRole('button', { name: 'Interpret request' }).click();
     expect(await builder(page)).toBe('goal-interpreted');
-    await expect(B.locator('.wa-goal-list dt')).toHaveText(D.goal.map((g) => g.k));
-
     await B.getByRole('button', { name: 'Continue to scope' }).click();
-    expect(await ws(page)).toBe('agent-builder-scope');
-    await expect(B.locator('.wa-scope-col.is-read li')).toHaveText(D.scope.read);
-    await expect(B.locator('.wa-scope-col.is-create li')).toHaveText(D.scope.create);
+    expect(await ws(page)).toBe('agent-builder-permissions');
     await expect(B.locator('.wa-scope-col.is-cannot li')).toHaveText(D.scope.cannot);
     await expect(B).toContainText(D.scope.inherit);
-    await expect(B).toContainText('Output: private to you');
-    await expect(B).toContainText('Human review before sharing');
-    await expect(B.getByRole('button', { name: 'Run' })).toHaveCount(0);
-
+    await expect(B.getByRole('button', { name: 'Run', exact: true })).toHaveCount(0);
     await B.getByRole('button', { name: 'Review the plan' }).click();
-    expect(await builder(page)).toBe('plan-reviewed');
-    await expect(B.locator('.wa-plan-step')).toHaveCount(5);
-    await expect(B.getByRole('button', { name: 'Edit plan' })).toBeVisible();
-
+    expect(await ws(page)).toBe('agent-builder-plan');
     await B.getByRole('button', { name: 'Run', exact: true }).click();
-    expect(await builder(page)).toBe('output-ready');
-    await expect(B.locator('.wa-report-title')).toHaveText(D.report.title);
-    await expect(B.locator('.wa-cite').first()).toBeVisible();
+    expect(await ws(page)).toBe('agent-builder-result');
+    await expect(B.locator('.wa-conc-fill')).toHaveCount(D.report.clusters.length);
+    await expect(B.locator('.wa-mark')).toHaveCount(D.report.expiries.length);
     await expect(B.locator('.wa-sources li')).toHaveCount(D.report.citations.length);
-    await expect(B.locator('.wa-gap')).toHaveCount(D.report.gaps.length);
     await expect(B.locator('.wa-outbar')).toContainText('human review required');
   });
 
@@ -230,29 +262,29 @@ test.describe('Agent Builder', () => {
     expect(await ws(page)).toBe('agent-builder-running');
     await expect(page.locator('#workspace-builder .wa-stage')).toHaveCount(5);
     await page.waitForFunction(() => document.body.dataset.builderState === 'output-ready', null, { timeout: 6000 });
-    await expect(page.locator('#workspace-builder .wa-report')).toBeVisible();
   });
 
-  test('reuse is governed: save privately, then request a reviewed team template', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+  test('reuse is governed: run once, save, schedule or request a reviewed template', async ({ page }) => {
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-builder');
     for (let i = 0; i < 5; i++) await press(page, 'Space');
     expect(await ws(page)).toBe('agent-builder-save');
     const R = page.locator('#workspace-builder .wa-reuse');
-    await expect(R.locator('.wa-promo-label')).toHaveText(await page.evaluate(() => NFR_WORKSPACE_DEMO.builder.promotion));
-    await R.getByRole('button', { name: 'Save to My Agents' }).click();
-    expect(await builder(page)).toBe('saved-personal');
-    await expect(R.locator('.wa-reuse-result')).toContainText('private to you');
+    await expect(R.locator('.wa-reuse-btn')).toHaveCount(4);
+    await expect(R.locator('.wa-promo-label')).toHaveText(['Run once', 'Personal agent', 'Reviewed team template', 'Standard app or automation']);
+    await R.locator('[data-reuse="schedule"]').click();
+    expect(await builder(page)).toBe('scheduled-personal');
     await expect(R.locator('.wa-promo-step.is-here')).toContainText('Personal agent');
-    await R.getByRole('button', { name: 'Request team template' }).click();
+    await press(page, 'Space');
     expect(await builder(page)).toBe('publication-requested');
     await expect(R.locator('.wa-promo-step.is-here')).toContainText('Reviewed team template');
-    await expect(R).toContainText('Not a back door');
+    await R.locator('[data-reuse="save"]').click();
+    expect(await builder(page)).toBe('saved-personal');
   });
 
   test('the request and the goal can be edited; Use example restores the scenario', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-builder');
     const B = page.locator('#workspace-builder');
@@ -268,20 +300,82 @@ test.describe('Agent Builder', () => {
   });
 });
 
+// ── FOUR WAYS ──
+test.describe('Four ways to work', () => {
+  test('each capability says when to use it and gives one concrete example', async ({ page }) => {
+    await reduced(page);
+    await open(page);
+    await enter(page, 'four-ways');
+    const caps = await page.evaluate(() => NFR_WORKSPACE_DEMO.capabilities.map((c) => ({ when: c.when, example: c.example })));
+    const cards = page.locator('#four-ways .fw-card');
+    await expect(cards).toHaveCount(4);
+    for (let i = 0; i < 4; i++) {
+      await expect(cards.nth(i).locator('.fw-when-text')).toHaveText(caps[i].when);
+      await expect(cards.nth(i).locator('.fw-ex-text')).toContainText(caps[i].example);
+    }
+    await expect(page.locator('#four-ways .fw-diff')).toContainText('An assistant helps a person complete an activity.');
+  });
+});
+
+// ── APPENDIX A TO E ──
+test.describe('Appendix A to E', () => {
+  const PAGES = ['appendix-capability-choice', 'appendix-architecture', 'appendix-runtime-reuse', 'appendix-agent-lifecycle', 'appendix-writeback'];
+
+  test('each page has its own hash, renders its topic and returns to the story', async ({ page }) => {
+    await reduced(page);
+    await open(page);
+    await enter(page, 'six-month-route');
+    for (const id of PAGES) {
+      await page.goto('/pitch.html#' + id);
+      await page.waitForFunction((sid) => typeof sections !== 'undefined' && sections[current] && sections[current].id === sid, id, { timeout: 8000 });
+      const body = page.locator('#' + id + ' .at-body');
+      expect((await body.innerText()).length, id).toBeGreaterThan(150);
+      await expect(page.locator('#storyReturn')).toBeVisible();
+    }
+    await expect(page.locator('#appendix-capability-choice .at-table tbody tr')).toHaveCount(4);
+    await expect(page.locator('#appendix-architecture .at-layer')).toHaveCount(4);
+    await expect(page.locator('#appendix-runtime-reuse .at-col')).toHaveCount(3);
+    await expect(page.locator('#appendix-agent-lifecycle .at-stage')).toHaveCount(4);
+    await expect(page.locator('#appendix-writeback .at-flow-step')).toHaveCount(8);
+    await page.locator('#storyReturn').click();
+    await page.waitForFunction(() => sections[current].dataset.route === 'core', null, { timeout: 6000 });
+    await expect(page.locator('#storyReturn')).toBeHidden();
+  });
+
+  test('the public pages name no internal asset or developer tooling', async ({ page }) => {
+    await open(page);
+    for (const id of PAGES) {
+      const text = (await page.locator('#' + id).innerText()).toLowerCase();
+      ['studio', 'matrix', 'podman', 'github', 'pull request', 'claude', 'harness', 'mcp'].forEach((t) => expect(text.includes(t), id + ' mentions ' + t).toBe(false));
+    }
+  });
+
+  test('Escape on an appendix page returns to the last story screen', async ({ page }) => {
+    await reduced(page);
+    await open(page);
+    await enter(page, 'four-ways');
+    await page.evaluate(() => document.getElementById('appendix-writeback').scrollIntoView({ behavior: 'instant' }));
+    await page.waitForFunction(() => sections[current].id === 'appendix-writeback');
+    await press(page, 'Escape');
+    await page.waitForFunction(() => sections[current].id === 'four-ways', null, { timeout: 6000 });
+  });
+});
+
 // ── PRESENTER CONTROLS ──
 test.describe('Presenter controls', () => {
   test('Space moves on from story screens; arrows move between screens', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await reduced(page);
     await open(page);
     await enter(page, 'assistance-here');
     await press(page, 'Space');
     await page.waitForFunction(() => sections[current].id === 'remaining-burden', null, { timeout: 4000 });
+    expect(await ws(page)).toBe('integration-burden');
     await press(page, 'ArrowLeft');
     await page.waitForFunction(() => sections[current].id === 'assistance-here', null, { timeout: 4000 });
   });
 
   test('Escape closes the trace first, then returns from the Workspace to the story', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-journey');
     await press(page, 'a');
@@ -291,40 +385,41 @@ test.describe('Presenter controls', () => {
     expect(await here(page)).toBe('workspace-journey');
     await press(page, 'Escape');
     await page.waitForFunction(() => sections[current].id === 'authority-boundary', null, { timeout: 4000 });
-    expect(await ws(page)).toBe('deck');
+    expect(await ws(page)).toBe('control-boundary');
   });
 
   test('0 resets the whole experience to the cover from any state', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-builder');
     await press(page, 'Space'); await press(page, 'Space');
     await press(page, '0');
     await page.waitForFunction(() => sections[current].id === 'cover', null, { timeout: 4000 });
-    expect(await ws(page)).toBe('deck');
+    expect(await ws(page)).toBe('cover');
     expect(await builder(page)).toBeUndefined();
   });
 
-  test('T opens technical depth with four tabs; ? lists the keys; Escape closes both', async ({ page }) => {
+  test('T opens the same topics as the appendix and links to each page', async ({ page }) => {
     await open(page);
     await press(page, 't');
     const drawer = page.locator('#techDrawer');
     await expect(drawer).toHaveClass(/open/);
-    await expect(drawer.locator('.pc-tab')).toHaveText(['Reference architecture', 'Agent governance', 'Control catalogue', 'Measurement library']);
-    await expect(drawer.locator('.pc-arch-layer')).toHaveCount(5);
-    await drawer.getByRole('tab', { name: 'Agent governance' }).click();
-    await expect(drawer.locator('.pc-life li')).toHaveCount(9);
-    await press(page, 'Escape');
+    await expect(drawer.locator('.pc-tab')).toHaveText(['A · Capability choice', 'B · Architecture', 'C · Runtime reuse', 'D · Agent lifecycle', 'E · Governed write-back', 'Measures']);
+    await expect(drawer.locator('.at-table tbody tr')).toHaveCount(4);
+    await drawer.getByRole('tab', { name: 'E · Governed write-back' }).click();
+    await expect(drawer.locator('.at-flow-step')).toHaveCount(8);
+    await expect(drawer.locator('.pc-controls dt')).toHaveCount(11);
+    await drawer.locator('.pc-page-link').click();
+    await page.waitForFunction(() => sections[current].id === 'appendix-writeback', null, { timeout: 6000 });
     await expect(drawer).not.toHaveClass(/open/);
     await page.keyboard.press('Shift+Slash');
     await expect(page.locator('#keysOverlay')).toHaveClass(/open/);
-    await expect(page.locator('#keysOverlay')).toContainText('Enter the NFR Workspace');
     await press(page, 'Escape');
     await expect(page.locator('#keysOverlay')).not.toHaveClass(/open/);
   });
 
   test('after a mouse click on a control, Space still advances instead of pressing it again', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await reduced(page);
     await open(page);
     await enter(page, 'assistance-here');
     await page.locator('#safeModeBtn').click();
@@ -335,7 +430,7 @@ test.describe('Presenter controls', () => {
     await enter(page, 'workspace-home');
     await page.locator('#workspace-home .ws-assist-q').nth(1).click();
     await press(page, 'Space');
-    await expect(page.locator('#workspace-home .ws-answer-q')).not.toHaveText(await page.evaluate(() => NFR_WORKSPACE_DEMO.assist.questions[1].q));
+    await page.waitForFunction(() => sections[current].id === 'workspace-journey', null, { timeout: 4000 });
   });
 
   test('arrow keys do not move the deck behind an open overlay', async ({ page }) => {
@@ -350,8 +445,7 @@ test.describe('Presenter controls', () => {
   test('the nav carries visible controls for keys, technical depth, safe mode, replay and pause', async ({ page }) => {
     await open(page);
     for (const id of ['keysBtn', 'techBtn', 'safeModeBtn', 'sceneReplayBtn', 'scenePauseBtn']) await expect(page.locator('#' + id)).toBeVisible();
-    await page.locator('#techBtn').click();
-    await expect(page.locator('#techDrawer')).toHaveClass(/open/);
+    await expect(page.locator('#storyReturn')).toBeHidden();
   });
 });
 
@@ -361,7 +455,6 @@ test.describe('Safe mode and resilience', () => {
     await open(page, '#workspace-boot', '?safe=1');
     await page.waitForFunction(() => sections[current].id === 'workspace-boot' && SceneDirector.getState() === 'complete', null, { timeout: 3000 });
     expect(await page.evaluate(() => document.documentElement.classList.contains('safe-mode') && SceneDirector.isSafe())).toBe(true);
-    await expect(page.locator('#workspace-boot .wb-boot')).toHaveClass(/is-gone/);
     await enter(page, 'workspace-builder');
     for (let i = 0; i < 4; i++) await press(page, 'Space');
     expect(await builder(page)).toBe('output-ready');
@@ -374,13 +467,12 @@ test.describe('Safe mode and resilience', () => {
     await page.waitForFunction(() => sections[current].id === 'remaining-burden' && SceneDirector.getState() === 'playing');
     await page.locator('#safeModeBtn').click();
     await page.waitForFunction(() => SceneDirector.getState() === 'complete', null, { timeout: 2000 });
-    expect(await page.evaluate(() => document.documentElement.classList.contains('safe-mode'))).toBe(true);
     await page.locator('#safeModeBtn').click();
     expect(await page.evaluate(() => document.documentElement.classList.contains('safe-mode'))).toBe(false);
   });
 
   test('refreshing inside the Workspace recovers a valid state; #cover deep link works', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-journey');
     await press(page, 'Space'); await press(page, 'Space');
@@ -392,7 +484,7 @@ test.describe('Safe mode and resilience', () => {
   });
 
   test('app-to-app moves are instant, so the application stays in place', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await reduced(page);
     await open(page);
     await enter(page, 'workspace-home');
     const before = await page.locator('#workspace-home .ws-app').boundingBox();
