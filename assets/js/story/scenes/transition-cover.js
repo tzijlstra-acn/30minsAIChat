@@ -1,23 +1,15 @@
-// Scene: transition-cover (Screen 00, landing)
-// Causal story: scattered source signals converge into one case thread, the thread
-// passes through one role workspace, stops at an amber human decision, and a green
-// recorded action closes the loop back to the next review. Compact vertical layout
-// for the right column of the landing slide; NFR OS stays a subtle mark.
+// Scene: transition-cover (v2 landing)
+// Causal story: a restrained workspace frame, not an AI motif. The frame and its
+// navigation appear, three skeleton cards resolve into prepared decisions for one
+// role, the first one is marked as needing a human decision, and the assistant column
+// fills in last, beside the work. It previews the product the conversation arrives at.
 SceneDirector.register('transition-cover', function(container, manifest, reduced) {
   var S = window.StoryKit;
+  var D = window.NFR_WORKSPACE_DEMO;
   var W = 560, H = 440;
-  var MERGE = { x: 234, y: 196 };
-  var BOX = { x: 262, y: 140, w: 222, h: 112 };
-  var AXIS_X = BOX.x + BOX.w / 2;
-
-  // Labels sit left of their dot so no converging line crosses them
-  var SIGNALS = [
-    { x: 162, y: 48,  label: 'GRC record' },
-    { x: 184, y: 122, label: 'Contract annex' },
-    { x: 156, y: 196, label: 'Assurance report' },
-    { x: 180, y: 270, label: 'Incident log' },
-    { x: 158, y: 344, label: 'Mail thread' }
-  ];
+  var FRAME = { x: 10, y: 24, w: 540, h: 360 };
+  var NAV_W = 96, ASSIST_W = 132, TOP = 40;
+  var CARD = { x: FRAME.x + NAV_W + 14, w: FRAME.w - NAV_W - ASSIST_W - 28, h: 82, gap: 10, y: FRAME.y + TOP + 40 };
 
   var cv = null;
   var n = {};
@@ -25,62 +17,69 @@ SceneDirector.register('transition-cover', function(container, manifest, reduced
 
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'transition-cover', maxScale: 1.15 });
-    n = { signals: [], feeds: [] };
+    cv = S.canvas(container, W, H, { id: 'cover' });
+    n = { navBars: [], cards: [], skels: [], pills: [] };
     done = false;
     var root = cv.el;
-    var g = cv.svg;
 
-    SIGNALS.forEach(function(s) {
-      var dot = S.el('div', 'tc-signal ts-hide ts-pop', null, { left: s.x - 6, top: s.y - 6, width: 12, height: 12 });
-      var lbl = S.el('div', 'ts-text tc-signal-label ts-hide', s.label, { left: s.x - 150, top: s.y - 10, width: 136 });
-      root.appendChild(dot);
-      root.appendChild(lbl);
-      n.signals.push(dot, lbl);
-      var d = 'M' + (s.x + 8) + ' ' + s.y + ' C' + (s.x + 40) + ' ' + s.y + ' ' + (MERGE.x - 40) + ' ' + MERGE.y + ' ' + MERGE.x + ' ' + MERGE.y;
-      n.feeds.push(S.path(g, d, 'ts-s-data'));
+    var frame = S.el('div', 'tc-frame ts-hide', null, { left: FRAME.x, top: FRAME.y, width: FRAME.w, height: FRAME.h });
+    var bar = S.el('div', 'tc-bar');
+    bar.appendChild(S.el('span', 'ws-mark tc-mark-sq'));
+    bar.appendChild(S.el('span', 'tc-brand', D.product));
+    bar.appendChild(S.el('span', 'ws-spacer'));
+    bar.appendChild(S.el('span', 'tc-role', D.role.label));
+    frame.appendChild(bar);
+    var nav = S.el('div', 'tc-nav');
+    D.nav.slice(0, 5).forEach(function(item, i) {
+      var b = S.el('div', 'tc-nav-item ts-hide' + (i === 0 ? ' is-active' : ''));
+      b.appendChild(S.icon(item.icon));
+      nav.appendChild(b);
+      n.navBars.push(b);
+    });
+    frame.appendChild(nav);
+    root.appendChild(frame);
+    n.frame = frame;
+
+    n.qLabel = S.el('div', 'ts-label ts-hide', 'Decisions waiting', { left: CARD.x, top: CARD.y - 26, width: CARD.w });
+    root.appendChild(n.qLabel);
+    D.queue.forEach(function(q, i) {
+      var y = CARD.y + i * (CARD.h + CARD.gap);
+      var sk = S.el('div', 'tc-skel ts-hide', null, { left: CARD.x, top: y, width: CARD.w, height: CARD.h });
+      [44, 70, 56].forEach(function(w) { var line = S.el('i'); line.style.width = w + '%'; sk.appendChild(line); });
+      root.appendChild(sk);
+      n.skels.push(sk);
+      var card = S.el('div', 'tc-card ts-hide' + (i === 0 ? ' is-next' : ''), null, { left: CARD.x, top: y, width: CARD.w, height: CARD.h });
+      card.appendChild(S.el('div', 'tc-card-journey', q.journey));
+      card.appendChild(S.el('div', 'tc-card-title', q.title));
+      card.appendChild(S.el('div', 'tc-card-due', window.WorkspaceKit.dueLabel(q.due)));
+      root.appendChild(card);
+      n.cards.push(card);
     });
 
-    n.thread1 = S.path(g, 'M' + MERGE.x + ' ' + MERGE.y + ' L' + (BOX.x - 2) + ' ' + MERGE.y, 'ts-s-ai tc-thread');
-
-    // One role workspace: the only box, because it is a real system boundary
-    var ws = S.el('div', 'ts-obj ts-soft ts-c-ai tc-ws ts-hide ts-pop', null, { left: BOX.x, top: BOX.y, width: BOX.w, height: BOX.h });
-    ws.appendChild(S.el('div', 'ts-label ts-ink', 'Role workspace'));
-    ws.appendChild(S.el('div', 'ts-title tc-ws-title', 'One case, prepared'));
-    ws.appendChild(S.el('div', 'ts-text', 'Evidence, changes and gaps in one place'));
-    root.appendChild(ws);
-    n.ws = ws;
-    n.mark = S.el('div', 'tc-mark ts-hide', 'NFR OS', { left: BOX.x, top: BOX.y - 24 });
-    root.appendChild(n.mark);
-
-    n.thread2 = S.path(g, 'M' + AXIS_X + ' ' + (BOX.y + BOX.h + 2) + ' L' + AXIS_X + ' 284', 'ts-s-ai tc-thread');
-
-    var gate = S.DecisionGate.create(null, { size: 'small', label: 'Human decision' });
-    gate.el.classList.add('tc-gate', 'ts-hide', 'ts-pop');
+    var gx = CARD.x + CARD.w - 42, gy = CARD.y + 28;
+    var gate = S.DecisionGate.create(null, { size: 'small' });
+    gate.el.classList.add('ts-hide', 'ts-pop');
     gate.el.style.position = 'absolute';
-    gate.el.style.left = (AXIS_X - 12) + 'px';
-    gate.el.style.top = '288px';
+    gate.el.style.left = gx + 'px';
+    gate.el.style.top = gy + 'px';
     root.appendChild(gate.el);
     n.gate = gate;
 
-    n.thread3 = S.path(g, 'M' + AXIS_X + ' 326 L' + AXIS_X + ' 352', 'ts-s-proof tc-thread');
+    var ax = FRAME.x + FRAME.w - ASSIST_W;
+    var assist = S.el('div', 'tc-assist ts-hide ts-right', null, { left: ax, top: FRAME.y + TOP, width: ASSIST_W, height: FRAME.h - TOP });
+    var ah = S.el('div', 'tc-assist-head');
+    ah.appendChild(S.icon('ti-message-circle'));
+    ah.appendChild(S.el('span', null, 'NFR Assist'));
+    assist.appendChild(ah);
+    for (var p = 0; p < 3; p++) assist.appendChild(S.el('i', 'tc-pill'));
+    root.appendChild(assist);
+    n.assist = assist;
 
-    var receipt = S.ReceiptState.create(null, { state: 'acknowledged', label: 'Action recorded' });
-    receipt.el.classList.add('ts-hide', 'ts-pop');
-    receipt.el.style.position = 'absolute';
-    receipt.el.style.left = (AXIS_X - 84) + 'px';
-    receipt.el.style.top = '356px';
-    receipt.el.style.width = '168px';
-    receipt.el.style.justifyContent = 'center';
-    root.appendChild(receipt.el);
-    n.receipt = receipt;
-
-    // The record feeds the next review: the loop closes
-    // Loops up the right side, back into the workspace, clear of the signal labels
-    n.loop = S.path(g, 'M' + (AXIS_X + 86) + ' 374 C548 374 548 ' + (BOX.y + BOX.h / 2) + ' ' + (BOX.x + BOX.w + 4) + ' ' + (BOX.y + BOX.h / 2), 'ts-s-proof tc-loop', cv.marker('proof'));
-    n.loopLabel = S.el('div', 'ts-label ts-ink ts-c-proof tc-loop-label ts-hide', 'Recorded, ready for the next review', { left: 0, top: 408, width: W });
-    root.appendChild(n.loopLabel);
+    n.foot = S.el('div', 'tc-foot ts-hide', 'Prepared for one role. Decided by a person. Recorded by the system.', { left: FRAME.x, top: FRAME.y + FRAME.h + 16, width: FRAME.w });
+    root.appendChild(n.foot);
   }
+
+  function resolve(i) { n.skels[i].classList.add('is-gone'); S.on(n.cards[i]); }
 
   function complete() {
     if (done) return;
@@ -89,20 +88,16 @@ SceneDirector.register('transition-cover', function(container, manifest, reduced
   }
 
   var steps = [
-    { delay: 300,  run: function() { S.on(n.signals.slice(0, 2)); } },
-    { delay: 480,  run: function() { S.on(n.signals.slice(2, 4)); } },
-    { delay: 660,  run: function() { S.on(n.signals.slice(4, 6)); } },
-    { delay: 840,  run: function() { S.on(n.signals.slice(6, 8)); } },
-    { delay: 1020, run: function() { S.on(n.signals.slice(8, 10)); } },
-    { delay: 1600, run: function() { S.on(n.feeds); } },
-    { delay: 2400, run: function() { S.on(n.thread1); } },
-    { delay: 2800, run: function() { S.on(n.ws); S.on(n.mark); } },
-    { delay: 3400, run: function() { S.on(n.thread2); } },
-    { delay: 3900, run: function() { S.on(n.gate.el); n.gate.activate(); } },
-    { delay: 4900, run: function() { n.gate.el.classList.remove('is-active'); S.on(n.thread3); } },
-    { delay: 5300, run: function() { S.on(n.receipt.el); } },
-    { delay: 5800, run: function() { S.on(n.loop); S.on(n.loopLabel); } },
-    { delay: 6500, run: complete }
+    { delay: 200,  run: function() { S.on(n.frame); } },
+    { delay: 600,  run: function() { S.on(n.navBars); S.on(n.qLabel); } },
+    { delay: 1000, run: function() { S.on(n.skels); } },
+    { delay: 1700, run: function() { resolve(0); } },
+    { delay: 2100, run: function() { resolve(1); } },
+    { delay: 2500, run: function() { resolve(2); } },
+    { delay: 3100, run: function() { S.on(n.gate.el); n.gate.activate(); } },
+    { delay: 3700, run: function() { S.on(n.assist); } },
+    { delay: 4300, run: function() { S.on(n.foot); } },
+    { delay: 4800, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -117,9 +112,9 @@ SceneDirector.register('transition-cover', function(container, manifest, reduced
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return 'Five scattered source signals, from a GRC record to a mail thread, converge into one case thread. '
-        + 'The thread passes through one role workspace that prepares the case, stops at an amber human decision gate, '
-        + 'and ends in a green recorded action that feeds the next review.';
+      return 'A restrained NFR Workspace frame for the ' + D.role.label + '. Three prepared decisions resolve in a queue: '
+        + D.queue.map(function(q) { return q.journey.toLowerCase(); }).join(', ') + '. The first is marked for a human decision. '
+        + 'NFR Assist sits beside the work, and the line reads: prepared for one role, decided by a person, recorded by the system.';
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

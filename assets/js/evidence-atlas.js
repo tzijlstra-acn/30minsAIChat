@@ -1370,7 +1370,7 @@
 
   function buildReuse(canvas) {
     var wrap = mk('div', { className: 'ea-story-wrap' });
-    storyHeader(wrap, 'From TPRM to every NFR journey: the shared core', 'What does each next journey reuse, what does it configure, and what does it still build?', 'reuse-core');
+    storyHeader(wrap, 'From TPRM to every NFR journey: the shared core', 'What does each next journey reuse, what does it configure, and what does it still build?', 'three-layers');
     var sec = section(wrap, 'Shared core components');
     var table = mk('table', { className: 'ea-story-table' });
     var head = mk('tr');
@@ -1401,7 +1401,7 @@
     if (!target) {
       try { target = sessionStorage.getItem('nfr_atlas_return'); } catch (e) { target = null; }
     }
-    target = target || 'first-move';
+    target = target || 'value-decision';
     var sec = document.getElementById(target);
     if (sec) sec.scrollIntoView({ behavior: 'smooth' });
     else window.location.hash = '#' + target;

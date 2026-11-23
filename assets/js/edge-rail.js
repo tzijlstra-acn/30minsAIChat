@@ -96,8 +96,8 @@
     });
 
     var html = '<div class="er-header">'
-      + '<div class="er-title">NFR OS</div>'
-      + '<div class="er-subtitle">TPRM transition story</div>'
+      + '<div class="er-title">NFR Workspace</div>'
+      + '<div class="er-subtitle">Four ways to work, three layers to scale</div>'
       + '</div>'
       + '<div class="er-candidate-chip" id="erCandidateChip" style="display:none">'
       + '<span class="er-chip-label" id="erCandidateLabel"></span>'

@@ -1,122 +1,91 @@
-// Scene: six-month-route (Screen 07)
-// Causal story: a three-act route builds left to right: frame (months 0 to 2), build
-// (2 to 4), test in use (4 to 6). Each act shows tangible outputs, not activity labels.
-// Seven workstreams rise together under every act, and all seven pass each gate
-// together: no workstream reaches a gate alone.
+// Scene: six-month-route (v2 screen 11)
+// Causal story: the same three layers from screen five, now as three lanes over six
+// months: define, build and test, operate and prove. Each phase fills all three lanes
+// at once, so the layers visibly move in parallel, with a gate between phases. Below:
+// the four entry conditions, and what month six proves. It proves one working loop and
+// reusable foundations, not an enterprise-wide platform.
 SceneDirector.register('six-month-route', function(container, manifest, reduced) {
   var S = window.StoryKit;
+  var D = window.NFR_WORKSPACE_DEMO;
   var W = 1040, H = 520;
-  var X0 = 214, MONTH = 134;           // month 0 at X0, one month = MONTH px
-  var ACT_TOP = 30, ACT_H = 226;
-  var LANE_TOP = 300, LANE_STEP = 27;
-
-  var ACTS = [
-    { from: 0, to: 2, label: 'Months 0 to 2', title: 'Frame', c: 'data',
-      focus: 'Agree the journey, baseline and boundaries',
-      outputs: ['Journey blueprint', 'Baseline and business case', 'Source and authority map', 'Product backlog', 'Ready-to-build gate'] },
-    { from: 2, to: 4, label: 'Months 2 to 4', title: 'Build', c: 'ai',
-      focus: 'Build the workspace and the read flow',
-      outputs: ['End-to-end read flow', 'Evaluated preparation tasks', 'Usable role workspace', 'Control and operations design', 'Month-3 gate: useful and safe'] },
-    { from: 4, to: 6, label: 'Months 4 to 6', title: 'Test in use', c: 'proof',
-      focus: 'Run real periodic reviews and measure',
-      outputs: ['One process in use', 'Measured operational result', 'Operating runbook', 'Month-6 evidence gate', 'Scale, adjust or stop advice'] }
-  ];
-  var GATES = [
-    { month: 2, label: 'Ready to build', align: 'left-of' },
-    { month: 3, label: 'Useful and safe', align: 'right-of' },
-    { month: 6, label: 'Evidence gate', align: 'right' }
-  ];
-  var LANES = [
-    'Process and operating model',
-    'Experience and workspace',
-    'Role App and backend',
-    'Data and integration',
-    'Models and evaluation',
-    'Governance and resilience',
-    'Change, adoption and value'
-  ];
+  var LBL = { x: 16, w: 150 };
+  var PH = { x0: 178, w: 266, gap: 26, y: 0, hh: 46 };
+  var ROW = { y0: 54, h: 80, gap: 8 };
+  var LOW = { y: 324 };
 
   var cv = null;
   var n = {};
   var done = false;
 
-  function mx(m) { return X0 + m * MONTH; }
+  function phX(i) { return PH.x0 + i * (PH.w + PH.gap); }
+  function rowY(i) { return ROW.y0 + i * (ROW.h + ROW.gap); }
 
   function build() {
     if (cv) cv.destroy();
     cv = S.canvas(container, W, H, { id: 'six-month-route' });
-    n = { acts: [], outputs: [[], [], []], segs: [[], [], []], gates: [], gateLines: [] };
+    n = { heads: [], labels: [], cells: [[], [], []], gates: [], entry: [], proof: [] };
     done = false;
     var root = cv.el;
-    var g = cv.svg;
+    var R = D.roadmap;
+    var tones = ['data', 'ai', 'proof'];
 
-    // Month axis
-    n.axis = S.path(g, 'M' + mx(0) + ' 18 L' + mx(6) + ' 18', 'ts-s-neutral');
-    n.ticks = [];
-    for (var m = 0; m <= 6; m++) {
-      var t = S.el('div', 'ts-label sm-tick ts-hide', 'M' + m, { left: mx(m) - 20, top: 0, width: 40 });
-      root.appendChild(t);
-      n.ticks.push(t);
-    }
-
-    ACTS.forEach(function(a, i) {
-      var box = S.el('div', 'ts-obj ts-soft ts-c-' + a.c + ' sm-act ts-hide ts-up', null,
-        { left: mx(a.from) + 4, top: ACT_TOP, width: (a.to - a.from) * MONTH - 8, height: ACT_H });
-      box.appendChild(S.el('div', 'ts-label ts-ink', a.label));
-      box.appendChild(S.el('div', 'sm-act-title', a.title));
-      box.appendChild(S.el('div', 'ts-text sm-focus', a.focus));
-      var list = S.el('div', 'sm-outputs');
-      a.outputs.forEach(function(o) {
-        var row = S.el('div', 'sm-output ts-hide ts-left');
-        row.appendChild(S.icon('ti-check', 'ts-ink'));
-        row.appendChild(S.el('span', null, o));
-        list.appendChild(row);
-        n.outputs[i].push(row);
-      });
-      box.appendChild(list);
-      root.appendChild(box);
-      n.acts.push(box);
+    R.phases.forEach(function(p, i) {
+      var h = S.el('div', 'sx-phase ts-hide ts-c-' + tones[i], null, { left: phX(i), top: PH.y, width: PH.w, height: PH.hh });
+      h.appendChild(S.el('span', 'ts-label ts-ink', p.months));
+      h.appendChild(S.el('span', 'sx-phase-name', p.label));
+      root.appendChild(h);
+      n.heads.push(h);
+      if (i < R.phases.length - 1) {
+        var gate = S.ProofGate.create(null, {});
+        gate.el.classList.add('sx-gate', 'ts-hide', 'ts-pop');
+        gate.el.style.position = 'absolute';
+        gate.el.style.left = (phX(i) + PH.w + PH.gap / 2 - 11) + 'px';
+        gate.el.style.top = (PH.y + PH.hh - 13) + 'px';
+        root.appendChild(gate.el);
+        n.gates.push(gate);
+      }
     });
 
-    // Seven workstream lanes, one segment per act
-    n.laneLabels = [];
-    LANES.forEach(function(l, li) {
-      var y = LANE_TOP + li * LANE_STEP;
-      var lbl = S.el('div', 'sm-lane-label ts-hide', l, { left: 0, top: y - 7, width: 200 });
-      root.appendChild(lbl);
-      n.laneLabels.push(lbl);
-      ACTS.forEach(function(a, ai) {
-        var seg = S.el('div', 'sm-seg ts-c-' + a.c, null, { left: mx(a.from) + 2, top: y - 3, width: (a.to - a.from) * MONTH - 4, height: 7 });
-        root.appendChild(seg);
-        n.segs[ai].push(seg);
+    D.layers.forEach(function(l, r) {
+      var y = rowY(r);
+      var lab = S.el('div', 'sx-lane ts-hide ts-left', null, { left: LBL.x, top: y, width: LBL.w, height: ROW.h });
+      lab.appendChild(S.icon(l.icon));
+      lab.appendChild(S.el('span', 'sx-lane-name', l.label));
+      root.appendChild(lab);
+      n.labels.push(lab);
+      R.cells[l.id].forEach(function(text, c) {
+        var cell = S.el('div', 'ts-obj ts-c-' + tones[c] + ' sx-cell ts-hide', null, { left: phX(c), top: y, width: PH.w, height: ROW.h });
+        cell.appendChild(S.el('span', 'sx-cell-text', text));
+        root.appendChild(cell);
+        n.cells[c].push(cell);
       });
     });
-    n.lanesTitle = S.el('div', 'ts-label ts-hide', 'Seven workstreams', { left: 0, top: LANE_TOP - 34, width: 200 });
-    root.appendChild(n.lanesTitle);
 
-    // Gates cut across every lane
-    GATES.forEach(function(gt) {
-      var x = mx(gt.month);
-      var line = S.el('div', 'sm-gate-line ts-hide', null, { left: x - 1, top: LANE_TOP - 16, width: 2, height: LANE_STEP * 6 + 26 });
-      root.appendChild(line);
-      n.gateLines.push(line);
-      var mark = S.el('div', 'sm-gate-mark ts-hide ts-pop', null, { left: x - 9, top: LANE_TOP - 28, width: 18, height: 18 });
-      root.appendChild(mark);
-      // Labels sit beside the gate line so neighbouring gates never collide
-      var lw = 132;
-      var left = gt.align === 'right-of' ? x + 14 : x - lw - 14;
-      var lbl = S.el('div', 'ts-label ts-ink ts-c-human sm-gate-label ts-hide', gt.label, { left: left, top: LANE_TOP - 34, width: lw });
-      lbl.style.textAlign = gt.align === 'right-of' ? 'left' : 'right';
-      root.appendChild(lbl);
-      n.gates.push([line, mark, lbl]);
+    var entry = S.el('div', 'sx-box sx-entry ts-hide ts-up', null, { left: 16, top: LOW.y, width: 400, height: 186 });
+    entry.appendChild(S.el('div', 'ts-label ts-ink ts-c-human', R.entryTitle));
+    R.entry.forEach(function(e) {
+      var row = S.el('div', 'sx-row');
+      row.appendChild(S.icon('ti-circle-check'));
+      row.appendChild(S.el('span', null, e));
+      entry.appendChild(row);
+      n.entry.push(row);
     });
+    root.appendChild(entry);
+    n.entryBox = entry;
 
-    n.together = S.el('div', 'ts-note ts-hide', 'All seven workstreams pass each gate together', { left: X0, top: LANE_TOP + LANE_STEP * 6 + 18 });
-    root.appendChild(n.together);
-  }
-
-  function grow(ai) {
-    n.segs[ai].forEach(function(seg) { seg.classList.add('is-grown'); });
+    var proof = S.el('div', 'sx-box sx-proof ts-hide ts-up', null, { left: 432, top: LOW.y, width: 592, height: 186 });
+    proof.appendChild(S.el('div', 'ts-label ts-ink ts-c-proof', R.proofTitle));
+    var grid = S.el('div', 'sx-proof-grid');
+    R.proof.forEach(function(p) {
+      var row = S.el('div', 'sx-row');
+      row.appendChild(S.icon('ti-circle-check'));
+      row.appendChild(S.el('span', null, p));
+      grid.appendChild(row);
+    });
+    proof.appendChild(grid);
+    proof.appendChild(S.el('div', 'sx-not', R.notInScope));
+    root.appendChild(proof);
+    n.proofBox = proof;
   }
 
   function complete() {
@@ -126,21 +95,15 @@ SceneDirector.register('six-month-route', function(container, manifest, reduced)
   }
 
   var steps = [
-    { delay: 200,  run: function() { S.on(n.axis); S.on(n.ticks); S.on(n.laneLabels); S.on(n.lanesTitle); } },
-    { delay: 600,  run: function() { S.on(n.acts[0]); } },
-    { delay: 1000, run: function() { S.on(n.outputs[0]); } },
-    { delay: 1700, run: function() { grow(0); } },
-    { delay: 2400, run: function() { S.on(n.gates[0]); } },
-    { delay: 3000, run: function() { S.on(n.acts[1]); } },
-    { delay: 3400, run: function() { S.on(n.outputs[1]); } },
-    { delay: 4100, run: function() { grow(1); } },
-    { delay: 4600, run: function() { S.on(n.gates[1]); } },
-    { delay: 5300, run: function() { S.on(n.acts[2]); } },
-    { delay: 5700, run: function() { S.on(n.outputs[2]); } },
-    { delay: 6400, run: function() { grow(2); } },
-    { delay: 7000, run: function() { S.on(n.gates[2]); } },
-    { delay: 7700, run: function() { S.on(n.together); } },
-    { delay: 8300, run: complete }
+    { delay: 200,  run: function() { S.on(n.labels); } },
+    { delay: 600,  run: function() { S.on(n.heads[0]); S.on(n.cells[0]); } },
+    { delay: 1500, run: function() { S.on(n.gates[0].el); n.gates[0].pass(); } },
+    { delay: 1800, run: function() { S.on(n.heads[1]); S.on(n.cells[1]); } },
+    { delay: 2700, run: function() { S.on(n.gates[1].el); n.gates[1].pass(); } },
+    { delay: 3000, run: function() { S.on(n.heads[2]); S.on(n.cells[2]); } },
+    { delay: 4000, run: function() { S.on(n.entryBox); } },
+    { delay: 4600, run: function() { S.on(n.proofBox); } },
+    { delay: 5300, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -155,10 +118,10 @@ SceneDirector.register('six-month-route', function(container, manifest, reduced)
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return ACTS.map(function(a) {
-        return a.label + ', ' + a.title + ': ' + a.focus.toLowerCase() + '. Outputs: ' + a.outputs.join(', ').toLowerCase() + '.';
-      }).join(' ') + ' Seven workstreams run under all three acts: ' + LANES.join(', ').toLowerCase()
-        + '. They pass the ready-to-build, month-3 and month-6 gates together.';
+      var R = D.roadmap;
+      return 'Six months in three parallel lanes. ' + D.layers.map(function(l) {
+        return l.label + ': ' + R.phases.map(function(p, i) { return p.label.toLowerCase() + ', ' + R.cells[l.id][i].toLowerCase(); }).join('; ');
+      }).join('. ') + '. ' + R.entryTitle + ': ' + R.entry.join(', ').toLowerCase() + '. ' + R.proofTitle + ': ' + R.proof.join(', ').toLowerCase() + '. ' + R.notInScope;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

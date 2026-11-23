@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="nfr-build" content="v27-0729a17">
-<title>NFR OS: From firefighting to prepared judgement</title>
+<title>NFR Workspace: from firefighting to prepared judgement</title>
 <script>if(sessionStorage.getItem('pitch_auth')!=='1'){location.replace('index.html');}</script>
 <script>window.NFR_BUILD={release:'v27',commit:'0729a17',builtAt:'2026-11-18T00:00:00Z'};</script>
 <link rel="stylesheet" href="./assets/vendor/fonts/fonts.css">
@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="./assets/css/scenes.css?v=0729a17">
 <link rel="stylesheet" href="./assets/css/knowledge-graph.css?v=0729a17">
 <link rel="stylesheet" href="./assets/css/connectors.css?v=0729a17">
+<link rel="stylesheet" href="./assets/css/workspace.css?v=0729a17">
 <link rel="stylesheet" media="print" href="./assets/css/print.css?v=0729a17">
 </head>
 <body>
@@ -31,8 +32,8 @@
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-brand">
-    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2" opacity=".4"/><circle cx="16" cy="16" r="8" fill="var(--accent)" opacity=".7"/></svg>
-    NFR OS
+    <span class="ws-mark nav-ws-mark" aria-hidden="true"></span>
+    NFR Workspace
   </div>
   <div class="nav-chapters" id="navChapters"></div>
   <div class="nav-right">
@@ -43,8 +44,11 @@
     <button class="nav-icon-btn" onclick="openAgenda()" title="Agenda (G)"><i class="ti ti-list"></i></button>
     <button class="nav-icon-btn" onclick="goToId('ref-room')" title="Evidence Atlas (E)"><i class="ti ti-book"></i></button>
     <a class="nav-icon-btn" href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI: next steps" title="Contact" style="text-decoration:none"><i class="ti ti-mail"></i></a>
-    <button class="nav-icon-btn" id="sceneReplayBtn" onclick="if(typeof SceneDirector!=='undefined')SceneDirector.replay();" title="Replay scene (R)"><i class="ti ti-player-skip-back"></i></button>
-    <button class="nav-icon-btn" id="scenePauseBtn" title="Pause / resume scene (Space)"><i class="ti ti-player-pause"></i></button>
+    <button class="nav-icon-btn" id="techBtn" title="Technical depth (T)" aria-label="Technical depth"><i class="ti ti-stack-2"></i></button>
+    <button class="nav-icon-btn" id="keysBtn" title="Presenter keys (?)" aria-label="Presenter keys"><i class="ti ti-keyboard"></i></button>
+    <button class="nav-icon-btn" id="safeModeBtn" title="Safe mode: final states, no animation" aria-label="Safe mode" aria-pressed="false"><i class="ti ti-player-stop"></i></button>
+    <button class="nav-icon-btn" id="sceneReplayBtn" onclick="if(typeof SceneDirector!=='undefined')SceneDirector.replay();" title="Replay or reset the screen (R)"><i class="ti ti-player-skip-back"></i></button>
+    <button class="nav-icon-btn" id="scenePauseBtn" title="Pause or resume the animation"><i class="ti ti-player-pause"></i></button>
   </div>
 </nav>
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
@@ -73,344 +77,197 @@
 <div class="toast" id="toast"></div>
 
 <!-- ==========================================================
-     CORE SCREENS -- V27 (15 screens, TPRM transition story)
-     One synthetic case, one process, one six-month route, one business case.
-     Case facts render from assets/data/tprm-case.js; fallbacks stay generic.
+     CORE ROUTE -- v2 NFR WORKSPACE (12 screens, four chapters)
+     Four ways to work, three layers to scale. Bank-neutral and synthetic.
+     Words render from assets/data/workspace-demo.js; case facts from tprm-case.js.
+     Screens 06 to 09 are the Workspace application (data-kind="app").
 =========================================================== -->
 
-<!-- 00 · LANDING -->
-<section id="cover" data-slide data-route="core" data-kind="landing" data-scene="transition-cover" data-chapter-id="setting-scene" data-chapter-title="SETTING THE SCENE" data-nav-title="From firefighting to prepared judgement">
+<!-- 01 · LANDING -->
+<section id="cover" data-slide data-route="core" data-kind="landing" data-scene="transition-cover" data-chapter-id="shift" data-chapter-title="THE SHIFT" data-nav-title="NFR Workspace: from firefighting to prepared judgement">
   <div class="inner landing">
     <div class="landing-main">
-      <div class="landing-eyebrow"><span class="landing-mark"></span>NFR OS &middot; Non-financial risk (NFR)</div>
+      <div class="landing-wordmark"><span class="ws-mark" aria-hidden="true"></span>NFR Workspace<span class="landing-wm-sub">Non-financial risk</span></div>
       <h2 class="slide-h landing-title">From firefighting to prepared judgement.</h2>
-      <p class="slide-sub landing-sub">One operating layer for every NFR domain, proven first on one TPRM periodic review.</p>
-      <div class="landing-tagline">Start with one worked example. Scale it across non-financial risk.</div>
-      <div class="landing-meta"><span>Client conversation</span><span>30 minutes</span><span>Worked example: third-party risk</span><span>Synthetic data, illustrative figures</span></div>
+      <p class="slide-sub landing-sub">How to scale from everyday AI assistance to role-specific applications, controlled automation and governed ad hoc work.</p>
+      <div class="landing-principle"><span>AI prepares.</span><span>Professionals decide.</span><span>Systems record.</span></div>
+      <div class="landing-meta"><span>Client conversation</span><span>30 minutes</span><span>Bank-neutral</span><span>Synthetic data, illustrative figures</span></div>
     </div>
     <div class="scene-stage landing-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 560 440" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g fill="#55C7E8"><circle cx="150" cy="48" r="6"/><circle cx="172" cy="122" r="6"/><circle cx="140" cy="196" r="6"/><circle cx="168" cy="270" r="6"/><circle cx="146" cy="344" r="6"/></g><g fill="none" stroke="#55C7E8" stroke-width="1.5" opacity=".6"><path d="M158 48 C190 48 182 196 222 196"/><path d="M180 122 C212 122 182 196 222 196"/><path d="M148 196 L222 196"/><path d="M176 270 C208 270 182 196 222 196"/><path d="M154 344 C186 344 182 196 222 196"/></g><line x1="222" y1="196" x2="262" y2="196" stroke="#B44CFF" stroke-width="2.4"/><rect x="262" y="140" width="222" height="112" rx="10" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="280" y="172" font-family="JetBrains Mono,monospace" font-size="12" fill="#B44CFF">ROLE WORKSPACE</text><text x="280" y="200" font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#E8E9F0">One case, prepared</text><line x1="373" y1="252" x2="373" y2="284" stroke="#B44CFF" stroke-width="2.4"/><rect x="361" y="288" width="24" height="24" rx="4" transform="rotate(45 373 300)" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="398" y="305" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">HUMAN DECISION</text><line x1="373" y1="326" x2="373" y2="352" stroke="#58C994" stroke-width="2.4"/><rect x="289" y="356" width="168" height="36" rx="7" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="373" y="379" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="14" font-weight="700" fill="#58C994">Action recorded</text></svg>
+      <svg data-scene-fallback viewBox="0 0 560 440" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="24" width="540" height="360" rx="12" fill="#13151C" stroke="#4A5064" stroke-width="1.5"/><rect x="11" y="25" width="538" height="40" rx="11" fill="#191C25"/><rect x="24" y="35" width="20" height="20" rx="5" fill="#B44CFF"/><text x="54" y="50" font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0">NFR Workspace</text><text x="532" y="50" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">NFR Risk Manager</text><rect x="11" y="65" width="96" height="318" fill="#191C25"/><rect x="418" y="65" width="131" height="318" fill="#191C25"/><text x="432" y="92" font-family="Space Grotesk,sans-serif" font-size="14" font-weight="700" fill="#E8E9F0">NFR Assist</text><g fill="#13151C" stroke="#343949"><rect x="430" y="106" width="108" height="26" rx="7"/><rect x="430" y="140" width="108" height="26" rx="7"/><rect x="430" y="174" width="108" height="26" rx="7"/></g><text x="120" y="98" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">DECISIONS WAITING</text><g font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0"><rect x="120" y="110" width="284" height="82" rx="9" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="134" y="156">Periodic third-party review</text><rect x="120" y="202" width="284" height="82" rx="9" fill="#191C25" stroke="#343949"/><text x="134" y="248">Control effectiveness challenge</text><rect x="120" y="294" width="284" height="82" rx="9" fill="#191C25" stroke="#343949"/><text x="134" y="340">Incident materiality assessment</text></g><rect x="370" y="140" width="20" height="20" rx="4" transform="rotate(45 380 150)" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="280" y="414" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#58C994">PREPARED FOR ONE ROLE. DECIDED BY A PERSON. RECORDED BY THE SYSTEM.</text></svg>
     </div>
     <nav class="landing-route" aria-label="Chapters of the conversation" data-landing-route></nav>
   </div>
 </section>
 
-<!-- CHAPTER 01 · SETTING THE SCENE (divider) -->
-<section id="ch-setting-scene" data-slide data-route="divider" data-chapter-id="setting-scene" data-chapter-title="SETTING THE SCENE" data-chapter-num="01" data-nav-title="Chapter 01: Setting the scene">
-  <div class="inner divider">
-    <div class="divider-num" aria-hidden="true">01</div>
-    <div class="divider-body">
-      <div class="divider-eyebrow">Chapter 01 of 05</div>
-      <h2 class="divider-title">Setting the scene</h2>
-      <p class="divider-question">Why act now, and where are we heading?</p>
-      <ol class="divider-screens" data-divider-screens></ol>
-    </div>
-    <div class="divider-progress" data-divider-progress aria-hidden="true"></div>
-  </div>
-</section>
-
-<!-- 01 · SETTING THE SCENE: THE HOOK -->
-<section id="pressure-gap" data-slide data-route="core" data-scene="pressure-gap" data-chapter-id="setting-scene" data-chapter-title="SETTING THE SCENE" data-nav-title="Non-financial risk is outgrowing the team">
+<!-- 02 · THE SHIFT: ASSISTANCE IS ALREADY HERE -->
+<section id="assistance-here" data-slide data-route="core" data-scene="assistance-here" data-chapter-id="shift" data-chapter-title="THE SHIFT" data-nav-title="AI assistance is becoming part of the working day">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="sec-tag">SETTING THE SCENE &middot; 01</div>
-      <h2 class="slide-h">Non-financial risk is outgrowing the team.</h2>
-      <p class="slide-sub">More dependence, tougher evidence expectations and faster change land on the same NFR teams with the same tools.</p>
+      <div class="sec-tag">THE SHIFT &middot; 02</div>
+      <h2 class="slide-h">AI assistance is becoming part of the working day.</h2>
+      <p class="slide-sub">Email, chat, documents, search and meetings are faster, but they mostly help one person with one activity.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0"><rect x="16" y="34" width="410" height="88" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="40" y="70">More dependence</text><rect x="16" y="134" width="410" height="88" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="40" y="170">Higher expectations</text><rect x="16" y="234" width="410" height="88" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="40" y="270">Faster change</text></g><rect x="456" y="34" width="568" height="288" rx="10" fill="none" stroke="#4A5064" stroke-dasharray="5 4"/><line x1="480" y1="250" x2="1004" y2="250" stroke="#F3B34C" stroke-width="2.4"/><path d="M480 268 C600 248 760 200 1000 100" fill="none" stroke="#55C7E8" stroke-width="2.4"/><path d="M590 250 C700 228 820 178 1000 100 L1000 250 Z" fill="#F0758A" opacity=".14"/><text x="900" y="214" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#F0758A">FIREFIGHTING</text><text x="880" y="272" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">TEAM CAPACITY</text><text x="472" y="56" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">ILLUSTRATIVE SHAPE, NOT CLIENT DATA</text><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0"><rect x="16" y="380" width="324" height="64" rx="8" fill="none" stroke="#F0758A" stroke-dasharray="5 4"/><text x="40" y="418">Reviews run late</text><rect x="358" y="380" width="324" height="64" rx="8" fill="none" stroke="#F0758A" stroke-dasharray="5 4"/><text x="382" y="418">Evidence is chased by hand</text><rect x="700" y="380" width="324" height="64" rx="8" fill="none" stroke="#F0758A" stroke-dasharray="5 4"/><text x="724" y="418">Judgement gets the last hour</text></g></svg>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0"><rect x="16" y="0" width="188" height="108" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="34" y="34">Email</text><rect x="219" y="0" width="188" height="108" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="237" y="34">Chat</text><rect x="422" y="0" width="188" height="108" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="440" y="34">Documents</text><rect x="625" y="0" width="188" height="108" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="643" y="34">Meetings</text><rect x="828" y="0" width="188" height="108" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="846" y="34">Search</text></g><g font-family="JetBrains Mono,monospace" font-size="12" fill="#58C994"><text x="34" y="92">HELPS HERE</text><text x="237" y="92">HELPS HERE</text><text x="440" y="92">HELPS HERE</text><text x="643" y="92">HELPS HERE</text><text x="846" y="92">HELPS HERE</text></g><circle cx="520" cy="196" r="30" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="520" y="250" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#D4D8E2">One professional, one activity at a time</text><text x="16" y="310" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">ONE NFR CASE STILL SPANS SYSTEMS AND HANDOFFS</text><g font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#E8E9F0" text-anchor="middle"><rect x="16" y="330" width="150" height="54" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="91" y="362">Case record</text><rect x="230" y="330" width="150" height="54" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="305" y="362">Evidence store</text><rect x="445" y="330" width="150" height="54" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="520" y="362">Policy library</text><rect x="659" y="330" width="150" height="54" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="734" y="362">Issue tracker</text><rect x="874" y="330" width="150" height="54" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="949" y="362">Approver</text></g><g stroke="#F0758A" stroke-width="2" stroke-dasharray="5 4"><line x1="170" y1="357" x2="226" y2="357"/><line x1="384" y1="357" x2="441" y2="357"/><line x1="599" y1="357" x2="655" y2="357"/><line x1="813" y1="357" x2="870" y2="357"/></g><text x="16" y="490" font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#E8E9F0">Assistance helps one person with one activity.</text></svg>
     </div>
-    <div class="scene-footer">
-      <div class="scene-footer-evidence">ILLUSTRATIVE SHAPE / NOT CLIENT DATA</div>
-      <div class="scene-footer-insight">The gap gets filled with firefighting.</div>
-    </div>
+    <div class="scene-footer"><div class="scene-footer-insight">The next step: from individual assistance to controlled operational work.</div></div>
   </div>
 </section>
 
-<!-- 02 · SETTING THE SCENE: THE NORTH STAR -->
-<section id="north-star" data-slide data-route="core" data-scene="north-star" data-chapter-id="setting-scene" data-chapter-title="SETTING THE SCENE" data-nav-title="The north star: one operating layer">
+<!-- 03 · THE SHIFT: THE REMAINING BURDEN -->
+<section id="remaining-burden" data-slide data-route="core" data-scene="remaining-burden" data-chapter-id="shift" data-chapter-title="THE SHIFT" data-nav-title="The NFR professional still connects the process">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="sec-tag">SETTING THE SCENE &middot; 02 &middot; THE NORTH STAR</div>
-      <h2 class="slide-h">One operating layer for all non-financial risk.</h2>
-      <p class="slide-sub">Work arrives prepared, professionals decide with evidence, and every action leaves a record.</p>
+      <div class="sec-tag">THE SHIFT &middot; 03</div>
+      <h2 class="slide-h">The NFR professional still connects the process.</h2>
+      <p class="slide-sub">Useful AI tools do not automatically create an end-to-end working process.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="14" font-weight="700" fill="#E8E9F0"><rect x="16" y="30" width="192" height="128" rx="10" fill="#191C25" stroke="#B44CFF" stroke-width="2"/><text x="32" y="62">Third-party risk</text><rect x="220" y="30" width="192" height="128" rx="10" fill="#191C25" stroke="#4A5064" stroke-width="1.5" opacity=".5"/><text x="236" y="62" opacity=".5">RCSA</text><rect x="424" y="30" width="192" height="128" rx="10" fill="#191C25" stroke="#4A5064" stroke-width="1.5" opacity=".5"/><text x="440" y="62" opacity=".5">Issues and actions</text><rect x="628" y="30" width="192" height="128" rx="10" fill="#191C25" stroke="#4A5064" stroke-width="1.5" opacity=".5"/><text x="644" y="62" opacity=".5">Regulatory change</text><rect x="832" y="30" width="192" height="128" rx="10" fill="#191C25" stroke="#4A5064" stroke-width="1.5" opacity=".5"/><text x="848" y="62" opacity=".5">Incidents and KRIs</text></g><rect x="16" y="206" width="1008" height="92" rx="12" fill="#191C25" stroke="#B44CFF" stroke-width="2"/><text x="40" y="242" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="#E8E9F0">NFR OS</text><text x="130" y="242" font-family="JetBrains Mono,monospace" font-size="12" fill="#B44CFF">ONE OPERATING LAYER</text><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700"><rect x="16" y="320" width="324" height="74" rx="8" fill="#191C25" stroke="#B44CFF"/><text x="36" y="362" fill="#B44CFF">Work arrives prepared</text><rect x="358" y="320" width="324" height="74" rx="8" fill="#191C25" stroke="#F3B34C"/><text x="378" y="362" fill="#F3B34C">Judgement stays human</text><rect x="700" y="320" width="324" height="74" rx="8" fill="#191C25" stroke="#58C994"/><text x="720" y="362" fill="#58C994">Every action is recorded</text></g><rect x="16" y="420" width="1008" height="70" rx="10" fill="none" stroke="#B44CFF" stroke-width="1.5"/><text x="40" y="461" font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#E8E9F0">Start with one worked example: a TPRM periodic review</text></svg>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle cx="360" cy="250" r="46" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="360" y="316" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">NFR PROFESSIONAL</text><g font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#E8E9F0"><rect x="253" y="33" width="214" height="42" rx="21" fill="#191C25" stroke="#4A5064"/><text x="270" y="59">1 Find the relevant case</text><rect x="427" y="90" width="214" height="42" rx="21" fill="#191C25" stroke="#4A5064"/><text x="444" y="116">2 Retrieve evidence</text><rect x="499" y="229" width="214" height="42" rx="21" fill="#191C25" stroke="#4A5064"/><text x="516" y="255">3 Reconcile changes</text><rect x="427" y="368" width="214" height="42" rx="21" fill="#191C25" stroke="#4A5064"/><text x="444" y="394">4 Apply policy and method</text><rect x="253" y="425" width="214" height="42" rx="21" fill="#191C25" stroke="#4A5064"/><text x="270" y="451">5 Chase missing input</text><rect x="79" y="368" width="214" height="42" rx="21" fill="#191C25" stroke="#4A5064"/><text x="96" y="394">6 Prepare the decision</text><rect x="7" y="229" width="214" height="42" rx="21" fill="#191C25" stroke="#4A5064"/><text x="24" y="255">7 Route challenge, approval</text><rect x="79" y="90" width="214" height="42" rx="21" fill="#191C25" stroke="#4A5064"/><text x="96" y="116">8 Record the outcome</text></g><g font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700" fill="#F0758A"><rect x="724" y="72" width="300" height="84" rx="9" fill="none" stroke="#F0758A" stroke-dasharray="5 4"/><text x="742" y="106">Delays</text><rect x="724" y="172" width="300" height="84" rx="9" fill="none" stroke="#F0758A" stroke-dasharray="5 4"/><text x="742" y="206">Rework</text><rect x="724" y="272" width="300" height="84" rx="9" fill="none" stroke="#F0758A" stroke-dasharray="5 4"/><text x="742" y="306">Inconsistency</text></g><text x="724" y="400" font-family="Inter,sans-serif" font-size="14" fill="#E8E9F0">Not a people problem. The process has</text><text x="724" y="420" font-family="Inter,sans-serif" font-size="14" fill="#E8E9F0">no connecting layer, so the person becomes it.</text></svg>
     </div>
-    <div class="scene-footer"><div class="scene-footer-insight">The destination is the NFR OS. The route starts with one journey.</div></div>
+    <div class="scene-footer"><div class="scene-footer-insight">The gap is not intelligence. The person is still the integration layer.</div></div>
   </div>
 </section>
 
-<!-- CHAPTER 02 · TODAY (divider) -->
-<section id="ch-today" data-slide data-route="divider" data-chapter-id="today" data-chapter-title="TODAY" data-chapter-num="02" data-nav-title="Chapter 02: Today">
-  <div class="inner divider">
-    <div class="divider-num" aria-hidden="true">02</div>
-    <div class="divider-body">
-      <div class="divider-eyebrow">Chapter 02 of 05</div>
-      <h2 class="divider-title">Today</h2>
-      <p class="divider-question">What consumes an NFR team today, seen through one TPRM officer?</p>
-      <p class="divider-example">One TPRM periodic review. The same pattern applies to RCSA, issues and actions, incidents and regulatory change.</p>
-      <ol class="divider-screens" data-divider-screens></ol>
-    </div>
-    <div class="divider-progress" data-divider-progress aria-hidden="true"></div>
-  </div>
-</section>
-
-<!-- 03 · TODAY: INTEGRATION LAYER -->
-<section id="today-integration-layer" data-slide data-route="core" data-scene="today-integration-layer" data-chapter-id="today" data-chapter-title="TODAY" data-nav-title="Your team is the integration layer">
+<!-- 04 · THE MODEL: FOUR WAYS TO WORK -->
+<section id="four-ways" data-slide data-route="core" data-scene="four-ways" data-chapter-id="model" data-chapter-title="THE MODEL" data-nav-title="One Workspace, four ways to get work done">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="sec-tag">TODAY &middot; 03 &middot; WORKED EXAMPLE: TPRM</div>
-      <h2 class="slide-h">Your team is the integration layer.</h2>
-      <p class="slide-sub">Worked example: one TPRM officer connects systems, evidence, context, actions and deadlines by hand.</p>
+      <div class="screen-hdr-row"><div class="sec-tag">THE MODEL &middot; 04</div><button type="button" class="ts-tech-link" data-tech-tab="architecture"><i class="ti ti-stack-2" aria-hidden="true"></i>Technical depth (T)</button></div>
+      <h2 class="slide-h">One Workspace. Four ways to get work done.</h2>
+      <p class="slide-sub">Ask, use, run and create, with the same identity, permissions, evidence and control record.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="14" font-weight="600" fill="#E8E9F0"><rect x="20" y="40" width="270" height="60" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="40" y="76">GRC and third-party inventory</text><rect x="20" y="125" width="270" height="60" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="40" y="161">Contracts and assurance reports</text><rect x="20" y="210" width="270" height="60" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="40" y="246">Incidents and KRIs</text><rect x="20" y="295" width="270" height="60" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="40" y="331">Mail, Teams and meetings</text><rect x="20" y="380" width="270" height="60" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="40" y="416">Trackers, tasks and deadlines</text></g><g fill="none" stroke="#B3BAC8" stroke-width="1.2" opacity=".55"><path d="M290 70 C400 70 400 240 470 240"/><path d="M290 155 C400 155 400 240 470 240"/><path d="M290 240 L470 240"/><path d="M290 325 C400 325 400 240 470 240"/><path d="M290 410 C400 410 400 240 470 240"/></g><circle cx="530" cy="240" r="58" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="530" y="236" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0">TPRM</text><text x="530" y="256" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0">professional</text><line x1="590" y1="240" x2="780" y2="240" stroke="#B3BAC8" stroke-width="1.5" stroke-dasharray="5 4"/><rect x="780" y="190" width="230" height="100" rx="8" fill="#191C25" stroke="#F3B34C" stroke-width="1.5" stroke-dasharray="5 4"/><text x="895" y="232" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0">Approver</text><text x="895" y="256" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">WAITING FOR PACKAGE</text><text x="530" y="340" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">COPY / COMPARE / CHASE / RE-KEY</text></svg>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g fill="#191C25" stroke="#B44CFF" stroke-width="1.5"><rect x="16" y="0" width="245" height="334" rx="8"/><rect x="270" y="0" width="245" height="334" rx="8"/><rect x="524" y="0" width="245" height="334" rx="8"/><rect x="778" y="0" width="245" height="334" rx="8"/></g><g font-family="Space Grotesk,sans-serif" font-size="34" font-weight="700" fill="#E8E9F0"><text x="32" y="80">Ask</text><text x="286" y="80">Use</text><text x="540" y="80">Run</text><text x="794" y="80">Create</text></g><g font-family="JetBrains Mono,monospace" font-size="12" fill="#B44CFF"><text x="32" y="106">NFR ASSIST</text><text x="286" y="106">NFR APPS</text><text x="540" y="106">NFR AUTOMATIONS</text><text x="794" y="106">AGENT BUILDER</text></g><g font-family="Inter,sans-serif" font-size="14" fill="#D4D8E2"><text x="32" y="140">Role-steered help</text><text x="286" y="140">A defined NFR task</text><text x="540" y="140">Repeatable cases</text><text x="794" y="140">Permission-aware</text><text x="32" y="160">in email, chat, documents</text><text x="286" y="160">with case, evidence</text><text x="540" y="160">across systems and</text><text x="794" y="160">analysis for a new</text><text x="32" y="180">and the Workspace.</text><text x="286" y="180">and permitted actions.</text><text x="540" y="180">human control points.</text><text x="794" y="180">or ad hoc need.</text></g><g stroke="#55C7E8" stroke-width="1.4"><line x1="138" y1="336" x2="138" y2="390"/><line x1="392" y1="336" x2="392" y2="390"/><line x1="646" y1="336" x2="646" y2="390"/><line x1="900" y1="336" x2="900" y2="390"/></g><rect x="16" y="392" width="1008" height="96" rx="12" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="36" y="424" font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#E8E9F0">NFR Workspace: one shared foundation</text><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="600" fill="#55C7E8" text-anchor="middle"><text x="138" y="466">Same identity</text><text x="392" y="466">Same permissions</text><text x="646" y="466">Same evidence</text><text x="900" y="466">Same control record</text></g></svg>
     </div>
-    <div class="scene-footer"><div class="scene-footer-insight">The professional is doing the integration before doing the risk work.</div></div>
+    <div class="scene-footer"><div class="scene-footer-insight">The Workspace is not the assistant. It is where all four work with the same role and controls.</div></div>
   </div>
 </section>
 
-<!-- 04 · TODAY: CONNECTION WORK -->
-<section id="connection-work" data-slide data-route="core" data-scene="connection-work" data-chapter-id="today" data-chapter-title="TODAY" data-nav-title="Judgement waits behind connection work">
+<!-- 05 · THE MODEL: THREE LAYERS TO SCALE -->
+<section id="three-layers" data-slide data-route="core" data-scene="three-layers" data-chapter-id="model" data-chapter-title="THE MODEL" data-nav-title="Scaling requires three layers to move together">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">TODAY &middot; 04</div><div class="case-thread" data-case-state="incomplete"></div></div>
-      <h2 class="slide-h">Judgement waits behind connection work.</h2>
-      <p class="slide-sub">Finding, reconciling, chasing and re-entering consume the review before challenge begins.</p>
+      <div class="sec-tag">THE MODEL &middot; 05</div>
+      <h2 class="slide-h">Scaling requires three layers to move together.</h2>
+      <p class="slide-sub">Work and roles, process and controls, data and platform improve in parallel, not one after another.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0" text-anchor="middle"><rect x="20" y="110" width="150" height="90" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="95" y="162">Find</text><rect x="230" y="110" width="150" height="90" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="305" y="162">Reconcile</text><rect x="440" y="110" width="150" height="90" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="515" y="162">Coordinate</text><rect x="650" y="110" width="150" height="90" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="725" y="162">Re-enter</text><rect x="860" y="110" width="160" height="90" rx="8" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="940" y="162" fill="#F3B34C">Judge</text></g><g font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8" text-anchor="middle"><text x="200" y="100">WAIT</text><text x="410" y="100">WAIT</text><text x="620" y="100">WAIT</text><text x="830" y="100">WAIT</text></g><path d="M515 205 C515 270 95 270 95 205" fill="none" stroke="#F0758A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="305" y="290" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#F0758A">REWORK: MISSING EVIDENCE</text><g font-family="JetBrains Mono,monospace" font-size="12" fill="#0E0F14"><rect x="20" y="380" width="430" height="40" fill="#55C7E8" opacity=".8"/><rect x="450" y="380" width="300" height="40" fill="#343949"/><rect x="750" y="380" width="140" height="40" fill="#F0758A" opacity=".75"/><rect x="890" y="380" width="130" height="40" fill="#F3B34C"/></g><g font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8"><text x="20" y="445">DIRECT EFFORT</text><text x="450" y="445">WAITING TIME</text><text x="750" y="445">REWORK</text><text x="890" y="445">JUDGEMENT</text><text x="20" y="365">ILLUSTRATIVE PROPORTIONS, NOT CLIENT DATA</text></g></svg>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="JetBrains Mono,monospace" font-size="12"><text x="196" y="16" fill="#B3BAC8">TODAY</text><text x="566" y="16" fill="#B44CFF">WITH NFR WORKSPACE</text></g><g font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#E8E9F0"><text x="20" y="88">Work &amp; roles</text><text x="20" y="208">Process &amp; controls</text><text x="20" y="328">Data &amp; platform</text></g><g fill="none" stroke="#4A5064" stroke-width="1.5" stroke-dasharray="5 4"><rect x="196" y="30" width="244" height="104" rx="9"/><rect x="196" y="150" width="244" height="104" rx="9"/><rect x="196" y="270" width="244" height="104" rx="9"/></g><g fill="#191C25" stroke="#B44CFF" stroke-width="1.5"><rect x="566" y="30" width="270" height="104" rx="8"/><rect x="566" y="150" width="270" height="104" rx="8"/><rect x="566" y="270" width="270" height="104" rx="8"/></g><g stroke="#B44CFF" stroke-width="2"><line x1="448" y1="82" x2="558" y2="82"/><line x1="448" y1="202" x2="558" y2="202"/><line x1="448" y1="322" x2="558" y2="322"/></g><text x="503" y="44" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#B44CFF">IN PARALLEL</text><rect x="880" y="30" width="144" height="344" rx="12" fill="#191C25" stroke="#B44CFF" stroke-width="2"/><text x="952" y="206" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700" fill="#E8E9F0">NFR Workspace</text><text x="34" y="446" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#E8E9F0">Improving only the AI layer creates another pilot.</text></svg>
     </div>
-    <div class="scene-footer">
-      <div class="scene-footer-evidence">SYNTHETIC CASE / ILLUSTRATIVE PROPORTIONS</div>
-      <div class="scene-footer-insight">The value pool is effort plus waiting plus rework.</div>
-    </div>
+    <div class="scene-footer"><div class="scene-footer-insight">A better interface alone is not transformation.</div></div>
   </div>
 </section>
 
-<!-- 05 · TODAY: PILOT TRAP -->
-<section id="pilot-trap" data-slide data-route="core" data-scene="pilot-trap" data-chapter-id="today" data-chapter-title="TODAY" data-nav-title="A useful AI tool is not yet a working process">
-  <div class="inner scene-screen">
+<!-- 06 · THE WORKSPACE: START-UP (application) -->
+<section id="workspace-boot" data-slide data-route="core" data-kind="app" data-scene="workspace-boot" data-chapter-id="workspace" data-chapter-title="THE WORKSPACE" data-nav-title="Enter the Workspace: role and controls load first">
+  <div class="inner scene-screen app-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">TODAY &middot; 05</div><div class="case-thread" data-case-state="incomplete"></div><a class="ts-atlas-link" href="#ref/toolkit" data-atlas-view="toolkit"><i class="ti ti-book" aria-hidden="true"></i>Atlas: architecture</a></div>
-      <h2 class="slide-h">A useful AI tool is not yet a working process.</h2>
-      <p class="slide-sub">Local pilots improve tasks, but the case, authority, handovers and outcome remain fragmented.</p>
+      <div class="screen-hdr-row"><div class="sec-tag">THE WORKSPACE &middot; 06</div></div>
+      <h2 class="slide-h">Role, permissions and controls load before the assistant.</h2>
+      <p class="slide-sub">Synthetic demonstration: entering the working day of an NFR risk manager.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0" text-anchor="middle"><rect x="20" y="30" width="230" height="80" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="135" y="76">Document summariser</text><rect x="275" y="30" width="230" height="80" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="390" y="76">Evidence chatbot</text><rect x="530" y="30" width="230" height="80" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="645" y="76">Classifier</text><rect x="785" y="30" width="235" height="80" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="902" y="76">Drafting assistant</text></g><g font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8" text-anchor="middle"><text x="135" y="160">SEPARATE FILE</text><text x="390" y="160">CHAT WINDOW</text><text x="645" y="160">SPREADSHEET</text><text x="902" y="160">INBOX</text></g><rect x="300" y="210" width="440" height="270" rx="10" fill="none" stroke="#F0758A" stroke-width="1.5" stroke-dasharray="6 5"/><text x="520" y="245" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#F0758A">CASE STILL INCOMPLETE</text><g font-family="Space Grotesk,sans-serif" font-size="14" fill="#D4D8E2"><text x="330" y="290">No persistent case</text><text x="330" y="330">No named decision right</text><text x="330" y="370">No controlled write</text><text x="330" y="410">No process receipt</text><text x="330" y="450">No common value baseline</text></g></svg>
+      <svg data-scene-fallback viewBox="0 0 1280 640" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="1278" height="638" rx="12" fill="#13151C" stroke="#4A5064"/><rect x="1" y="1" width="1278" height="48" rx="12" fill="#191C25"/><rect x="18" y="14" width="22" height="22" rx="6" fill="#B44CFF"/><text x="50" y="31" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0">NFR Workspace</text><text x="1262" y="31" text-anchor="end" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#F3B34C">NFR Risk Manager</text><text x="640" y="230" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="40" font-weight="700" fill="#E8E9F0">NFR Workspace</text><text x="640" y="270" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" fill="#F3B34C">Role context: NFR Risk Manager</text><g font-family="Inter,sans-serif" font-size="15" fill="#E8E9F0"><rect x="450" y="294" width="380" height="36" rx="8" fill="#191C25" stroke="#58C994"/><text x="476" y="318">Role and permissions</text><rect x="450" y="338" width="380" height="36" rx="8" fill="#191C25" stroke="#58C994"/><text x="476" y="362">Approved applications</text><rect x="450" y="382" width="380" height="36" rx="8" fill="#191C25" stroke="#58C994"/><text x="476" y="406">Connected evidence</text><rect x="450" y="426" width="380" height="36" rx="8" fill="#191C25" stroke="#58C994"/><text x="476" y="450">Control policies and case state</text></g><text x="640" y="500" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#58C994">WORKSPACE READY</text></svg>
     </div>
-    <div class="scene-footer"><div class="scene-footer-insight">Good pilots can still leave the operating model unchanged.</div></div>
+    <div class="scene-footer"><div class="scene-footer-insight">Work, case and controls exist before the chat opens.</div></div>
   </div>
 </section>
 
-<!-- CHAPTER 03 · THE NEW WORKDAY (divider) -->
-<section id="ch-new-workday" data-slide data-route="divider" data-chapter-id="new-workday" data-chapter-title="THE NEW WORKDAY" data-chapter-num="03" data-nav-title="Chapter 03: The new workday">
-  <div class="inner divider">
-    <div class="divider-num" aria-hidden="true">03</div>
-    <div class="divider-body">
-      <div class="divider-eyebrow">Chapter 03 of 05</div>
-      <h2 class="divider-title">The new workday</h2>
-      <p class="divider-question">What changes in the professional&rsquo;s day, and what stays human?</p>
-      <p class="divider-example">One TPRM periodic review. The same pattern applies to RCSA, issues and actions, incidents and regulatory change.</p>
-      <ol class="divider-screens" data-divider-screens></ol>
-    </div>
-    <div class="divider-progress" data-divider-progress aria-hidden="true"></div>
-  </div>
-</section>
-
-<!-- 06 · NEW WORKDAY: PREPARED DECISION -->
-<section id="prepared-decision" data-slide data-route="core" data-scene="prepared-decision" data-chapter-id="new-workday" data-chapter-title="THE NEW WORKDAY" data-nav-title="What if the next decision arrived ready?">
-  <div class="inner scene-screen">
+<!-- 07 · THE WORKSPACE: HOME (application) -->
+<section id="workspace-home" data-slide data-route="core" data-kind="app" data-scene="workspace-home" data-chapter-id="workspace" data-chapter-title="THE WORKSPACE" data-nav-title="Start with the next decision, not a blank chat">
+  <div class="inner scene-screen app-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE NEW WORKDAY &middot; 06</div><div class="case-thread" data-case-state="prepared"></div></div>
-      <h2 class="slide-h">What if the next decision arrived ready?</h2>
-      <p class="slide-sub">The operating layer gathers the evidence, names the changes and keeps uncertainty visible.</p>
+      <div class="screen-hdr-row"><div class="sec-tag">THE WORKSPACE &middot; 07</div><div class="case-thread" data-case-state="prepared"></div></div>
+      <h2 class="slide-h">Start with the next decision, not a blank chat.</h2>
+      <p class="slide-sub">A queue ranked for the role. Each card says why it is here, what changed and what is needed.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="14" font-weight="600" fill="#E8E9F0"><rect x="20" y="70" width="230" height="56" rx="8" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="40" y="104">Authorised source</text><rect x="20" y="150" width="230" height="56" rx="8" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="40" y="184">Authorised source</text><rect x="20" y="230" width="230" height="56" rx="8" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="40" y="264">Authorised source</text><rect x="20" y="310" width="230" height="56" rx="8" fill="none" stroke="#F3B34C" stroke-width="1.5" stroke-dasharray="5 4"/><text x="40" y="344" fill="#F3B34C">Missing report</text></g><rect x="330" y="20" width="690" height="480" rx="12" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="360" y="60" font-family="JetBrains Mono,monospace" font-size="12" fill="#B44CFF">NFR OS / PREPARED DECISION</text><text x="360" y="100" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#E8E9F0">Next decision, arrived ready</text><g fill="none" stroke="#343949" stroke-width="1.5"><rect x="360" y="140" width="630" height="44" rx="6"/><rect x="360" y="194" width="630" height="44" rx="6"/><rect x="360" y="248" width="630" height="44" rx="6"/></g><rect x="360" y="302" width="630" height="44" rx="6" fill="none" stroke="#F3B34C" stroke-width="1.5" stroke-dasharray="5 4"/><text x="380" y="330" font-family="Space Grotesk,sans-serif" font-size="14" font-weight="600" fill="#F3B34C">Missing evidence stays visible</text><rect x="360" y="370" width="630" height="44" rx="6" fill="none" stroke="#B44CFF" stroke-width="1.5"/><text x="380" y="398" font-family="Space Grotesk,sans-serif" font-size="14" font-weight="600" fill="#E8E9F0">Proposed action</text><rect x="360" y="436" width="120" height="40" rx="6" fill="none" stroke="#F3B34C" stroke-width="2"/><text x="420" y="461" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="14" font-weight="700" fill="#F3B34C">Approve</text><text x="500" y="461" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">HUMAN DECISION</text></svg>
+      <svg data-scene-fallback viewBox="0 0 1280 640" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="1278" height="638" rx="12" fill="#13151C" stroke="#4A5064"/><rect x="1" y="1" width="1278" height="48" rx="12" fill="#191C25"/><text x="50" y="31" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0">NFR Workspace</text><rect x="18" y="14" width="22" height="22" rx="6" fill="#B44CFF"/><rect x="1" y="49" width="196" height="590" fill="#191C25"/><g font-family="Inter,sans-serif" font-size="14" fill="#D4D8E2"><text x="40" y="88" fill="#E8E9F0">Home</text><text x="40" y="128">My work</text><text x="40" y="168">Cases</text><text x="40" y="208">Applications</text><text x="40" y="248">Create</text><text x="40" y="288">Insights</text></g><text x="218" y="92" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="#E8E9F0">Decisions waiting for you</text><g font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#E8E9F0"><rect x="218" y="110" width="740" height="150" rx="10" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="236" y="166">Periodic third-party review</text><rect x="218" y="270" width="740" height="150" rx="10" fill="#191C25" stroke="#343949"/><text x="236" y="326">Control effectiveness challenge</text><rect x="218" y="430" width="740" height="150" rx="10" fill="#191C25" stroke="#343949"/><text x="236" y="486">Incident materiality assessment</text></g><g font-family="Inter,sans-serif" font-size="13" fill="#B3BAC8"><text x="236" y="196">Why it is here</text><text x="420" y="196">What changed</text><text x="604" y="196">Evidence</text><text x="788" y="196" fill="#F3B34C">Decision required</text></g><rect x="980" y="49" width="299" height="590" fill="#191C25"/><text x="998" y="82" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0">NFR Assist</text><g font-family="Inter,sans-serif" font-size="13" fill="#D4D8E2"><rect x="996" y="130" width="268" height="44" rx="8" fill="#13151C" stroke="#343949"/><text x="1008" y="157">What changed since the last review?</text><rect x="996" y="182" width="268" height="44" rx="8" fill="#13151C" stroke="#343949"/><text x="1008" y="209">Which evidence is missing or stale?</text><rect x="996" y="234" width="268" height="44" rx="8" fill="#13151C" stroke="#343949"/><text x="1008" y="261">Why is this case prioritised?</text></g></svg>
+    </div>
+    <div class="scene-footer"><div class="scene-footer-insight">Chat is available, but it is not the organising principle.</div></div>
+  </div>
+</section>
+
+<!-- 08 · THE WORKSPACE: STANDARD JOURNEY (application) -->
+<section id="workspace-journey" data-slide data-route="core" data-kind="app" data-scene="workspace-journey" data-chapter-id="workspace" data-chapter-title="THE WORKSPACE" data-nav-title="For standard work, the case arrives prepared">
+  <div class="inner scene-screen app-screen">
+    <div class="screen-hdr">
+      <div class="screen-hdr-row"><div class="sec-tag">THE WORKSPACE &middot; 08</div><div class="case-thread" data-case-state="decision"></div></div>
+      <h2 class="slide-h">For standard work, the case arrives prepared end to end.</h2>
+      <p class="slide-sub">One periodic third-party review: the role app prepares, a bounded automation routes, the professional decides.</p>
+    </div>
+    <div class="scene-stage" data-size="wide" data-scene-container>
+      <svg data-scene-fallback viewBox="0 0 1280 640" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="1278" height="638" rx="12" fill="#13151C" stroke="#4A5064"/><rect x="1" y="1" width="1278" height="48" rx="12" fill="#191C25"/><rect x="18" y="14" width="22" height="22" rx="6" fill="#B44CFF"/><text x="50" y="31" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0">NFR Workspace</text><rect x="1" y="49" width="196" height="590" fill="#191C25"/><text x="218" y="88" font-family="Space Grotesk,sans-serif" font-size="19" font-weight="700" fill="#E8E9F0">Periodic third-party review, prepared for judgement</text><g font-family="JetBrains Mono,monospace" font-size="13" fill="#B3BAC8"><rect x="218" y="110" width="510" height="190" rx="10" fill="#191C25" stroke="#343949"/><text x="232" y="134">EVIDENCE CHECKLIST</text><rect x="218" y="312" width="510" height="150" rx="10" fill="#191C25" stroke="#343949"/><text x="232" y="336">CURRENT VERSUS PREVIOUS REVIEW</text><rect x="742" y="110" width="472" height="110" rx="10" fill="#191C25" stroke="#343949"/><text x="756" y="134">POLICY AND METHOD REQUIREMENTS</text><rect x="742" y="232" width="472" height="90" rx="10" fill="#191C25" stroke="#F3B34C"/><text x="756" y="256" fill="#F3B34C">EXCEPTIONS AND DATA GAPS</text><rect x="742" y="334" width="472" height="128" rx="10" fill="#191C25" stroke="#343949"/><text x="756" y="358">PROPOSED FOLLOW-UP QUESTIONS</text></g><rect x="218" y="482" width="996" height="140" rx="12" fill="#191C25" stroke="#F3B34C" stroke-width="1.5"/><text x="240" y="514" font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700" fill="#F3B34C">Your decision</text><text x="240" y="544" font-family="Inter,sans-serif" font-size="14" fill="#D4D8E2">The Workspace prepared and routed this case. The judgement is yours.</text><text x="240" y="590" font-family="JetBrains Mono,monospace" font-size="13" fill="#58C994">THEN: OUTCOME RECORDED, ACTIONS CREATED, MONITORING SCHEDULED, AUDIT RECEIPT ISSUED</text></svg>
     </div>
     <div class="scene-footer">
       <div class="scene-footer-evidence">SYNTHETIC CASE</div>
-      <div class="scene-footer-insight">The work arrives prepared. The judgement remains human.</div>
+      <div class="scene-footer-insight">AI and automation prepare and route. The professional makes the material judgement.</div>
     </div>
   </div>
 </section>
 
-<!-- 07 · NEW WORKDAY: ROLE WORKSPACE -->
-<section id="role-workspace" data-slide data-route="core" data-scene="role-workspace" data-chapter-id="new-workday" data-chapter-title="THE NEW WORKDAY" data-nav-title="The day starts with the next decision">
-  <div class="inner scene-screen">
+<!-- 09 · THE WORKSPACE: AGENT BUILDER (application) -->
+<section id="workspace-builder" data-slide data-route="core" data-kind="app" data-scene="workspace-builder" data-chapter-id="workspace" data-chapter-title="THE WORKSPACE" data-nav-title="For the long tail, create a controlled ad hoc agent">
+  <div class="inner scene-screen app-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE NEW WORKDAY &middot; 07</div><div class="case-thread" data-case-state="decision"></div></div>
-      <h2 class="slide-h">The day starts with the next decision.</h2>
-      <p class="slide-sub">One role workspace ranks the work, brings the evidence and carries the case forward.</p>
+      <div class="screen-hdr-row"><div class="sec-tag">THE WORKSPACE &middot; 09</div><button type="button" class="ts-tech-link" data-tech-tab="lifecycle"><i class="ti ti-stack-2" aria-hidden="true"></i>Agent governance (T)</button></div>
+      <h2 class="slide-h">For the long tail, create a controlled ad hoc agent.</h2>
+      <p class="slide-sub">Describe the outcome. See the sources, steps and limits before it runs, inside your own permissions.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="1020" height="360" rx="12" fill="#13151C" stroke="#343949" stroke-width="1.5"/><text x="34" y="44" font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0">NFR OS / Third-party risk / Today</text><g font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8"><text x="34" y="86">WORK QUEUE</text><text x="370" y="86">NEXT DECISION</text><text x="740" y="86">EVIDENCE THREAD</text></g><rect x="34" y="100" width="300" height="56" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="2"/><rect x="34" y="166" width="300" height="56" rx="8" fill="#191C25" stroke="#343949"/><rect x="34" y="232" width="300" height="56" rx="8" fill="#191C25" stroke="#343949"/><rect x="370" y="100" width="340" height="250" rx="8" fill="#191C25" stroke="#F3B34C" stroke-width="1.5"/><text x="390" y="135" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0">Prepared decision</text><rect x="740" y="100" width="266" height="250" rx="8" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="760" y="135" font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0">Sources linked</text><g font-family="JetBrains Mono,monospace" font-size="12"><text x="20" y="410" fill="#B3BAC8">BEFORE</text><text x="110" y="410" fill="#B3BAC8">search / chase / reconcile / merge / draft / re-key</text><text x="20" y="460" fill="#F3B34C">AFTER</text><text x="110" y="460" fill="#E8E9F0">inspect change / test evidence / challenge / decide / own follow-up</text></g></svg>
+      <svg data-scene-fallback viewBox="0 0 1280 640" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="1278" height="638" rx="12" fill="#13151C" stroke="#4A5064"/><rect x="1" y="1" width="1278" height="48" rx="12" fill="#191C25"/><rect x="18" y="14" width="22" height="22" rx="6" fill="#B44CFF"/><text x="50" y="31" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0">NFR Workspace</text><rect x="1" y="49" width="196" height="590" fill="#191C25"/><g font-family="Inter,sans-serif" font-size="13.5" fill="#E8E9F0"><rect x="218" y="66" width="190" height="34" rx="8" fill="#191C25" stroke="#58C994"/><text x="232" y="88">1 Goal</text><rect x="414" y="66" width="190" height="34" rx="8" fill="#191C25" stroke="#B44CFF"/><text x="428" y="88">2 Scope</text><rect x="610" y="66" width="190" height="34" rx="8" fill="#191C25" stroke="#343949"/><text x="624" y="88">3 Plan</text><rect x="806" y="66" width="190" height="34" rx="8" fill="#191C25" stroke="#343949"/><text x="820" y="88">4 Run</text><rect x="1002" y="66" width="190" height="34" rx="8" fill="#191C25" stroke="#343949"/><text x="1016" y="88">5 Reuse</text></g><text x="218" y="140" font-family="Space Grotesk,sans-serif" font-size="19" font-weight="700" fill="#E8E9F0">Review scope and permissions, before anything runs</text><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700"><rect x="218" y="160" width="316" height="250" rx="11" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="236" y="190" fill="#55C7E8">Can read</text><rect x="546" y="160" width="316" height="250" rx="11" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="564" y="190" fill="#B44CFF">Can create</text><rect x="874" y="160" width="316" height="250" rx="11" fill="none" stroke="#F0758A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="892" y="190" fill="#F0758A">Cannot</text></g><rect x="218" y="424" width="972" height="64" rx="11" fill="#191C25" stroke="#F3B34C"/><text x="240" y="462" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="600" fill="#E8E9F0">This agent inherits your access. It does not create new access.</text><g font-family="Inter,sans-serif" font-size="14" fill="#D4D8E2"><text x="218" y="528">Ad hoc run</text><text x="420" y="528">Personal agent</text><text x="640" y="528">Reviewed team template</text><text x="900" y="528">Standard app or automation</text></g></svg>
     </div>
-    <div class="scene-footer">
-      <div class="scene-footer-evidence">SYNTHETIC CASE</div>
-      <div class="scene-footer-insight">Less navigation. More challenge.</div>
-    </div>
+    <div class="scene-footer"><div class="scene-footer-insight">Ad hoc work stays possible. Sources, permissions, actions and review stay visible.</div></div>
   </div>
 </section>
 
-<!-- 08 · NEW WORKDAY: THE WORKSPACE, LIVE -->
-<section id="workspace-live" data-slide data-route="core" data-scene="workspace-live" data-chapter-id="new-workday" data-chapter-title="THE NEW WORKDAY" data-nav-title="Already running: the workspace">
+<!-- 10 · THE WORKSPACE: CONTROL BOUNDARY -->
+<section id="authority-boundary" data-slide data-route="core" data-scene="authority-boundary" data-chapter-id="workspace" data-chapter-title="THE WORKSPACE" data-nav-title="AI prepares. Professionals decide. Systems record.">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE NEW WORKDAY &middot; 08 &middot; LIVE PRODUCT</div></div>
-      <h2 class="slide-h">Already running. It feels like home.</h2>
-      <p class="slide-sub">NFR OS on a synthetic bank: the TPRM officer's day, and skills built in a sentence over data the role already sees.</p>
-    </div>
-    <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="719" height="479" rx="10" fill="#1B1E27" stroke="#343949"/><text x="70" y="20" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">NFR OS, the running product</text><image href="./assets/img/nfros/nfros-skills.jpg" x="1" y="30" width="718" height="449" preserveAspectRatio="xMinYMin slice"/><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0"><rect x="744" y="0.5" width="296" height="116" rx="10" fill="#13151C" stroke="#343949"/><text x="780" y="32">The workday, ranked</text><rect x="744" y="124" width="296" height="116" rx="10" fill="#13151C" stroke="#343949"/><text x="780" y="156">Ask the partner for a skill</text><rect x="744" y="248" width="296" height="116" rx="10" fill="#13151C" stroke="#8B7CFF" stroke-width="1.5"/><text x="780" y="280">Check it, save it, reuse it</text></g><g font-family="JetBrains Mono,monospace" font-size="12" fill="#58C994"><text x="0" y="507">READ ONLY</text><text x="120" y="507">SCOPED TO THE ROLE'S ENTITY</text><text x="370" y="507">EVERY RUN AUDITED</text><text x="540" y="507">WORKS WITHOUT A MODEL KEY</text></g></svg>
-    </div>
-    <div class="scene-footer">
-      <div class="scene-footer-evidence">LIVE PRODUCT &middot; SYNTHETIC INSTITUTION</div>
-      <div class="scene-footer-insight">Their data, their questions, one home.</div>
-    </div>
-  </div>
-</section>
-
-<!-- 09 · NEW WORKDAY: AUTHORITY BOUNDARY -->
-<section id="authority-boundary" data-slide data-route="core" data-scene="authority-boundary" data-chapter-id="new-workday" data-chapter-title="THE NEW WORKDAY" data-nav-title="AI prepares. Professionals decide. Systems record.">
-  <div class="inner scene-screen">
-    <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE NEW WORKDAY &middot; 09</div><div class="case-thread" data-case-state="receipt"></div><a class="ts-atlas-link" href="#ref/controlled-write" data-atlas-view="controlled-write"><i class="ti ti-book" aria-hidden="true"></i>Atlas: controlled write</a></div>
+      <div class="screen-hdr-row"><div class="sec-tag">THE WORKSPACE &middot; 10</div><div class="case-thread" data-case-state="receipt"></div><a class="ts-atlas-link" href="#ref/controlled-write" data-atlas-view="controlled-write"><i class="ti ti-book" aria-hidden="true"></i>Atlas: controlled write</a><button type="button" class="ts-tech-link" data-tech-tab="controls"><i class="ti ti-stack-2" aria-hidden="true"></i>Controls (T)</button></div>
       <h2 class="slide-h">AI prepares. Professionals decide. Systems record.</h2>
-      <p class="slide-sub">Capability may increase, but authority changes only through an explicit control decision.</p>
+      <p class="slide-sub">Each capability has a default authority. None of them owns the risk.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><line x1="60" y1="470" x2="600" y2="470" stroke="#4A5064" stroke-width="1.5"/><line x1="60" y1="470" x2="60" y2="20" stroke="#4A5064" stroke-width="1.5"/><g font-family="Space Grotesk,sans-serif" font-size="14" font-weight="700"><rect x="74" y="250" width="250" height="200" rx="8" fill="#191C25" stroke="#55C7E8" stroke-width="1.2"/><text x="90" y="278" fill="#55C7E8">Execute within policy</text><rect x="334" y="250" width="256" height="200" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.2"/><text x="350" y="278" fill="#B44CFF">Prepare for review</text><rect x="74" y="30" width="250" height="210" rx="8" fill="#191C25" stroke="#F3B34C" stroke-width="1.2"/><text x="90" y="58" fill="#F3B34C">Named approval required</text><rect x="334" y="30" width="256" height="210" rx="8" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="350" y="58" fill="#F3B34C">Human decision only</text></g><g font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8"><text x="330" y="500" text-anchor="middle">NEED FOR PROFESSIONAL JUDGEMENT</text></g><g font-family="Space Grotesk,sans-serif" font-size="14" font-weight="600" fill="#E8E9F0"><rect x="700" y="30" width="300" height="46" rx="7" fill="#191C25" stroke="#343949"/><text x="720" y="59">Identity</text><rect x="700" y="96" width="300" height="46" rx="7" fill="#191C25" stroke="#343949"/><text x="720" y="125">Role scope</text><rect x="700" y="162" width="300" height="46" rx="7" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="720" y="191" fill="#F3B34C">Exact approval</text><rect x="700" y="228" width="300" height="46" rx="7" fill="#191C25" stroke="#343949"/><text x="720" y="257">Connector</text><rect x="700" y="294" width="300" height="46" rx="7" fill="#191C25" stroke="#343949"/><text x="720" y="323">Target acknowledgement</text><rect x="700" y="360" width="300" height="46" rx="7" fill="#191C25" stroke="#58C994" stroke-width="2"/><text x="720" y="389" fill="#58C994">Audit receipt</text></g></svg>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700"><rect x="16" y="0" width="318" height="292" rx="8" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="34" y="34" fill="#B44CFF">AI and automation prepare</text><rect x="377" y="0" width="318" height="292" rx="8" fill="#191C25" stroke="#F3B34C" stroke-width="1.5"/><text x="395" y="34" fill="#F3B34C">Professionals decide</text><rect x="738" y="0" width="286" height="292" rx="8" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="756" y="34" fill="#58C994">Systems record</text></g><g font-family="Inter,sans-serif" font-size="14" fill="#E8E9F0"><text x="34" y="70">Retrieve and compare evidence</text><text x="34" y="96">Flag missing or stale information</text><text x="34" y="122">Draft summaries and questions</text><text x="395" y="70">Challenge evidence</text><text x="395" y="96">Determine materiality</text><text x="395" y="122">Accept, mitigate or escalate risk</text><text x="756" y="70">Approved outcome</text><text x="756" y="96">Named decision maker</text><text x="756" y="122">Source and policy versions</text></g><text x="16" y="330" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">DEFAULT AUTHORITY BY CAPABILITY</text><g font-family="Inter,sans-serif" font-size="14" fill="#E8E9F0"><rect x="16" y="344" width="690" height="36" rx="8" fill="#191C25" stroke="#343949"/><text x="32" y="367">Ask, NFR Assist: draft and explain</text><rect x="16" y="386" width="690" height="36" rx="8" fill="#191C25" stroke="#343949"/><text x="32" y="409">Use, NFR Apps: prepare and validate a defined task</text><rect x="16" y="428" width="690" height="36" rx="8" fill="#191C25" stroke="#343949"/><text x="32" y="451">Run, NFR Automations: approved steps, pause at human gates</text><rect x="16" y="470" width="690" height="36" rx="8" fill="#191C25" stroke="#343949"/><text x="32" y="493">Create, Agent Builder: read, analyse and draft within permissions</text></g><rect x="734" y="344" width="290" height="162" rx="10" fill="#191C25" stroke="#F3B34C" stroke-width="1.5"/><text x="752" y="380" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="#F3B34C">No capability owns the risk.</text></svg>
     </div>
     <div class="scene-footer"><div class="scene-footer-insight">Automation does not grant authority.</div></div>
   </div>
 </section>
 
-<!-- CHAPTER 04 · SIX MONTHS (divider) -->
-<section id="ch-six-months" data-slide data-route="divider" data-chapter-id="six-months" data-chapter-title="SIX MONTHS AND PAYBACK" data-chapter-num="04" data-nav-title="Chapter 04: Six months and payback">
-  <div class="inner divider">
-    <div class="divider-num" aria-hidden="true">04</div>
-    <div class="divider-body">
-      <div class="divider-eyebrow">Chapter 04 of 05</div>
-      <h2 class="divider-title">Six months and payback</h2>
-      <p class="divider-question">What gets built, what is live at month six, and when does it pay back?</p>
-      <p class="divider-example">One TPRM periodic review. The same pattern applies to RCSA, issues and actions, incidents and regulatory change.</p>
-      <ol class="divider-screens" data-divider-screens></ol>
-    </div>
-    <div class="divider-progress" data-divider-progress aria-hidden="true"></div>
-  </div>
-</section>
-
-<!-- 10 · SIX MONTHS: ROUTE -->
-<section id="six-month-route" data-slide data-route="core" data-scene="six-month-route" data-chapter-id="six-months" data-chapter-title="SIX MONTHS AND PAYBACK" data-nav-title="Six months to one complete working loop">
+<!-- 11 · THE PATH: SIX MONTHS, THREE LANES -->
+<section id="six-month-route" data-slide data-route="core" data-scene="six-month-route" data-chapter-id="path" data-chapter-title="THE PATH" data-nav-title="Six months to prove one working loop">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">SIX MONTHS AND PAYBACK &middot; 10</div><a class="ts-atlas-link" href="#ref/workstreams" data-atlas-view="workstreams"><i class="ti ti-book" aria-hidden="true"></i>Atlas: workstreams</a></div>
-      <h2 class="slide-h">Six months to one complete working loop.</h2>
-      <p class="slide-sub">Frame the journey, build the flow, then prove it on real cases.</p>
+      <div class="screen-hdr-row"><div class="sec-tag">THE PATH &middot; 11</div><a class="ts-atlas-link" href="#ref/workstreams" data-atlas-view="workstreams"><i class="ti ti-book" aria-hidden="true"></i>Atlas: workstreams</a></div>
+      <h2 class="slide-h">Six months to prove one working loop on reusable foundations.</h2>
+      <p class="slide-sub">Work and roles, process and controls, data and platform move through three phases together.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#E8E9F0"><rect x="190" y="20" width="270" height="230" rx="10" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="210" y="52">Months 0 to 2: Frame</text><rect x="470" y="20" width="270" height="230" rx="10" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="490" y="52">Months 2 to 4: Build</text><rect x="750" y="20" width="270" height="230" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="770" y="52">Months 4 to 6: Test</text></g><g font-family="Space Grotesk,sans-serif" font-size="13" fill="#D4D8E2"><text x="20" y="300">Process and operating model</text><text x="20" y="328">Experience and workspace</text><text x="20" y="356">Role App and backend</text><text x="20" y="384">Data and integration</text><text x="20" y="412">Models and evaluation</text><text x="20" y="440">Governance and resilience</text><text x="20" y="468">Change, adoption and value</text></g><g stroke="#4A5064" stroke-width="6" stroke-linecap="round"><line x1="200" y1="296" x2="1010" y2="296"/><line x1="200" y1="324" x2="1010" y2="324"/><line x1="200" y1="352" x2="1010" y2="352"/><line x1="200" y1="380" x2="1010" y2="380"/><line x1="200" y1="408" x2="1010" y2="408"/><line x1="200" y1="436" x2="1010" y2="436"/><line x1="200" y1="464" x2="1010" y2="464"/></g><g fill="#191C25" stroke="#F3B34C" stroke-width="2"><rect x="453" y="263" width="16" height="16" transform="rotate(45 461 271)"/><rect x="598" y="263" width="16" height="16" transform="rotate(45 606 271)"/><rect x="1006" y="263" width="16" height="16" transform="rotate(45 1014 271)"/></g></svg>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#E8E9F0"><text x="182" y="38">Define</text><text x="470" y="38">Build and test</text><text x="758" y="38">Operate and prove</text></g><g font-family="JetBrains Mono,monospace" font-size="12"><text x="182" y="16" fill="#55C7E8">MONTHS 0 TO 2</text><text x="470" y="16" fill="#B44CFF">MONTHS 2 TO 4</text><text x="758" y="16" fill="#58C994">MONTHS 4 TO 6</text></g><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0"><text x="16" y="100">Work &amp; roles</text><text x="16" y="188">Process &amp; controls</text><text x="16" y="276">Data &amp; platform</text></g><g fill="#191C25" stroke-width="1.5"><rect x="178" y="54" width="276" height="80" rx="8" stroke="#55C7E8"/><rect x="466" y="54" width="276" height="80" rx="8" stroke="#B44CFF"/><rect x="754" y="54" width="276" height="80" rx="8" stroke="#58C994"/><rect x="178" y="142" width="276" height="80" rx="8" stroke="#55C7E8"/><rect x="466" y="142" width="276" height="80" rx="8" stroke="#B44CFF"/><rect x="754" y="142" width="276" height="80" rx="8" stroke="#58C994"/><rect x="178" y="230" width="276" height="80" rx="8" stroke="#55C7E8"/><rect x="466" y="230" width="276" height="80" rx="8" stroke="#B44CFF"/><rect x="754" y="230" width="276" height="80" rx="8" stroke="#58C994"/></g><rect x="16" y="324" width="400" height="186" rx="10" fill="#191C25" stroke="#F3B34C"/><text x="34" y="350" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">ENTRY CONDITIONS</text><rect x="432" y="324" width="592" height="186" rx="10" fill="#191C25" stroke="#58C994"/><text x="450" y="350" font-family="JetBrains Mono,monospace" font-size="12" fill="#58C994">WHAT MONTH SIX PROVES</text><text x="450" y="494" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">NOT IN SCOPE: AN ENTERPRISE-WIDE NFR PLATFORM IN SIX MONTHS.</text></svg>
     </div>
-    <div class="scene-footer"><div class="scene-footer-insight">The six months prove a process, not a chatbot.</div></div>
+    <div class="scene-footer"><div class="scene-footer-insight">Six months prove one loop and its foundation, not a universal platform.</div></div>
   </div>
 </section>
 
-<!-- 11 · SIX MONTHS: MONTH-SIX PROOF -->
-<section id="m6-proof" data-slide data-route="core" data-scene="m6-proof" data-chapter-id="six-months" data-chapter-title="SIX MONTHS AND PAYBACK" data-nav-title="Not a demo. One controlled process in use.">
+<!-- 12 · THE PATH: VALUE AND THE WORKSHOP DECISION -->
+<section id="value-decision" data-slide data-route="core" data-scene="value-decision" data-chapter-id="path" data-chapter-title="THE PATH" data-nav-title="Value grows as assistance becomes operational work">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">SIX MONTHS AND PAYBACK &middot; 11</div><div class="case-thread" data-case-state="measured"></div></div>
-      <h2 class="slide-h">Not a demo. One controlled process in use.</h2>
-      <p class="slide-sub">Five proof points define done at month six.</p>
+      <div class="screen-hdr-row"><div class="sec-tag">THE PATH &middot; 12</div><a class="ts-atlas-link" href="#business-case" onclick="goToId('business-case');return false;"><i class="ti ti-book" aria-hidden="true"></i>Appendix: business case</a><button type="button" class="ts-tech-link" data-tech-tab="metrics"><i class="ti ti-stack-2" aria-hidden="true"></i>Measures (T)</button></div>
+      <h2 class="slide-h">Value grows as assistance becomes operational work.</h2>
+      <p class="slide-sub">Risk outcomes, operating performance and capacity are measured separately. Then we choose the first loop.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0" text-anchor="middle"><rect x="20" y="40" width="160" height="120" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="100" y="105">Trigger</text><rect x="200" y="40" width="160" height="120" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="280" y="105">Evidence</text><rect x="380" y="40" width="160" height="120" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="460" y="105">Decision</text><rect x="560" y="40" width="160" height="120" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="640" y="105">Action</text><rect x="740" y="40" width="160" height="120" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="820" y="105">Proof</text></g><rect x="950" y="80" width="40" height="40" rx="5" transform="rotate(45 970 100)" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="970" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">SCALE / ADJUST / STOP</text><rect x="20" y="230" width="490" height="260" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.2"/><text x="44" y="264" font-family="JetBrains Mono,monospace" font-size="12" fill="#58C994">IN SCOPE BY MONTH SIX</text><rect x="530" y="230" width="490" height="260" rx="10" fill="none" stroke="#4A5064" stroke-width="1.2" stroke-dasharray="5 4"/><text x="554" y="264" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">NOT IN SCOPE BY MONTH SIX</text></svg>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g fill="#191C25" stroke="#B44CFF" stroke-width="1.5"><rect x="16" y="54" width="246" height="96" rx="8"/><rect x="270" y="38" width="246" height="112" rx="8"/><rect x="524" y="22" width="246" height="128" rx="8"/><rect x="778" y="6" width="246" height="144" rx="8"/></g><g font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="#E8E9F0"><text x="32" y="84">Ask</text><text x="286" y="68">Use</text><text x="540" y="52">Run</text><text x="794" y="36">Create</text></g><g fill="#191C25" stroke="#343949"><rect x="16" y="168" width="330" height="176" rx="10"/><rect x="355" y="168" width="330" height="176" rx="10"/><rect x="694" y="168" width="330" height="176" rx="10"/></g><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0"><text x="34" y="196">Risk outcomes</text><text x="373" y="196">Operating performance</text><text x="712" y="196">Capacity and economics</text></g><rect x="16" y="392" width="1008" height="120" rx="12" fill="#191C25" stroke="#F3B34C" stroke-width="1.5"/><text x="40" y="424" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">WORKSHOP DECISION</text><text x="40" y="456" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="#E8E9F0">Which role, decision and bounded journey should become the first controlled loop?</text></svg>
     </div>
-    <div class="scene-footer"><div class="scene-footer-insight">Month six earns the next investment.</div></div>
+    <div class="scene-footer"><div class="scene-footer-insight">Start with one role, one bounded decision journey and one measurable loop.</div></div>
   </div>
 </section>
 
-<!-- 12 · BUSINESS CASE -->
-<section id="business-case" data-slide data-route="core" data-scene="business-case" data-chapter-id="six-months" data-chapter-title="SIX MONTHS AND PAYBACK" data-nav-title="Count hours returned, not model calls">
-  <div class="inner scene-screen">
-    <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">SIX MONTHS AND PAYBACK &middot; 12</div><div class="case-thread" data-case-state="measured"></div><a class="ts-atlas-link" href="#ref/economics" data-atlas-view="economics"><i class="ti ti-book" aria-hidden="true"></i>Atlas: formulas</a></div>
-      <h2 class="slide-h">Count hours returned, not model calls.</h2>
-      <p class="slide-sub">Measured on the worked example: effort, cycle time, quality, control and run cost of one review.</p>
-    </div>
-    <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><text x="20" y="30" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">ILLUSTRATIVE ONLY. REPLACE WITH CLIENT BASELINE.</text><g font-family="Space Grotesk,sans-serif" font-size="13" fill="#D4D8E2"><text x="20" y="86">Find and retrieve</text><text x="20" y="130">Reconcile and compare</text><text x="20" y="174">Coordinate and chase</text><text x="20" y="218">Re-enter and record</text><text x="20" y="262">Rework</text><text x="20" y="306" fill="#F3B34C">Professional judgement</text></g><g><rect x="200" y="72" width="150" height="18" fill="#B44CFF" opacity=".7"/><rect x="350" y="72" width="27" height="18" fill="#4A5064"/><rect x="200" y="116" width="114" height="18" fill="#B44CFF" opacity=".7"/><rect x="314" y="116" width="29" height="18" fill="#4A5064"/><rect x="200" y="160" width="100" height="18" fill="#B44CFF" opacity=".7"/><rect x="300" y="160" width="43" height="18" fill="#4A5064"/><rect x="200" y="204" width="64" height="18" fill="#B44CFF" opacity=".7"/><rect x="264" y="204" width="7" height="18" fill="#4A5064"/><rect x="200" y="248" width="59" height="18" fill="#B44CFF" opacity=".7"/><rect x="259" y="248" width="48" height="18" fill="#4A5064"/><rect x="200" y="292" width="214" height="18" fill="#F3B34C" opacity=".8"/></g><text x="20" y="360" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">JUDGEMENT STAYS AT ZERO AUTOMATION</text><rect x="470" y="60" width="250" height="300" rx="10" fill="#191C25" stroke="#343949"/><text x="490" y="92" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">GROSS TO NET CAPACITY</text><rect x="750" y="60" width="270" height="300" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="770" y="92" font-family="JetBrains Mono,monospace" font-size="12" fill="#58C994">HOURS RETURNED PER REVIEW</text></svg>
-    </div>
-    <div class="scene-footer">
-      <div class="scene-footer-evidence">ILLUSTRATIVE ONLY / REPLACE WITH CLIENT BASELINE</div>
-      <div class="scene-footer-insight">Task automation is not the same as role automation.</div>
-    </div>
-  </div>
-</section>
-
-<!-- CHAPTER 05 · SCALE AND START (divider) -->
-<section id="ch-scale-start" data-slide data-route="divider" data-chapter-id="scale-start" data-chapter-title="SCALE AND START" data-chapter-num="05" data-nav-title="Chapter 05: Scale and start">
-  <div class="inner divider">
-    <div class="divider-num" aria-hidden="true">05</div>
-    <div class="divider-body">
-      <div class="divider-eyebrow">Chapter 05 of 05</div>
-      <h2 class="divider-title">Scale and start</h2>
-      <p class="divider-question">How does one journey become the NFR OS, and what is the first move?</p>
-      <p class="divider-example divider-example-scale">From one worked example to every NFR domain: the shared core is reused, each journey adds its domain logic.</p>
-      <ol class="divider-screens" data-divider-screens></ol>
-    </div>
-    <div class="divider-progress" data-divider-progress aria-hidden="true"></div>
-  </div>
-</section>
-
-<!-- 13 · SCALE: REUSE CORE -->
-<section id="reuse-core" data-slide data-route="core" data-scene="reuse-core" data-chapter-id="scale-start" data-chapter-title="SCALE AND START" data-nav-title="Build the first journey once. Reuse the core.">
-  <div class="inner scene-screen">
-    <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">SCALE AND START &middot; 13</div><a class="ts-atlas-link" href="#ref/reuse" data-atlas-view="reuse"><i class="ti ti-book" aria-hidden="true"></i>Atlas: shared core</a></div>
-      <h2 class="slide-h">Build the first journey once. Reuse the core.</h2>
-      <p class="slide-sub">TPRM builds the shared core; RCSA, issues, incidents and regulatory change add mainly domain logic.</p>
-    </div>
-    <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="40" width="250" height="300" rx="10" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="40" y="74" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0">TPRM periodic review</text><rect x="330" y="20" width="380" height="440" rx="12" fill="#191C25" stroke="#58C994" stroke-width="2"/><text x="350" y="54" font-family="JetBrains Mono,monospace" font-size="12" fill="#58C994">SHARED CORE, BUILT ONCE</text><g fill="none" stroke="#343949" stroke-width="1.2"><rect x="350" y="70" width="340" height="44" rx="6"/><rect x="350" y="124" width="340" height="44" rx="6"/><rect x="350" y="178" width="340" height="44" rx="6"/><rect x="350" y="232" width="340" height="44" rx="6"/><rect x="350" y="286" width="340" height="44" rx="6"/><rect x="350" y="340" width="340" height="44" rx="6"/><rect x="350" y="394" width="340" height="44" rx="6"/></g><rect x="770" y="40" width="250" height="300" rx="10" fill="#191C25" stroke="#55C7E8" stroke-width="1.5" stroke-dasharray="5 4"/><text x="790" y="74" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0">Next NFR journeys</text><text x="790" y="380" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">ADDS DOMAIN LOGIC ONLY</text></svg>
-    </div>
-    <div class="scene-footer"><div class="scene-footer-insight">The first process proves value. Reuse creates the operating system.</div></div>
-  </div>
-</section>
-
-<!-- 14 · SCALE: INTEGRATED DELIVERY -->
-<section id="integrated-delivery" data-slide data-route="core" data-scene="integrated-delivery" data-chapter-id="scale-start" data-chapter-title="SCALE AND START" data-nav-title="One team owns the whole loop">
-  <div class="inner scene-screen">
-    <div class="screen-hdr">
-      <div class="sec-tag">SCALE AND START &middot; 14</div>
-      <h2 class="slide-h">One team owns the whole loop.</h2>
-      <p class="slide-sub">Process, product, data, engineering, control and change move together.</p>
-    </div>
-    <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle cx="520" cy="200" r="80" fill="#191C25" stroke="#F3B34C" stroke-width="2"/><text x="520" y="196" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0">One working</text><text x="520" y="216" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="15" font-weight="700" fill="#E8E9F0">process</text><g font-family="Space Grotesk,sans-serif" font-size="14" font-weight="700" fill="#E8E9F0"><rect x="60" y="40" width="260" height="60" rx="8" fill="#191C25" stroke="#55C7E8"/><text x="80" y="76">NFR process and operating model</text><rect x="720" y="40" width="260" height="60" rx="8" fill="#191C25" stroke="#B44CFF"/><text x="740" y="76">Product and role experience</text><rect x="20" y="170" width="260" height="60" rx="8" fill="#191C25" stroke="#B44CFF"/><text x="40" y="206">Data and AI</text><rect x="760" y="170" width="260" height="60" rx="8" fill="#191C25" stroke="#55C7E8"/><text x="780" y="206">Architecture and integration</text><rect x="60" y="300" width="260" height="60" rx="8" fill="#191C25" stroke="#F3B34C"/><text x="80" y="336">Governance and resilience</text><rect x="720" y="300" width="260" height="60" rx="8" fill="#191C25" stroke="#58C994"/><text x="740" y="336">Change, adoption and value</text></g><text x="520" y="440" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">REUSABLE ACCENTURE PATTERNS</text></svg>
-    </div>
-    <div class="scene-footer"><div class="scene-footer-insight">The product is the working process, not the model.</div></div>
-  </div>
-</section>
-
-<!-- 15 · SCALE: FIRST MOVE -->
-<section id="first-move" data-slide data-route="core" data-scene="first-move" data-chapter-id="scale-start" data-chapter-title="SCALE AND START" data-nav-title="Start with one bounded review">
-  <div class="inner scene-screen">
-    <div class="screen-hdr">
-      <div class="sec-tag">SCALE AND START &middot; 15</div>
-      <h2 class="slide-h">Start with one bounded review.</h2>
-      <p class="slide-sub">Agree ownership, access, proof and the first six-month boundary.</p>
-    </div>
-    <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#E8E9F0"><rect x="20" y="30" width="200" height="300" rx="10" fill="#191C25" stroke="#F3B34C" stroke-width="1.5"/><text x="40" y="64">Ownership</text><rect x="240" y="30" width="200" height="300" rx="10" fill="#191C25" stroke="#55C7E8" stroke-width="1.5"/><text x="260" y="64">Access</text><rect x="460" y="30" width="200" height="300" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="480" y="64">Proof</text></g><rect x="700" y="30" width="320" height="300" rx="10" fill="#191C25" stroke="#B44CFF" stroke-width="1.5"/><text x="720" y="64" font-family="JetBrains Mono,monospace" font-size="12" fill="#B44CFF">FIRST-MOVE HYPOTHESIS</text><text x="720" y="100" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0">TPRM periodic review</text><text x="20" y="420" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="600" fill="#F3B34C">Which periodic-review cohort gives us the strongest starting point?</text></svg>
-    </div>
-    <div class="scene-footer"><div class="scene-footer-insight">One journey. One baseline. One accountable owner.</div></div>
-  </div>
-</section>
 
 <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      APPENDIX (excluded from core counter): index, Evidence Atlas, A1 to A6 in story order
@@ -428,12 +285,48 @@
       </div>
     </div>
     <div class="apx-index reveal">
-      <div class="apx-group"><div class="apx-group-hd">Behind the north star</div><a class="apx-link apx-atlas" href="#ref/reuse" data-atlas-view="reuse"><span class="apx-num">Atlas</span>Reuse across NFR journeys</a><a class="apx-link apx-atlas" href="#ref/risk-map" data-atlas-view="risk-map"><span class="apx-num">Atlas</span>Risk map of NFR capabilities</a><a class="apx-link apx-atlas" href="#ref/solutions" data-atlas-view="solutions"><span class="apx-num">Atlas</span>Solution portfolio</a></div>
-      <div class="apx-group"><div class="apx-group-hd">Behind the new workday</div><a class="apx-link apx-atlas" href="#ref/controlled-write" data-atlas-view="controlled-write"><span class="apx-num">Atlas</span>Controlled write and authority</a><a class="apx-link" href="#app-rai" onclick="goToId('app-rai');return false;"><span class="apx-num">A1</span>Responsible AI: minimum checklist for risk use cases</a></div>
-      <div class="apx-group"><div class="apx-group-hd">Behind six months and payback</div><a class="apx-link apx-atlas" href="#ref/workstreams" data-atlas-view="workstreams"><span class="apx-num">Atlas</span>Workstreams and gates</a><a class="apx-link apx-atlas" href="#ref/economics" data-atlas-view="economics"><span class="apx-num">Atlas</span>Formulas and assumptions</a><a class="apx-link" href="#app-method" onclick="goToId('app-method');return false;"><span class="apx-num">A2</span>Lean client entry: methodology principles</a><a class="apx-link" href="#app-evidence" onclick="goToId('app-evidence');return false;"><span class="apx-num">A3</span>What evidence is needed before the first proof</a><a class="apx-link" href="#app-kpis" onclick="goToId('app-kpis');return false;"><span class="apx-num">A4</span>Proof KPIs: what to measure and how</a><a class="apx-link" href="#app-assumptions" onclick="goToId('app-assumptions');return false;"><span class="apx-num">A5</span>Assumptions, sources, and disclaimers</a></div>
-      <div class="apx-group"><div class="apx-group-hd">Behind scale and start</div><a class="apx-link apx-atlas" href="#ref/toolkit" data-atlas-view="toolkit"><span class="apx-num">Atlas</span>Reference architecture</a><a class="apx-link" href="#app-team" onclick="goToId('app-team');return false;"><span class="apx-num">A6</span>Team and credentials</a><a class="apx-link apx-ext" href="https://tzijlstra-acn.github.io/NFRAIAssets/" target="_blank" rel="noopener"><span class="apx-num">Portal</span>NFR AI Assets portal (restricted access)</a></div>
+      <div class="apx-group"><div class="apx-group-hd">Technical depth (press T)</div><a class="apx-link" href="#appendix" data-tech-tab="architecture"><span class="apx-num">T1</span>Reference architecture: five layers</a><a class="apx-link" href="#appendix" data-tech-tab="lifecycle"><span class="apx-num">T2</span>Agent governance lifecycle</a><a class="apx-link" href="#appendix" data-tech-tab="controls"><span class="apx-num">T3</span>Control catalogue</a><a class="apx-link" href="#appendix" data-tech-tab="metrics"><span class="apx-num">T4</span>Measurement library</a></div>
+      <div class="apx-group"><div class="apx-group-hd">Behind the Workspace</div><a class="apx-link" href="#workspace-live" onclick="goToId('workspace-live');return false;"><span class="apx-num">P</span>Running prototype captures</a><a class="apx-link apx-atlas" href="#ref/controlled-write" data-atlas-view="controlled-write"><span class="apx-num">Atlas</span>Controlled write and authority</a><a class="apx-link" href="#app-rai" onclick="goToId('app-rai');return false;"><span class="apx-num">A1</span>Responsible AI: minimum checklist for risk use cases</a></div>
+      <div class="apx-group"><div class="apx-group-hd">Behind the six-month path and value</div><a class="apx-link" href="#business-case" onclick="goToId('business-case');return false;"><span class="apx-num">BC</span>Business case calculator (illustrative)</a><a class="apx-link apx-atlas" href="#ref/workstreams" data-atlas-view="workstreams"><span class="apx-num">Atlas</span>Workstreams and gates</a><a class="apx-link apx-atlas" href="#ref/economics" data-atlas-view="economics"><span class="apx-num">Atlas</span>Formulas and assumptions</a><a class="apx-link" href="#app-method" onclick="goToId('app-method');return false;"><span class="apx-num">A2</span>Lean client entry: methodology principles</a><a class="apx-link" href="#app-evidence" onclick="goToId('app-evidence');return false;"><span class="apx-num">A3</span>What evidence is needed before the first proof</a><a class="apx-link" href="#app-kpis" onclick="goToId('app-kpis');return false;"><span class="apx-num">A4</span>Proof KPIs: what to measure and how</a><a class="apx-link" href="#app-assumptions" onclick="goToId('app-assumptions');return false;"><span class="apx-num">A5</span>Assumptions, sources, and disclaimers</a></div>
+      <div class="apx-group"><div class="apx-group-hd">Behind scale</div><a class="apx-link apx-atlas" href="#ref/reuse" data-atlas-view="reuse"><span class="apx-num">Atlas</span>Reuse across NFR journeys</a><a class="apx-link apx-atlas" href="#ref/toolkit" data-atlas-view="toolkit"><span class="apx-num">Atlas</span>Reference architecture detail</a><a class="apx-link apx-atlas" href="#ref/risk-map" data-atlas-view="risk-map"><span class="apx-num">Atlas</span>Risk map of NFR capabilities</a><a class="apx-link apx-atlas" href="#ref/solutions" data-atlas-view="solutions"><span class="apx-num">Atlas</span>Solution portfolio</a><a class="apx-link" href="#app-team" onclick="goToId('app-team');return false;"><span class="apx-num">A6</span>Team and credentials</a><a class="apx-link apx-ext" href="https://tzijlstra-acn.github.io/NFRAIAssets/" target="_blank" rel="noopener"><span class="apx-num">Portal</span>NFR AI Assets portal (restricted access)</a></div>
     </div>
-    <button class="apx-back" type="button" onclick="goToId('first-move')">Back to the core route</button>
+    <button class="apx-back" type="button" onclick="goToId('value-decision')">Back to the core route</button>
+  </div>
+</section>
+
+<!-- APPENDIX · BUSINESS CASE (moved from the v27 core route) -->
+<section id="business-case" data-slide data-route="reference" data-scene="business-case" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="Business case calculator (illustrative)">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="screen-hdr-row"><div class="sec-tag">APPENDIX &middot; BUSINESS CASE</div><div class="case-thread" data-case-state="measured"></div><a class="ts-atlas-link" href="#ref/economics" data-atlas-view="economics"><i class="ti ti-book" aria-hidden="true"></i>Atlas: formulas</a></div>
+      <h2 class="slide-h">Count hours returned, not model calls.</h2>
+      <p class="slide-sub">Measured on the worked example: effort, cycle time, quality, control and run cost of one review.</p>
+    </div>
+    <div class="scene-stage" data-size="wide" data-scene-container>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><text x="20" y="30" font-family="JetBrains Mono,monospace" font-size="12" fill="#F3B34C">ILLUSTRATIVE ONLY. REPLACE WITH CLIENT BASELINE.</text><g font-family="Space Grotesk,sans-serif" font-size="13" fill="#D4D8E2"><text x="20" y="86">Find and retrieve</text><text x="20" y="130">Reconcile and compare</text><text x="20" y="174">Coordinate and chase</text><text x="20" y="218">Re-enter and record</text><text x="20" y="262">Rework</text><text x="20" y="306" fill="#F3B34C">Professional judgement</text></g><g><rect x="200" y="72" width="150" height="18" fill="#B44CFF" opacity=".7"/><rect x="350" y="72" width="27" height="18" fill="#4A5064"/><rect x="200" y="116" width="114" height="18" fill="#B44CFF" opacity=".7"/><rect x="314" y="116" width="29" height="18" fill="#4A5064"/><rect x="200" y="160" width="100" height="18" fill="#B44CFF" opacity=".7"/><rect x="300" y="160" width="43" height="18" fill="#4A5064"/><rect x="200" y="204" width="64" height="18" fill="#B44CFF" opacity=".7"/><rect x="264" y="204" width="7" height="18" fill="#4A5064"/><rect x="200" y="248" width="59" height="18" fill="#B44CFF" opacity=".7"/><rect x="259" y="248" width="48" height="18" fill="#4A5064"/><rect x="200" y="292" width="214" height="18" fill="#F3B34C" opacity=".8"/></g><text x="20" y="360" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">JUDGEMENT STAYS AT ZERO AUTOMATION</text><rect x="470" y="60" width="250" height="300" rx="10" fill="#191C25" stroke="#343949"/><text x="490" y="92" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">GROSS TO NET CAPACITY</text><rect x="750" y="60" width="270" height="300" rx="10" fill="#191C25" stroke="#58C994" stroke-width="1.5"/><text x="770" y="92" font-family="JetBrains Mono,monospace" font-size="12" fill="#58C994">HOURS RETURNED PER REVIEW</text></svg>
+    </div>
+    <div class="scene-footer">
+      <div class="scene-footer-evidence">ILLUSTRATIVE ONLY / REPLACE WITH CLIENT BASELINE</div>
+      <div class="scene-footer-insight">Task automation is not the same as role automation.</div>
+    </div>
+  </div>
+</section>
+
+<!-- APPENDIX · RUNNING PROTOTYPE (moved from the v27 core route) -->
+<section id="workspace-live" data-slide data-route="reference" data-scene="workspace-live" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="Running prototype captures">
+  <div class="inner scene-screen">
+    <div class="screen-hdr">
+      <div class="screen-hdr-row"><div class="sec-tag">APPENDIX &middot; RUNNING PROTOTYPE</div></div>
+      <h2 class="slide-h">The running prototype, on a synthetic bank.</h2>
+      <p class="slide-sub">Captures from the working prototype: a risk manager's day, and a read-only agent described in one sentence.</p>
+    </div>
+    <div class="scene-stage" data-size="wide" data-scene-container>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="719" height="479" rx="10" fill="#1B1E27" stroke="#343949"/><text x="70" y="20" font-family="JetBrains Mono,monospace" font-size="12" fill="#B3BAC8">The running prototype</text><image href="./assets/img/nfros/nfros-skills.jpg" x="1" y="30" width="718" height="449" preserveAspectRatio="xMinYMin slice"/><g font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#E8E9F0"><rect x="744" y="0.5" width="296" height="116" rx="10" fill="#13151C" stroke="#343949"/><text x="780" y="32">The workday, ranked</text><rect x="744" y="124" width="296" height="116" rx="10" fill="#13151C" stroke="#343949"/><text x="780" y="156">Ask the partner for a skill</text><rect x="744" y="248" width="296" height="116" rx="10" fill="#13151C" stroke="#8B7CFF" stroke-width="1.5"/><text x="780" y="280">Check it, save it, reuse it</text></g><g font-family="JetBrains Mono,monospace" font-size="12" fill="#58C994"><text x="0" y="507">READ ONLY</text><text x="120" y="507">SCOPED TO THE ROLE'S ENTITY</text><text x="370" y="507">EVERY RUN AUDITED</text><text x="540" y="507">WORKS WITHOUT A MODEL KEY</text></g></svg>
+    </div>
+    <div class="scene-footer">
+      <div class="scene-footer-evidence">DEVELOPMENT BUILD &middot; SYNTHETIC INSTITUTION</div>
+      <div class="scene-footer-insight">Development build: the captures still show the prototype's working title.</div>
+    </div>
   </div>
 </section>
 
@@ -674,26 +567,27 @@
 <script src="./assets/js/story/scene-director.js?v=0729a17"></script>
 <script src="./assets/js/story/visual-grammar.js?v=0729a17"></script>
 <script src="./assets/js/story/composition-linter.js?v=0729a17"></script>
+<script src="./assets/js/story/workspace-kit.js?v=0729a17"></script>
+<script src="./assets/js/story/presenter-controls.js?v=0729a17"></script>
 <script src="./assets/data/tprm-case.js?v=0729a17"></script>
+<script src="./assets/data/workspace-demo.js?v=0729a17"></script>
 <script src="./assets/data/business-case.js?v=0729a17"></script>
 <script src="./assets/js/story/roi-model.js?v=0729a17"></script>
 <script src="./assets/js/story/business-case-state.js?v=0729a17"></script>
 <script src="./assets/js/story/scenes/transition-cover.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/pressure-gap.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/north-star.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/today-integration-layer.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/connection-work.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/pilot-trap.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/prepared-decision.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/role-workspace.js?v=0729a17"></script>
+<script src="./assets/js/story/scenes/assistance-here.js?v=0729a17"></script>
+<script src="./assets/js/story/scenes/remaining-burden.js?v=0729a17"></script>
+<script src="./assets/js/story/scenes/four-ways.js?v=0729a17"></script>
+<script src="./assets/js/story/scenes/three-layers.js?v=0729a17"></script>
+<script src="./assets/js/story/scenes/workspace-boot.js?v=0729a17"></script>
+<script src="./assets/js/story/scenes/workspace-home.js?v=0729a17"></script>
+<script src="./assets/js/story/scenes/workspace-journey.js?v=0729a17"></script>
+<script src="./assets/js/story/scenes/workspace-builder.js?v=0729a17"></script>
+<script src="./assets/js/story/scenes/value-decision.js?v=0729a17"></script>
 <script src="./assets/js/story/scenes/workspace-live.js?v=0729a17"></script>
 <script src="./assets/js/story/scenes/authority-boundary.js?v=0729a17"></script>
 <script src="./assets/js/story/scenes/six-month-route.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/m6-proof.js?v=0729a17"></script>
 <script src="./assets/js/story/scenes/business-case.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/reuse-core.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/integrated-delivery.js?v=0729a17"></script>
-<script src="./assets/js/story/scenes/first-move.js?v=0729a17"></script>
 <script src="./assets/js/app.js?v=0729a17"></script>
 </body>
 </html>

@@ -1,123 +1,85 @@
-// Scene: authority-boundary (Screen 06)
-// Causal story: a two-axis field (need for professional judgement x action
-// materiality) shows what executes within policy, what is prepared for review, what
-// needs a named approval and what stays a human decision. The model then proposes the
-// case's follow-up task: it passes identity and role scope, stops at the amber gate,
-// is approved, the connector writes, and the state turns green only after the target
-// system acknowledges. Automation does not grant authority.
+// Scene: authority-boundary (v2 screen 10)
+// Causal story: the principle behind every screen of the demo. Three columns, left to
+// right: AI and automation prepare, professionals decide, systems record. The record
+// is acknowledged only after the decision. Below, each capability's default authority:
+// Assist drafts and explains, a role app prepares and validates, an automation runs
+// approved steps and pauses at human gates, an ad hoc agent reads, analyses and drafts.
+// No capability owns the risk.
 SceneDirector.register('authority-boundary', function(container, manifest, reduced) {
   var S = window.StoryKit;
-  // Content ends at 480px: the shorter canvas keeps text larger under this long title
-  var W = 1040, H = 480;
-  var FIELD = { x: 64, y: 8, w: 530, h: 444 };
-  var QW = 258, QH = 212, QGAP = 14;
+  var D = window.NFR_WORKSPACE_DEMO;
+  var W = 1040, H = 520;
+  var COL = { y: 0, w: 310, h: 292, gap: 39, x0: 16 };
+  var TBL = { x: 16, y: 318, w: 690 };
 
-  var QUADS = [
-    { id: 'approval', label: 'Named approval required', c: 'human', x: FIELD.x, y: FIELD.y,
-      items: ['Create an internal task', 'Send an external request', 'Update review status'] },
-    { id: 'human', label: 'Human decision only', c: 'human', strong: true, x: FIELD.x + QW + QGAP, y: FIELD.y,
-      items: ['Accept a control exception', 'Set residual risk', 'Approve the provider'] },
-    { id: 'policy', label: 'Execute within policy', c: 'data', x: FIELD.x, y: FIELD.y + QH + QGAP,
-      items: ['Retrieve approved evidence', 'Calculate a fixed threshold'] },
-    { id: 'prepare', label: 'Prepare for review', c: 'ai', x: FIELD.x + QW + QGAP, y: FIELD.y + QH + QGAP,
-      items: ['Compare evidence', 'Draft a narrative'] }
+  var COLS = [
+    { key: 'prepare', tone: 'ai', icon: 'ti-sparkles' },
+    { key: 'decide', tone: 'human', icon: 'ti-user-check' },
+    { key: 'record', tone: 'proof', icon: 'ti-database' }
   ];
-
-  var THREAD_X = 632, THREAD_W = 238;
-  var TOKEN_X = 882, TOKEN_W = 154;
-  var STAGES = [
-    { id: 'identity', label: 'Identity',               c: 'data'  },
-    { id: 'scope',    label: 'Role scope',             c: 'data'  },
-    { id: 'approval', label: 'Exact approval',         c: 'human' },
-    { id: 'connector', label: 'Connector',             c: 'ai'    },
-    { id: 'ack',      label: 'Target acknowledgement', c: 'proof' },
-    { id: 'receipt',  label: 'Audit receipt',          c: 'proof' }
-  ];
-  var STAGE_H = 46, STAGE_GAP = 20, STAGE_TOP = 42;
 
   var cv = null;
   var n = {};
   var done = false;
 
-  function stageY(i) { return STAGE_TOP + i * (STAGE_H + STAGE_GAP); }
+  function colX(i) { return COL.x0 + i * (COL.w + COL.gap); }
 
   function build() {
     if (cv) cv.destroy();
     cv = S.canvas(container, W, H, { id: 'authority-boundary' });
-    n = { quads: [], stages: [], ticks: [] };
+    n = { cols: [], arrows: [], rows: [] };
     done = false;
-    var C = window.TPRM_CASE;
     var root = cv.el;
     var g = cv.svg;
+    var B = D.boundary;
 
-    // Axes
-    n.axes = [
-      S.path(g, 'M' + (FIELD.x - 14) + ' ' + (FIELD.y + FIELD.h) + ' L' + (FIELD.x + FIELD.w) + ' ' + (FIELD.y + FIELD.h), 'ts-s-neutral', cv.marker('neutral')),
-      S.path(g, 'M' + (FIELD.x - 14) + ' ' + (FIELD.y + FIELD.h) + ' L' + (FIELD.x - 14) + ' ' + FIELD.y, 'ts-s-neutral', cv.marker('neutral'))
-    ];
-    n.xLabel = S.el('div', 'ts-label ts-hide', 'Need for professional judgement', { left: FIELD.x, top: FIELD.y + FIELD.h + 12, width: FIELD.w });
-    n.yLabel = S.el('div', 'ts-label ab-ylabel ts-hide', 'Action materiality', { left: -64, top: FIELD.y + FIELD.h / 2 - 8, width: 160 });
-    root.appendChild(n.xLabel);
-    root.appendChild(n.yLabel);
-
-    QUADS.forEach(function(q) {
-      var box = S.el('div', 'ab-quad ts-c-' + q.c + (q.strong ? ' ab-quad-strong' : '') + ' ts-hide ts-pop', null, { left: q.x, top: q.y, width: QW, height: QH });
-      box.appendChild(S.el('div', 'ts-title ts-ink ab-quad-title', q.label));
-      q.items.forEach(function(it, k) {
-        var row = S.el('div', 'ab-item', it);
-        if (q.id === 'approval' && k === 0) {
-          row.classList.add('ab-item-case');
-          n.caseItem = row;
-        }
-        box.appendChild(row);
-      });
-      root.appendChild(box);
-      n.quads.push(box);
+    COLS.forEach(function(c, i) {
+      var spec = B[c.key];
+      var x = colX(i);
+      var col = S.el('div', 'ts-obj ts-c-' + c.tone + ' cb-col ts-hide ts-up', null, { left: x, top: COL.y, width: COL.w, height: COL.h });
+      var head = S.el('div', 'cb-head');
+      head.appendChild(S.icon(c.icon, 'ts-ink'));
+      head.appendChild(S.el('span', 'cb-head-text ts-ink', spec.label));
+      col.appendChild(head);
+      var ul = S.el('ul', 'cb-items');
+      spec.items.forEach(function(it) { ul.appendChild(S.el('li', null, it)); });
+      col.appendChild(ul);
+      if (c.key === 'record') {
+        var rc = S.ReceiptState.create(col, { state: 'acknowledged', label: 'Recorded after the decision' });
+        rc.el.classList.add('cb-receipt');
+      }
+      if (c.key === 'decide') {
+        var gate = S.DecisionGate.create(col, { size: 'small', label: 'Named decision maker' });
+        gate.el.classList.add('cb-gate');
+        n.gate = gate;
+      }
+      root.appendChild(col);
+      n.cols.push(col);
+      if (i < COLS.length - 1) {
+        var ax = x + COL.w + 6, bx = colX(i + 1) - 6, ay = COL.y + COL.h / 2;
+        n.arrows.push(S.path(g, 'M' + ax + ' ' + ay + ' L' + bx + ' ' + ay, 'ts-s-' + COLS[i + 1].tone + ' cb-arrow', cv.marker(COLS[i + 1].tone)));
+      }
     });
 
-    // Controlled execution thread
-    n.threadLabel = S.el('div', 'ts-label ts-hide', 'Controlled execution', { left: THREAD_X, top: 12 });
-    root.appendChild(n.threadLabel);
-    n.spine = S.path(g, 'M' + (THREAD_X + 22) + ' ' + (STAGE_TOP + STAGE_H / 2) + ' L' + (THREAD_X + 22) + ' ' + (stageY(5) + STAGE_H / 2), 'ts-s-neutral ab-spine');
-    STAGES.forEach(function(st, i) {
-      var box = S.el('div', 'ab-stage ts-c-' + st.c + ' ts-hide ts-right', null, { left: THREAD_X, top: stageY(i), width: THREAD_W, height: STAGE_H });
-      box.appendChild(S.el('span', 'ab-dot'));
-      box.appendChild(S.el('span', 'ab-stage-label', st.label));
-      var tick = S.el('span', 'ab-tick');
-      box.appendChild(tick);
-      root.appendChild(box);
-      n.stages.push(box);
-      n.ticks.push(tick);
+    n.tblLabel = S.el('div', 'ts-label ts-hide', B.tableTitle, { left: TBL.x, top: TBL.y, width: TBL.w });
+    root.appendChild(n.tblLabel);
+    D.capabilities.forEach(function(c, i) {
+      var r = S.el('div', 'cb-row ts-hide ts-left', null, { left: TBL.x, top: TBL.y + 26 + i * 42, width: TBL.w, height: 36 });
+      var who = S.el('div', 'cb-who');
+      who.appendChild(S.icon(c.icon));
+      who.appendChild(S.el('span', 'cb-verb', c.verb));
+      who.appendChild(S.el('span', 'cb-product', c.product));
+      r.appendChild(who);
+      r.appendChild(S.el('div', 'cb-auth', c.authority));
+      root.appendChild(r);
+      n.rows.push(r);
     });
 
-    // The proposed action travels down the thread
-    var token = S.el('div', 'ab-token ts-hide ts-pop', null, { left: TOKEN_X, top: 0, width: TOKEN_W });
-    token.appendChild(S.el('div', 'ts-label ts-ink ts-c-ai', 'Model proposes'));
-    token.appendChild(S.el('div', 'ab-token-text', C.followUp));
-    n.tokenState = S.el('div', 'ab-token-state', '');
-    token.appendChild(n.tokenState);
-    root.appendChild(token);
-    n.token = token;
-
-    var receipt = S.ReceiptState.create(null, { state: 'pending', label: 'Not written' });
-    receipt.el.classList.add('ts-hide');
-    receipt.el.style.position = 'absolute';
-    receipt.el.style.left = THREAD_X + 'px';
-    receipt.el.style.top = (stageY(5) + STAGE_H + 16) + 'px';
-    root.appendChild(receipt.el);
-    n.receipt = receipt;
-
-  }
-
-  function moveToken(stageIdx, stateText, stateCls) {
-    var y = stageY(stageIdx) + 2;
-    n.token.style.transform = 'translateY(' + y + 'px)';
-    n.tokenState.textContent = stateText || '';
-    n.tokenState.className = 'ab-token-state ' + (stateCls || '');
-  }
-
-  function pass(i) {
-    n.stages[i].classList.add('is-passed');
+    var note = S.el('div', 'cb-note ts-hide ts-pop', null, { left: 734, top: TBL.y + 26, width: 290, height: 162 });
+    note.appendChild(S.el('div', 'cb-note-main', B.tableNote));
+    note.appendChild(S.el('div', 'ts-text', 'Authority changes only through an explicit control decision. Capability can grow; accountability stays with named people.'));
+    root.appendChild(note);
+    n.note = note;
   }
 
   function complete() {
@@ -127,20 +89,17 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
   }
 
   var steps = [
-    { delay: 200,  run: function() { S.on(n.axes); S.on(n.xLabel); S.on(n.yLabel); } },
-    { delay: 500,  run: function() { S.on(n.quads[2]); } },
-    { delay: 850,  run: function() { S.on(n.quads[3]); } },
-    { delay: 1200, run: function() { S.on(n.quads[0]); } },
-    { delay: 1550, run: function() { S.on(n.quads[1]); } },
-    { delay: 2000, run: function() { S.on(n.threadLabel); S.on(n.spine); S.on(n.stages); S.on(n.receipt.el); } },
-    { delay: 2600, run: function() { n.caseItem.classList.add('is-active'); S.on(n.token); moveToken(0, 'Checking identity'); } },
-    { delay: 3300, run: function() { pass(0); moveToken(1, 'Checking role scope'); } },
-    { delay: 3900, run: function() { pass(1); moveToken(2, 'Stopped: awaiting approval', 'is-human'); n.stages[2].classList.add('is-active'); n.receipt.set('blocked', 'Write blocked'); } },
-    { delay: 5100, run: function() { n.stages[2].classList.remove('is-active'); pass(2); moveToken(3, 'Approved by ' + window.TPRM_CASE.roles.decider, 'is-human'); n.receipt.set('writing', 'Connector writing'); } },
-    { delay: 5900, run: function() { pass(3); moveToken(4, 'Writing to ' + window.TPRM_CASE.roles.target); } },
-    { delay: 6700, run: function() { pass(4); moveToken(5, 'Acknowledged by target', 'is-proof'); } },
-    { delay: 7300, run: function() { pass(5); n.receipt.set('acknowledged', 'Receipt recorded'); n.token.classList.add('is-done'); } },
-    { delay: 8000, run: complete }
+    { delay: 200,  run: function() { S.on(n.cols[0]); } },
+    { delay: 900,  run: function() { S.on(n.arrows[0]); } },
+    { delay: 1200, run: function() { S.on(n.cols[1]); n.gate.activate(); } },
+    { delay: 1900, run: function() { S.on(n.arrows[1]); } },
+    { delay: 2200, run: function() { S.on(n.cols[2]); } },
+    { delay: 3000, run: function() { S.on(n.tblLabel); S.on(n.rows[0]); } },
+    { delay: 3300, run: function() { S.on(n.rows[1]); } },
+    { delay: 3600, run: function() { S.on(n.rows[2]); } },
+    { delay: 3900, run: function() { S.on(n.rows[3]); } },
+    { delay: 4500, run: function() { S.on(n.note); } },
+    { delay: 5100, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -155,12 +114,10 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      var C = window.TPRM_CASE;
-      return 'A field sets need for professional judgement against action materiality. Execute within policy: retrieve approved evidence, calculate a fixed threshold. '
-        + 'Prepare for review: compare evidence, draft a narrative. Named approval required: create an internal task, send an external request, update review status. '
-        + 'Human decision only: accept a control exception, set residual risk, approve the provider. '
-        + 'For case ' + C.id + ' the model proposes: ' + C.followUp.toLowerCase() + '. It passes identity and role scope, stops at the exact-approval gate until the '
-        + C.roles.decider + ' approves, the connector writes, and the receipt turns green only after the ' + C.roles.target + ' acknowledges.';
+      var B = D.boundary;
+      return B.prepare.label + ': ' + B.prepare.items.join(', ').toLowerCase() + '. ' + B.decide.label + ': ' + B.decide.items.join(', ').toLowerCase() + '. '
+        + B.record.label + ': ' + B.record.items.join(', ').toLowerCase() + '. Default authority: '
+        + D.capabilities.map(function(c) { return c.product + ', ' + c.authority.toLowerCase(); }).join('; ') + '. ' + B.tableNote;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

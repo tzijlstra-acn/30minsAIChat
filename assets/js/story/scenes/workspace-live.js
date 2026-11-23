@@ -1,8 +1,8 @@
 // Scene: workspace-live (Screen 08)
-// Causal story: the workspace on the previous screens is not a mock-up. NFR OS runs
+// Appendix screen. Causal story: the Workspace demo has a working counterpart. The prototype runs
 // today on a synthetic bank. Three real captures, in the order a professional meets
-// them: the ranked workday, asking the work partner for a skill in a sentence, and
-// the skill read back, previewed on the role's own records and saved by the person.
+// them: the ranked workday, describing a read-only agent in one sentence (a "skill" in the
+// prototype), and that agent read back, previewed on the role's own records and saved by the person.
 // The guardrails are the product's own: read only, scoped to the role, every run
 // audited, and it works without a model key. The captures are screenshots of the
 // running product, labelled as such; nothing on them is client data.
@@ -15,13 +15,13 @@ SceneDirector.register('workspace-live', function(container, manifest, reduced) 
   var STEP_H = 116, STEP_GAP = 8, STEP_Y = 0;
 
   var SHOTS = [
-    { src: './assets/img/nfros/nfros-home.jpg', alt: 'NFR OS workday for the Third-Party Risk Manager at the synthetic Arcadia Bank AG: what needs judgement now, what is next, and what ran in the background.' },
-    { src: './assets/img/nfros/nfros-partner.jpg', alt: 'The AI Partner chat in NFR OS, asked to build a skill for critical suppliers due for assessment, answering with a read-only preview and a link to Skills.' },
-    { src: './assets/img/nfros/nfros-skills.jpg', alt: 'The Skills builder in NFR OS showing the drafted skill: the records it reads, its filters, a read-only preview with one matching supplier, and the save form.' }
+    { src: './assets/img/nfros/nfros-home.jpg', alt: 'Prototype workday for the Third-Party Risk Manager at the synthetic Arcadia Bank AG: what needs judgement now, what is next, and what ran in the background.' },
+    { src: './assets/img/nfros/nfros-partner.jpg', alt: 'The prototype assistant, asked to build a read-only skill for critical suppliers due for assessment, answering with a read-only preview and a link to Skills.' },
+    { src: './assets/img/nfros/nfros-skills.jpg', alt: 'The prototype skill builder showing the drafted skill: the records it reads, its filters, a read-only preview with one matching supplier, and the save form.' }
   ];
   var STEPS = [
     { title: 'The workday, ranked', text: 'The TPRM officer\'s live workspace: what needs judgement now, and what ran in the background.' },
-    { title: 'Ask the partner for a skill', text: '"Build a skill that lists critical suppliers due in the next 90 days."' },
+    { title: 'Describe the agent you need', text: '"List critical suppliers due for assessment in the next 90 days."' },
     { title: 'Check it, save it, reuse it', text: 'Read back filter by filter, previewed on the role\'s own records. Saving stays a human step.' }
   ];
   var GUARDS = [
@@ -56,7 +56,7 @@ SceneDirector.register('workspace-live', function(container, manifest, reduced) 
     var dots = S.el('span', 'wl-dots');
     dots.appendChild(S.el('i')); dots.appendChild(S.el('i')); dots.appendChild(S.el('i'));
     chrome.appendChild(dots);
-    chrome.appendChild(S.el('span', 'wl-title', 'NFR OS, the running product'));
+    chrome.appendChild(S.el('span', 'wl-title', 'The running prototype'));
     chrome.appendChild(S.el('span', 'wl-spacer'));
     chrome.appendChild(S.el('span', 'wl-synthetic', 'Synthetic bank'));
     win.appendChild(chrome);
@@ -90,7 +90,7 @@ SceneDirector.register('workspace-live', function(container, manifest, reduced) 
       root.appendChild(card);
       n.steps.push(card);
     });
-    n.note = S.el('div', 'ts-note ts-hide', 'Screenshots of NFR OS on a synthetic institution', { left: COL.x, top: STEP_Y + 3 * (STEP_H + STEP_GAP) + 10, width: COL.w });
+    n.note = S.el('div', 'ts-note ts-hide', 'Prototype captures on a synthetic institution', { left: COL.x, top: STEP_Y + 3 * (STEP_H + STEP_GAP) + 10, width: COL.w });
     root.appendChild(n.note);
 
     // The product's own guardrails, in one row under the window
@@ -134,7 +134,7 @@ SceneDirector.register('workspace-live', function(container, manifest, reduced) 
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return 'Screenshots of NFR OS, the running product, on the synthetic Arcadia Bank AG. First, the Third-Party Risk Manager\'s workday, ranked by what needs judgement now. '
+      return 'Captures of the running prototype on the synthetic Arcadia Bank AG. First, the Third-Party Risk Manager\'s workday, ranked by what needs judgement now. '
         + 'Second, the work partner is asked to build a skill that lists critical suppliers due for assessment in the next 90 days; it drafts the skill, previews it read only and hands it over. '
         + 'Third, the Skills builder reads the skill back filter by filter, previews it on the role\'s own records and leaves saving to the person. '
         + 'Guardrails: read only, scoped to the role\'s entity, every run audited, and it works without a model key.';
