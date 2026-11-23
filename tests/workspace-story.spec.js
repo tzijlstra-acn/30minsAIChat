@@ -100,7 +100,7 @@ test.describe('Scene contract', () => {
 
   test('manifest titles match the screen titles, within word limits', async ({ page }) => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('29');
+    expect(m.version).toBe('30');
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE);
     await open(page);
     for (const s of m.screens) {
@@ -528,8 +528,7 @@ test.describe('Appendix', () => {
     const pages = await page.$$eval('section[data-route="reference"]', (s) => s.map((x) => x.id).filter((id) => id !== 'appendix' && id !== 'ref-room'));
     pages.forEach((p) => expect(targets, p).toContain(p));
     ['reuse', 'risk-map', 'solutions', 'controlled-write', 'workstreams', 'economics', 'toolkit'].forEach((v) => expect(targets).toContain('atlas:' + v));
-    expect(targets).toContain('tech:metrics');
-    ['appendix-capability-choice', 'appendix-architecture', 'appendix-runtime-reuse', 'appendix-agent-lifecycle', 'appendix-writeback'].forEach((p) => expect(targets).toContain(p));
+    ['appendix-capability-choice', 'appendix-authority', 'appendix-architecture', 'appendix-writeback', 'appendix-agent-lifecycle', 'appendix-runtime-reuse', 'appendix-proof-gates'].forEach((p) => expect(targets).toContain(p));
   });
 
   test('the prototype captures are labelled as a development build on a synthetic institution', async ({ page }) => {

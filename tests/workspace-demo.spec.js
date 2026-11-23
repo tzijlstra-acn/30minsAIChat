@@ -1,8 +1,9 @@
 // @ts-check
 /**
- * NFR Workspace -- the deterministic product demo, presenter controls and appendix A to E.
- * Start-up, decision-first home, visual insight, Assist-to-app hand-off, the periodic
- * review with write-back preview and commit, the Agent Builder, keys, safe mode.
+ * NFR Workspace -- the deterministic product demo, presenter controls and appendix A to G.
+ * Start-up, decision-first home, visual insight with source detail, Assist-to-app hand-off,
+ * the periodic review with write-back preview and commit, the Agent Builder, keys, safe
+ * mode, browser history, the state registry and an offline run.
  * Every test sets its own viewport, so the file runs once, in the chromium project.
  */
 const { test, expect } = require('@playwright/test');
@@ -113,6 +114,14 @@ test.describe('Workspace home', () => {
     await expect(I.locator('.wi-fresh')).toContainText('within your access');
     await expect(I.locator('.wi-action')).toContainText('Recommended next action');
     expect(await I.locator('.wi-bars').getAttribute('aria-label')).toContain('Cloud hosting +18');
+    await expect(I.locator('.wi-fig')).toContainText(['services deteriorating', 'severe issues open', 'acceptances expiring', 'required report missing']);
+    await expect(I.locator('[data-visual="ranking"] .wi-panel-title')).toHaveText('Cloud hosting moved most, +18 points');
+    await expect(I.locator('[data-visual="trend"] .wi-panel-title')).toHaveText('Above appetite since September');
+    await expect(I.locator('.wi-chart-foot .ws-source')).toHaveCount(2);
+    await expect(I.locator('.wi-drivers .ws-source')).toHaveCount(4);
+    // Each chart carries a data table for screen readers: five services; six months and the appetite
+    await expect(I.locator('[data-visual="ranking"] table.ws-sr-only tr')).toHaveCount(5);
+    await expect(I.locator('[data-visual="trend"] table.ws-sr-only tr')).toHaveCount(7);
     await I.getByRole('button', { name: 'Pin to My work' }).click();
     await expect(I.locator('.wi-saved')).toContainText('Pinned');
     await I.locator('.wj-crumb').click();
@@ -173,6 +182,8 @@ test.describe('Periodic-review journey', () => {
     await expect(P).toContainText('System of record (synthetic GRC)');
     await expect(P.locator('.wj-change:not(.wj-change-hd)')).toHaveCount(4);
     await expect(P.locator('.wj-change-to').first()).toHaveText('Approved with condition');
+    for (const t of ['Target', 'Record', 'Decision', 'Reason', 'Actions', 'Approver', 'Evidence']) await expect(P.locator('.wj-preview-meta dt', { hasText: t })).toHaveCount(1);
+    await expect(P.locator('.wj-preview-meta')).toContainText('Vendor manager, due in 30 days');
     await expect(J.locator('.ts-receipt')).toHaveCount(0);
 
     await P.getByRole('button', { name: 'Confirm and record' }).click();
@@ -180,6 +191,9 @@ test.describe('Periodic-review journey', () => {
     await expect(J.locator('.wj-statechange')).toContainText('Approved with condition');
     await expect(J.locator('.wj-statechange')).toContainText('Moved from Now to Recorded today');
     await expect(J.locator('.wj-receipt .ts-receipt[data-state="acknowledged"]')).toBeVisible();
+    const receipt = await J.locator('.wj-receipt-list dt').allInnerTexts();
+    ['Actor', 'Role', 'Time', 'Action', 'Target record', 'Sources', 'Policy'].forEach((t) => expect(receipt).toContain(t));
+    await expect(J.locator('.wj-receipt-list')).toContainText('TPRM-PR-042');
   });
 
   test('Space walks the journey from the role app to the receipt, then moves on', async ({ page }) => {
@@ -317,9 +331,9 @@ test.describe('Four ways to work', () => {
   });
 });
 
-// ── APPENDIX A TO E ──
-test.describe('Appendix A to E', () => {
-  const PAGES = ['appendix-capability-choice', 'appendix-architecture', 'appendix-runtime-reuse', 'appendix-agent-lifecycle', 'appendix-writeback'];
+// ── APPENDIX A TO G ──
+test.describe('Appendix A to G', () => {
+  const PAGES = ['appendix-capability-choice', 'appendix-authority', 'appendix-architecture', 'appendix-writeback', 'appendix-agent-lifecycle', 'appendix-runtime-reuse', 'appendix-proof-gates'];
 
   test('each page has its own hash, renders its topic and returns to the story', async ({ page }) => {
     await reduced(page);
@@ -337,6 +351,13 @@ test.describe('Appendix A to E', () => {
     await expect(page.locator('#appendix-runtime-reuse .at-col')).toHaveCount(3);
     await expect(page.locator('#appendix-agent-lifecycle .at-stage')).toHaveCount(4);
     await expect(page.locator('#appendix-writeback .at-flow-step')).toHaveCount(8);
+    await expect(page.locator('#appendix-authority .at-col')).toHaveCount(3);
+    await expect(page.locator('#appendix-authority .at-footer')).toHaveText('AI prepares. Rules constrain. Professionals decide. Systems record.');
+    await expect(page.locator('#appendix-proof-gates .at-stage')).toHaveCount(4);
+    await expect(page.locator('#appendix-proof-gates .at-measure')).toHaveCount(10);
+    // Letters follow page order
+    const tags = await page.$$eval('section[id^="appendix-"] .sec-tag', (t) => t.map((x) => x.textContent.trim().slice(0, 10)));
+    expect(tags).toEqual(['Appendix A', 'Appendix B', 'Appendix C', 'Appendix D', 'Appendix E', 'Appendix F', 'Appendix G']);
     await page.locator('#storyReturn').click();
     await page.waitForFunction(() => sections[current].dataset.route === 'core', null, { timeout: 6000 });
     await expect(page.locator('#storyReturn')).toBeHidden();
@@ -404,9 +425,9 @@ test.describe('Presenter controls', () => {
     await press(page, 't');
     const drawer = page.locator('#techDrawer');
     await expect(drawer).toHaveClass(/open/);
-    await expect(drawer.locator('.pc-tab')).toHaveText(['A · Capability choice', 'B · Architecture', 'C · Runtime reuse', 'D · Agent lifecycle', 'E · Governed write-back', 'Measures']);
+    await expect(drawer.locator('.pc-tab')).toHaveText(['A · Capability choice', 'B · AI, rules, people', 'C · Architecture', 'D · Write-back', 'E · Agent lifecycle', 'F · Runtime reuse', 'G · Proof gates']);
     await expect(drawer.locator('.at-table tbody tr')).toHaveCount(4);
-    await drawer.getByRole('tab', { name: 'E · Governed write-back' }).click();
+    await drawer.getByRole('tab', { name: 'D · Write-back' }).click();
     await expect(drawer.locator('.at-flow-step')).toHaveCount(8);
     await expect(drawer.locator('.pc-controls dt')).toHaveCount(11);
     await drawer.locator('.pc-page-link').click();
@@ -449,6 +470,116 @@ test.describe('Presenter controls', () => {
   });
 });
 
+// ── V5: SOURCE DETAIL, CHART REGISTRY, KEYS, HISTORY, STATE MODEL ──
+test.describe('Source detail, chart registry, keys and history', () => {
+  test('a source chip opens a read-only source detail; Escape and Space close it first', async ({ page }) => {
+    await reduced(page);
+    await open(page);
+    await enter(page, 'workspace-home');
+    await press(page, 'Space');
+    const H = page.locator('#workspace-home');
+    await H.locator('.wi-drivers .ws-source', { hasText: 'Contract annex' }).click();
+    const E = H.locator('.ws-evidence');
+    await expect(E).toBeVisible();
+    await expect(E).toContainText('Annex C');
+    await expect(E).toContainText('Read only, within your access');
+    expect(await ws(page)).toBe('source-detail-open');
+    await press(page, 'Escape');
+    await expect(E).toHaveCount(0);
+    expect(await ws(page)).toBe('insight-visible');
+    await H.locator('.wi-chart-foot .ws-source').first().click();
+    await expect(H.locator('.ws-evidence')).toContainText('KRI-CH-07');
+    await press(page, 'Space');
+    await expect(H.locator('.ws-evidence')).toHaveCount(0);
+    expect(await ws(page)).toBe('insight-visible');
+    await press(page, 'Space');
+    await expect(H.locator('.ws-handoff')).toBeVisible();
+    // In the role app the comparison sources open the same detail; Space closes, then steps on
+    await enter(page, 'workspace-journey');
+    await press(page, 'Space');
+    const J = page.locator('#workspace-journey');
+    await J.locator('.wj-cmp .ws-source', { hasText: 'SOC 2 Type II' }).click();
+    await expect(J.locator('.ws-evidence')).toContainText('Two exceptions');
+    await press(page, 'Space');
+    expect(await ws(page)).toBe('role-app-open');
+    await press(page, 'Space');
+    expect(await ws(page)).toBe('automation-trace-open');
+  });
+
+  test('the insight draws only supported chart types and falls back to a table', async ({ page }) => {
+    await open(page);
+    const r = await page.evaluate(() => {
+      const K = window.WorkspaceKit;
+      const bad = K.renderVisual({ id: 'x', type: 'pie', title: 'T', unit: 'u', summary: 's', data: [{ label: 'a', value: 1 }] });
+      const broken = K.renderVisual({ id: 'y', type: 'trend-line', title: 'T', unit: 'u', summary: 's', labels: ['a'], values: [1, 2], threshold: 1 });
+      return {
+        types: K.VISUAL_TYPES,
+        valid: window.NFR_WORKSPACE_DEMO.insight.visuals.map((v) => K.validateVisual(v)),
+        bad: [bad.classList.contains('is-fallback'), bad.querySelectorAll('table.wi-table tr').length, bad.dataset.invalid],
+        broken: [broken.classList.contains('is-fallback'), broken.dataset.invalid]
+      };
+    });
+    expect(r.types).toEqual(['ranked-bar', 'trend-line']);
+    expect(r.valid).toEqual([null, null]);
+    expect(r.bad).toEqual([true, 1, 'unsupported type pie']);
+    expect(r.broken[0]).toBe(true);
+  });
+
+  test('Page Down and Page Up move between screens, as a clicker sends them', async ({ page }) => {
+    await reduced(page);
+    await open(page);
+    await enter(page, 'four-ways');
+    await press(page, 'PageDown');
+    await page.waitForFunction(() => sections[current].id === 'three-layers', null, { timeout: 4000 });
+    await press(page, 'PageUp');
+    await page.waitForFunction(() => sections[current].id === 'four-ways', null, { timeout: 4000 });
+  });
+
+  test('S toggles safe mode', async ({ page }) => {
+    await open(page);
+    await press(page, 's');
+    expect(await page.evaluate(() => SceneDirector.isSafe() && document.documentElement.classList.contains('safe-mode'))).toBe(true);
+    await expect(page.locator('#safeModeBtn')).toHaveAttribute('aria-pressed', 'true');
+    await press(page, 'S');
+    expect(await page.evaluate(() => SceneDirector.isSafe())).toBe(false);
+  });
+
+  test('browser Back from an appendix page returns to the screen that opened it; Forward goes back in', async ({ page }) => {
+    await reduced(page);
+    await open(page);
+    await enter(page, 'workspace-journey');
+    await page.waitForTimeout(600);
+    await page.evaluate(() => goToId('appendix-writeback'));
+    await page.waitForFunction(() => sections[current].id === 'appendix-writeback', null, { timeout: 4000 });
+    expect(page.url()).toContain('#appendix-writeback');
+    await page.goBack();
+    await page.waitForFunction(() => sections[current].id === 'workspace-journey', null, { timeout: 4000 });
+    expect(page.url()).toContain('#workspace-journey');
+    await page.goForward();
+    await page.waitForFunction(() => sections[current].id === 'appendix-writeback', null, { timeout: 4000 });
+    expect(await ws(page)).toBe('appendix');
+  });
+
+  test('every state the default route reaches is in the experience state model', async ({ page }) => {
+    const warnings = [];
+    page.on('console', (m) => { if (m.type() === 'warning' && m.text().includes('NFRExperience')) warnings.push(m.text()); });
+    await reduced(page);
+    await open(page);
+    await enter(page, 'cover');
+    const known = await page.evaluate(() => NFRExperience.states());
+    const seen = new Set([await ws(page)]);
+    for (let i = 0; i < 60 && (await here(page)) !== 'value-decision'; i++) {
+      await press(page, 'Space');
+      await page.waitForTimeout(250);
+      seen.add(await ws(page));
+    }
+    expect(await here(page)).toBe('value-decision');
+    for (const s of seen) expect(known, s).toContain(s);
+    ['workspace-home', 'insight-visible', 'role-app-open', 'decision-pending', 'writeback-preview', 'writeback-complete', 'agent-builder-save', 'value'].forEach((s) => expect([...seen]).toContain(s));
+    expect(warnings).toEqual([]);
+  });
+});
+
 // ── SAFE MODE AND RESILIENCE ──
 test.describe('Safe mode and resilience', () => {
   test('?safe=1 renders final states without animation and keeps the demo working', async ({ page }) => {
@@ -481,6 +612,25 @@ test.describe('Safe mode and resilience', () => {
     expect(await ws(page)).toBe('case-open');
     await page.goto('/pitch.html#cover');
     await page.waitForFunction(() => typeof sections !== 'undefined' && sections[current] && sections[current].id === 'cover', null, { timeout: 8000 });
+  });
+
+  test('after the first load the core route and the demo run offline', async ({ page, context }) => {
+    const failed = [];
+    const errors = [];
+    await reduced(page);
+    await open(page);
+    await page.waitForLoadState('networkidle');
+    await context.setOffline(true);
+    page.on('requestfailed', (r) => failed.push(r.url()));
+    page.on('pageerror', (e) => errors.push(e.message));
+    const ids = await page.evaluate(() => sections.filter((x) => x.dataset.route === 'core').map((x) => x.id));
+    for (const id of ids) await enter(page, id);
+    await enter(page, 'workspace-journey');
+    for (let i = 0; i < 5; i++) await press(page, 'Space');
+    expect(await ws(page)).toBe('writeback-complete');
+    await context.setOffline(false);
+    expect(failed).toEqual([]);
+    expect(errors).toEqual([]);
   });
 
   test('app-to-app moves are instant, so the application stays in place', async ({ page }) => {

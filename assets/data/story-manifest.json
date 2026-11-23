@@ -1,5 +1,5 @@
 {
-  "version": "29",
+  "version": "30",
   "story": "NFR Workspace: from firefighting to prepared judgement",
   "model": {
     "waysToWork": [
@@ -42,7 +42,7 @@
       "chapterId": "shift",
       "kind": "landing",
       "title": "From firefighting to prepared judgement.",
-      "subtitle": "How to scale from everyday AI assistance to role-specific applications, controlled automation and governed ad hoc work.",
+      "subtitle": "Scale from everyday AI assistance to connected role applications, governed ad hoc agents and controlled process automation.",
       "closingLine": "",
       "question": "What will this conversation show me?",
       "scene": "transition-cover",
@@ -56,7 +56,7 @@
       "route": "core",
       "chapterId": "shift",
       "kind": "scene",
-      "title": "AI assistance is becoming part of the working day.",
+      "title": "Most banks already have AI assistance.",
       "subtitle": "Email, chat, documents, search and meetings are faster, but they mostly help one person with one activity.",
       "closingLine": "The next step: from individual assistance to controlled operational work.",
       "question": "Do we not have AI already?",
@@ -71,7 +71,7 @@
       "route": "core",
       "chapterId": "shift",
       "kind": "scene",
-      "title": "The NFR professional still connects the process.",
+      "title": "NFR specialists still absorb the integration burden.",
       "subtitle": "Useful AI tools do not automatically create an end-to-end working process.",
       "closingLine": "The gap is not intelligence. The person is still the integration layer.",
       "question": "So what is still hard?",
@@ -206,7 +206,7 @@
       "kind": "scene",
       "title": "Six months to prove one loop on reusable foundations.",
       "subtitle": "Work and roles, process and controls, data and platform move through three phases together.",
-      "closingLine": "Six months prove one loop and its foundation, not a universal platform.",
+      "closingLine": "Month six proves one complete NFR operating loop, not a collection of AI features.",
       "question": "What is the first six-month proof?",
       "scene": "six-month-route",
       "durationMs": 5600,
