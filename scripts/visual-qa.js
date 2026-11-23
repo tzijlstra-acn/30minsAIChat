@@ -6,7 +6,8 @@
  *
  * For each presentation size (1920x1080, 1600x900, 1440x900, 1366x768) it captures:
  *   - every core screen in its final state (reduced motion), and
- *   - every beat of the Workspace demo, driven with the presenter keys.
+ *   - every beat of the Workspace demo (v4: insight, hand-off, write-back preview),
+ *     driven with the presenter keys, and the five appendix pages A to E.
  * It prints console errors and the experience state at each beat, and exits 1 on errors.
  * Screenshots land in <out>/<size>/; artifacts/ is gitignored.
  */
@@ -54,17 +55,24 @@ async function run() {
     var state = function() { return page.evaluate(function() { return sections[current].id + ' ' + (document.body.dataset.wsState || '') + ' ' + (document.body.dataset.builderState || ''); }); };
     await page.evaluate(function() { document.getElementById('workspace-home').scrollIntoView({ behavior: 'instant' }); });
     await page.waitForFunction(function() { return sections[current].id === 'workspace-home' && SceneDirector.getState() === 'complete'; });
-    await key('Space'); await shot('home-assist');
+    await key('Space'); await shot('home-insight');
+    await key('Space'); await shot('home-handoff');
     await page.evaluate(function() { document.getElementById('workspace-journey').scrollIntoView({ behavior: 'instant' }); });
     await page.waitForFunction(function() { return sections[current].id === 'workspace-journey' && SceneDirector.getState() === 'complete'; });
-    var beats = ['journey-role-app', 'journey-trace', 'journey-decision', 'journey-recorded'];
+    var beats = ['journey-role-app', 'journey-trace', 'journey-decision', 'journey-preview', 'journey-recorded'];
     for (var b = 0; b < beats.length; b++) { await key('Space'); await shot(beats[b]); console.log('  ' + w + 'x' + h + ' ' + (await state())); }
     await key('Space');
     await page.waitForFunction(function() { return sections[current].id === 'workspace-builder' && SceneDirector.getState() === 'complete'; });
-    var steps = ['builder-goal', 'builder-scope', 'builder-plan', 'builder-output', 'builder-reuse', 'builder-saved', 'builder-template'];
+    var steps = ['builder-goal', 'builder-permissions', 'builder-plan', 'builder-result', 'builder-reuse', 'builder-saved', 'builder-template'];
     for (var t = 0; t < steps.length; t++) { await key('Space'); await shot(steps[t]); }
     console.log('  ' + w + 'x' + h + ' ' + (await state()));
     await key('t'); await shot('technical-depth'); await key('Escape');
+    var apx = ['appendix-capability-choice', 'appendix-architecture', 'appendix-runtime-reuse', 'appendix-agent-lifecycle', 'appendix-writeback'];
+    for (var a = 0; a < apx.length; a++) {
+      await page.evaluate(function(id) { document.getElementById(id).scrollIntoView({ behavior: 'instant' }); }, apx[a]);
+      await page.waitForFunction(function(id) { return sections[current].id === id; }, apx[a]);
+      await shot(apx[a]);
+    }
 
     console.log(w + 'x' + h + ': ' + n + ' screenshots, ' + errors.length + ' console errors');
     errors.forEach(function(e) { console.log('    ' + e); });
