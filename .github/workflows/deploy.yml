@@ -14,15 +14,13 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+# Two jobs, as in GitHub's starter workflow. With upload and deploy in one job,
+# deploy-pages intermittently cannot see the artifact uploaded seconds earlier
+# ("No artifacts named github-pages", actions/deploy-pages#451, 2026-11-23).
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
-      # Node 24 majors: the v4 deploy action, forced onto Node 24, could no longer
-      # find the artifact uploaded by upload-pages-artifact@v3 (2026-11-23)
       - name: Checkout
         uses: actions/checkout@v5
       - name: Setup Pages
@@ -31,6 +29,14 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: '.'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
