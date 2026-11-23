@@ -86,3 +86,16 @@ Audit of the repository as found on 2026-11-23, and the decisions taken for v2.
 - **Retired screens.** The v27 scenes and their CSS were removed. `git show baseline-pre-workspace-v2:pitch.html` and the tag restore the previous route.
 - **Prototype captures.** `assets/img/nfros/` still shows the prototype's working title. Recapture when the prototype is rebranded.
 - **Historical notes.** `TRANSITION_RELEASE.md`, `TRANSITION_BASELINE.md`, `V23_BASELINE.md` and `AUDIT_BASELINE.md` describe earlier releases and still use the old name.
+
+## 7. v4 additions (pitch plan v4, release v29)
+
+| Concern | Where |
+|---|---|
+| Current-state audit, scene inventory, gap matrix | `docs/CURRENT_STATE_AUDIT.md` |
+| Decision-first home (Now, Next, Watching, Done) and the visual insight | `home()` and `insight()` in `assets/js/story/workspace-kit.js`; copy in `NFR_WORKSPACE_DEMO.home` and `.insight` |
+| Assist hand-off to the role app | `NFRExperience.handoff()` / `takeHandoff()`; the journey opens at `role-app-open` |
+| Write-back preview, commit and queue change | `showPreview()` in the journey scene; `NFRExperience.setFlag('reviewRecorded')` read by the home |
+| Appendix A to E pages and the technical drawer | `assets/js/story/appendix-topics.js` renders both from `NFR_WORKSPACE_DEMO.technical` |
+| Return to the story from the appendix | `#storyReturn` in the nav; Escape on an appendix page |
+| Experience states | Story screens: cover, assistance, integration-burden, four-ways, three-layers, control-boundary, roadmap, value, appendix. App screens: booting, workspace-home, insight-visible, case-open, role-app-open, automation-trace-open, decision-pending, writeback-preview, writeback-complete, agent-builder-goal, -permissions, -plan, -running, -result, -save |
+| Internal-only material | Any `*.local.md` file or `docs/internal/` (git-ignored). The repository is public and Pages serves every committed file |

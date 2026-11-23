@@ -7,3 +7,7 @@ artifacts/visual-qa/
 *.log
 .DS_Store
 Thumbs.db
+
+# Internal-only notes: GitHub Pages publishes the repository root, so these never get committed
+*.local.md
+docs/internal/

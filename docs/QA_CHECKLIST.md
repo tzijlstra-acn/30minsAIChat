@@ -1,82 +1,95 @@
-# NFR Workspace v2: QA checklist
+# NFR Workspace pitch: QA checklist (release v29, pitch plan v4)
 
-Status as of 2026-11-23 on branch `feat/nfr-workspace-v2`. "Automated" names the test or audit that checks the item; "Visual" means checked on screenshots from `npm run qa:visual` (1920x1080, 1600x900, 1440x900, 1366x768) and full-motion walkthroughs.
-
-How to re-run everything:
+Status as of 2026-11-23 on branch `feat/pitch-v4`. "Automated" names the Playwright test or audit that covers the item; "Visual" means checked on screenshots at 1920x1080, 1600x900, 1440x900, 1366x768 and 125 percent browser zoom (1536x864 at 1.25 device pixel ratio), plus full-motion walkthroughs.
 
 ```
-npm run serve                      # in one terminal
+npm run serve
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
-npm run qa:visual                  # screenshots in artifacts/visual-qa/
+npm run qa:visual
 ```
 
-## Functional
+## 1. Critical route (brief 13.1)
 
-| Check | Status | How it is checked |
-|---|---|---|
-| Password gate still works | Pass | Automated: layout "auth gate redirects to index.html without a session flag" |
-| `pitch.html#cover` deep link works | Pass | Automated: demo "refreshing inside the Workspace recovers a valid state; #cover deep link works" |
-| Next and previous navigation | Pass | Automated: layout "right arrow key advances"; demo "Space moves on from story screens; arrows move between screens" |
-| Browser refresh does not break state | Pass | Automated: refresh inside the journey returns to the case summary |
-| Workspace start-up plays, skips and replays | Pass | Automated: "the start-up takes about two seconds, can be skipped with Space and replayed with R" |
-| Context loads before the assistant | Pass | Automated: midway through start-up, three or more statuses shown and NFR Assist not yet visible |
-| Standard journey completes end to end | Pass | Automated: "runs end to end: summary, role app, trace, human decision, recorded outcome and receipt" |
-| Human decision produces outcome and receipt | Pass | Automated: no receipt before the decision; acknowledged receipt after; each of the three decisions records its own outcome |
-| Agent Builder completes from goal to output | Pass | Automated: "goal, then scope and permissions before any run, then plan, run and a cited briefing" |
-| Permission screen appears before any run | Pass | Automated: the Run control does not exist on the scope step |
-| Save and promotion options work | Pass | Automated: saved-personal, then publication-requested, with the promotion path highlighted |
-| Escape closes overlays, then leaves the Workspace | Pass | Automated: trace closes first, second Escape returns to the control boundary |
-| Reset returns to a known state | Pass | Automated: `0` from the builder returns to the cover with state `deck` |
-| Safe mode works | Pass | Automated: `?safe=1` and the nav toggle; the demo still steps through every beat |
-| No unhandled console errors | Pass | Automated: layout "no console errors on load" at every viewport; visual QA run reports zero |
+| # | Check | Status | How |
+|---|---|---|---|
+| 1 | Live and local URL open | Pass | Local suite; live check after each deploy |
+| 2 | Password gate works | Pass | Automated: "auth gate redirects to index.html without a session flag" |
+| 3 | Cover deep link works | Pass | Automated: `#cover` after a reload |
+| 4 | Default route linear and understandable | Pass, pending people test | Twelve screens, four chapters; see section 2 |
+| 5 | Start-up plays, skips, replays | Pass | Automated: start-up tests |
+| 6 | Decision-first home | Pass | Automated: one Now card, Next, Watching, Done; all third-party cases |
+| 7 | Standard case opens | Pass | Automated: Open case and the Assist hand-off |
+| 8 | Question returns a structured visual answer | Pass | Automated: conclusion, four figures, five ranked bars, trend line, drivers with sources, freshness, next action |
+| 9 | Evidence or source detail available | Pass | Source chips on every driver and comparison row; evidence checklist; citations in the briefing |
+| 10 | Automation trace pauses at a human gate | Pass | Automated: eight steps, last one waiting at the human gate |
+| 11 | Human action produces a visible state change | Pass | Automated: preview, confirm, case status and queue change; home shows the review recorded |
+| 12 | Audit receipt appears | Pass | Automated: acknowledged receipt only after the commit |
+| 13 | Agent Builder shows goal, permissions, plan, result | Pass | Automated: permissions before any Run control exists; visual, cited briefing |
+| 14 | Save and promotion lifecycle understandable | Pass | Automated: run once, save, schedule, template; promotion path |
+| 15 | Six-month roadmap matches the three layers | Pass | Automated: three lanes from the same layer data |
+| 16 | Main route ends before the appendix | Pass | Automated: last core screen precedes the first reference section |
+| 17 | Appendix opens and returns | Pass | Automated: A to E by hash, Back to the story, Escape |
+| 18 | Reset restores the known state | Pass | Automated: `0` returns to the cover with state `cover` and no flags |
+| 19 | Safe mode carries the story | Pass | Automated: `?safe=1` and the toggle; demo beats still work |
+| 20 | No console errors | Pass | Automated per viewport; walkthroughs report zero |
 
-## Content
-
-| Check | Status | How it is checked |
-|---|---|---|
-| No visible "NFR OS" | Pass, one known exception | Automated: "NFR OS is gone from the visible experience and the source copy". Exception: the three prototype screenshots in the appendix (`assets/img/nfros/`) show the prototype's "NFROS" wordmark inside the image. The screen says "Development build: the captures still show the prototype's working title." Recapture after the prototype is rebranded, or remove the appendix screen. |
-| No client branding or confidential detail | Pass | Automated: "no client branding: the experience is bank-neutral" |
-| All demo names and numbers synthetic | Pass | Data lives in `workspace-demo.js` and `tprm-case.js`, both flagged `synthetic` and frozen; "Synthetic demonstration" badge on every app screen |
-| Four capability labels consistent | Pass | Automated: Ask, Use, Run, Create; NFR Assist, NFR Apps, NFR Automations, Agent Builder |
-| Three layers consistent | Pass | Automated: Work & roles, Process & controls, Data & platform, reused by the roadmap |
-| No screen suggests AI accepts risk on its own | Pass | Control boundary screen: "No capability owns the risk"; automated claim check for overclaiming phrases |
-| Workspace does not replace authoritative systems | Pass | Technical depth: "Authoritative systems remain authoritative"; receipts acknowledged by the system of record |
-| "Ad hoc" and "parallel" spelled correctly | Pass | Automated: misspelling check on all visible core text |
-| House copy rules | Pass | `lint-copy` (no "will/must/never/always", no exclamation marks), `check-emdash`, `audit:story` (headlines of ten words or fewer) |
-
-## Visual
-
-| Check | Status | How it is checked |
-|---|---|---|
-| No clipped text at required resolutions | Pass | Automated per viewport (1024x768 to 1920x1080): elements inside the canvas, no ellipsis, subtitles not clipped |
-| No tiny labels when screen-shared | Pass | Automated text floor: 11px rendered at 1440x900 and above, 10px at 1366x768 and 1280x720, 9.5px at 1024x768. Narrative text renders at 14px or more from 1440x900 up |
-| Focus states visible | Pass | Visual: cyan focus outline on every Workspace control and presenter button |
-| Motion smooth | Pass | Visual: full-motion walkthrough at 1920x1080; transitions are opacity and transform only |
-| Reduced motion usable | Pass | Automated: every scene complete and fully visible under reduced motion |
-| Application distinct from narrative slides | Pass | Visual: app screens use a compact header and a full-width application frame |
-| Assistant appears after the Workspace context | Pass | Automated (see Functional) |
-| Builder output readable without scrolling | Pass | Visual: the one-page briefing fits the application frame at 1366x768 and above |
-
-## Performance and resilience
-
-| Check | Status | How it is checked |
-|---|---|---|
-| No live API calls | Pass | Automated: "no runtime request leaves the local origin"; `audit:offline` |
-| No remote runtime dependencies | Pass | Automated: "no external runtime resources in pitch.html" |
-| Assets load from the repository | Pass | Relative paths only; GitHub Pages serves the repository root |
-| Fast on a standard laptop | Pass | No particle background; scenes mount on arrival and are destroyed on departure |
-| Works with a cold cache | Pass | Every Playwright test starts a fresh browser context |
-| Safe mode carries the whole story | Pass | Automated: safe mode renders final states; every screen and demo control remains available |
-| A failing scene leaves something on screen | Pass | Automated: static fallback when a script fails to load or throws, including a Workspace screen |
-
-## Comprehension
+## 2. Comprehension (brief 13.2)
 
 | Check | Status |
 |---|---|
-| No-context colleague test (the six questions in the presenter guide) | **Not done yet.** Needs a colleague who was not involved in the design. Run it once before the presentation and tighten any screen they cannot explain. |
+| Two colleagues not involved in the build (one business or risk, one technology) watch the default route unbriefed and answer the seven questions | **Not done.** Needs people. Questions: what is NFR Workspace; how is it different from chat; what are Ask, Use, Run and Create; what are the three layers; where does the human decide; what is delivered in six months; what role might an enterprise agent runtime play. Fix any screen they cannot explain. |
+
+## 3. Claim audit (brief 13.3)
+
+| Claim on screen | Status |
+|---|---|
+| The Workspace prepares a case end to end, the professional decides, the system records | Demonstrated in the pitch with synthetic data; a target design, not a shipped product |
+| Assist hands work to a role app; insights are visual and source-linked | Demonstrated in the pitch; target design |
+| Agents inherit the user's access and do not create new access | Design principle demonstrated in the pitch; to be validated in the chosen runtime |
+| Write-back is previewed, checked, approved, attributed and recorded | Demonstrated in the pitch; Appendix E is the target control pattern |
+| Six months prove one loop and reusable foundations | Hypothesis requiring client validation (entry conditions on the screen) |
+| Value across risk, operating performance and capacity | Hypothesis; the business case is labelled illustrative |
+| A validated agent runtime can provide execution and governance (Appendix C) | Candidate, stated as such on the page; asset-specific status lives only in local notes, verified against the source on 2026-11-23 |
+| Running prototype captures (appendix) | Shows the development prototype on a synthetic bank; labelled as a development build |
+
+No screen claims an internal asset is used, shipped or production ready.
+
+## 4. Security and confidentiality (brief 13.4 and 8.3)
+
+| Check | Status |
+|---|---|
+| Repository visibility | **Public**, and Pages serves every committed file (docs, tests, scripts included). Treat everything committed as public |
+| Credentials, tokens, model keys | None found (repository scan) |
+| Client data or branding | None; automated bank-neutral check |
+| Internal URLs | One link to the team's NFR AI Assets portal (restricted access) |
+| Internal asset names, source, screenshots or archive contents | None in tracked files or history; automated check on the appendix pages; asset detail kept in git-ignored `*.local.md` |
+| Confidential presenter notes in public files | None; internal talk track only in a local, git-ignored file |
+| Reliance on the password | None; the gate is presentation-only and the guide says so |
+| Personal information | **Open decision.** The team appendix publishes seven colleagues' names, work emails and photos; `claims.json` lists one owner email. Confirm consent or remove before the next public deploy |
+
+## 5. Visual (brief 13.5)
+
+| Check | Status | How |
+|---|---|---|
+| No clipping, no tiny text, no overflow | Pass | Automated per viewport (1024x768 to 1920x1080); text floors 9.5 to 11 px rendered |
+| No chart overflow, no broken SVG | Pass | Visual; the trend chart has fixed size and an accessible label |
+| No hidden primary action, no off-screen drawer | Pass | Visual: insight action bar, preview confirm, reuse panel and drawers inside the frame at 1366x768 |
+| Smooth animation | Pass | Full-motion walkthroughs |
+| Contrast | Pass | Dark theme tokens; meaning is never colour alone (labels, icons and states carry it) |
+| Stable application frame | Pass | Automated: app-to-app moves are instant and the frame does not shift |
+| Appendix diagrams fit without zooming | Pass | Visual at 1440x900 and 1366x768 |
+
+## 6. Performance (brief 13.6)
+
+| Check | Status |
+|---|---|
+| Fast initial load, no large media, no remote fonts | Pass: vendored fonts and libraries; no particle background |
+| No live API, cold cache works | Pass: automated "no runtime request leaves the local origin"; every test starts cold |
+| Animations stop when a screen is inactive | Pass: scenes are destroyed on departure; timelines are tracked |
+| No memory growth from repeated replay | Pass: 25 replays of the home and builder screens left the JS heap at 10 MB and the DOM size unchanged |
 
 ## Not covered
 
-- The `mobile` Playwright project (iPhone 14, WebKit) does not run on this machine because WebKit is not installed (`npx playwright install webkit`). Mobile layout is not a goal for this presentation.
-- Microsoft Teams screen-sharing has not been tried end to end; the text floors above are the proxy.
+- The `mobile` Playwright project (WebKit) does not run on this machine (`npx playwright install webkit`). Mobile is not a goal.
+- Microsoft Teams screen-sharing not tried end to end; the text floors are the proxy.

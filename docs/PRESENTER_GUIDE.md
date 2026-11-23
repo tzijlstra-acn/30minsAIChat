@@ -20,9 +20,9 @@ Twelve screens, about 30 minutes, for two buyers: the NFR business owner (main r
 | Space | Advance the demo step; at the last step, next screen. On story screens, next screen. |
 | W | Jump into the NFR Workspace (screen 06) |
 | A | Show or hide the automation trace (screen 08) |
-| T | Technical depth: architecture, agent governance, controls, measures |
+| T | Technical depth: appendix A to E and the measurement library, as a drawer |
 | R | Replay the current screen, or reset the active demo |
-| Escape | Close the open panel; in the Workspace with nothing open, return to the story (screen 10) |
+| Escape | Close the open panel; in the Workspace with nothing open, return to the story (screen 10); on an appendix page, return to the screen you came from |
 | 0 | Reset everything and return to the cover |
 | G | Agenda |
 | ? | Shows these keys on screen |
@@ -70,14 +70,14 @@ The nav bar also has visible buttons for technical depth, keys, safe mode, repla
 
 ## 04 One Workspace. Four ways to get work done.
 
-- **Objective:** introduce the one model the rest of the story uses.
-- **Remember:** Ask, Use, Run, Create, on one shared foundation.
-- **Talk track (60 s):** "There are four ways to work in the Workspace. Ask: NFR Assist, role-steered help in email, chat, documents and the Workspace. Use: NFR Apps, a connected application for a defined task such as a periodic review. Run: NFR Automations, which move repeatable cases across systems and pause at human control points. Create: the Agent Builder, for the new or ad hoc need nobody has built for yet. All four share the same identity, permissions, evidence and control record. The Workspace is not the assistant; it is where all four work with the same role and controls."
-- **Action:** none. Press T if someone wants the architecture now.
-- **Visual state:** four cards revealed one by one, then joined to one foundation strip.
-- **Business owner asks:** "Which of these do my people see first?" **Answer:** "Ask and Use on day one; Run where the journey is repeatable; Create for the long tail."
-- **IT strategist asks:** "Four platforms?" **Answer:** "One foundation, four modes. Same entitlements, same audit, same evidence services (T, reference architecture)."
-- **Fallback line:** "Ask, use, run, create: four ways, one foundation."
+- **Objective:** introduce the one model the rest of the story uses, and the one sentence that separates it from an assistant.
+- **Remember:** an assistant helps a person complete an activity; NFR Workspace carries the role, case, evidence, controls and permitted actions across the work.
+- **Talk track (60 s):** "Four ways to work, each with a plain rule for when to use it. Ask, NFR Assist, when you need help inside the task you are doing: summarise what changed in this review. Use, NFR Apps, when you need to complete a defined role task: a periodic third-party review. Run, NFR Automations, for a repeatable process across systems: collect evidence, check completeness, route challenge, record the outcome. Create, the Agent Builder, for a new or temporary analysis: a concentration briefing from approved records. And the sentence at the bottom is the point: an assistant helps a person complete an activity; the Workspace carries the role, the case, the evidence, the controls and the permitted actions across the work."
+- **Action:** none. "Which path? (T)" opens Appendix A, the capability-choice table.
+- **Visual state:** four cards revealed one by one, each with "Use it when" and an example, joined to one foundation strip under the difference sentence.
+- **Business owner asks:** "Is this another chatbot?" **Answer:** "No. Assistance is one of four modes. The Workspace also holds the work queue, the case, the evidence, the apps, the controls, the decisions and the recorded outcomes."
+- **IT strategist asks:** "Four platforms?" **Answer:** "One foundation, four modes. Same entitlements, same audit, same evidence services (Appendix B)."
+- **Fallback line:** "Ask, use, run, create: four ways, one foundation, and the Workspace carries the case across all of them."
 
 ## 05 Scaling requires three layers to move together
 
@@ -107,25 +107,25 @@ The nav bar also has visible buttons for technical depth, keys, safe mode, repla
 
 ## 07 Start with the next decision, not a blank chat
 
-- **Objective:** show the role-based home.
-- **Remember:** the day starts from a ranked decision queue.
-- **Talk track (45 s):** "Three decisions are waiting: a periodic third-party review, a control effectiveness challenge and an incident materiality assessment. Each card says why it is here, what changed, how complete the evidence is, the decision required and when. NFR Assist sits beside the work. Let me ask it three questions." Press Space three times.
-- **Action:** Space asks: "What changed since the previous review?", "Which evidence is missing or stale?", "Explain why this case is prioritised." Then "Open case" or Space.
-- **Visual state:** the first card's fields light up in turn; answers appear in the Assist panel with sources and the note "NFR Assist explains; you decide."
-- **Business owner asks:** "Who decides the ranking?" **Answer:** "Queue rules your process owner agrees: due date, criticality, materiality. They are visible and versioned."
-- **IT strategist asks:** "Is the assistant grounded?" **Answer:** "Answers cite the case's own sources and stay within the user's access."
-- **Fallback line:** "The experience begins with the role and the next decision; chat is available but not the organising principle."
+- **Objective:** show the decision-first home, one visual answer, and the hand-off from assistance to a role app.
+- **Remember:** the day starts from one decision; Assist explains, the role app carries the method.
+- **Talk track (90 s):** "One decision is dominant: the periodic review of the cloud hosting provider, due today. It says why it is here, what changed, what was prepared and which decision is needed. Two items are next, three signals are watched, and the overnight work is quiet. Now I ask Assist a portfolio question." Space. "The answer is not a paragraph. One conclusion, four figures, a ranking of services, the trend for the worst one, the drivers with their sources, and how fresh the data is. The recommended action is to open the review." Space. "Ask it what changed, and it hands the work over:" read the hand-off line. "The assistant can explain the case, but the role app carries the approved method, the required evidence, the permitted actions and the decision path." Space opens the app.
+- **Action:** Space three times: the visual insight, the hand-off, then "Open Periodic Review App". Or click the questions and buttons. "Your day" returns from the insight.
+- **Visual state:** Now card with the four fields and Open case; Next, Watching, Done by the Workspace; the insight with a ranked bar chart and a trend line; the Assist hand-off with its button.
+- **Business owner asks:** "Who decides the ranking?" **Answer:** "Queue rules your process owner agrees: due date, criticality, materiality. Visible and versioned."
+- **IT strategist asks:** "Does the model draw the chart?" **Answer:** "No. Charts come from a fixed set of approved visualisations filled with sourced data; the model never writes chart code."
+- **Fallback line:** "The experience starts with the role and the next decision. Chat is available, but it hands real work to the app that owns it."
 
 ## 08 For standard work, the case arrives prepared end to end
 
-- **Objective:** show one controlled case loop from summary to receipt.
-- **Remember:** AI and automation prepare and route; the professional makes the material judgement.
-- **Talk track (60 to 90 s):** "This periodic review was prepared overnight. Here is the summary: criticality, the previous conclusion, three material changes, one missing report, one open issue. In the role app the evidence checklist, current versus previous, the policy requirements, the gaps and the follow-up questions are already there. The automation trace (A) shows how it got here: eight steps, read only, and it stopped at a human gate. Now the decision. The rationale is drafted; I can edit it. I approve with a 30-day condition. Only now is the outcome written to the system of record, the follow-up actions created, the next monitoring event scheduled and an audit receipt issued."
-- **Action:** Space steps: case summary, role app, trace, decision, recorded. Or click: "Open the periodic review app", "Trace (A)", "Go to decision", then one of the three decisions. "Replay this case" starts again.
-- **Visual state:** the missing report stays amber throughout; the trace ends on "Paused for human challenge"; no receipt exists until a decision is chosen.
-- **Business owner asks:** "What if I disagree with the proposal?" **Answer:** "Choose hold or escalate; each records its own outcome and reason. Overrides are measured, not hidden."
-- **IT strategist asks:** "What exactly is written, and when?" **Answer:** "Nothing before the decision. After it, the approved outcome only, through a controlled connector, with the source, policy and model versions in the receipt."
-- **Fallback line:** "Prepared by the Workspace, decided by the professional, recorded by the system."
+- **Objective:** show one controlled loop: propose, inspect, approve, commit, receipt.
+- **Remember:** AI and automation prepare and route; the professional makes the material judgement; nothing is written until it is confirmed.
+- **Talk track (90 s):** "We arrive in the role app, already prepared: the evidence checklist with the missing report in amber, current versus previous, the requirements, the gaps and the follow-up questions." A for the trace: "Eight steps, read only, and it stopped at a human gate." Space to the decision: "Three options, the proposed one marked." Choose it: "Before anything is written, a preview: the target system, the record, every field that changes, and the checks: role and record scope, delegated authority, a scoped connector with no credentials in the model." Confirm: "Now the system of record acknowledges, the case status changes, the item leaves my queue, actions and monitoring are created, and the audit receipt holds who, when, which sources, which policy, which automation and which model."
+- **Action:** Space steps role app, trace, decision, preview, commit. Or click "Trace (A)", "Go to decision", a decision, "Confirm and record". "Back to the decision" leaves the preview without writing. "Back to decisions" shows the home queue with the review recorded; "Replay this case" resets it.
+- **Visual state:** amber "Nothing written yet" until confirmation; then the green state-change strip and the receipt.
+- **Business owner asks:** "What if I disagree with the proposal?" **Answer:** "Hold or escalate; each previews and records its own outcome and reason."
+- **IT strategist asks:** "How is write-back controlled?" **Answer:** "Propose, check role and record scope, approve where required, a governed connector with scoped credentials, confirmation from the authoritative system, then the receipt (Appendix E)."
+- **Fallback line:** "Prepared by the Workspace, decided by the professional, written only after a previewed confirmation, recorded by the system."
 
 ### Transition into the Agent Builder
 
@@ -133,13 +133,13 @@ The nav bar also has visible buttons for technical depth, keys, safe mode, repla
 
 ## 09 For the long tail, create a controlled ad hoc agent
 
-- **Objective:** show agility without uncontrolled autonomy.
-- **Remember:** the agent inherits the user's access; it does not create new access.
-- **Talk track (90 s):** "The request: a one-page briefing of critical third-party services with worsening indicators, severe open issues or expiring risk acceptances, grouped by provider concentration, every statement cited. Step one, the Workspace restates the goal; I can edit it. Step two, before anything runs, the scope: what it can read, what it can create, what it cannot do. It cannot change records, accept risk, close issues, notify anyone outside or publish without review. Output is private to me. Step three, the plan, five steps. Run. A one-page briefing, sources cited, data gaps shown rather than filled, marked for human review. Step five: run once, save it to My Agents, or ask for a reviewed team template. That is the path from an ad hoc run to a standard app or automation."
-- **Action:** Space steps through Goal, Scope, Plan, Run (staged, about three seconds), Output, Reuse; then Space selects "Save to My Agents" and then "Request team template". Buttons do the same. "Use example" restores the request if someone edits it.
-- **Visual state:** stepper across the top; scope columns read, create, cannot; the briefing with citations; the promotion path with the current stage highlighted.
-- **Business owner asks:** "Can anyone build anything?" **Answer:** "Anyone can build within their own access and approved actions. Sharing with a team needs owner and control review."
-- **IT strategist asks:** "How do you avoid agent sprawl?" **Answer:** "Private by default, every run traced, team templates versioned and owned, and recurring agents are promoted into supported apps or automations (T, agent governance)."
+- **Objective:** show agility without uncontrolled autonomy, and that the builder is not a fifth platform.
+- **Remember:** standard apps and automations cover repeatable work; the Agent Builder covers changing and ad hoc needs within the same permissions, evidence and controls. The agent inherits the user's access; it does not create new access.
+- **Talk track (90 s):** "Standard work is built deliberately; the long tail changes too quickly. I describe what I need. The Workspace restates the goal; I can edit it. Before anything runs: what it can read, what it can create, and what it cannot do. Private to me, review before sharing. The plan, five steps. Run. A one-page briefing: concentration by provider as bars, expiring acceptances on a 90-day line, gaps shown, every statement cited. Then reuse: run once, save it, schedule it weekly, or ask for a reviewed team template. That is the path from a single run to a supported app or automation."
+- **Action:** Space steps goal, permissions, plan, run, reuse; then Space selects "Save to My Agents" and "Request team template". "Schedule weekly" is a click.
+- **Visual state:** stepper; read, create and cannot columns; the briefing with bars and the timeline; the four reuse options and the promotion path.
+- **Business owner asks:** "How do we stop hundreds of uncontrolled agents?" **Answer:** "Agents start private and read-only. Reuse, scheduling, team publication and write-back need progressively stronger ownership and review (Appendix D)."
+- **IT strategist asks:** "What runs it?" **Answer:** "Approved execution services behind a runtime gateway (Appendices B and C). The builder never grants access the user does not have."
 - **Fallback line:** "The builder is not a back door around standardisation; it covers the long tail and shows what to industrialise next."
 
 ## 10 AI prepares. Professionals decide. Systems record.
@@ -180,6 +180,43 @@ The nav bar also has visible buttons for technical depth, keys, safe mode, repla
 > "The first step is not to build the universal NFR platform. It is to select one role, one bounded decision journey and one measurable loop, then reuse what we prove."
 
 ---
+
+## Appendix and technical depth
+
+Five appendix pages answer the questions that come after the core route. Each has its own address, and **Back to the story** (top right) or Escape returns to the screen you came from.
+
+| Page | Address | Use it for |
+|---|---|---|
+| A. Which capability should handle the work? | `#appendix-capability-choice` | "Which path do I use?" Need, path, example, default authority |
+| B. From business experience to governed execution | `#appendix-architecture` | The four layers: Workspace, runtime gateway, execution services, authoritative systems |
+| C. Candidate runtime reuse | `#appendix-runtime-reuse` | What an existing runtime could provide, what to adapt, what stays out of the business UI |
+| D. How ad hoc work becomes governed and reusable | `#appendix-agent-lifecycle` | Run once, personal agent, reviewed template, standard app; the gates between |
+| E. Governed write-back | `#appendix-writeback` | The eight-step write pattern and its controls |
+
+T opens the same topics as a drawer, plus the measurement library, without leaving the current screen. Appendix C is deliberately generic in the public deck; any discussion of a specific internal asset stays in your local, untracked notes.
+
+### Architecture transition
+
+> "The NFR professional should not need to see the agent runtime. The Workspace owns the role experience; approved platform services execute the work behind it; authoritative systems still hold the record."
+
+## Likely buyer questions
+
+### NFR business owner
+
+- **Is this another chatbot?** No. Assistance is one interaction mode. The Workspace also holds the role context, work queue, case, evidence, applications, controls, decisions and recorded outcomes.
+- **Are you replacing our GRC platform?** No. Authoritative systems remain authoritative. The Workspace prepares and coordinates the work across them and writes back only through approved controls.
+- **Who owns the conclusion?** The named professional or accountable role. AI prepares; the professional challenges and decides.
+- **What happens when the AI is uncertain?** It shows missing evidence, contradictions and limits, and abstains where a result is unsupported. The case stays with the professional.
+- **Why do we need an Agent Builder?** Standard apps cannot cover every emerging event, temporary analysis or management question. The builder covers that long tail without bypassing access and review.
+- **How do we stop hundreds of uncontrolled agents?** Agents start private and constrained. Reuse, publication, scheduling, write-back and standardisation need progressively stronger ownership and review.
+
+### IT strategist
+
+- **Does NFR Workspace depend on a specific agent runtime?** No. Execution services sit behind a stable runtime gateway, so an approved runtime can be swapped. Existing assets are candidate accelerators, validated before any commitment.
+- **Is the runtime model-independent?** The Workspace architecture is runtime-pluggable. Whether a given runtime can change models or its agent framework is part of its validation; do not assume it is configuration only.
+- **Where does workflow state live?** In the appropriate enterprise system of record or an approved orchestration service, not in a developer tool.
+- **How is write-back controlled?** The Workspace proposes an action, checks role and record scope, obtains approval where required, calls a governed connector with scoped credentials and records the confirmed outcome with an audit reference.
+- **How do you manage cost and runaway agents?** Bounded iterations, budgets, schedule and concurrency limits, observable usage, cancellation and escalation. Verify which controls the chosen runtime ships before making claims.
 
 ## When something goes wrong
 
