@@ -81,8 +81,8 @@ Audit of the repository as found on 2026-11-23, and the decisions taken for v2.
 
 - **Demo beats.** App scenes expose `advance()` (Space) and `key()` (A, Escape) to SceneDirector. A scene re-mounts on every arrival, so a demo always starts from its first beat. `NFRExperience.get()` and `body[data-ws-state]` report the current state; `body[data-builder-state]` reports the builder flow.
 - **Copy.** Change words in `assets/data/workspace-demo.js` (or `tprm-case.js` for the case), never in scene code; a test fails if scenes hard-code case facts or product names.
-- **Headlines.** Edit the `<h2>` and `.slide-sub` in `pitch.html`, then regenerate the manifest from the DOM (the generator lives outside the repo; the test "manifest titles match the screen titles" catches drift).
-- **Build stamp.** `node scripts/stamp-build.js v28` after the final commit sets the release, the commit and every `?v=` string.
+- **Headlines.** Edit the `<h2>` and `.slide-sub` in `pitch.html`, then run `node scripts/build-manifest.js` (in the repository since v5; the test "manifest titles match the screen titles" catches drift).
+- **Build stamp.** `node scripts/stamp-build.js v<n>` after the final commit sets the release, the commit and every `?v=` string.
 - **Retired screens.** The v27 scenes and their CSS were removed. `git show baseline-pre-workspace-v2:pitch.html` and the tag restore the previous route.
 - **Prototype captures.** `assets/img/nfros/` still shows the prototype's working title. Recapture when the prototype is rebranded.
 - **Historical notes.** `TRANSITION_RELEASE.md`, `TRANSITION_BASELINE.md`, `V23_BASELINE.md` and `AUDIT_BASELINE.md` describe earlier releases and still use the old name.
@@ -99,3 +99,18 @@ Audit of the repository as found on 2026-11-23, and the decisions taken for v2.
 | Return to the story from the appendix | `#storyReturn` in the nav; Escape on an appendix page |
 | Experience states | Story screens: cover, assistance, integration-burden, four-ways, three-layers, control-boundary, roadmap, value, appendix. App screens: booting, workspace-home, insight-visible, case-open, role-app-open, automation-trace-open, decision-pending, writeback-preview, writeback-complete, agent-builder-goal, -permissions, -plan, -running, -result, -save |
 | Internal-only material | Any `*.local.md` file or `docs/internal/` (git-ignored). The repository is public and Pages serves every committed file |
+
+## 8. v5 additions (meeting-ready plan v5, release v30)
+
+| Concern | Where |
+|---|---|
+| Audit before v5 | `docs/CURRENT_STATE_AUDIT.md`; baseline tag `baseline-pre-pitch-v5` |
+| Visual registry and chart validation | `VISUALS`, `validateVisual()` and `renderVisual()` in `workspace-kit.js`. Types: `ranked-bar`, `trend-line`. An invalid visual renders its data as a table; every chart also carries a screen-reader table. Data in `NFR_WORKSPACE_DEMO.insight.visuals` |
+| Source detail | `sourceChip()` and `evidenceDrawer()` in the kit; records in `NFR_WORKSPACE_DEMO.evidence`, keyed by the source name a chip shows. Opening sets `source-detail-open`; closing restores the previous state. Space and Escape close it before anything else |
+| Write-back preview and receipt | Each decision in `journey.decisions` has `reason` and `actionOwner`; the receipt has `actor` and `role` |
+| Appendix A to G | Topics `choice`, `authority`, `architecture`, `writeback`, `lifecycle`, `runtime`, `proof` in `appendix-topics.js`; tabs and letters in `technical.tabs` |
+| Experience state model | `NFRExperience.states()` lists every state in route order; `set()` warns on an unknown state, and a test walks the route against the list |
+| History | `_syncHistory()` and `_goToHash()` in `navigation.js`: one entry for the story, one more when the appendix is entered; Back and Forward land on the hash; manual scroll restoration. Jumps between story and appendix are instant |
+| Keys | Page Up and Page Down (clickers) in `navigation.js`; S (safe mode) in `presenter-controls.js` |
+| Static fallback | `npm run fallback` (`scripts/export-fallback.js`): a PDF of the route, demo beats and appendix A to G at 1920x1080 in `artifacts/fallback/` (git-ignored) |
+| Manifest generator | `scripts/build-manifest.js` |
