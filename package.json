@@ -18,7 +18,8 @@
     "audit:claims": "python scripts/lint-copy.py",
     "audit:all": "node scripts/audit-all.js",
     "qa:visual": "node scripts/visual-qa.js 8080",
-    "stamp": "node scripts/stamp-build.js"
+    "stamp": "node scripts/stamp-build.js",
+    "fallback": "node scripts/export-fallback.js 8080"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0"

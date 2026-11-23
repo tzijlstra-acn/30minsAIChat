@@ -4,6 +4,7 @@ playwright-report/
 artifacts/baseline/
 artifacts/v23-after/
 artifacts/visual-qa/
+artifacts/fallback/
 *.log
 .DS_Store
 Thumbs.db
