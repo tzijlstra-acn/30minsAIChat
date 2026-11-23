@@ -2,6 +2,8 @@
   "version": "18",
   "icons": [
     { "name": "alert-triangle",       "class": "ti-alert-triangle",       "semantic": "risk" },
+    { "name": "arrow-up-right",       "class": "ti-arrow-up-right",       "semantic": "navigation" },
+    { "name": "file-search",          "class": "ti-file-search",          "semantic": "evidence" },
     { "name": "arrow-right-circle",   "class": "ti-arrow-right-circle",   "semantic": "navigation" },
     { "name": "book",                 "class": "ti-book",                 "semantic": "reference" },
     { "name": "brain",                "class": "ti-brain",                "semantic": "ai-work" },
