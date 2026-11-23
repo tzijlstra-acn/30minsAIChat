@@ -1,12 +1,11 @@
 // @ts-check
 /**
- * Layout and platform tests -- NFR OS pitch, V27 (16-screen TPRM transition story)
+ * Layout and platform tests -- NFR Workspace v2 (release v28, twelve-screen core route)
  * Run: npx playwright test tests/layout.spec.js
  * The suite's web server is node scripts/serve.js 8080 (see playwright.config.js).
  *
- * V27 removed the V13 to V26 gates that tested the deleted scene files (cover-flow,
- * task-route, next-move and the rest). Story-specific checks live in
- * tests/transition-story.spec.js; pure model tests in tests/roi-model.spec.js.
+ * Story checks live in tests/workspace-story.spec.js, the interactive demo in
+ * tests/workspace-demo.spec.js and pure model tests in tests/roi-model.spec.js.
  */
 
 const { test, expect } = require('@playwright/test');
@@ -27,10 +26,9 @@ const VIEWPORTS = [
 ];
 
 const CORE_SLIDES = [
-  'cover', 'pressure-gap', 'north-star', 'today-integration-layer', 'connection-work', 'pilot-trap',
-  'prepared-decision', 'role-workspace', 'workspace-live', 'authority-boundary',
-  'six-month-route', 'm6-proof', 'business-case',
-  'reuse-core', 'integrated-delivery', 'first-move'
+  'cover', 'assistance-here', 'remaining-burden', 'four-ways', 'three-layers',
+  'workspace-boot', 'workspace-home', 'workspace-journey', 'workspace-builder',
+  'authority-boundary', 'six-month-route', 'value-decision'
 ];
 
 async function gotoPage(page, url) {
@@ -73,7 +71,7 @@ for (const vp of VIEWPORTS) {
       expect(overflowing).toEqual([]);
     });
 
-    test('all 16 core screens are attached to the DOM', async ({ page }) => {
+    test('all 12 core screens are attached to the DOM', async ({ page }) => {
       await gotoPage(page);
       for (const id of CORE_SLIDES) {
         await expect(page.locator(`#${id}`), `${id} missing at ${vp.name}`).toBeAttached();
@@ -143,7 +141,7 @@ test('store is initialised with defaults', async ({ page }) => {
   expect(state).not.toBeNull();
 });
 
-test('exactly 16 core screens, appendix excluded from the core route', async ({ page }) => {
+test('exactly 12 core screens, appendix excluded from the core route', async ({ page }) => {
   await gotoPage(page);
   const ids = await page.$$eval('section[data-route="core"]', (s) => s.map((x) => x.id));
   expect(ids).toEqual(CORE_SLIDES);
@@ -153,7 +151,7 @@ test('exactly 16 core screens, appendix excluded from the core route', async ({ 
 test('counter total comes from the DOM', async ({ page }) => {
   await gotoPage(page);
   await page.waitForTimeout(500);
-  await expect(page.locator('#counter')).toHaveText('1 / 16');
+  await expect(page.locator('#counter')).toHaveText('1 / 12');
 });
 
 test('nav bar has an Evidence Atlas button', async ({ page }) => {
@@ -161,10 +159,10 @@ test('nav bar has an Evidence Atlas button', async ({ page }) => {
   await expect(page.locator('.nav button[title*="Evidence Atlas"]')).toBeAttached();
 });
 
-test('agenda lists the five chapters, the appendix and a business-case quick jump', async ({ page }) => {
+test('agenda lists the four chapters, the appendix and a business-case quick jump', async ({ page }) => {
   await gotoPage(page);
   const chapters = await page.$$eval('#agendaStory .agenda-ch-name', (e) => e.map((x) => x.textContent));
-  for (const c of ['SETTING THE SCENE', 'TODAY', 'THE NEW WORKDAY', 'SIX MONTHS AND PAYBACK', 'SCALE AND START', 'APPENDIX']) {
+  for (const c of ['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'THE PATH', 'APPENDIX']) {
     expect(chapters).toContain(c);
   }
   await expect(page.locator('#agendaRoiJump')).toBeAttached();
@@ -233,10 +231,10 @@ test('Evidence Atlas hides its loading hint after init', async ({ page }) => {
 test.describe('Static checks', () => {
   chromiumOnly();
 
-  test('build fingerprint is v27', () => {
+  test('build fingerprint is v28', () => {
     const html = read('pitch.html');
-    expect(html).toMatch(/<meta name="nfr-build" content="v27-[0-9a-f]{7}">/);
-    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v27'/);
+    expect(html).toMatch(/<meta name="nfr-build" content="v28-[0-9a-f]{7}">/);
+    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v28'/);
   });
 
   test('all local asset ?v= strings share one fingerprint', () => {
@@ -244,11 +242,11 @@ test.describe('Static checks', () => {
     expect([...shas]).toHaveLength(1);
   });
 
-  test('story manifest is version 27 with five chapters and sixteen screens', () => {
+  test('story manifest is version 28 with four chapters and twelve core screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('27');
-    expect(m.chapters.map((c) => c.id)).toEqual(['setting-scene', 'today', 'new-workday', 'six-months', 'scale-start']);
-    expect(m.screens.map((s) => s.id)).toEqual(CORE_SLIDES);
+    expect(m.version).toBe('28');
+    expect(m.chapters.map((c) => c.id)).toEqual(['shift', 'model', 'workspace', 'path']);
+    expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE_SLIDES);
   });
 
   test('vendor scripts load in the body, before application scripts', () => {
@@ -280,11 +278,13 @@ test.describe('Static checks', () => {
 
   test('scene-director keeps the lifecycle helpers and a DOM-derived scene list', () => {
     const src = read('assets/js/story/scene-director.js');
-    ['renderStatic', 'renderError', 'getAccessibleSummary', 'seek', 'visibilitychange', 'getState'].forEach((k) => expect(src).toContain(k));
+    ['renderStatic', 'renderError', 'getAccessibleSummary', 'seek', 'visibilitychange', 'getState', 'advance', 'setSafe'].forEach((k) => expect(src).toContain(k));
     expect(src).toContain("querySelectorAll('section[data-scene]')");
   });
 
-  test('visual grammar exposes the V26 primitives and the V27 story kit', () => {
+  test('visual grammar exposes the V26 primitives and the story kit; the Workspace kit exposes the shell', () => {
+    const kit = read('assets/js/story/workspace-kit.js');
+    ['shell', 'queueCard', 'assistPanel', 'stepper', 'sequence'].forEach((k) => expect(kit).toContain(k + ':'));
     const src = read('assets/js/story/visual-grammar.js');
     ['SystemField', 'WorkLane', 'MetricStrip', 'ReuseMarker', 'StoryKit', 'CaseBadge', 'EvidenceChip', 'UncertaintyBadge', 'DecisionGate', 'ReceiptState', 'ProofGate'].forEach((k) => expect(src).toContain(k));
   });
