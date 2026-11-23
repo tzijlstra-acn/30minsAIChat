@@ -46,6 +46,16 @@ if (fs.existsSync(scenesDir)) {
   });
 }
 
+// v2: the Workspace kit, presenter controls and demo data render icons too
+['assets/js/story/workspace-kit.js', 'assets/js/story/presenter-controls.js', 'assets/data/workspace-demo.js'].forEach(function(rel) {
+  var p = path.join(ROOT, rel);
+  if (!fs.existsSync(p)) return;
+  var code = fs.readFileSync(p, 'utf8');
+  var re = /['"](ti-[a-z][a-z0-9-]+)['"]/g;
+  var km;
+  while ((km = re.exec(code)) !== null) sceneIcons.add(km[1]);
+});
+
 var allUsed = new Set([...htmlIcons, ...sceneIcons]);
 
 // Check all used classes are in manifest

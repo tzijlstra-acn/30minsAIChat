@@ -1,4 +1,4 @@
-// ── SCENE DIRECTOR -- V26 ──
+// ── SCENE DIRECTOR -- V26, v2 additions: safe mode, advance, key ──
 // Manages deterministic scene playback for each core screen.
 // One scene plays per screen. Scenes are loaded on demand and cancelled on navigation.
 // V26 contract: mount (= factory call), play, pause, resume, seek, finish, resize,
@@ -10,12 +10,18 @@
 var SceneDirector = (function() {
   var _scenes = {};        // registered scene factories: id -> createScene
   var _current = null;     // { sceneId, instance, manifest, state }
-  var _reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var _mq = window.matchMedia('(prefers-reduced-motion: reduce)');
   var _paused = false;
 
-  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function(e) {
-    _reduced = e.matches;
-  });
+  // v2 safe mode: ?safe=1 or the presenter toggle. Behaves like reduced motion
+  // (final states, no animation) and keeps every screen and control.
+  var _safe = _readSafe();
+  function _readSafe() {
+    if (/[?&]safe=1(&|$)/.test(window.location.search)) return true;
+    try { return sessionStorage.getItem('nfr_safe_mode') === '1'; } catch (e) { return false; }
+  }
+  function _isReduced() { return _mq.matches || _safe; }
+  if (_safe) document.documentElement.classList.add('safe-mode');
 
   // Pause/resume on visibility change (no background animation on inactive tabs)
   document.addEventListener('visibilitychange', function() {
@@ -102,7 +108,7 @@ var SceneDirector = (function() {
     }
     var instance;
     try {
-      instance = factory(container, manifestEntry, _reduced);
+      instance = factory(container, manifestEntry, _isReduced());
     } catch (e) {
       console.error('[scene:' + manifestEntry.scene + '] init error', e);
       _showFallback(container, manifestEntry.scene);
@@ -127,7 +133,7 @@ var SceneDirector = (function() {
       _setState('ready');
       requestAnimationFrame(function() {
         try {
-          if (_reduced) {
+          if (_isReduced()) {
             _setState('complete');
             instance.finish();
           } else {
@@ -165,7 +171,7 @@ var SceneDirector = (function() {
     _paused = false;
     try {
       _current.instance.reset();
-      if (_reduced) {
+      if (_isReduced()) {
         _current.instance.finish();
       } else {
         _current.instance.play();
@@ -197,10 +203,40 @@ var SceneDirector = (function() {
 
   function getState() { return _current ? _current.state : null; }
 
+  // v2: interactive scenes step through scripted beats. advance() returns true when the
+  // scene moved to its next beat, false when it has none left (the caller then moves on).
+  function advance() {
+    if (!_current || typeof _current.instance.advance !== 'function') return false;
+    try { return !!_current.instance.advance(); } catch (e) { console.warn('SceneDirector: advance error', e); return false; }
+  }
+
+  // v2: scene-level keys (for example A for the automation trace). True when handled.
+  function key(k) {
+    if (!_current || typeof _current.instance.key !== 'function') return false;
+    try { return !!_current.instance.key(k); } catch (e) { return false; }
+  }
+
+  function isReduced() { return _isReduced(); }
+  function isSafe() { return _safe; }
+
+  // Switch safe mode and re-render the current screen in its new mode
+  function setSafe(on) {
+    _safe = !!on;
+    try { sessionStorage.setItem('nfr_safe_mode', _safe ? '1' : '0'); } catch (e) {}
+    document.documentElement.classList.toggle('safe-mode', _safe);
+    if (_current) {
+      var sec = document.querySelector('section[data-scene="' + _current.sceneId + '"]');
+      var entry = _current.manifest;
+      if (sec) enter(sec, entry);
+    }
+    return _safe;
+  }
+
   return {
     register: register, enter: enter, cancel: cancel,
     replay: replay, togglePause: togglePause, finish: finish,
-    hasScene: hasScene, getState: getState
+    hasScene: hasScene, getState: getState,
+    advance: advance, key: key, isReduced: isReduced, isSafe: isSafe, setSafe: setSafe
   };
 }());
 

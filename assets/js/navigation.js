@@ -56,10 +56,25 @@ function buildDividers(){
 
 function buildLandingRoute(){
   var nav=document.querySelector('[data-landing-route]');if(!nav)return;
-  nav.innerHTML=chapterDividers().map(function(d){
-    return '<button type="button" class="landing-chapter" onclick="goToId(\''+d.id+'\')"><span class="landing-chapter-num">'+d.dataset.chapterNum+'</span>'
-      +'<span class="landing-chapter-title">'+(d.querySelector('.divider-title')||{}).textContent+'</span></button>';
-  }).join('');
+  var dividers=chapterDividers();
+  var items=[];
+  if(dividers.length){
+    items=dividers.map(function(d){return {target:d.id,num:d.dataset.chapterNum,title:(d.querySelector('.divider-title')||{}).textContent,count:''};});
+  }else{
+    // v2: no dividers. Each chapter button jumps to the chapter's first screen.
+    items=chapterMap.filter(function(c){return c.id!=='reference'&&c.slides.length;}).map(function(c,ci){
+      var title=(c.title||'').toLowerCase();title=title.charAt(0).toUpperCase()+title.slice(1);
+      return {target:c.slides[0].id,num:'0'+(ci+1),title:title,count:c.slides.length+(c.slides.length===1?' screen':' screens')};
+    });
+  }
+  nav.innerHTML='';
+  items.forEach(function(it){
+    var b=document.createElement('button');b.type='button';b.className='landing-chapter';b.dataset.target=it.target;
+    b.innerHTML='<span class="landing-chapter-num">'+it.num+'</span><span class="landing-chapter-title">'+it.title+'</span>'
+      +(it.count?'<span class="landing-chapter-count">'+it.count+'</span>':'');
+    b.addEventListener('click',function(){goToId(it.target);});
+    nav.appendChild(b);
+  });
 }
 
 // ── CASE THREAD ──
@@ -146,13 +161,18 @@ function setRouteMode(mode){
   // Visual-only for now; filter can be applied to agenda
 }
 
+function _scrollMode(target){
+  var from=sections[current];
+  var safe=document.documentElement.classList.contains('safe-mode');
+  return (safe||(from&&target&&from.dataset.kind==='app'&&target.dataset.kind==='app'))?'instant':'smooth';
+}
 function goToIndex(i){
   if(i<0)i=0;if(i>=sections.length)i=sections.length-1;
-  sections[i].scrollIntoView({behavior:'smooth'});
+  sections[i].scrollIntoView({behavior:_scrollMode(sections[i])});
 }
 function goToId(id){
   var sec=document.getElementById(id);
-  if(sec)sec.scrollIntoView({behavior:'smooth'});
+  if(sec)sec.scrollIntoView({behavior:_scrollMode(sec)});
 }
 function getSlideIndex(id){
   for(var i=0;i<sections.length;i++){if(sections[i].id===id)return i;}
@@ -192,6 +212,8 @@ function updateNav(idx){
   if(sec&&sec.id)history.replaceState(null,null,'#'+sec.id);
   // Left-edge rail highlight
   if(typeof window.edgeRailHighlight==='function'&&sec&&sec.id)window.edgeRailHighlight(sec.id);
+  // v2: experience state and presenter controls follow the screen
+  if(window.PresenterControls)PresenterControls.onScreen(sec);
   // Render
   if(!rendered.has(idx)){rendered.add(idx);renderSection(sec);}
   // V13: fire scene director for the incoming screen
@@ -280,6 +302,7 @@ document.addEventListener('keydown',function(e){
   if(['INPUT','TEXTAREA','SELECT'].indexOf(tag)>-1)return;
   // Let focused buttons and links activate with Space and Enter
   if((tag==='BUTTON'||tag==='A')&&(e.key===' '||e.key==='Enter'))return;
+  if(window.PresenterControls&&PresenterControls.handleKey(e))return;
   if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();goToIndex(current+1);}
   else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();goToIndex(current-1);}
   else if((e.key==='g'||e.key==='G')&&!e.metaKey&&!e.ctrlKey){e.preventDefault();openAgenda();}
@@ -287,15 +310,6 @@ document.addEventListener('keydown',function(e){
   else if((e.key==='r'||e.key==='R')&&!e.metaKey&&!e.ctrlKey){
     e.preventDefault();
     if(typeof SceneDirector!=='undefined')SceneDirector.replay();
-  }
-  else if(e.key===' '&&!e.metaKey&&!e.ctrlKey){
-    // Space pauses/resumes current scene, but not if a scroll would happen
-    if(typeof SceneDirector!=='undefined'){
-      e.preventDefault();
-      var paused=SceneDirector.togglePause();
-      var pb=document.getElementById('scenePauseBtn');
-      if(pb){var pi=pb.querySelector('i');if(pi)pi.className=paused?'ti ti-player-play':'ti ti-player-pause';}
-    }
   }
 });
 (function(){var sx=0;

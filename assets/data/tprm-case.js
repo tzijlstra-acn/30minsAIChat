@@ -26,14 +26,21 @@
 
     // Material changes since the last review, each tied to its evidence object
     changes: [
-      { id: 'sub-processor', type: 'Sub-processor', title: 'Sub-processor added', detail: 'Added in Ireland', tag: 'Ireland', evidence: 'Contract annex', evidenceState: 'Approved' },
-      { id: 'assurance', type: 'Assurance', title: 'SOC 2 renewed', detail: 'SOC 2 renewed with two exceptions', tag: 'Two exceptions', evidence: 'SOC 2 Type II', evidenceState: 'Verified' },
-      { id: 'incident', type: 'Incident', title: 'Priority 2 incident', detail: 'Priority 2 incident in September', tag: 'September', evidence: 'Incident log', evidenceState: 'Verified' }
+      { id: 'sub-processor', type: 'Sub-processor', title: 'Sub-processor added', detail: 'Added in Ireland', tag: 'Ireland', evidence: 'Contract annex', evidenceState: 'Approved', previous: 'Two sub-processors', current: 'Third added in Ireland' },
+      { id: 'assurance', type: 'Assurance', title: 'SOC 2 renewed', detail: 'SOC 2 renewed with two exceptions', tag: 'Two exceptions', evidence: 'SOC 2 Type II', evidenceState: 'Verified', previous: 'SOC 2, no exceptions', current: 'Renewed, two exceptions' },
+      { id: 'incident', type: 'Incident', title: 'Priority 2 incident', detail: 'Priority 2 incident in September', tag: 'September', evidence: 'Incident log', evidenceState: 'Verified', previous: 'No priority incidents', current: 'Priority 2 in September' }
     ],
 
     // Evidence that is still missing. Uncertainty stays visible; it is never hidden.
     missing: [
       { id: 'pen-test', type: 'Penetration test', title: 'Penetration-test report', detail: 'Report pending', requirement: 'Required before close' }
+    ],
+
+    // Review history and open items (used by the Workspace case summary)
+    previousConclusion: 'Renewed without conditions',
+    lastReview: '12 months ago',
+    openIssues: [
+      { id: 'ISS-2207', title: 'Change-management finding', state: 'Open, due in 45 days' }
     ],
 
     proposedAction: 'Approve renewal with a 30-day condition',
