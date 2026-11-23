@@ -41,7 +41,7 @@ SceneDirector.register('workspace-home', function(container, manifest, reduced) 
     clearTimers();
     n.shell.clearMain();
     view = 'insight';
-    var ins = K.insight(n.shell.main, { onBack: function() { showHome(); }, onOpenApp: openApp });
+    var ins = K.insight(n.shell.main, { onBack: function() { showHome(); }, onOpenApp: openApp, onSource: function(name) { n.evidence.open(name); } });
     K.hide(ins.parts, 'ts-up');
     timers.push(K.sequence(ins.parts, 110, 40));
     K.setState('insight-visible');
@@ -57,6 +57,7 @@ SceneDirector.register('workspace-home', function(container, manifest, reduced) 
     var sh = K.shell(cv.el, { active: 'home', assist: 'panel' });
     sh.app.classList.add('is-framed');
     n.shell = sh;
+    n.evidence = K.evidenceDrawer(sh.main);
     n.assist = K.assistPanel(sh.assist, {
       onAsk: function(i) { asked = i; },
       onInsight: showInsight,
@@ -101,12 +102,15 @@ SceneDirector.register('workspace-home', function(container, manifest, reduced) 
     // Space: the visual insight, then the hand-off from Assist, then the role app
     advance: function() {
       if (!done) { if (cv) cv.setStatic(true); tl.finish(); if (cv && !K.isStatic()) cv.setStatic(false); return true; }
+      // An open source detail closes first, so Space never skips past what is on screen
+      if (n.evidence && n.evidence.close()) return true;
       if (asked < 0 || (asked === 0 && view !== 'insight')) { n.assist.ask(0); asked = 0; return true; }
       if (asked === 0) { n.assist.ask(1); asked = 1; return true; }
       if (asked >= 1) { openApp(); return true; }
       return false;
     },
     key: function(k) {
+      if (k === 'Escape' && n.evidence && n.evidence.close()) return true;
       if (k === 'Escape' && view === 'insight') { showHome(); return true; }
       return false;
     },

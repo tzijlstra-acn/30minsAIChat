@@ -2,7 +2,7 @@
 // Causal story: three lanes, work and roles, process and controls, data and platform,
 // each with a fragmented today. The three move to their future state at the same time
 // (one "in parallel" bracket, three arrows drawing together), then converge into the
-// NFR Workspace. Improving only the AI layer creates another pilot.
+// NFR Workspace. Improving only the AI component creates another pilot.
 SceneDirector.register('three-layers', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;

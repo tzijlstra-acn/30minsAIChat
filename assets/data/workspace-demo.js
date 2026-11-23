@@ -85,8 +85,8 @@
         today: 'Pilots rely on isolated data and one-off integrations.',
         future: 'Reusable identity, permissions, evidence, case state, audit and monitoring.' }
     ],
-    layersLine: 'Improving only the AI layer creates another pilot.',
-    layersLine2: 'Scaling NFR work needs roles, processes and the platform to move together.',
+    layersLine: 'Improving only the AI component creates another pilot.',
+    layersLine2: 'Scaling NFR work requires all three layers to move together.',
 
     // ── Scene two: assistance is already here ──
     channels: [
@@ -116,7 +116,7 @@
     // ── Scene six: the Workspace start-up ──
     boot: {
       roleContext: 'Role context',
-      statuses: ['Role and permissions', 'Approved applications', 'Connected evidence', 'Control policies and case state'],
+      statuses: ['Resolving role and permissions', 'Loading current decisions', 'Connecting approved applications', 'Synchronising case and evidence state'],
       ready: 'Workspace ready'
     },
 
@@ -167,24 +167,29 @@
     insight: {
       question: 'Which critical third-party services are deteriorating, and why?',
       answeredBy: 'NFR Assist, approved sources',
-      conclusion: 'Three of 42 critical services are deteriorating. Cloud hosting moved most, and its periodic review is due ' + C.due.toLowerCase() + '.',
+      conclusion: 'Three of 42 critical services are deteriorating. Cloud hosting moved most, four critical services depend on it, and its review is due ' + C.due.toLowerCase() + '.',
+      // Decision facts, consistent with the home, the case and the Agent Builder briefing
       figures: [
-        { v: '3', k: 'services deteriorating' },
-        { v: '42', k: 'critical services checked' },
-        { v: '+18', k: 'points, cloud hosting' },
-        { v: String(C.missing.length), k: 'required report missing' }
+        { v: '3', k: 'services deteriorating', tone: 'risk' },
+        { v: '2', k: 'severe issues open', tone: 'risk' },
+        { v: '2', k: 'acceptances expiring', tone: 'human' },
+        { v: String(C.missing.length), k: 'required report missing', tone: 'human' }
       ],
-      rankingTitle: 'Risk indicator change, two quarters (points)',
-      ranking: [
-        { label: 'Cloud hosting', provider: 'Provider A', v: 18, selected: true },
-        { label: 'Managed network', provider: 'Provider B', v: 11 },
-        { label: 'Card processing', provider: 'Provider C', v: 7 },
-        { label: 'Payroll service', provider: 'Provider D', v: 1 },
-        { label: 'Document storage', provider: 'Provider E', v: -2 }
+      // Supported visual types only (WorkspaceKit.VISUAL_TYPES); titles state the conclusion
+      visuals: [
+        { id: 'ranking', type: 'ranked-bar', title: 'Cloud hosting moved most, +18 points', unit: 'points',
+          summary: 'Two-quarter change, points', source: 'Risk indicators',
+          data: [
+            { label: 'Cloud hosting', provider: 'Provider A', value: 18, selected: true },
+            { label: 'Managed network', provider: 'Provider B', value: 11 },
+            { label: 'Card processing', provider: 'Provider C', value: 7 },
+            { label: 'Payroll service', provider: 'Provider D', value: 1 },
+            { label: 'Document storage', provider: 'Provider E', value: -2 }
+          ] },
+        { id: 'trend', type: 'trend-line', title: 'Above appetite since September', unit: 'score',
+          summary: 'Score; dashed line: appetite 52', source: 'Risk indicators',
+          labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'], values: [42, 44, 47, 55, 57, 60], threshold: 52 }
       ],
-      trendTitle: 'Cloud hosting, last six months',
-      trend: { labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'], values: [42, 44, 47, 55, 57, 60], threshold: 52 },
-      trendNote: 'Above appetite since the September incident.',
       driversTitle: 'What is driving it',
       drivers: C.changes.map(function(ch) { return { text: ch.title + ' · ' + ch.tag, source: ch.evidence }; })
         .concat(C.missing.map(function(m) { return { text: m.title + ' missing', source: 'Evidence checklist', gap: true }; })),
@@ -196,6 +201,28 @@
         { id: 'attach', label: 'Attach to the case as a draft', icon: 'ti-paperclip', result: 'Attached to the case as a draft note. Nothing written to the system of record.' }
       ]
     },
+
+    // ── Source records behind every source chip (insight, case comparison) ──
+    // Keyed by the source name the chips show. Synthetic; opening one changes nothing.
+    evidence: {
+      'Risk indicators': { record: 'KRI-CH-07 · Cloud hosting availability score', version: 'Refreshed today at 06:00', freshness: 'Current',
+        excerpt: 'Score 60 against an appetite of 52. Above appetite since the September incident; up 18 points over two quarters.',
+        usedFor: 'Ranking and trend charts' },
+      'Contract annex': { record: 'Annex C · Sub-processor list, version 4', version: 'Approved five weeks ago', freshness: 'Current',
+        excerpt: 'A third sub-processor is added for data-centre operations in Ireland.',
+        usedFor: 'Sub-processor change' },
+      'SOC 2 Type II': { record: 'Independent assurance report, 12-month period', version: 'Issued three weeks ago', freshness: 'Current',
+        excerpt: 'Two exceptions: change approvals not evidenced for two of 25 sampled changes.',
+        usedFor: 'Assurance change, SOC 2 exceptions' },
+      'Incident log': { record: 'INC-4471 · Priority 2 · September', version: 'Closed, root cause recorded', freshness: 'Current',
+        excerpt: 'Four hours of degraded availability in one region after a failed configuration change.',
+        usedFor: 'Incident change, indicator rise' },
+      'Evidence checklist': { record: 'Third-party policy 4.2 · Critical services', version: 'Checked today at 06:03', freshness: 'Missing',
+        excerpt: 'Penetration-test report within 12 months: not received. The last report is 14 months old.',
+        usedFor: 'Missing evidence, case condition' }
+    },
+    evidenceAccess: 'Read only, within your access',
+    evidenceNote: 'Synthetic record. Opening a source reads it; nothing changes.',
 
     // ── NFR Assist: suggested questions, deterministic answers, hand-off to the app ──
     assist: {
@@ -263,6 +290,8 @@
           actions: ['30-day follow-up: obtain the ' + C.missing[0].title.toLowerCase(), 'Track the SOC 2 exceptions to closure'],
           monitoring: 'Day-30 evidence check scheduled',
           status: 'Approved with condition',
+          reason: 'Changes reviewed; report gap is time-bound',
+          actionOwner: 'Vendor manager, due in 30 days',
           changes: [
             { field: 'Review status', from: 'Due ' + C.due.toLowerCase(), to: 'Approved with condition' },
             { field: 'Condition', from: 'None', to: C.missing[0].title + ' within 30 days' },
@@ -274,6 +303,8 @@
           actions: ['Evidence request drafted for the vendor manager to send'],
           monitoring: 'Case resumes when the report arrives, or in 10 days',
           status: 'On hold, evidence requested',
+          reason: 'Required report missing before renewal',
+          actionOwner: 'Vendor manager, due in 10 days',
           changes: [
             { field: 'Review status', from: 'Due ' + C.due.toLowerCase(), to: 'On hold, evidence requested' },
             { field: 'Follow-up actions', from: 'None', to: '1 evidence request, draft' },
@@ -284,6 +315,8 @@
           actions: ['Second-line reviewer assigned'],
           monitoring: 'Challenge due in 5 days',
           status: 'Escalated to second line',
+          reason: 'Exceptions need independent challenge',
+          actionOwner: 'Second-line reviewer, due in 5 days',
           changes: [
             { field: 'Review status', from: 'Due ' + C.due.toLowerCase(), to: 'Escalated to second line' },
             { field: 'Follow-up actions', from: 'None', to: 'Second-line reviewer assigned' },
@@ -306,6 +339,8 @@
       receipt: {
         id: 'RCPT-1124-0042',
         decidedBy: 'NFR Risk Manager (synthetic user)',
+        actor: 'Synthetic user',
+        role: 'NFR Risk Manager',
         time: '09:42',
         sources: (C.changes.length + C.missing.length) + ' sources, versions pinned',
         policy: 'Third-party policy v7.2',
@@ -416,7 +451,7 @@
         platform: ['Confirm sources, permissions, case-state needs and the technical path', 'Build connectors, identity integration, reusable services, audit and monitoring', 'Harden, deploy, monitor and name what the next journey reuses']
       },
       entryTitle: 'Entry conditions',
-      entry: ['Named process owner', 'Bounded case type', 'Representative data and system access', 'Agreed AI, automation and human boundary'],
+      entry: ['Named business and process owner', 'One bounded case type', 'Representative records and source-system access', 'Approved platform route', 'Agreed AI, rules and human boundary', 'Agreed proof thresholds'],
       proofTitle: 'What month six proves',
       proof: ['One role experience', 'One connected role app', 'One bounded automation loop', 'One constrained ad hoc reporting pattern', 'Measured risk, process and capacity outcomes'],
       notInScope: 'Not in scope: an enterprise-wide NFR platform in six months.'
@@ -425,12 +460,13 @@
     // ── Scene twelve: value and the workshop decision ──
     value: {
       outcomes: [
-        { id: 'risk', label: 'Risk outcomes', items: ['Evidence completeness and freshness', 'Consistent application of requirements', 'Earlier sight of material change', 'Complete decision trace', 'Fewer unsupported conclusions'] },
-        { id: 'operating', label: 'Operating performance', items: ['Lower human touch time', 'Shorter review cycle', 'Less rework', 'Fewer overdue cases', 'Faster escalation and ad hoc analysis'] },
-        { id: 'capacity', label: 'Capacity and economics', items: ['Capacity returned to judgement and challenge', 'Sustainable cost per case', 'Less central build for the long tail', 'Reuse of connectors, controls and role patterns'] }
+        { id: 'risk', label: 'Risk outcomes', items: ['Better evidence completeness', 'More consistent policy application', 'Earlier detection of material change', 'More complete decision trace'] },
+        { id: 'operating', label: 'Operating performance', items: ['Faster review cycle', 'Fewer handoffs and follow-ups', 'Fewer overdue cases', 'Faster escalation'] },
+        { id: 'capacity', label: 'Capacity and economics', items: ['Lower human touch time', 'Less avoidable rework', 'Sustainable cost per case', 'Capacity redirected to judgement'] }
       ],
       measureNote: 'Capacity, elapsed time and control quality are measured separately. Waiting time saved is not headcount.',
-      question: 'Which role, decision and bounded journey should become the first controlled loop?',
+      question: 'Which role, decision and bounded process should become the first controlled loop?',
+      next: 'And what evidence would authorise the next wave?',
       criteria: ['High manual integration burden', 'Bounded data and decision path', 'Measurable risk and operating outcome']
     },
 

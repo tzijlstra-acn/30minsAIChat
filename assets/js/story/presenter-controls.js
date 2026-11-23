@@ -291,7 +291,7 @@
       if (!e.detail) return;
       var b = e.target.closest && e.target.closest('button');
       if (!b) return;
-      if (b.closest('.nav') || b.classList.contains('ws-btn') || b.classList.contains('ws-nav-item') || b.classList.contains('landing-chapter') || b.classList.contains('wj-crumb')) b.blur();
+      if (b.closest('.nav') || b.classList.contains('ws-btn') || b.classList.contains('ws-source') || b.classList.contains('ws-nav-item') || b.classList.contains('landing-chapter') || b.classList.contains('wj-crumb')) b.blur();
     }, true);  // capture phase: demo buttons stop propagation of their own clicks
     syncSafeButton();
   }

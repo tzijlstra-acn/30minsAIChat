@@ -123,8 +123,8 @@ SceneDirector.register('workspace-boot', function(container, manifest, reduced) 
     // Space during start-up skips to the ready Workspace; afterwards the deck moves on
     advance: function() { if (done) return false; finishNow(); return true; },
     getAccessibleSummary: function() {
-      return 'The NFR Workspace starts up for the ' + D.role.label + ', a synthetic demonstration. It loads '
-        + D.boot.statuses.join(', ').toLowerCase() + ', then reports ready. The decision-first home appears: one decision now and '
+      return 'The NFR Workspace starts up for the ' + D.role.label + ', a synthetic demonstration. Start-up steps: '
+        + D.boot.statuses.join(', ').toLowerCase() + ', then the Workspace reports ready. The decision-first home appears: one decision now and '
         + D.home.next.length + ' next, and NFR Assist opens last, beside the work.';
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }

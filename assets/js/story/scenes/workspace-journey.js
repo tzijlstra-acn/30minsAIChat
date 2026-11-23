@@ -43,6 +43,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     var sh = K.shell(cv.el, { active: 'cases', assist: 'rail' });
     sh.app.classList.add('is-framed');
     n.shell = sh;
+    n.evidence = K.evidenceDrawer(sh.main);
     var hand = window.NFRExperience && NFRExperience.takeHandoff ? NFRExperience.takeHandoff('workspace-journey') : null;
     entryBeat = hand ? Math.max(0, BEATS.indexOf(hand)) : 0;
   }
@@ -150,7 +151,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
       r.appendChild(S.el('span', 'wj-cmp-k', ch.type));
       r.appendChild(S.el('span', 'wj-cmp-prev', ch.previous));
       r.appendChild(S.el('span', 'wj-cmp-cur', ch.current));
-      r.appendChild(K.chip(ch.evidence, 'data'));
+      r.appendChild(K.sourceChip(ch.evidence, 'data', openSource));
       cmp.appendChild(r);
     });
 
@@ -178,6 +179,9 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     K.hide(foot);
     reveal([[ev, req], [cmp, gaps], qs, foot], 150, 80);
   }
+
+  // Source detail over the role app; the trace and the source never show together
+  function openSource(name) { if (n.trace) toggleTrace(false); n.evidence.open(name); }
 
   // Automation trace drawer over the role app
   function setTrace(open) {
@@ -273,7 +277,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     p.appendChild(hd);
     var body = S.el('div', 'wj-preview-body');
     var meta = S.el('dl', 'wj-preview-meta');
-    [['Target', WB.target], ['Record', WB.record], ['Decision', d.label], ['Approver', WB.approver], ['Evidence', WB.evidence]].forEach(function(kv) {
+    [['Target', WB.target], ['Record', WB.record], ['Decision', d.label], ['Reason', d.reason], ['Actions', d.actionOwner], ['Approver', WB.approver], ['Evidence', WB.evidence]].forEach(function(kv) {
       meta.appendChild(S.el('dt', null, kv[0]));
       meta.appendChild(S.el('dd', null, kv[1]));
     });
@@ -361,7 +365,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     rh.appendChild(K.chip(r.id, 'proof'));
     rc.appendChild(rh);
     var dl = S.el('dl', 'wj-receipt-list');
-    [['Decision', d.label], ['Decided by', r.decidedBy], ['Time', r.time], ['Sources', r.sources], ['Policy', r.policy], ['Automation', r.trace], ['Model', r.model]].forEach(function(kv) {
+    [['Actor', r.actor], ['Role', r.role], ['Time', r.time], ['Action', d.label], ['Target record', J.writeback.record], ['Sources', r.sources], ['Policy', r.policy], ['Automation', r.trace], ['Model', r.model]].forEach(function(kv) {
       dl.appendChild(S.el('dt', null, kv[0]));
       dl.appendChild(S.el('dd', null, kv[1]));
     });
@@ -391,6 +395,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
   }
 
   function go(b) {
+    if (n.evidence) n.evidence.close();
     beat = b;
     if (b === 0) { choice = null; showCase(); }
     else if (b === 1) { showApp(); setTrace(false); }
@@ -429,6 +434,8 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     renderError: function() { tl.reset(); clearTimers(); if (cv) cv.destroy(); S.restoreFallback(container); },
     advance: function() {
       if (!done) { finishEntry(); return true; }
+      // An open source detail closes first, so Space never skips past what is on screen
+      if (n.evidence && n.evidence.close()) return true;
       if (beat === 3) { choice = choice || J.decisions[0]; go(4); return true; }
       if (beat < BEATS.length - 1) { go(beat + 1); return true; }
       return false;
@@ -439,6 +446,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
         if (beat === 0) { go(2); return true; }
         return false;
       }
+      if (k === 'Escape' && n.evidence && n.evidence.close()) return true;
       if (k === 'Escape' && n.trace) { toggleTrace(false); return true; }
       return false;
     },

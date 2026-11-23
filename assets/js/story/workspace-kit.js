@@ -253,13 +253,191 @@
     return { el: wrap, head: head, card: card, parts: parts, fields: Array.prototype.slice.call(card.querySelectorAll('.ws-field')) };
   }
 
+  // ── Source chips and the evidence detail drawer ──
+  // A chip for a known evidence record is a button that opens the record; any other
+  // source stays a plain label. Records come from NFR_WORKSPACE_DEMO.evidence.
+  function sourceChip(name, tone, onSource) {
+    var rec = D().evidence[name];
+    if (!rec || !onSource) return chip(name, tone);
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'ws-chip ws-tone-' + (tone || 'data') + ' ws-source';
+    b.title = 'Open the source record';
+    b.setAttribute('data-source', name);
+    b.appendChild(S().el('span', null, name));
+    b.appendChild(S().icon('ti-arrow-up-right'));
+    b.addEventListener('click', function(e) { e.stopPropagation(); onSource(name); });
+    return b;
+  }
+
+  // Drawer over the right of the main area. Opening sets the experience state to
+  // source-detail-open; closing restores the state it replaced. Read only.
+  function evidenceDrawer(host) {
+    var K = S(), el = null, prev = null;
+    function isOpen() { return !!(el && el.isConnected); }
+    function close() {
+      if (!isOpen()) { el = null; return false; }
+      el.remove();
+      el = null;
+      if (prev) setState(prev);
+      prev = null;
+      return true;
+    }
+    function open(name) {
+      var rec = D().evidence[name];
+      if (!rec) return false;
+      var wasOpen = isOpen();
+      if (wasOpen) el.remove();
+      else prev = window.NFRExperience ? NFRExperience.get() : null;
+      el = K.el('div', 'ws-evidence');
+      el.setAttribute('role', 'region');
+      el.setAttribute('aria-label', 'Source detail: ' + name);
+      el.setAttribute('data-source', name);
+      var head = K.el('div', 'ws-ev-head');
+      head.appendChild(K.icon('ti-file-search'));
+      head.appendChild(K.el('span', 'ws-ev-title', 'Source detail'));
+      head.appendChild(chip(rec.freshness, rec.freshness === 'Missing' ? 'human' : 'proof'));
+      head.appendChild(K.el('span', 'ws-spacer'));
+      head.appendChild(btn('Close', { kind: 'ghost', icon: 'ti-x', cls: 'ws-ev-close', onClick: function() { close(); } }));
+      el.appendChild(head);
+      var dl = K.el('dl', 'ws-ev-list');
+      [['Source', name], ['Record', rec.record], ['Version', rec.version], ['Used for', rec.usedFor], ['Access', D().evidenceAccess]].forEach(function(kv) {
+        dl.appendChild(K.el('dt', null, kv[0]));
+        dl.appendChild(K.el('dd', null, kv[1]));
+      });
+      el.appendChild(dl);
+      el.appendChild(K.el('div', 'ws-label', 'Excerpt'));
+      el.appendChild(K.el('blockquote', 'ws-ev-quote', rec.excerpt));
+      el.appendChild(K.el('div', 'ws-ev-note', D().evidenceNote));
+      host.appendChild(el);
+      setState('source-detail-open');
+      return true;
+    }
+    return { open: open, close: close, isOpen: isOpen };
+  }
+
+  // ── Visual registry: the only chart types an insight can render ──
+  // Each visual: { id, type, title (a conclusion), unit, summary, source, ... }.
+  // validateVisual returns a reason string or null; renderVisual never throws.
+  function signed(v) { return (v > 0 ? '+' : '') + v; }
+  function isNum(v) { return typeof v === 'number' && isFinite(v); }
+  var VISUALS = {
+    'ranked-bar': {
+      validate: function(v) {
+        if (!Array.isArray(v.data) || !v.data.length) return 'no data';
+        return v.data.every(function(r) { return r && typeof r.label === 'string' && isNum(r.value); }) ? null : 'each row needs a label and a numeric value';
+      },
+      rows: function(v) { return v.data.map(function(r) { return [r.label, signed(r.value) + ' ' + v.unit]; }); },
+      // Ranked horizontal bars, zero line inside the track so a fall reads leftwards
+      render: function(panel, v) {
+        var K = S();
+        var vals = v.data.map(function(r) { return r.value; });
+        var min = Math.min(0, Math.min.apply(null, vals)) - 2, max = Math.max.apply(null, vals) + 2;
+        var span = max - min, zero = (0 - min) / span * 100;
+        var bars = K.el('div', 'wi-bars');
+        bars.setAttribute('role', 'img');
+        bars.setAttribute('aria-label', v.title + '. ' + v.summary + ': ' + v.data.map(function(r) { return r.label + ' ' + signed(r.value); }).join(', '));
+        v.data.forEach(function(r) {
+          var row = K.el('div', 'wi-bar-row' + (r.selected ? ' is-selected' : '') + (r.value >= 5 ? ' is-worse' : ''));
+          var name = K.el('div', 'wi-bar-name');
+          name.appendChild(K.el('span', 'wi-bar-label', r.label));
+          row.appendChild(name);
+          var track = K.el('div', 'wi-track');
+          var z = K.el('i', 'wi-zero');
+          z.style.left = zero + '%';
+          track.appendChild(z);
+          var fill = K.el('i', 'wi-fill');
+          var w = Math.abs(r.value) / span * 100;
+          fill.style.left = (r.value >= 0 ? zero : zero - w) + '%';
+          fill.style.width = w + '%';
+          track.appendChild(fill);
+          row.appendChild(track);
+          row.appendChild(K.el('span', 'wi-bar-v', signed(r.value)));
+          bars.appendChild(row);
+        });
+        panel.appendChild(bars);
+      }
+    },
+    'trend-line': {
+      validate: function(v) {
+        if (!Array.isArray(v.values) || v.values.length < 2 || !v.values.every(isNum)) return 'needs two or more numeric values';
+        if (!Array.isArray(v.labels) || v.labels.length !== v.values.length) return 'labels and values differ in length';
+        return isNum(v.threshold) ? null : 'needs a numeric threshold';
+      },
+      rows: function(v) { return v.labels.map(function(l, i) { return [l, v.values[i] + ' ' + v.unit]; }).concat([['Appetite', v.threshold + ' ' + v.unit]]); },
+      // Trend line for the selected service, with the appetite threshold
+      render: function(panel, v) {
+        var K = S(), svg = K.svg;
+        var TW = 300, TH = 78, pad = 6;
+        var tv = v.values, tmin = Math.min.apply(null, tv.concat([v.threshold])) - 4, tmax = Math.max.apply(null, tv) + 4;
+        function px(i) { return pad + i * (TW - 2 * pad) / (tv.length - 1); }
+        function py(x) { return TH - pad - (x - tmin) / (tmax - tmin) * (TH - 2 * pad); }
+        var g = svg('svg', { viewBox: '0 0 ' + TW + ' ' + TH, width: TW, height: TH, role: 'img', 'aria-label': v.title + '. ' + v.summary + ': ' + v.labels.map(function(l, i) { return l + ' ' + tv[i]; }).join(', ') + '; appetite ' + v.threshold });
+        g.setAttribute('class', 'wi-trend');
+        g.style.width = TW + 'px';
+        g.style.height = TH + 'px';
+        g.appendChild(svg('line', { x1: pad, x2: TW - pad, y1: py(v.threshold), y2: py(v.threshold), 'class': 'wi-threshold' }));
+        g.appendChild(svg('polyline', { points: tv.map(function(x, i) { return px(i).toFixed(1) + ',' + py(x).toFixed(1); }).join(' '), 'class': 'wi-line' }));
+        tv.forEach(function(x, i) { g.appendChild(svg('circle', { cx: px(i), cy: py(x), r: i === tv.length - 1 ? 4 : 2.5, 'class': x > v.threshold ? 'wi-dot is-over' : 'wi-dot' })); });
+        panel.appendChild(g);
+        var months = K.el('div', 'wi-months');
+        v.labels.forEach(function(m) { months.appendChild(K.el('span', null, m)); });
+        panel.appendChild(months);
+      }
+    }
+  };
+  function validateVisual(v) {
+    if (!v || typeof v !== 'object') return 'not an object';
+    if (!VISUALS[v.type]) return 'unsupported type ' + String(v.type);
+    if (!v.title || !v.unit || !v.summary) return 'needs a title, a unit and a summary';
+    return VISUALS[v.type].validate(v);
+  }
+  // A data table for any visual: hidden for screen readers under a chart, shown when
+  // the chart cannot render. Columns: the category and the value with its unit.
+  function dataTable(rows, cls) {
+    var K = S();
+    var t = K.el('table', cls);
+    rows.forEach(function(r) {
+      var tr = K.el('tr');
+      tr.appendChild(K.el('th', null, r[0]));
+      tr.appendChild(K.el('td', null, r[1]));
+      t.appendChild(tr);
+    });
+    return t;
+  }
+  function renderVisual(v, opts) {
+    opts = opts || {};
+    var K = S();
+    var panel = K.el('div', 'wi-panel');
+    panel.setAttribute('data-visual', (v && v.id) || 'invalid');
+    panel.appendChild(K.el('div', 'wi-panel-title', (v && v.title) || 'Chart'));
+    var reason = validateVisual(v);
+    var rows = null;
+    if (reason) {
+      panel.classList.add('is-fallback');
+      panel.setAttribute('data-invalid', reason);
+      panel.appendChild(K.el('div', 'wi-fallback-note', 'This chart cannot be drawn, so its data is shown as a table.'));
+      var raw = (v && Array.isArray(v.data)) ? v.data.map(function(r) { return [String(r && r.label), String(r && r.value)]; }) : [];
+      panel.appendChild(dataTable(raw, 'wi-table'));
+      return panel;
+    }
+    VISUALS[v.type].render(panel, v);
+    rows = VISUALS[v.type].rows(v);
+    var foot = K.el('div', 'wi-chart-foot');
+    foot.appendChild(K.el('span', 'wi-chart-unit', v.summary));
+    if (v.source) foot.appendChild(sourceChip(v.source, 'data', opts.onSource));
+    panel.appendChild(foot);
+    panel.appendChild(dataTable(rows, 'ws-sr-only'));
+    return panel;
+  }
+
   // ── Structured insight: one question answered as a decision product ──
   // Conclusion, key figures, a ranked bar chart, a trend line, drivers with sources,
   // freshness, the recommended next action and save options. Data is synthetic and fixed.
-  // opts: { onBack, onOpenApp }
+  // opts: { onBack, onOpenApp, onSource(name) }
   function insight(main, opts) {
     opts = opts || {};
-    var K = S(), I = D().insight, svg = K.svg;
+    var K = S(), I = D().insight;
     var wrap = K.el('div', 'wi');
     wrap.setAttribute('data-insight', '');
 
@@ -279,64 +457,16 @@
 
     var figs = K.el('div', 'wi-figs');
     I.figures.forEach(function(f) {
-      var t = K.el('div', 'wi-fig');
+      var t = K.el('div', 'wi-fig' + (f.tone ? ' is-' + f.tone : ''));
       t.appendChild(K.el('div', 'wi-fig-v', f.v));
       t.appendChild(K.el('div', 'wi-fig-k', f.k));
       figs.appendChild(t);
     });
     wrap.appendChild(figs);
 
+    // Charts come only from the supported registry; an invalid one falls back to a table
     var charts = K.el('div', 'wi-charts');
-    // Ranked horizontal bars, zero line inside the track so a fall reads leftwards
-    var rank = K.el('div', 'wi-panel');
-    rank.appendChild(K.el('div', 'wi-panel-title', I.rankingTitle));
-    var vals = I.ranking.map(function(r) { return r.v; });
-    var min = Math.min(0, Math.min.apply(null, vals)) - 2, max = Math.max.apply(null, vals) + 2;
-    var span = max - min, zero = (0 - min) / span * 100;
-    var bars = K.el('div', 'wi-bars');
-    bars.setAttribute('role', 'img');
-    bars.setAttribute('aria-label', I.rankingTitle + ': ' + I.ranking.map(function(r) { return r.label + ' ' + (r.v > 0 ? '+' : '') + r.v; }).join(', '));
-    I.ranking.forEach(function(r) {
-      var row = K.el('div', 'wi-bar-row' + (r.selected ? ' is-selected' : '') + (r.v >= 5 ? ' is-worse' : ''));
-      var name = K.el('div', 'wi-bar-name');
-      name.appendChild(K.el('span', 'wi-bar-label', r.label));
-      row.appendChild(name);
-      var track = K.el('div', 'wi-track');
-      var z = K.el('i', 'wi-zero');
-      z.style.left = zero + '%';
-      track.appendChild(z);
-      var fill = K.el('i', 'wi-fill');
-      var w = Math.abs(r.v) / span * 100;
-      fill.style.left = (r.v >= 0 ? zero : zero - w) + '%';
-      fill.style.width = w + '%';
-      track.appendChild(fill);
-      row.appendChild(track);
-      row.appendChild(K.el('span', 'wi-bar-v', (r.v > 0 ? '+' : '') + r.v));
-      bars.appendChild(row);
-    });
-    rank.appendChild(bars);
-    charts.appendChild(rank);
-
-    // Trend line for the selected service, with the appetite threshold
-    var trend = K.el('div', 'wi-panel');
-    trend.appendChild(K.el('div', 'wi-panel-title', I.trendTitle));
-    var TW = 300, TH = 78, pad = 6;
-    var tv = I.trend.values, tmin = Math.min.apply(null, tv.concat([I.trend.threshold])) - 4, tmax = Math.max.apply(null, tv) + 4;
-    function px(i) { return pad + i * (TW - 2 * pad) / (tv.length - 1); }
-    function py(v) { return TH - pad - (v - tmin) / (tmax - tmin) * (TH - 2 * pad); }
-    var g = svg('svg', { viewBox: '0 0 ' + TW + ' ' + TH, width: TW, height: TH, role: 'img', 'aria-label': I.trendTitle + ': ' + tv.join(', ') + '; threshold ' + I.trend.threshold });
-    g.setAttribute('class', 'wi-trend');
-    g.style.width = TW + 'px';
-    g.style.height = TH + 'px';
-    g.appendChild(svg('line', { x1: pad, x2: TW - pad, y1: py(I.trend.threshold), y2: py(I.trend.threshold), 'class': 'wi-threshold' }));
-    g.appendChild(svg('polyline', { points: tv.map(function(v, i) { return px(i).toFixed(1) + ',' + py(v).toFixed(1); }).join(' '), 'class': 'wi-line' }));
-    tv.forEach(function(v, i) { g.appendChild(svg('circle', { cx: px(i), cy: py(v), r: i === tv.length - 1 ? 4 : 2.5, 'class': v > I.trend.threshold ? 'wi-dot is-over' : 'wi-dot' })); });
-    trend.appendChild(g);
-    var months = K.el('div', 'wi-months');
-    I.trend.labels.forEach(function(m) { months.appendChild(K.el('span', null, m)); });
-    trend.appendChild(months);
-    trend.appendChild(K.el('div', 'wi-trend-note', I.trendNote));
-    charts.appendChild(trend);
+    I.visuals.forEach(function(v) { charts.appendChild(renderVisual(v, { onSource: opts.onSource })); });
     wrap.appendChild(charts);
 
     var drivers = K.el('div', 'wi-panel wi-drivers');
@@ -346,7 +476,7 @@
       var r = K.el('div', 'wi-driver' + (dr.gap ? ' is-gap' : ''));
       r.appendChild(K.icon(dr.gap ? 'ti-alert-triangle' : 'ti-trending-up'));
       r.appendChild(K.el('span', 'wi-driver-text', dr.text));
-      r.appendChild(chip(dr.source, dr.gap ? 'human' : 'data'));
+      r.appendChild(sourceChip(dr.source, dr.gap ? 'human' : 'data', opts.onSource));
       dl.appendChild(r);
     });
     drivers.appendChild(dl);
@@ -484,6 +614,8 @@
     isStatic: isStatic, setState: setState, goScreen: goScreen,
     btn: btn, chip: chip, label: label, meter: meter, dueLabel: dueLabel,
     shell: shell, queueCard: queueCard, nextRow: nextRow, home: home, insight: insight, assistPanel: assistPanel,
-    sequence: sequence, hide: hide, stepper: stepper
+    sequence: sequence, hide: hide, stepper: stepper,
+    sourceChip: sourceChip, evidenceDrawer: evidenceDrawer,
+    VISUAL_TYPES: Object.keys(VISUALS), validateVisual: validateVisual, renderVisual: renderVisual
   };
 }());

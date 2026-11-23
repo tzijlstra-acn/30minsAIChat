@@ -3,14 +3,15 @@
 // rises from Assist to role apps to automations to the Agent Builder, each with its
 // primary value. Three outcome groups are measured separately: risk, operating
 // performance, capacity and economics. The conversation ends on one decision for the
-// room: which role, decision and bounded journey becomes the first controlled loop.
+// room: which role, decision and bounded process becomes the first controlled loop, and
+// what evidence would authorise the next wave.
 SceneDirector.register('value-decision', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var W = 1040, H = 520;
   var STEP = { x0: 16, w: 246, gap: 8, base: 150, heights: [96, 112, 128, 144] };
-  var OUT = { y: 168, w: 330, gap: 9, h: 176 };
-  var Q = { y: 392, h: 120 };
+  var OUT = { y: 168, w: 330, gap: 9, h: 156 };
+  var Q = { y: 366, h: 132 };
 
   var cv = null;
   var n = {};
@@ -64,6 +65,7 @@ SceneDirector.register('value-decision', function(container, manifest, reduced) 
     var body = S.el('div', 'vd-q-body');
     body.appendChild(S.el('div', 'ts-label ts-ink ts-c-human', 'Workshop decision'));
     body.appendChild(S.el('div', 'vd-q-text', V.question));
+    body.appendChild(S.el('div', 'vd-q-next', V.next));
     var crit = S.el('div', 'vd-criteria');
     V.criteria.forEach(function(c) { crit.appendChild(S.el('span', 'ts-chip ts-c-human', c)); });
     body.appendChild(crit);
@@ -106,7 +108,7 @@ SceneDirector.register('value-decision', function(container, manifest, reduced) 
       var V = D.value;
       return 'Value grows from ' + D.capabilities.map(function(c) { return c.product + ' (' + c.value.toLowerCase() + ')'; }).join(' to ') + '. '
         + V.outcomes.map(function(o) { return o.label + ': ' + o.items.join(', ').toLowerCase(); }).join('. ') + '. ' + V.measureNote
-        + ' Workshop decision: ' + V.question + ' Criteria: ' + V.criteria.join(', ').toLowerCase() + '.';
+        + ' Workshop decision: ' + V.question + ' ' + V.next + ' Criteria: ' + V.criteria.join(', ').toLowerCase() + '.';
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };
