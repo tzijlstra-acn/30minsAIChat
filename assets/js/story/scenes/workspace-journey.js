@@ -5,14 +5,17 @@
 // follow-up questions. The automation trace shows how the case got here and that it
 // paused for a human. The professional makes the material judgement; only then is the
 // outcome recorded, actions created, monitoring scheduled and an audit receipt issued.
-// Beats: case-open, role-app-open, automation-trace-open, human-decision, decision-recorded.
+// Beats: case-open, role-app-open, automation-trace-open, decision-pending,
+// writeback-preview, writeback-complete (propose, inspect, approve, commit, receipt).
+// Opened from NFR Assist, the scene starts at the role app; after the commit the home
+// queue shows the review as recorded.
 SceneDirector.register('workspace-journey', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var K = window.WorkspaceKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var J = D.journey;
 
-  var BEATS = ['case-open', 'role-app-open', 'automation-trace-open', 'human-decision', 'decision-recorded'];
+  var BEATS = ['case-open', 'role-app-open', 'automation-trace-open', 'decision-pending', 'writeback-preview', 'writeback-complete'];
   var TYPE_ICON = { system: 'ti-database', rule: 'ti-list-check', 'ai-assisted': 'ti-sparkles', 'human-gate': 'ti-user-check' };
 
   var cv = null;
@@ -22,6 +25,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
   var view = null;
   var choice = null;
   var timers = [];
+  var entryBeat = 0;
 
   function C() { return window.TPRM_CASE; }
   function clearTimers() { timers.forEach(function(t) { t.destroy(); }); timers = []; }
@@ -39,6 +43,8 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     var sh = K.shell(cv.el, { active: 'cases', assist: 'rail' });
     sh.app.classList.add('is-framed');
     n.shell = sh;
+    var hand = window.NFRExperience && NFRExperience.takeHandoff ? NFRExperience.takeHandoff('workspace-journey') : null;
+    entryBeat = hand ? Math.max(0, BEATS.indexOf(hand)) : 0;
   }
 
   // Case header shared by every view of this case
@@ -235,6 +241,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     J.decisions.forEach(function(d) {
       var b = K.btn(d.label, { kind: d.proposed ? 'human' : 'option', icon: d.proposed ? 'ti-circle-check' : (d.id === 'hold' ? 'ti-hand-stop' : 'ti-arrow-big-right'), onClick: function() { choice = d; go(4); } });
       b.classList.add('wj-option');
+      b.setAttribute('data-decision', d.id);
       if (d.proposed) { b.classList.add('ws-cue'); b.appendChild(K.chip('Proposed', 'ai')); }
       opts.appendChild(b);
     });
@@ -246,17 +253,87 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     reveal([p], 0, 40);
   }
 
-  // ── Beat 4: recorded outcome and audit receipt ──
+  // ── Beat 4: write-back preview. Nothing is written until the professional confirms ──
+  function showPreview() {
+    var d = choice || J.decisions[0];
+    var WB = J.writeback;
+    showApp();
+    setTrace(false);
+    if (n.decision) { n.decision.remove(); n.decision = null; }
+    if (n.preview) n.preview.remove();
+    if (n.foot) n.foot.classList.add('is-hidden');
+    if (n.app) n.app.classList.add('is-behind');
+    if (n.status) { n.status.textContent = WB.pending; n.status.className = 'ws-chip ws-tone-human wj-status'; }
+    var p = S.el('div', 'wj-decide wj-preview');
+    var hd = S.el('div', 'wj-decide-head');
+    hd.appendChild(S.icon('ti-database'));
+    hd.appendChild(S.el('span', 'wj-decide-title', WB.title));
+    hd.appendChild(K.chip(WB.pending, 'human', 'ti-lock'));
+    hd.appendChild(S.el('span', 'wj-decide-note', WB.intro));
+    p.appendChild(hd);
+    var body = S.el('div', 'wj-preview-body');
+    var meta = S.el('dl', 'wj-preview-meta');
+    [['Target', WB.target], ['Record', WB.record], ['Decision', d.label], ['Approver', WB.approver], ['Evidence', WB.evidence]].forEach(function(kv) {
+      meta.appendChild(S.el('dt', null, kv[0]));
+      meta.appendChild(S.el('dd', null, kv[1]));
+    });
+    body.appendChild(meta);
+    var ch = S.el('div', 'wj-changes');
+    var hdr = S.el('div', 'wj-change wj-change-hd');
+    ['Field', 'Now', 'After you confirm'].forEach(function(h) { hdr.appendChild(S.el('span', null, h)); });
+    ch.appendChild(hdr);
+    d.changes.forEach(function(c) {
+      var r = S.el('div', 'wj-change');
+      r.appendChild(S.el('span', 'wj-change-k', c.field));
+      r.appendChild(S.el('span', 'wj-change-from', c.from));
+      r.appendChild(S.el('span', 'wj-change-to', c.to));
+      ch.appendChild(r);
+    });
+    body.appendChild(ch);
+    p.appendChild(body);
+    var foot = S.el('div', 'wj-preview-foot');
+    var checks = S.el('div', 'wj-checks');
+    WB.checks.forEach(function(c) { checks.appendChild(K.chip(c, 'proof', 'ti-circle-check')); });
+    foot.appendChild(checks);
+    foot.appendChild(K.btn(WB.back, { kind: 'ghost', icon: 'ti-arrow-back-up', onClick: function() { go(3); } }));
+    var confirm = K.btn(WB.confirm, { kind: 'human', icon: 'ti-circle-check', onClick: function() { go(5); } });
+    confirm.classList.add('ws-cue', 'wj-confirm');
+    foot.appendChild(confirm);
+    p.appendChild(foot);
+    n.shell.main.appendChild(p);
+    n.preview = p;
+    K.hide(p, 'ts-up');
+    reveal([p], 0, 40);
+  }
+
+  // ── Beat 5: committed. Recorded outcome, state change and audit receipt ──
   function showRecorded() {
     clearTimers();
     n.shell.clearMain();
     n.decision = null;
+    n.preview = null;
     n.trace = null;
     view = 'recorded';
     var d = choice || J.decisions[0];
     var r = J.receipt;
     var main = n.shell.main;
     caseHeader(main, 'Decision recorded', 'proof');
+    if (window.NFRExperience && NFRExperience.setFlag) NFRExperience.setFlag('reviewRecorded', { id: d.id, status: d.status, time: r.time });
+    // The state change the professional just caused: case status and queue position
+    var change = S.el('div', 'wj-statechange');
+    change.appendChild(S.icon('ti-refresh'));
+    var cs = S.el('span', 'wj-sc-item');
+    cs.appendChild(S.el('b', null, 'Case status'));
+    cs.appendChild(document.createTextNode(' ' + d.changes[0].from + ' → ' + d.status));
+    change.appendChild(cs);
+    var qs = S.el('span', 'wj-sc-item');
+    qs.appendChild(S.el('b', null, 'Queue'));
+    qs.appendChild(document.createTextNode(' ' + J.writeback.queueChange));
+    change.appendChild(qs);
+    var after = S.el('span', 'wj-sc-after');
+    after.appendChild(document.createTextNode('Automation resumed: ' + J.traceAfter.join(' · ').toLowerCase()));
+    change.appendChild(after);
+    main.appendChild(change);
     var wrap = S.el('div', 'wj-rec');
     var left = S.el('div', 'wj-rec-left');
     function item(icon, title, lines, tone) {
@@ -296,20 +373,21 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
 
     var foot = S.el('div', 'wj-foot');
     foot.appendChild(S.el('span', 'wj-principle', D.principle.join(' ')));
-    foot.appendChild(K.btn('Replay this case', { kind: 'ghost', icon: 'ti-refresh', onClick: function() { go(0); } }));
+    foot.appendChild(K.btn('Replay this case', { kind: 'ghost', icon: 'ti-refresh', onClick: function() { if (window.NFRExperience && NFRExperience.setFlag) NFRExperience.setFlag('reviewRecorded', null); go(0); } }));
     foot.appendChild(K.btn('Back to decisions', { kind: 'ghost', icon: 'ti-arrow-back-up', onClick: function() { K.goScreen('workspace-home'); } }));
     main.appendChild(foot);
+    K.hide(change, 'ts-up');
     K.hide(items, 'ts-left');
     K.hide(rc, 'ts-pop');
     K.hide(foot);
-    reveal([items[0], items[1], items[2], items[3], rc, foot], 160, 80);
+    reveal([change, items[0], items[1], items[2], items[3], rc, foot], 150, 80);
   }
 
   function toggleTrace(force) {
     var open = force === undefined ? !n.trace : !!force;
     if (beat === 1 && open) { go(2); return; }
     if (beat === 2 && !open) { go(1); return; }
-    if (beat === 3) { setTrace(open); K.setState(open ? 'automation-trace-open' : 'human-decision'); }
+    if (beat === 3) { setTrace(open); K.setState(open ? 'automation-trace-open' : 'decision-pending'); }
   }
 
   function go(b) {
@@ -317,8 +395,9 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     if (b === 0) { choice = null; showCase(); }
     else if (b === 1) { showApp(); setTrace(false); }
     else if (b === 2) { showApp(); setTrace(true); }
-    else if (b === 3) { showApp(); setTrace(false); showDecision(); }
-    else if (b === 4) { showRecorded(); }
+    else if (b === 3) { showApp(); setTrace(false); if (n.preview) { n.preview.remove(); n.preview = null; } showDecision(); }
+    else if (b === 4) { showPreview(); }
+    else if (b === 5) { showRecorded(); }
     K.setState(BEATS[b]);
     container.setAttribute('data-beat', BEATS[b]);
   }
@@ -330,7 +409,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
   }
 
   var steps = [
-    { delay: 60,   run: function() { go(0); } },
+    { delay: 60,   run: function() { go(entryBeat); } },
     { delay: 1500, run: function() { if (n.openApp) n.openApp.classList.add('is-ready'); } },
     { delay: 2200, run: complete }
   ];
@@ -350,7 +429,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
     renderError: function() { tl.reset(); clearTimers(); if (cv) cv.destroy(); S.restoreFallback(container); },
     advance: function() {
       if (!done) { finishEntry(); return true; }
-      if (beat === 3) { choice = J.decisions[0]; go(4); return true; }
+      if (beat === 3) { choice = choice || J.decisions[0]; go(4); return true; }
       if (beat < BEATS.length - 1) { go(beat + 1); return true; }
       return false;
     },
@@ -367,7 +446,7 @@ SceneDirector.register('workspace-journey', function(container, manifest, reduce
       var c = C();
       return 'Periodic third-party review ' + c.id + ' in the NFR Workspace. The case summary shows ' + J.summary.map(function(f) { return f.k.toLowerCase() + ': ' + f.v; }).join('; ')
         + '. The role app shows the evidence checklist, current versus previous, requirements, gaps and follow-up questions. The automation trace lists '
-        + J.trace.length + ' steps and ends paused for human challenge. The professional decides; then the outcome is recorded, actions are created, monitoring is scheduled and an audit receipt is issued.';
+        + J.trace.length + ' steps and ends paused for human challenge. The professional decides, inspects a write-back preview of exactly what changes, and confirms; only then is the outcome recorded, the case and queue status change, actions are created, monitoring is scheduled and an audit receipt is issued.';
     },
     destroy: function() { tl.destroy(); clearTimers(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

@@ -1,5 +1,5 @@
 {
-  "version": "28",
+  "version": "29",
   "story": "NFR Workspace: from firefighting to prepared judgement",
   "model": {
     "waysToWork": [
@@ -88,7 +88,7 @@
       "kind": "scene",
       "title": "One Workspace. Four ways to get work done.",
       "subtitle": "Ask, use, run and create, with the same identity, permissions, evidence and control record.",
-      "closingLine": "The Workspace is not the assistant. It is where all four work with the same role and controls.",
+      "closingLine": "Not every need is a chat. Pick the path that fits the work.",
       "question": "What is NFR Workspace?",
       "scene": "four-ways",
       "durationMs": 5900,
@@ -134,7 +134,7 @@
       "chapterId": "workspace",
       "kind": "app",
       "title": "Start with the next decision, not a blank chat.",
-      "subtitle": "A queue ranked for the role. Each card says why it is here, what changed and what is needed.",
+      "subtitle": "One decision now, then next and watched items. Each says why it is here, what changed and what was prepared.",
       "closingLine": "Chat is available, but it is not the organising principle.",
       "question": "Where does the day start?",
       "scene": "workspace-home",

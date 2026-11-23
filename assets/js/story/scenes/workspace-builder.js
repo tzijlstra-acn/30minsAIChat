@@ -5,16 +5,17 @@
 // output. The user reviews a five-step plan and presses Run. A staged, deterministic
 // run produces a one-page, source-linked briefing marked for human review. Reuse is
 // governed: run once, save privately, or request a reviewed team template, on a
-// promotion path that ends in a standard app or automation.
+// promotion path that ends in a standard app or automation. The result is visual:
+// concentration bars by provider and a 90-day timeline of expiring acceptances.
 // Builder flow: idle, goal-interpreted, scope-reviewed, plan-reviewed, running,
-// output-ready, saved-personal, publication-requested.
+// output-ready, saved-personal or scheduled-personal, publication-requested.
 SceneDirector.register('workspace-builder', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var K = window.WorkspaceKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var B = D.builder;
 
-  var STATES = ['agent-builder-goal', 'agent-builder-goal', 'agent-builder-scope', 'agent-builder-plan', 'agent-builder-output', 'agent-builder-save'];
+  var STATES = ['agent-builder-goal', 'agent-builder-goal', 'agent-builder-permissions', 'agent-builder-plan', 'agent-builder-result', 'agent-builder-save'];
   var FLOW = ['idle', 'goal-interpreted', 'scope-reviewed', 'plan-reviewed', 'output-ready', 'output-ready'];
 
   var cv = null;
@@ -22,7 +23,7 @@ SceneDirector.register('workspace-builder', function(container, manifest, reduce
   var done = false;
   var beat = 0;
   var running = false;
-  var reuseStage = -1;
+  var reuseId = null;
   var promptText = '';
   var goalEdits = null;
   var planEdits = null;
@@ -44,7 +45,7 @@ SceneDirector.register('workspace-builder', function(container, manifest, reduce
     done = false;
     beat = 0;
     running = false;
-    reuseStage = -1;
+    reuseId = null;
     promptText = '';
     goalEdits = null;
     planEdits = null;
@@ -314,28 +315,49 @@ SceneDirector.register('workspace-builder', function(container, manifest, reduce
     s1.appendChild(p);
     var s2 = sec(left, 'Top findings');
     R.findings.forEach(function(f) { var r = S.el('div', 'wa-find'); r.appendChild(S.el('span', null, f.text)); r.appendChild(cite(f.cite)); s2.appendChild(r); });
-    var s3 = sec(left, 'Concentration clusters');
+    var s3 = sec(left, R.clustersTitle);
+    var maxCount = Math.max.apply(null, R.clusters.map(function(c) { return c.count; }));
+    var conc = S.el('div', 'wa-conc');
+    conc.setAttribute('role', 'img');
+    conc.setAttribute('aria-label', R.clustersTitle + ': ' + R.clusters.map(function(c) { return c.provider + ' ' + c.count; }).join(', '));
     R.clusters.forEach(function(c) {
       var r = S.el('div', 'wa-cluster');
       var who = S.el('div', 'wa-cluster-who');
       who.appendChild(S.el('span', 'wa-cluster-name', c.provider));
       who.appendChild(S.el('span', 'wa-cluster-kind', c.kind));
       r.appendChild(who);
-      var dots = S.el('span', 'wa-dots');
-      for (var i = 0; i < 4; i++) dots.appendChild(S.el('i', i < c.count ? 'is-on' : ''));
-      r.appendChild(dots);
-      r.appendChild(S.el('span', 'wa-cluster-svc', c.count + ' · ' + c.services));
-      s3.appendChild(r);
+      var track = S.el('div', 'wa-conc-track');
+      var fill = S.el('i', 'wa-conc-fill' + (c.count === maxCount ? ' is-max' : ''));
+      fill.style.width = (c.count / maxCount * 100) + '%';
+      fill.appendChild(S.el('b', null, String(c.count)));
+      track.appendChild(fill);
+      r.appendChild(track);
+      r.appendChild(S.el('span', 'wa-cluster-svc', c.services));
+      conc.appendChild(r);
     });
+    s3.appendChild(conc);
 
-    var s4 = sec(right, 'Urgent expiries');
-    R.expiries.forEach(function(x) {
-      var r = S.el('div', 'wa-exp');
-      r.appendChild(K.chip(x.id, 'neutral'));
-      r.appendChild(S.el('span', 'wa-exp-text', x.text));
-      r.appendChild(K.chip(x.days + ' days', 'human', 'ti-clock'));
-      s4.appendChild(r);
+    var s4 = sec(right, R.expiryTitle);
+    var tlw = S.el('div', 'wa-timeline');
+    tlw.setAttribute('role', 'img');
+    tlw.setAttribute('aria-label', R.expiryTitle + ': ' + R.expiries.map(function(x) { return x.id + ' in ' + x.days + ' days'; }).join(', '));
+    var axis = S.el('div', 'wa-axis');
+    R.expiries.forEach(function(x, i) {
+      var m = S.el('div', 'wa-mark' + (i % 2 ? ' is-low' : ''));
+      m.style.left = (x.days / R.expiryWindow * 100) + '%';
+      m.appendChild(S.el('span', 'wa-mark-dot'));
+      m.appendChild(S.el('span', 'wa-mark-label', x.id + ' · ' + x.days + ' days'));
+      axis.appendChild(m);
     });
+    tlw.appendChild(axis);
+    var ticks = S.el('div', 'wa-ticks');
+    ['Today', '30 days', '60 days', R.expiryWindow + ' days'].forEach(function(t) { ticks.appendChild(S.el('span', null, t)); });
+    tlw.appendChild(ticks);
+    s4.appendChild(tlw);
+    var exp = S.el('div', 'wa-exp-line');
+    exp.appendChild(document.createTextNode(R.expiries.map(function(x) { return x.id + ': ' + x.text.toLowerCase(); }).join(' · ')));
+    exp.appendChild(cite(R.expiries[0].cite));
+    s4.appendChild(exp);
     var s5 = sec(right, 'Data gaps');
     R.gaps.forEach(function(g) { var r = S.el('div', 'wa-gap'); r.appendChild(S.icon('ti-alert-triangle')); r.appendChild(S.el('span', null, g)); s5.appendChild(r); });
     var s6 = sec(right, 'Recommended questions');
@@ -358,7 +380,7 @@ SceneDirector.register('workspace-builder', function(container, manifest, reduce
     n.body.innerHTML = '';
     beat = 4;
     n.stepper.set(3);
-    K.setState('agent-builder-output');
+    K.setState('agent-builder-result');
     flow('output-ready');
     var rep = report(n.body);
     n.report = rep.card;
@@ -388,8 +410,9 @@ SceneDirector.register('workspace-builder', function(container, manifest, reduce
     p.appendChild(title('Step 5 · Reuse and govern', 'Private by default', 'ai'));
     var opts = S.el('div', 'wa-reuse-opts');
     n.reuseBtns = B.reuse.map(function(r) {
-      var b = K.btn(r.label, { kind: 'option', icon: r.icon, onClick: function() { pick(r.stage); } });
+      var b = K.btn(r.label, { kind: 'option', icon: r.icon, onClick: function() { pick(r.id); } });
       b.classList.add('wa-reuse-btn');
+      b.setAttribute('data-reuse', r.id);
       opts.appendChild(b);
       return b;
     });
@@ -416,20 +439,20 @@ SceneDirector.register('workspace-builder', function(container, manifest, reduce
 
   function paintReuse() {
     if (!n.promo) return;
+    var pickd = B.reuse.filter(function(r) { return r.id === reuseId; })[0];
+    var stage = pickd ? pickd.stage : -1;
     n.promo.forEach(function(li, i) {
-      li.classList.toggle('is-done', reuseStage >= 0 && i < reuseStage);
-      li.classList.toggle('is-here', i === Math.max(reuseStage, 0));
+      li.classList.toggle('is-done', stage >= 0 && i < stage);
+      li.classList.toggle('is-here', i === Math.max(stage, 0));
     });
-    n.reuseBtns.forEach(function(b, i) { b.classList.toggle('is-picked', B.reuse[i].stage === reuseStage); b.setAttribute('aria-pressed', B.reuse[i].stage === reuseStage ? 'true' : 'false'); });
-    var pickd = B.reuse.filter(function(r) { return r.stage === reuseStage; })[0];
+    n.reuseBtns.forEach(function(b, i) { var on = B.reuse[i].id === reuseId; b.classList.toggle('is-picked', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
     n.reuseResult.textContent = pickd ? pickd.result : 'Choose how this agent is reused.';
     n.reuseResult.classList.toggle('is-set', !!pickd);
-    if (reuseStage === 1) flow('saved-personal');
-    else if (reuseStage === 2) flow('publication-requested');
-    else flow('output-ready');
+    var FLOWS = { save: 'saved-personal', schedule: 'scheduled-personal', template: 'publication-requested' };
+    flow(FLOWS[reuseId] || 'output-ready');
   }
 
-  function pick(stage) { reuseStage = stage; paintReuse(); }
+  function pick(id) { reuseId = id; paintReuse(); }
 
   function go(b) {
     beat = b;
@@ -481,8 +504,8 @@ SceneDirector.register('workspace-builder', function(container, manifest, reduce
       if (!done) { finishEntry(); return true; }
       if (running) { showOutput(); return true; }
       if (beat < 5) { go(beat + 1); return true; }
-      if (reuseStage < 1) { pick(1); return true; }
-      if (reuseStage < 2) { pick(2); return true; }
+      if (!reuseId || reuseId === 'once') { pick('save'); return true; }
+      if (reuseId !== 'template') { pick('template'); return true; }
       return false;
     },
     getAccessibleSummary: function() {

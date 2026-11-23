@@ -38,10 +38,10 @@ SceneDirector.register('workspace-boot', function(container, manifest, reduced) 
     sh.main.appendChild(skel);
     n.skel = skel;
 
-    var q = K.queue(sh.main, { onOpen: function() { K.goScreen('workspace-journey'); } });
+    var q = K.home(sh.main, { onOpen: function() { K.goScreen('workspace-journey'); } });
     q.el.classList.add('wb-queue');
     K.hide(q.head);
-    q.cards.forEach(function(c) { K.hide(c, 'ts-up'); });
+    q.parts.forEach(function(c) { K.hide(c, 'ts-up'); });
     n.queue = q;
 
     n.assist = K.assistPanel(sh.assist, {});
@@ -102,7 +102,7 @@ SceneDirector.register('workspace-boot', function(container, manifest, reduced) 
     { delay: 1360, run: function() { loaded(3); } },
     { delay: 1460, run: function() { S.on(n.ready); n.boot.classList.add('is-ready'); } },
     { delay: 1680, run: function() { n.boot.classList.add('is-gone'); S.on([n.shell.top, n.shell.nav]); S.on(n.skels); } },
-    { delay: 1900, run: function() { n.skel.classList.add('is-gone'); S.on(n.queue.head); S.on(n.queue.cards); } },
+    { delay: 1900, run: function() { n.skel.classList.add('is-gone'); S.on(n.queue.head); S.on(n.queue.parts); } },
     { delay: 2150, run: function() { S.on(n.shell.assist); } },
     { delay: 2400, run: complete }
   ];
@@ -124,8 +124,8 @@ SceneDirector.register('workspace-boot', function(container, manifest, reduced) 
     advance: function() { if (done) return false; finishNow(); return true; },
     getAccessibleSummary: function() {
       return 'The NFR Workspace starts up for the ' + D.role.label + ', a synthetic demonstration. It loads '
-        + D.boot.statuses.join(', ').toLowerCase() + ', then reports ready. The decision queue appears with '
-        + D.queue.length + ' prepared cases, and NFR Assist opens last, beside the work.';
+        + D.boot.statuses.join(', ').toLowerCase() + ', then reports ready. The decision-first home appears: one decision now and '
+        + D.home.next.length + ' next, and NFR Assist opens last, beside the work.';
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

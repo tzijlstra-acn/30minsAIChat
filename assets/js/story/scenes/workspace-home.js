@@ -1,9 +1,12 @@
-// Scene: workspace-home (v2 screen 07)
-// Causal story: the working day starts from a decision queue, not a blank chat. Each
-// card says why it is here, what changed, how complete the evidence is, which decision
-// is needed and when. The first card's anatomy lights up field by field. NFR Assist sits
-// beside the work with three questions about it; Space (or a click) asks them in turn.
-// "Open case" leads into the periodic-review journey on the next screen.
+// Scene: workspace-home (screen 07)
+// Causal story: the working day starts from decisions, not a blank chat. One item is
+// dominant (Now: the periodic review due today), two follow (Next), three signals are
+// watched and the overnight work is quiet (Done by the Workspace). Each item says why
+// it is here, what changed, what was prepared and which decision is needed.
+// NFR Assist sits beside the work. Space asks it a portfolio question, answered as a
+// visual, source-linked insight; Space again asks what changed, and Assist hands the
+// work to the Periodic Review app; Space again opens that app on the next screen.
+// After the review is recorded (screen 08), the queue shows it as done.
 SceneDirector.register('workspace-home', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var K = window.WorkspaceKit;
@@ -13,8 +16,39 @@ SceneDirector.register('workspace-home', function(container, manifest, reduced) 
   var n = {};
   var done = false;
   var asked = -1;
+  var view = 'home';
+  var timers = [];
+
+  function clearTimers() { timers.forEach(function(t) { t.destroy(); }); timers = []; }
+  function recorded() { return window.NFRExperience && NFRExperience.getFlag ? NFRExperience.getFlag('reviewRecorded') : null; }
+
+  function openApp() {
+    if (window.NFRExperience && NFRExperience.handoff) NFRExperience.handoff('workspace-journey', 'role-app-open');
+    K.goScreen('workspace-journey');
+  }
+  function openCase() { K.goScreen('workspace-journey'); }
+
+  function showHome() {
+    clearTimers();
+    n.shell.clearMain();
+    view = 'home';
+    n.home = K.home(n.shell.main, { onOpen: openCase, recorded: recorded() });
+    n.fields = n.home.fields;
+    K.setState('workspace-home');
+  }
+
+  function showInsight() {
+    clearTimers();
+    n.shell.clearMain();
+    view = 'insight';
+    var ins = K.insight(n.shell.main, { onBack: function() { showHome(); }, onOpenApp: openApp });
+    K.hide(ins.parts, 'ts-up');
+    timers.push(K.sequence(ins.parts, 110, 40));
+    K.setState('insight-visible');
+  }
 
   function build() {
+    clearTimers();
     if (cv) cv.destroy();
     cv = S.canvas(container, K.W, K.H, { id: 'ws-home', maxScale: 1.4 });
     n = {};
@@ -23,15 +57,18 @@ SceneDirector.register('workspace-home', function(container, manifest, reduced) 
     var sh = K.shell(cv.el, { active: 'home', assist: 'panel' });
     sh.app.classList.add('is-framed');
     n.shell = sh;
-    n.queue = K.queue(sh.main, { onOpen: function() { K.goScreen('workspace-journey'); } });
-    n.fields = Array.prototype.slice.call(n.queue.cards[0].querySelectorAll('.ws-field'));
-    n.assist = K.assistPanel(sh.assist, { onAsk: function(i) { asked = i; } });
+    n.assist = K.assistPanel(sh.assist, {
+      onAsk: function(i) { asked = i; },
+      onInsight: showInsight,
+      onOpenApp: openApp
+    });
     n.sugg = n.assist.questions;
     K.hide(n.sugg, 'ts-up');
+    showHome();
   }
 
   function emphasise(i) {
-    n.fields.forEach(function(f, j) { f.classList.toggle('is-lit', j === i); });
+    (n.fields || []).forEach(function(f, j) { f.classList.toggle('is-lit', j === i); });
   }
 
   function complete() {
@@ -42,12 +79,12 @@ SceneDirector.register('workspace-home', function(container, manifest, reduced) 
 
   var steps = [
     { delay: 100,  run: function() { K.setState('workspace-home'); } },
-    { delay: 500,  run: function() { emphasise(0); } },
-    { delay: 950,  run: function() { emphasise(1); } },
-    { delay: 1400, run: function() { emphasise(2); } },
-    { delay: 1850, run: function() { emphasise(3); } },
-    { delay: 2350, run: function() { emphasise(-1); n.queue.cards[0].classList.add('is-read'); S.on(n.sugg); } },
-    { delay: 2600, run: complete }
+    { delay: 450,  run: function() { emphasise(0); } },
+    { delay: 850,  run: function() { emphasise(1); } },
+    { delay: 1250, run: function() { emphasise(2); } },
+    { delay: 1650, run: function() { emphasise(3); } },
+    { delay: 2150, run: function() { emphasise(-1); S.on(n.sugg); } },
+    { delay: 2500, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -60,23 +97,26 @@ SceneDirector.register('workspace-home', function(container, manifest, reduced) 
     finish: function() { build(); cv.setStatic(true); tl.finish(); },
     resize: function() { if (cv) cv.fit(); },
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
-    renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
-    // Space asks the suggested questions in order, then the deck moves on
+    renderError: function() { tl.reset(); clearTimers(); if (cv) cv.destroy(); S.restoreFallback(container); },
+    // Space: the visual insight, then the hand-off from Assist, then the role app
     advance: function() {
-      if (!done) { if (cv) cv.setStatic(true); tl.finish(); return true; }
-      var next = asked + 1;
-      if (next >= D.assist.questions.length) return false;
-      n.assist.ask(next);
-      asked = next;
-      return true;
+      if (!done) { if (cv) cv.setStatic(true); tl.finish(); if (cv && !K.isStatic()) cv.setStatic(false); return true; }
+      if (asked < 0 || (asked === 0 && view !== 'insight')) { n.assist.ask(0); asked = 0; return true; }
+      if (asked === 0) { n.assist.ask(1); asked = 1; return true; }
+      if (asked >= 1) { openApp(); return true; }
+      return false;
+    },
+    key: function(k) {
+      if (k === 'Escape' && view === 'insight') { showHome(); return true; }
+      return false;
     },
     getAccessibleSummary: function() {
-      var q = D.queue[0];
-      return 'Workspace home for the ' + D.role.label + '. ' + D.queue.length + ' decisions are waiting. The first is a '
-        + q.journey.toLowerCase() + ' for ' + q.id + ': ' + q.why.toLowerCase() + '; ' + q.changed.toLowerCase() + '; evidence '
-        + q.evidenceHave + ' of ' + q.evidenceTotal + '; decision required: ' + q.decision.toLowerCase() + '. NFR Assist offers three questions: '
-        + D.assist.questions.map(function(x) { return x.q; }).join(' ');
+      var H = D.home, q = H.now;
+      return 'Workspace home for the ' + D.role.label + '. Now: ' + q.journey.toLowerCase() + ' ' + q.id + ', ' + q.title + '. Why it is here: ' + q.why.toLowerCase()
+        + '. What changed: ' + q.changed.toLowerCase() + '. Prepared: ' + q.prepared.toLowerCase() + '. Decision needed: ' + q.decision.toLowerCase() + '. Next: '
+        + H.next.map(function(x) { return x.title; }).join(' and ') + '. Watching: ' + H.watching.map(function(w) { return w.text; }).join('; ')
+        + '. NFR Assist offers: ' + D.assist.questions.map(function(x) { return x.q; }).join(' ');
     },
-    destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
+    destroy: function() { tl.destroy(); clearTimers(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };
 });

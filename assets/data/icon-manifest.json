@@ -87,6 +87,10 @@
     { "name": "shield-lock",         "class": "ti-shield-lock",          "semantic": "boundary" },
     { "name": "stack-2",             "class": "ti-stack-2",              "semantic": "reference" },
     { "name": "users-group",         "class": "ti-users-group",          "semantic": "ui" },
-    { "name": "wand",                "class": "ti-wand",                 "semantic": "builder" }
+    { "name": "wand",                "class": "ti-wand",                 "semantic": "builder" },
+    { "name": "trending-up",         "class": "ti-trending-up",          "semantic": "trend" },
+    { "name": "hierarchy-2",         "class": "ti-hierarchy-2",          "semantic": "concentration" },
+    { "name": "pin",                 "class": "ti-pin",                  "semantic": "save" },
+    { "name": "paperclip",           "class": "ti-paperclip",            "semantic": "save" }
   ]
 }
