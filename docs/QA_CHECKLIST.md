@@ -66,7 +66,7 @@ No screen claims an internal asset is used, shipped or production ready.
 | Internal asset names, source, screenshots or archive contents | None in tracked files or history; automated check on the appendix pages; asset detail kept in git-ignored `*.local.md` |
 | Confidential presenter notes in public files | None; internal talk track only in a local, git-ignored file |
 | Reliance on the password | None; the gate is presentation-only and the guide says so |
-| Personal information | **Open decision.** The team appendix publishes seven colleagues' names, work emails and photos; `claims.json` lists one owner email. Confirm consent or remove before the next public deploy |
+| Personal information | Decided 2026-11-23 by the deck owner: the team appendix (seven colleagues' names, work emails and photos) and the owner email in `claims.json` stay as they are |
 
 ## 5. Visual (brief 13.5)
 
