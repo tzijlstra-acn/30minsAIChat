@@ -56,3 +56,33 @@ Audit of the repository as found on 2026-11-23, and the decisions taken for v2.
 | Styles for v2 scenes and the application | `assets/css/workspace.css` |
 | Presenter guide | `docs/PRESENTER_GUIDE.md` |
 | QA checklist | `docs/QA_CHECKLIST.md` |
+
+## 5. What v2 delivers
+
+| Priority | Item | State |
+|---|---|---|
+| P0 | NFR OS rebranded as NFR Workspace (title, nav, edge rail, copy, manifest) | Done |
+| P0 | Core route rebuilt on four ways to work and three layers to scale (12 screens, 4 chapters) | Done |
+| P0 | Workspace start-up (about 2.3 s, skippable, replayable, reduced-motion aware) | Done |
+| P0 | Workspace home with decision queue and NFR Assist | Done |
+| P0 | Periodic-review journey: summary, role app, automation trace, human decision, recorded outcome, audit receipt | Done |
+| P0 | Agent Builder: goal, scope and permissions before any run, plan, staged run, cited briefing, reuse and promotion path | Done |
+| P0 | Control boundary, six-month three-lane roadmap, value and workshop decision | Done |
+| P0 | Reset, replay and safe mode (`?safe=1` and nav toggle) | Done |
+| P0 | Synthetic, bank-neutral data only | Done |
+| P0 | Presenter guide (`docs/PRESENTER_GUIDE.md`) | Done |
+| P1 | Technical depth drawer: reference architecture, agent governance lifecycle, control catalogue, measurement library (key T) | Done |
+| P1 | Automation trace with step types and the human gate | Done |
+| P1 | Repeatable visual QA (`npm run qa:visual`) | Done |
+| P1 | Dedicated evidence and citation drawer | Not built. Citations and sources show inline in the role app, NFR Assist and the briefing |
+| P2 | Node diagrams, more journeys, theme switcher, mobile, live LLM | Not started, by design |
+
+## 6. Notes for maintainers
+
+- **Demo beats.** App scenes expose `advance()` (Space) and `key()` (A, Escape) to SceneDirector. A scene re-mounts on every arrival, so a demo always starts from its first beat. `NFRExperience.get()` and `body[data-ws-state]` report the current state; `body[data-builder-state]` reports the builder flow.
+- **Copy.** Change words in `assets/data/workspace-demo.js` (or `tprm-case.js` for the case), never in scene code; a test fails if scenes hard-code case facts or product names.
+- **Headlines.** Edit the `<h2>` and `.slide-sub` in `pitch.html`, then regenerate the manifest from the DOM (the generator lives outside the repo; the test "manifest titles match the screen titles" catches drift).
+- **Build stamp.** `node scripts/stamp-build.js v28` after the final commit sets the release, the commit and every `?v=` string.
+- **Retired screens.** The v27 scenes and their CSS were removed. `git show baseline-pre-workspace-v2:pitch.html` and the tag restore the previous route.
+- **Prototype captures.** `assets/img/nfros/` still shows the prototype's working title. Recapture when the prototype is rebranded.
+- **Historical notes.** `TRANSITION_RELEASE.md`, `TRANSITION_BASELINE.md`, `V23_BASELINE.md` and `AUDIT_BASELINE.md` describe earlier releases and still use the old name.

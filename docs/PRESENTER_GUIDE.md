@@ -9,7 +9,7 @@ Twelve screens, about 30 minutes, for two buyers: the NFR business owner (main r
 | Open the deck | `pitch.html` on GitHub Pages, or `npm run serve` and open `http://localhost:8080`. Enter the access code (shared separately). |
 | Screen size | Any 16:9 screen from 1366 x 768 up. Share the browser tab or window in Teams, not the whole desktop. Full screen: F11. |
 | Reset | Press `0` before you begin. Everything returns to the cover. |
-| If the laptop is slow | Turn on safe mode (the square icon in the nav bar, or add `?safe=1` to the address). Every screen shows its final state and every demo button still works. |
+| If the laptop is slow | Turn on safe mode (the square icon in the nav bar, or add `?safe=1` to the address). Every screen shows its final state and every demo button still works. Switching it re-renders the current screen, so a demo restarts at its first step; switch before you start a demo. |
 | Focus | Click once on an empty part of the screen before using the keyboard. If a button has focus, Space presses that button. |
 
 ### Keys
