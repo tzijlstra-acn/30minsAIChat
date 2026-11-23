@@ -1,11 +1,12 @@
-// -- PRESENTER CONTROLS -- v4 --
+// -- PRESENTER CONTROLS -- v5 --
 // Experience state, presenter keys, safe mode, the shortcut overlay, the technical-depth
 // drawer and the return-to-story control. navigation.js hands every keydown to
 // handleKey() first.
 //
 // Keys: Space advances the scripted demo, then moves on. W enters the Workspace.
 // A toggles the automation trace. T opens technical depth. R replays or resets the
-// current screen. 0 resets the whole experience to the cover. ? lists the keys.
+// current screen. S toggles safe mode. 0 resets the whole experience to the cover.
+// ? lists the keys. Arrows and Page Up / Page Down (clickers) move between screens.
 // Escape closes the top overlay; in the Workspace with nothing open it returns to the story.
 // Exposes: window.NFRExperience, window.PresenterControls
 
@@ -24,13 +25,25 @@
     'six-month-route': 'roadmap', 'value-decision': 'value'
   };
 
+  // ── The experience state model: every state the route can be in, in route order ──
+  // Story screens map through STATE_BY_SCREEN; the Workspace screens set their own beats.
+  var STATES = [
+    'cover', 'assistance', 'integration-burden', 'four-ways', 'three-layers',
+    'booting', 'workspace-home', 'insight-visible', 'source-detail-open',
+    'case-open', 'role-app-open', 'automation-trace-open', 'decision-pending', 'writeback-preview', 'writeback-complete',
+    'agent-builder-goal', 'agent-builder-permissions', 'agent-builder-plan', 'agent-builder-running', 'agent-builder-result', 'agent-builder-save',
+    'control-boundary', 'roadmap', 'value', 'appendix'
+  ];
+
   // ── Experience state, session flags and hand-offs between screens ──
   var _state = 'cover';
   var _flags = {};
   var _handoff = null;
   var NFRExperience = {
     get: function() { return _state; },
+    states: function() { return STATES.slice(); },
     set: function(s) {
+      if (STATES.indexOf(s) < 0 && window.console) console.warn('NFRExperience: unknown state ' + s);
       _state = s;
       if (document.body) document.body.setAttribute('data-ws-state', s);
     },
@@ -128,13 +141,14 @@
 
   // Presenter keys
   var KEYS = [
-    ['Right / Left', 'Next or previous screen'],
+    ['Right / Left, Page Down / Up', 'Next or previous screen (works with a clicker)'],
     ['Space', 'Advance the demo step; at the last step, next screen'],
     ['W', 'Enter the NFR Workspace'],
     ['A', 'Show or hide the automation trace (case demo)'],
-    ['T', 'Technical depth: capability choice, architecture, runtime, lifecycle, write-back'],
+    ['T', 'Technical depth: appendix A to G in a drawer'],
     ['R', 'Replay the screen or reset the active demo'],
-    ['Escape', 'Close the open panel; in the Workspace, back to the story'],
+    ['Escape', 'Close the open panel; in the Workspace or the appendix, back to the story'],
+    ['S', 'Safe mode on or off: final states, no animation'],
     ['0', 'Reset everything and return to the cover'],
     ['G', 'Agenda'],
     ['?', 'This list']
@@ -148,11 +162,11 @@
       list.appendChild(el('dd', null, k[1]));
     });
     o.panel.appendChild(list);
-    o.panel.appendChild(el('p', 'pc-note', 'Safe mode (nav bar, or add ?safe=1 to the address) shows every screen in its final state without animation. The demo controls keep working.'));
+    o.panel.appendChild(el('p', 'pc-note', 'Safe mode (S, the nav bar, or ?safe=1 in the address) shows every screen in its final state without animation. The demo controls keep working.'));
     _keys = o.ov;
   }
 
-  // Technical depth drawer: the same topics as appendix A to E, from one renderer
+  // Technical depth drawer: the same topics as appendix A to G, from one renderer
   function buildTech() {
     var o = overlayShell('techDrawer', 'Technical depth', 'techTitle');
     o.ov.classList.add('pc-drawer');
@@ -250,6 +264,7 @@
     if (k === 't' || k === 'T') { e.preventDefault(); showTech(); return true; }
     if (k === 'w' || k === 'W') { e.preventDefault(); if (typeof goToId === 'function') goToId(WORKSPACE_ENTRY); return true; }
     if (k === '0') { e.preventDefault(); resetAll(); return true; }
+    if (k === 's' || k === 'S') { e.preventDefault(); toggleSafe(); return true; }
     if (k === 'a' || k === 'A') {
       if (window.SceneDirector && SceneDirector.key('a')) { e.preventDefault(); return true; }
       return false;

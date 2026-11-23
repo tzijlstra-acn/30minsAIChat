@@ -470,16 +470,17 @@
       criteria: ['High manual integration burden', 'Bounded data and decision path', 'Measurable risk and operating outcome']
     },
 
-    // ── Appendix A to E and measures: rendered as appendix pages and in the drawer (T) ──
+    // ── Appendix A to G: rendered as appendix pages and in the technical drawer (T) ──
     // Public-safe: no internal asset is named; the runtime is described generically.
     technical: {
       tabs: [
-        { id: 'choice', label: 'A · Capability choice', page: 'appendix-capability-choice' },
-        { id: 'architecture', label: 'B · Architecture', page: 'appendix-architecture' },
-        { id: 'runtime', label: 'C · Runtime reuse', page: 'appendix-runtime-reuse' },
-        { id: 'lifecycle', label: 'D · Agent lifecycle', page: 'appendix-agent-lifecycle' },
-        { id: 'writeback', label: 'E · Governed write-back', page: 'appendix-writeback' },
-        { id: 'metrics', label: 'Measures' }
+        { id: 'choice', letter: 'A', label: 'A · Capability choice', page: 'appendix-capability-choice' },
+        { id: 'authority', letter: 'B', label: 'B · AI, rules, people', page: 'appendix-authority' },
+        { id: 'architecture', letter: 'C', label: 'C · Architecture', page: 'appendix-architecture' },
+        { id: 'writeback', letter: 'D', label: 'D · Write-back', page: 'appendix-writeback' },
+        { id: 'lifecycle', letter: 'E', label: 'E · Agent lifecycle', page: 'appendix-agent-lifecycle' },
+        { id: 'runtime', letter: 'F', label: 'F · Runtime reuse', page: 'appendix-runtime-reuse' },
+        { id: 'proof', letter: 'G', label: 'G · Proof gates', page: 'appendix-proof-gates' }
       ],
       choice: {
         headline: 'Every NFR need has a suitable path.',
@@ -492,11 +493,26 @@
         ],
         footer: 'Not every question needs an agent. Not every agent should become an application. Recurrence, materiality and control needs decide the path.'
       },
+      authority: {
+        headline: 'Different work belongs to different control mechanisms.',
+        columns: [
+          { id: 'ai', label: 'AI-assisted', icon: 'ti-wand', items: ['Search and summarise evidence', 'Extract information', 'Compare current and previous state', 'Draft findings and questions', 'Suggest actions'] },
+          { id: 'rules', label: 'Deterministic rules and services', icon: 'ti-route', items: ['Identity and permissions', 'Mandatory evidence checks', 'Thresholds and due dates', 'Routing and escalation', 'Write-back controls'] },
+          { id: 'human', label: 'Human authority', icon: 'ti-user-check', items: ['Challenge evidence', 'Determine materiality', 'Approve the risk conclusion', 'Select treatment or escalation', 'Approve material write-back'] }
+        ],
+        demoTitle: 'In the periodic review demonstrated',
+        demo: [
+          { id: 'ai', text: 'Changes identified, requirements mapped, exceptions prepared' },
+          { id: 'rules', text: 'Review due, freshness checked, scope and authority checked' },
+          { id: 'human', text: 'Evidence challenged, condition decided, write-back approved' }
+        ],
+        footer: 'AI prepares. Rules constrain. Professionals decide. Systems record.'
+      },
       architecture: {
         headline: 'The Workspace owns the experience. Approved runtime services execute the work. Systems of record remain authoritative.',
         layers: [
           { label: 'NFR Workspace', note: 'Business experience', items: ['Role queue', 'NFR Assist', 'Role apps', 'Agent Builder', 'Visual insights', 'Decisions and write-back preview'] },
-          { label: 'NFR runtime gateway', note: 'Stable contract', items: ['Identity and role mapping', 'Case correlation', 'Structured request and result contract', 'Permission and policy checks', 'Approval orchestration', 'Audit correlation'] },
+          { label: 'NFR runtime gateway', note: 'Stable contract', items: ['Identity and role mapping', 'Case correlation', 'Structured request and result contract', 'Output validation', 'Permission and policy checks', 'Approval orchestration', 'Audit correlation'] },
           { label: 'Approved enterprise execution services', note: 'Execution', items: ['Agents and skills', 'Triggers and schedules', 'Multi-step flows', 'Memory and knowledge', 'Governed connectors', 'Human gates', 'Cost and runtime controls'] },
           { label: 'Authoritative enterprise systems', note: 'System of record', items: ['GRC', 'Documents and policy', 'Third-party inventory', 'Issues and actions', 'Incidents', 'Controls and KRIs', 'Collaboration channels'] }
         ],
@@ -549,13 +565,30 @@
           ['First-line and second-line separation', 'Preparation and challenge stay with different roles.']
         ]
       },
-      metrics: [
-        ['Evidence quality', ['Evidence completeness', 'Evidence freshness', 'Extraction and citation accuracy', 'Material-change detection recall']],
-        ['Decision quality', ['Human override rate and reason', 'Rework', 'Unsupported or unauthorised writebacks', 'Audit replay success']],
-        ['Process performance', ['Touch time', 'Cycle time', 'Overdue cases', 'Run cost per case or report']],
-        ['Ad hoc and adoption', ['Time to create an ad hoc report', 'Ad hoc agent reuse rate', 'Promotion rate to governed templates', 'Adoption by eligible users and cases']]
-      ],
-      metricsNote: 'Waiting time saved is reported as elapsed time, not as headcount.'
+      proof: {
+        headline: 'A bounded proof earns the right to scale.',
+        gatesTitle: 'Four gates before the next wave',
+        gates: [
+          { label: 'Process and data viability', note: 'Sources, access and case state confirmed' },
+          { label: 'Output quality', note: 'Extraction, citation and change detection tested' },
+          { label: 'Control readiness', note: 'Permissions, approvals, audit and fallback in place' },
+          { label: 'Live or representative proof', note: 'The full loop runs on real or representative cases' }
+        ],
+        measuresTitle: 'Example measures',
+        metrics: [
+          ['Evidence quality', 'Completeness and freshness'],
+          ['Accuracy', 'Extraction and citation correctness'],
+          ['Risk sensitivity', 'Material-change detection recall'],
+          ['Human control', 'Override or disagreement rate, with the reason'],
+          ['Process', 'Human touch time, rework and cycle time'],
+          ['Timeliness', 'Reduction in overdue cases'],
+          ['Control', 'Unsupported or unauthorised write-backs'],
+          ['Auditability', 'Share of cases fully replayable'],
+          ['Economics', 'Run cost per prepared review'],
+          ['Adoption', 'Eligible cases using the controlled flow']
+        ],
+        footer: 'The first proof does not rest on avoided-loss or breach-reduction claims. Waiting time saved is reported as elapsed time, not headcount.'
+      }
     }
   };
 

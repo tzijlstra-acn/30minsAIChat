@@ -164,7 +164,11 @@ function setRouteMode(mode){
 function _scrollMode(target){
   var from=sections[current];
   var safe=document.documentElement.classList.contains('safe-mode');
-  return (safe||(from&&target&&from.dataset.kind==='app'&&target.dataset.kind==='app'))?'instant':'smooth';
+  var appToApp=from&&target&&from.dataset.kind==='app'&&target.dataset.kind==='app';
+  // v5: a jump between the story and the appendix is instant, so it never passes
+  // through (and enters) the screens in between
+  var crossing=from&&target&&_isRefSec(from)!==_isRefSec(target)&&Math.abs(sections.indexOf(target)-current)>1;
+  return (safe||appToApp||crossing)?'instant':'smooth';
 }
 function goToIndex(i){
   if(i<0)i=0;if(i>=sections.length)i=sections.length-1;
@@ -209,7 +213,7 @@ function updateNav(idx){
   // Agenda links
   document.querySelectorAll('.agenda-slide-link').forEach(function(a){a.classList.toggle('active',parseInt(a.dataset.sidx)===idx);});
   // Hash update
-  if(sec&&sec.id)history.replaceState(null,null,'#'+sec.id);
+  _syncHistory(sec);
   // Left-edge rail highlight
   if(typeof window.edgeRailHighlight==='function'&&sec&&sec.id)window.edgeRailHighlight(sec.id);
   // v2: experience state and presenter controls follow the screen
@@ -227,6 +231,43 @@ function updateNav(idx){
   var pb=document.getElementById('scenePauseBtn');
   if(pb){var pi=pb.querySelector('i');if(pi)pi.className='ti ti-player-pause';}
 }
+
+// ── HISTORY ──
+// v5: the story keeps one history entry, updated in place. Entering the appendix from
+// the story adds one entry, so browser Back returns to the screen that opened it and
+// Forward goes back in. Back, Forward and an edited address land on the screen the
+// hash names, instantly, so the experience never shows a stale screen.
+var _navPrev=null,_popTarget=null;
+function _isRefSec(s){return !!(s&&(s.dataset.chapterId==='reference'||s.dataset.route==='reference'));}
+function _syncHistory(sec){
+  if(!sec||!sec.id)return;
+  // The atlas keeps its view in the hash (#ref/<view>)
+  var atlasHash=/^#ref\//.test(location.hash);
+  var url=(sec.id==='ref-room'&&atlasHash)?location.hash:'#'+sec.id;
+  var entering=_navPrev&&_isRefSec(sec)&&!_isRefSec(_navPrev)&&_popTarget!==sec.id;
+  if(entering){
+    // The story entry keeps the screen that was left, even if the atlas already wrote its view
+    history.replaceState({nfr:_navPrev.id},'','#'+_navPrev.id);
+    history.pushState({nfr:sec.id},'',url);
+  } else {
+    history.replaceState({nfr:sec.id},'',url);
+  }
+  if(_popTarget===sec.id)_popTarget=null;
+  _navPrev=sec;
+}
+function _goToHash(){
+  var h=location.hash.slice(1);
+  if(!h)return;
+  var id=/^ref\//.test(h)?'ref-room':h;
+  var sec=document.getElementById(id);
+  if(!sec||!sec.hasAttribute('data-slide')||sections[current]===sec)return;
+  _popTarget=id;
+  sec.scrollIntoView({behavior:'instant'});
+}
+// The deck, not the browser, decides where Back and Forward land
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+window.addEventListener('popstate',_goToHash);
+window.addEventListener('hashchange',_goToHash);
 
 function setupObservers(){
   var slideObs=new IntersectionObserver(function(entries){
@@ -303,8 +344,8 @@ document.addEventListener('keydown',function(e){
   // Let focused buttons and links activate with Space and Enter
   if((tag==='BUTTON'||tag==='A')&&(e.key===' '||e.key==='Enter'))return;
   if(window.PresenterControls&&PresenterControls.handleKey(e))return;
-  if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();goToIndex(current+1);}
-  else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();goToIndex(current-1);}
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='PageDown'){e.preventDefault();goToIndex(current+1);}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();goToIndex(current-1);}
   else if((e.key==='g'||e.key==='G')&&!e.metaKey&&!e.ctrlKey){e.preventDefault();openAgenda();}
   else if(e.key==='Escape'){closeAgenda();closeDrawer();}
   else if((e.key==='r'||e.key==='R')&&!e.metaKey&&!e.ctrlKey){

@@ -6,8 +6,8 @@
  *
  * For each presentation size (1920x1080, 1600x900, 1440x900, 1366x768) it captures:
  *   - every core screen in its final state (reduced motion), and
- *   - every beat of the Workspace demo (v4: insight, hand-off, write-back preview),
- *     driven with the presenter keys, and the five appendix pages A to E.
+ *   - every beat of the Workspace demo (insight, source detail, hand-off, write-back
+ *     preview, receipt), driven with the presenter keys, and the appendix pages A to G.
  * It prints console errors and the experience state at each beat, and exits 1 on errors.
  * Screenshots land in <out>/<size>/; artifacts/ is gitignored.
  */
@@ -56,6 +56,7 @@ async function run() {
     await page.evaluate(function() { document.getElementById('workspace-home').scrollIntoView({ behavior: 'instant' }); });
     await page.waitForFunction(function() { return sections[current].id === 'workspace-home' && SceneDirector.getState() === 'complete'; });
     await key('Space'); await shot('home-insight');
+    await page.click('.wi-drivers .ws-source'); await shot('home-source-detail'); await key('Escape');
     await key('Space'); await shot('home-handoff');
     await page.evaluate(function() { document.getElementById('workspace-journey').scrollIntoView({ behavior: 'instant' }); });
     await page.waitForFunction(function() { return sections[current].id === 'workspace-journey' && SceneDirector.getState() === 'complete'; });
@@ -67,7 +68,7 @@ async function run() {
     for (var t = 0; t < steps.length; t++) { await key('Space'); await shot(steps[t]); }
     console.log('  ' + w + 'x' + h + ' ' + (await state()));
     await key('t'); await shot('technical-depth'); await key('Escape');
-    var apx = ['appendix-capability-choice', 'appendix-architecture', 'appendix-runtime-reuse', 'appendix-agent-lifecycle', 'appendix-writeback'];
+    var apx = ['appendix-capability-choice', 'appendix-authority', 'appendix-architecture', 'appendix-writeback', 'appendix-agent-lifecycle', 'appendix-runtime-reuse', 'appendix-proof-gates'];
     for (var a = 0; a < apx.length; a++) {
       await page.evaluate(function(id) { document.getElementById(id).scrollIntoView({ behavior: 'instant' }); }, apx[a]);
       await page.waitForFunction(function(id) { return sections[current].id === id; }, apx[a]);

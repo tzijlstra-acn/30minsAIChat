@@ -1,8 +1,8 @@
-// -- APPENDIX TOPICS -- v4 --
+// -- APPENDIX TOPICS -- v5 --
 // Renders the technical-depth topics from NFR_WORKSPACE_DEMO.technical, once, for two
 // places: the appendix pages (section [data-topic], filled at load) and the technical
-// drawer (T). Topics: choice (A), architecture (B), runtime (C), lifecycle (D),
-// writeback (E) and metrics. Public-safe: no internal asset is named.
+// drawer (T). Topics: choice (A), authority (B), architecture (C), writeback (D),
+// lifecycle (E), runtime (F) and proof (G). Public-safe: no internal asset is named.
 // Exposes: window.AppendixTopics
 
 (function() {
@@ -47,7 +47,32 @@
       footer(c, T.footer);
     },
 
-    // B: from business experience to governed execution
+    // B: AI-assisted work, deterministic rules and human authority, side by side
+    authority: function(c, T) {
+      var cols = el('div', 'at-cols at-authority');
+      T.columns.forEach(function(col) {
+        var box = el('div', 'at-col at-col-' + col.id);
+        var title = el('div', 'at-col-title');
+        title.appendChild(icon(col.icon));
+        title.appendChild(el('span', null, col.label));
+        box.appendChild(title);
+        var ul = el('ul');
+        col.items.forEach(function(it) { ul.appendChild(el('li', null, it)); });
+        box.appendChild(ul);
+        var demo = T.demo.filter(function(d) { return d.id === col.id; })[0];
+        if (demo) {
+          var ex = el('div', 'at-col-demo');
+          ex.appendChild(el('span', 'at-col-demo-k', T.demoTitle));
+          ex.appendChild(el('span', null, demo.text));
+          box.appendChild(ex);
+        }
+        cols.appendChild(box);
+      });
+      c.appendChild(cols);
+      footer(c, T.footer);
+    },
+
+    // C: from business experience to governed execution
     architecture: function(c, T) {
       var stack = el('div', 'at-stack');
       T.layers.forEach(function(layer, i) {
@@ -68,7 +93,7 @@
       footer(c, T.footer);
     },
 
-    // C: candidate runtime reuse, in generic terms
+    // F: candidate runtime reuse, in generic terms
     runtime: function(c, T) {
       var cols = el('div', 'at-cols');
       T.columns.forEach(function(col) {
@@ -95,7 +120,7 @@
       footer(c, T.footer);
     },
 
-    // D: how ad hoc work becomes governed and reusable
+    // E: how ad hoc work becomes governed and reusable
     lifecycle: function(c, T) {
       var row = el('ol', 'at-stages');
       T.stages.forEach(function(s, i) {
@@ -115,7 +140,7 @@
       footer(c, T.footer);
     },
 
-    // E: governed write-back (and, in the drawer, the control catalogue)
+    // D: governed write-back (and, in the drawer, the control catalogue)
     writeback: function(c, T, mode) {
       var flow = el('ol', 'at-flow');
       T.flow.forEach(function(step, i) {
@@ -136,20 +161,28 @@
       }
     },
 
-    // Measurement library
-    metrics: function(c) {
-      var T = D().technical;
-      var grid = el('div', 'pc-metrics');
-      T.metrics.forEach(function(g) {
-        var col = el('div', 'pc-metric-group');
-        col.appendChild(el('div', 'pc-metric-hd', g[0]));
-        var ul = el('ul');
-        g[1].forEach(function(m) { ul.appendChild(el('li', null, m)); });
-        col.appendChild(ul);
-        grid.appendChild(col);
+    // G: proof gates and the measures behind them
+    proof: function(c, T) {
+      var gates = el('ol', 'at-stages at-proof-gates');
+      T.gates.forEach(function(g, i) {
+        var li = el('li', 'at-stage');
+        li.appendChild(el('span', 'at-stage-num', String(i + 1)));
+        li.appendChild(el('div', 'at-stage-label', g.label));
+        li.appendChild(el('div', 'at-stage-note', g.note));
+        gates.appendChild(li);
+      });
+      c.appendChild(el('div', 'at-sub', T.gatesTitle));
+      c.appendChild(gates);
+      c.appendChild(el('div', 'at-sub', T.measuresTitle));
+      var grid = el('div', 'at-measures');
+      T.metrics.forEach(function(m) {
+        var it = el('div', 'at-measure');
+        it.appendChild(el('span', 'at-measure-k', m[0]));
+        it.appendChild(el('span', 'at-measure-v', m[1]));
+        grid.appendChild(it);
       });
       c.appendChild(grid);
-      footer(c, T.metricsNote);
+      footer(c, T.footer);
     }
   };
 

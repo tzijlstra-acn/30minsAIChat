@@ -847,3 +847,21 @@ body.in-appendix #storyReturn { display: inline-flex; }
 .ws-ev-list dd { color: var(--text-1); margin: 0; }
 .ws-ev-quote { margin: 0; padding: 8px 12px; border-left: 3px solid var(--cyan); background: rgba(85,199,232,.06); border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.4; color: var(--text-1); }
 .ws-ev-note { font-size: 13px; color: var(--text-3); }
+
+/* v5 appendix B (AI, rules, people) and G (proof gates and measures) */
+.at-col-ai { border-color: rgba(180,76,255,.5); }
+.at-col-rules { border-color: rgba(85,199,232,.5); }
+.at-col-human { border-color: rgba(243,179,76,.55); }
+.at-col-title .ti { font-size: 18px; margin-right: 8px; vertical-align: -2px; }
+.at-col-ai .at-col-title { color: var(--accent); }
+.at-col-rules .at-col-title { color: var(--cyan); }
+.at-col-human .at-col-title { color: var(--amber); }
+.at-col-demo { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border-2); display: flex; flex-direction: column; gap: 3px; font-size: 13.5px; color: var(--text-2); line-height: 1.38; }
+.at-col-demo-k { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--text-3); }
+.at-stage-note { font-size: 13.5px; color: var(--text-2); line-height: 1.38; }
+.at-measures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+.at-measure { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border-1); background: var(--surface-1); font-size: 13.5px; line-height: 1.35; }
+.at-measure-k { color: var(--text-3); font-weight: 600; }
+.at-measure-v { color: var(--text-1); }
+.pc-drawer .at-measures { grid-template-columns: minmax(0, 1fr); }
+.pc-drawer .at-proof-gates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
