@@ -53,7 +53,7 @@ SceneDirector.register('work-arrives', function(container, manifest, reduced) {
     root.appendChild(q);
     n.queue = q;
     n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: 430, width: 1008 });
-    n.note.appendChild(S.el('span', 'ah-note-strong', 'No request arrives labelled with a method, a data set or an owner.'));
+    n.note.appendChild(S.el('span', 'ah-note-strong', A.strong));
     n.note.appendChild(S.el('span', 'ts-text', A.line));
     root.appendChild(n.note);
   }
@@ -86,7 +86,7 @@ SceneDirector.register('work-arrives', function(container, manifest, reduced) {
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return 'Four requests arrive in one role queue: ' + A.asks.map(function(a) { return a.channel.toLowerCase() + ', ' + a.text; }).join(' ') + ' ' + A.line;
+      return 'Four requests arrive in one role queue: ' + A.asks.map(function(a) { return a.channel.toLowerCase() + ', ' + a.text; }).join(' ') + ' ' + A.strong + ' ' + A.line;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

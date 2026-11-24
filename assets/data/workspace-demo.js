@@ -27,7 +27,7 @@
     principle: ['AI prepares.', 'Professionals decide.', 'Systems record.'],
     syntheticLabel: 'Synthetic demonstration',
     // The one sentence that separates an assistant from the Workspace
-    difference: ['The assistant helps the person.', 'NFR Workspace carries the role, case, evidence, controls and permitted actions across the work.'],
+    difference: ['The assistant helps the person.', 'NFR Workspace connects the systems and carries the role, case, evidence and controls across the work.'],
 
     // ── 01 Cover: a capture of the real product, not a drawing of it ──
     cover: {
@@ -47,7 +47,8 @@
         { channel: 'Audit request', icon: 'ti-file-text', text: 'Can we prove that our key controls are operating, not only documented?', needs: 'Tests, evidence, attestations' },
         { channel: 'Chat', icon: 'ti-message-circle', text: 'Which critical third-party services are deteriorating, and why?', needs: 'Indicators, incidents, issues, dependencies' }
       ],
-      line: 'The answer usually requires several records, documents, rules, judgements and owners.'
+      strong: 'No request arrives labelled with a method.',
+      line: 'The answer sits across several systems; no single tool holds it.'
     },
 
     // ── 03 Regulation from above, drift from below ──
@@ -66,17 +67,32 @@
       line: 'Not a lack of documents or dashboards: the cost is keeping context, evidence and decisions aligned.'
     },
 
-    // ── 04 Assistance helps the person; the operating gap remains ──
-    channels: [
-      { id: 'email', label: 'Email', icon: 'ti-mail', helps: 'Drafts the reply' },
-      { id: 'chat', label: 'Chat and search', icon: 'ti-message-circle', helps: 'Answers a question' },
-      { id: 'documents', label: 'Documents', icon: 'ti-file-text', helps: 'Summarises a policy' },
-      { id: 'meetings', label: 'Meetings', icon: 'ti-users', helps: 'Writes the minutes' },
-      { id: 'policy', label: 'Policy questions', icon: 'ti-search', helps: 'Explains the rule' }
-    ],
-    gapTitle: 'The remaining operating gap',
-    gap: ['Identify the case and required evidence', 'Retrieve from approved sources', 'Apply the correct method', 'Detect exceptions and changes',
-      'Route to the accountable role', 'Obtain approval', 'Update the authoritative record', 'Keep a complete audit trail'],
+    // ── 04 Standalone AI sees one system; the NFR answer needs all of them ──
+    // The question is the one the live product answers in act 3. Needs 1 to 4 are the
+    // top row; needs 5 to 8 sit above tools 1 to 4. A tool "covers" the one need it sees.
+    sees: {
+      question: { label: 'One question', text: 'Which critical third-party services are deteriorating, and why?' },
+      needsTitle: 'What the answer needs, and where each part lives',
+      needs: [
+        { id: 'register', label: 'Third-party register', system: 'Vendor management' },
+        { id: 'contracts', label: 'Contracts and SLAs', system: 'Contract repository' },
+        { id: 'incidents', label: 'Incidents', system: 'Incident register' },
+        { id: 'kri', label: 'Key risk indicators', system: 'Risk reporting' },
+        { id: 'mail', label: 'Supplier correspondence', system: 'Mailbox' },
+        { id: 'assurance', label: 'Assurance reports', system: 'Document store' },
+        { id: 'controls', label: 'Controls and issues', system: 'GRC platform' },
+        { id: 'dependencies', label: 'Service dependencies', system: 'IT service inventory' }
+      ],
+      seesLabel: 'Sees',
+      tools: [
+        { id: 'email', label: 'Email assistant', icon: 'ti-mail', sees: 'The mailbox', covers: 'mail' },
+        { id: 'documents', label: 'Document assistant', icon: 'ti-file-text', sees: 'The open file', covers: 'assurance' },
+        { id: 'grc', label: 'GRC assistant', icon: 'ti-shield-check', sees: 'The GRC records', covers: 'controls' },
+        { id: 'chat', label: 'Chat assistant', icon: 'ti-message-circle', sees: 'What you paste or upload', covers: null }
+      ],
+      person: 'The professional joins the other five by hand, for every question.',
+      note: ['Each assistant helps with its own slice.', "NFR Workspace brings every system's content into one picture, within the user's permissions."]
+    },
 
     // ── 05 Four ways to work: plain verb, product, when to use it, one concrete example ──
     capabilities: [
@@ -158,12 +174,12 @@
     // ── 09 Connected context keeps the answer true ──
     connected: {
       nodes: [
-        { label: 'Obligation', id: 'OBL-12' },
-        { label: 'Risk or process', id: 'R-21' },
-        { label: 'Control', id: 'CTL-0417', meet: true },
-        { label: 'Evidence', id: 'Q3 test missing', gap: true },
-        { label: 'Assessment', id: 'RCSA Q3' },
-        { label: 'Decision', id: 'Attestation' }
+        { label: 'Obligation', id: 'OBL-12', system: 'Regulatory library' },
+        { label: 'Risk or process', id: 'R-21', system: 'Process inventory' },
+        { label: 'Control', id: 'CTL-0417', system: 'GRC platform', meet: true },
+        { label: 'Evidence', id: 'Q3 test missing', system: 'Testing tool', gap: true },
+        { label: 'Assessment', id: 'RCSA Q3', system: 'RCSA tool' },
+        { label: 'Decision', id: 'Attestation', system: 'Attestation workflow' }
       ],
       topDown: { label: 'Top-down', trigger: 'A new obligation arrives', steps: ['Tied to its clause', 'Linked risks and controls found', 'Gaps and touched links go to review'] },
       bottomUp: { label: 'Bottom-up', trigger: 'A control test fails', steps: ['The failure is recorded', 'Traced up to risks and obligations', 'Attestations flagged before sign-off'] },
@@ -224,13 +240,13 @@
 
     // ── 14 The decision for the room ──
     decision: {
-      label: 'The decision',
+      label: 'Agree today',
       question: 'Which role, decision and bounded process should become the first working loop?',
       agree: [
-        { icon: 'ti-user-check', label: 'Target role' },
-        { icon: 'ti-route', label: 'Target decision or process' },
-        { icon: 'ti-database', label: 'Representative data and cases' },
-        { icon: 'ti-target', label: 'Proof criteria at five weeks and six months' }
+        { icon: 'ti-user-check', label: 'Target role', hint: 'Who does the work today, and who decides' },
+        { icon: 'ti-route', label: 'Target decision or process', hint: 'One bounded journey with a clear outcome' },
+        { icon: 'ti-database', label: 'Representative data and cases', hint: "Real records, under the bank's own controls" },
+        { icon: 'ti-target', label: 'Proof criteria at five weeks and six months', hint: 'What each gate shows to earn the next step' }
       ],
       secondary: 'Which existing AI, workflow, GRC and data capabilities should the Workspace reuse rather than rebuild?'
     },

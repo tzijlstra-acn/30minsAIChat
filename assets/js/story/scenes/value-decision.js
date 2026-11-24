@@ -20,7 +20,7 @@ SceneDirector.register('value-decision', function(container, manifest, reduced) 
 
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'value-decision' });
+    cv = S.canvas(container, W, H, { id: 'value-decision', refHeight: 520 });
     n = { steps: [], outs: [] };
     done = false;
     var root = cv.el;

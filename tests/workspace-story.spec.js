@@ -26,7 +26,7 @@ const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic la
 const CLAIMS = ['fully autonomous', 'replaces all systems', 'all nfr processes', 'zero human effort', 'instant deployment',
   'regulator-ready', 'guaranteed compliance', 'any agent in one sentence', 'skills built in a sentence', 'one team owns the whole loop']; // lint-ok: phrases the deck avoids
 // Agreed floor for rendered canvas text (canvas px x fit scale)
-const MIN_TEXT_PX = { '1920x1080': 11, '1600x900': 11, '1440x900': 11, '1366x768': 10, '1280x720': 10, '1024x768': 9.5 };
+const MIN_TEXT_PX = { '1920x1080': 11, '1600x900': 11, '1440x900': 11, '1366x768': 10, '1366x650': 10, '1280x720': 10, '1024x768': 9.5 };
 
 test.beforeEach(({}, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'story tests set their own viewport and run once');
@@ -99,7 +99,7 @@ test.describe('Scene contract', () => {
 
   test('manifest titles match the screen titles, within word limits', async ({ page }) => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('32');
+    expect(m.version).toBe('33');
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE);
     await open(page);
     for (const s of m.screens) {
@@ -198,7 +198,7 @@ test.describe('Story data', () => {
 });
 
 // ── LAYOUT AT SUPPORTED VIEWPORTS ──
-for (const [w, h] of [[1440, 900], [1366, 768], [1600, 900], [1280, 720], [1920, 1080], [1024, 768]]) {
+for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280, 720], [1920, 1080], [1024, 768]]) {
   const vp = w + 'x' + h;
   test.describe('Layout ' + vp, () => {
     test.use({ viewport: { width: w, height: h } });
@@ -218,6 +218,7 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1600, 900], [1280, 720], [1920,
           const out = [];
           const small = [];
           const cut = [];
+          const spill = [];
           if (cr.left < sr.left - 1 || cr.right > sr.right + 1 || cr.top < sr.top - 1 || cr.bottom > sr.bottom + 1) out.push('canvas');
           cv.querySelectorAll('*').forEach((el) => {
             if (el.closest('.ts-svg') || el.closest('.scene-accessible-summary')) return;
@@ -230,13 +231,20 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1600, 900], [1280, 720], [1920,
               const px = parseFloat(getComputedStyle(el).fontSize) * scale;
               if (px < min) small.push((el.textContent || '').trim().slice(0, 30) + ' ' + px.toFixed(1));
               if (getComputedStyle(el).textOverflow === 'ellipsis' && el.scrollWidth > el.clientWidth + 1) cut.push((el.textContent || '').slice(0, 40));
+              // Text stays inside the box that holds it
+              const box = el.closest('.ts-obj');
+              if (box && box !== el) {
+                const b = box.getBoundingClientRect();
+                if (r.left < b.left - 2 || r.right > b.right + 2 || r.top < b.top - 2 || r.bottom > b.bottom + 2) spill.push((el.textContent || '').trim().slice(0, 30));
+              }
             }
           });
-          return { out: out.slice(0, 5), small: small.slice(0, 5), cut: cut.slice(0, 5) };
+          return { out: out.slice(0, 5), small: small.slice(0, 5), cut: cut.slice(0, 5), spill: spill.slice(0, 5) };
         }, [id, MIN_TEXT_PX[vp]]);
         expect(r.out, id + ' elements outside the canvas at ' + vp).toEqual([]);
         expect(r.small, id + ' text below ' + MIN_TEXT_PX[vp] + 'px at ' + vp).toEqual([]);
         expect(r.cut, id + ' truncated text at ' + vp).toEqual([]);
+        expect(r.spill, id + ' text outside its box at ' + vp).toEqual([]);
       }
     });
 
@@ -268,6 +276,15 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1600, 900], [1280, 720], [1920,
         const r = await page.evaluate(([sid, min]) => {
           const s = document.getElementById(sid);
           const small = [];
+          const spill = [];
+          const above = [];
+          // The visual stays below the subtitle
+          const sub = s.querySelector('.slide-sub');
+          const vis = s.querySelector('.apx-visual');
+          if (sub && vis) {
+            const sb = sub.getBoundingClientRect().bottom;
+            vis.querySelectorAll('*').forEach((e) => { const q = e.getBoundingClientRect(); if (q.height && q.top < sb - 1) above.push(String(e.className).slice(0, 30)); });
+          }
           s.querySelectorAll('*').forEach((el) => {
             if (el.closest('.ws-sr-only') || el.closest('details:not([open])')) return;
             if (el.checkVisibility && !el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) return;
@@ -277,11 +294,18 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1600, 900], [1280, 720], [1920,
             const svg = el.ownerSVGElement;
             const scale = svg ? svg.getBoundingClientRect().width / svg.viewBox.baseVal.width : 1;
             if (fs * scale < min) small.push((el.textContent || '').trim().slice(0, 30) + ' ' + (fs * scale).toFixed(1));
+            const box = el.closest('.apx-col, .apx-wave, .apx-stage, .apx-pool, .apx-sprint-phase');
+            if (box && box !== el) {
+              const b = box.getBoundingClientRect(), q = el.getBoundingClientRect();
+              if (q.left < b.left - 2 || q.right > b.right + 2 || q.top < b.top - 2 || q.bottom > b.bottom + 2) spill.push((el.textContent || '').trim().slice(0, 30));
+            }
           });
-          return { overflow: s.scrollWidth > s.clientWidth + 2, height: s.offsetHeight / window.innerHeight, small: small.slice(0, 5) };
+          return { overflow: s.scrollWidth > s.clientWidth + 2, height: s.offsetHeight / window.innerHeight, small: small.slice(0, 5), spill: spill.slice(0, 5), above: above.slice(0, 3) };
         }, [id, MIN_TEXT_PX[vp]]);
         expect(r.overflow, id + ' overflows at ' + vp).toBe(false);
         expect(r.small, id + ' text below the floor at ' + vp).toEqual([]);
+        expect(r.spill, id + ' text outside its box at ' + vp).toEqual([]);
+        expect(r.above, id + ' visual rises into the subtitle at ' + vp).toEqual([]);
         // Tall pages scroll; past about 1.8 screens the screen tracker could miss them
         expect(r.height, id + ' height in screens at ' + vp).toBeLessThan(1.8);
       }

@@ -11,8 +11,8 @@ SceneDirector.register('connected-context', function(container, manifest, reduce
   var C = D.connected;
   var W = 1040, H = 520;
   var PANEL = { y: 0, w: 496, h: 132 };
-  var NODE = { y: 188, w: 152, h: 74 };
-  var MEET = { y: 300, h: 64 };
+  var NODE = { y: 184, w: 152, h: 90 };
+  var MEET = { y: 318, h: 60 };
 
   var cv = null;
   var n = {};
@@ -49,6 +49,7 @@ SceneDirector.register('connected-context', function(container, manifest, reduce
       var b = S.el('div', 'ts-obj ' + cls + ' cc-node ts-hide', null, { left: x, top: NODE.y, width: NODE.w, height: NODE.h });
       b.appendChild(S.el('div', 'cc-node-label ts-ink', nd.label));
       b.appendChild(S.el('div', 'cc-node-id', nd.id));
+      if (nd.system) b.appendChild(S.el('div', 'cc-node-sys', nd.system));
       root.appendChild(b);
       n.nodes.push(b);
       if (i < C.nodes.length - 1) {
@@ -105,7 +106,7 @@ SceneDirector.register('connected-context', function(container, manifest, reduce
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return 'The chain ' + C.nodes.map(function(x) { return x.label.toLowerCase() + ' ' + x.id; }).join(', ') + '. '
+      return 'The chain ' + C.nodes.map(function(x) { return x.label.toLowerCase() + ' ' + x.id + (x.system ? ' from the ' + x.system.toLowerCase() : ''); }).join(', ') + '. '
         + C.topDown.label + ': ' + C.topDown.trigger.toLowerCase() + ', ' + C.topDown.steps.join(', ').toLowerCase() + '. '
         + C.bottomUp.label + ': ' + C.bottomUp.trigger.toLowerCase() + ', ' + C.bottomUp.steps.join(', ').toLowerCase() + '. ' + C.meet + ' ' + C.line;
     },

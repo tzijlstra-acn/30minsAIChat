@@ -149,3 +149,15 @@ v7 merges the earlier control-platform proposition into NFR Workspace: one brand
 | Internal edition | `npm run build:internal` writes `dist-internal/` from the git-ignored `internal/` overlay: `story-internal.js` (merged into the story data before it is frozen, via `window.NFR_STORY_INTERNAL`), `appendix-internal.js` (pages appended per domain before freezing, via `window.NFR_APPENDIX_INTERNAL`; the build adds one section shell per page), `internal.css` (edition badge). Title suffix and `noindex`. Never published |
 | Tests | `tests/build.spec.js`: the public build holds only the site, no overlay reference, no hashed term; the workflow uploads `dist`; with the overlay present, its pages exist in the internal build and are absent from the public one |
 | Preview | `npm run serve:public` (port 8190), `npm run serve:internal` (port 8191); `scripts/serve.js <port> <root>` |
+
+## 11. v8 changes (presentability audit, release v33)
+
+An audit before management presents the deck: text in boxes, font sizes, the story for an NFR audience.
+
+| Concern | Where |
+|---|---|
+| Key idea | Screen 04 is now "Standalone AI sees one system. NFR needs the whole picture." Data `NFR_WORKSPACE_DEMO.sees`: one question (the one the product answers in act 3), eight sources with their systems, four assistants and the one source each sees. Screen 02's note and screen 09's systems line set it up and pay it off |
+| Canvas scale | `S.canvas(..., { refHeight: 520 })`: a shorter canvas scales as if it were 520 high and starts where a 520 canvas starts, so text keeps one size across screens (screens 11 to 14 were 9 to 18 percent larger on height-limited windows) |
+| Fixes | Screen 08 flow on one line (text left its box); screen 02 request text at 15 px (was the largest body text in the deck); screen 13 boxes sized to content; screen 14 drops the repeated question and adds one line per item to agree; five-wave visual (S6) no longer rises into the subtitle |
+| Tests | Layout runs also at 1366 x 650 (a browser window on a 1366 x 768 laptop); text must stay inside its canvas box and its appendix box; appendix visuals must stay below the subtitle |
+| Presenter guide | Opens with the idea in sixty seconds: three messages, the ask, what not to say |

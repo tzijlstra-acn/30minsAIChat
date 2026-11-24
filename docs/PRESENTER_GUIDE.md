@@ -2,7 +2,19 @@
 
 A 30-minute conversation for two buyers: the NFR business owner first, the IT strategist second. v7 merges the earlier control-platform proposition into one story: **NFR Workspace**. The deck tells it in fourteen screens in four chapters; **the real NFR Workspace product is the demonstration**, shown live after screen 07. The deck carries no mock of the product. Everything on screen is synthetic and bank-neutral.
 
-The one idea the room must leave with: **NFR work arrives as a question, not a method; the assistant helps the person, and NFR Workspace carries the role, case, evidence, controls and permitted actions across the work.** The principle: **AI prepares. Professionals decide. Systems record.**
+## The idea in sixty seconds (read this first)
+
+**The idea.** Banks already have AI assistants, but each one sees a single system: the mailbox, the open file, the GRC records. An NFR question, such as which critical suppliers are deteriorating and why, needs contracts, incidents, indicators, assurance reports, controls and dependencies together, so today a professional joins them by hand. NFR Workspace connects the content of every system for each NFR role, prepares the answer in small steps that can be tested, and leaves the decision with a named person.
+
+**Three messages to repeat.**
+
+1. Standalone AI sees one system. NFR answers need all of them.
+2. NFR Workspace connects them for each role, in small steps that can be tested.
+3. AI prepares. Professionals decide. Systems record.
+
+**The ask.** Agree one role, one decision, representative data and the proof criteria, and qualify it in five weeks.
+
+**Do not say.** "Replaces your GRC", "fully autonomous", "regulator ready", "built on" any named Accenture asset, or any client name or figure that has not passed claim review.
 
 The live product has its own script: `docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in the `nfr-workos` repository. It is authoritative for the five acts; this guide covers the deck, the hand-off, the return and the appendix.
 
@@ -88,7 +100,7 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 ### 02 NFR work arrives as a question, not a method
 
 - **Remember:** requests come by email, meeting, audit request and chat, and none of them names a method, a data set or an owner.
-- **Talk track (45 s):** read two of the four requests aloud. "None of these arrives labelled. Each needs several records, documents, rules, judgements and owners, and they all land in one role's queue."
+- **Talk track (45 s):** read two of the four requests aloud. "None of these arrives labelled. The answer sits across several systems, no single tool holds it, and they all land in one role's queue."
 - **Deep dive:** V1 (where to start; its detail lists the nine kinds of request risk functions bring).
 
 ### 03 Regulation changes from above. Practice drifts from below.
@@ -97,11 +109,12 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 - **Talk track (50 s):** "From above: new regulation, revised standards, findings, policy updates. From below: controls that no longer address the risk, are not performed as designed, rely on stale evidence, or attestations that no longer reflect reality. The chain from obligation to decision stops telling one story, and the professional re-maps it by hand. The result is fragmented, falsely assured and burdensome."
 - **Deep dive:** D4 (the connected NFR core).
 
-### 04 The assistant helps. The Workspace carries the work.
+### 04 Standalone AI sees one system. NFR needs the whole picture.
 
-- **Remember:** assistance improves individual activities; it does not create a complete controlled process.
-- **Talk track (45 s):** walk the eight steps of the gap (identify the case, retrieve, apply the method, detect exceptions, route, approve, update the record, keep the trail). "The assistant helps with a step. The Workspace carries all eight."
-- **Business owner asks:** "So our assistant rollout was wasted?" **Answer:** "No. It is the starting point."
+- **Remember:** this is the key screen of the first chapter. Each assistant sees one system; the NFR answer needs all of them.
+- **Talk track (60 s):** "Take one question: which critical third-party services are deteriorating, and why? The answer needs eight things, and each lives in its own system: the third-party register, contracts and SLAs, incidents, risk indicators, supplier mail, assurance reports, controls and issues, service dependencies. The email assistant sees the mailbox. The document assistant sees the open file. The GRC assistant sees the GRC records. The chat assistant sees what you paste in. Nobody sees the other five, so the professional joins them by hand, for every question. NFR Workspace brings every system's content into one picture, within the user's permissions. You will see it answer exactly this question in a few minutes."
+- **Business owner asks:** "So our assistant rollout was wasted?" **Answer:** "No. Each assistant helps with its own slice. The Workspace joins the slices."
+- **IT strategist asks:** "Does that mean one big data lake?" **Answer:** "No. The Workspace reads through approved connections under the user's own access (D2, D9)."
 
 ## Chapter 2: the model
 
@@ -135,7 +148,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 |---|---|---|
 | 1 The Workspace feels real | The user does not start with a blank chatbot | M1, D1 |
 | 2 The next decision arrives prepared | The case, the evidence and the action arrive together | D3, M6 |
-| 3 A live question, a visual answer | Not prose: a governed analysis from connected records; no number came from a model | D8, D4, D5 |
+| 3 A live question, a visual answer | The question from screen 04, answered. Say: "No single assistant could answer this: the answer drew on 12 sources." Not prose: a governed analysis from connected records; no number came from a model | D8, D4, D5 |
 | 4 From insight to action | The professional approves; the system records | M7, D9 |
 | 5 The long tail, governed | Agents cover the long tail without bypassing controls | M8, M1 |
 
@@ -160,7 +173,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 ### 09 Every answer keeps the line from obligation to evidence
 
 - **Remember:** the connected core computes the ripple; people decide what to do about it.
-- **Talk track (45 s):** top-down, a new obligation arrives and finds its risks and controls; bottom-up, a control test fails and is traced up to obligations and attestations. "Both traces meet on one control: the new obligation relies on a control with a missing test."
+- **Talk track (45 s):** "Each record on this line lives in a different system: the regulatory library, the process inventory, the GRC platform, the testing tool, the RCSA tool, the attestation workflow." Then top-down, a new obligation arrives and finds its risks and controls; bottom-up, a control test fails and is traced up to obligations and attestations. "Both traces meet on one control: the new obligation relies on a control with a missing test. Only a connected view sees that."
 - **Deep dives:** D4 (the connected core), D5 (when a knowledge graph adds value).
 
 ### 10 AI prepares. Professionals decide. Systems record.
@@ -190,7 +203,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 
 ### 14 Which role, decision and process becomes the first loop?
 
-- **Remember:** agree four things today: the target role, the decision or process, representative data and cases, and the proof criteria at five weeks and six months.
+- **Remember:** agree four things today: the target role, the decision or process, representative data and cases, and the proof criteria at five weeks and six months. Each card says what a good answer looks like; ask the room to fill them in.
 - **Secondary question:** which existing AI, workflow, GRC and data capabilities the Workspace should reuse rather than rebuild.
 - **Deep dive:** V1 (where to start).
 
@@ -259,4 +272,4 @@ Also from the index: the captured live demonstration, the team page, and the Evi
 
 ## Comprehension check
 
-After one pass, a first-time viewer should be able to explain: why work arrives as a question; why the chain drifts; why an assistant is not the Workspace; Ask, Use, Run and Create; the three layers; why small methods and not one large model; where professional authority remains; what the five weeks and the six months prove. Ask a business colleague and a technology colleague who did not build the deck, before explaining anything.
+After one pass, a first-time viewer should be able to explain: why work arrives as a question; why the chain drifts; why a standalone assistant sees only a slice of the answer; Ask, Use, Run and Create; the three layers; why small methods and not one large model; where professional authority remains; what the five weeks and the six months prove. Ask a business colleague and a technology colleague who did not build the deck, before explaining anything.

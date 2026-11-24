@@ -7,8 +7,10 @@ SceneDirector.register('experience', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var X = D.experience;
-  var W = 1040, H = 470;
-  var CARD = { y: 0, h: 330, gap: 12 };
+  // Public cards carry a short text; internal credentials add results and a claim line
+  var RICH = X.items.some(function(it) { return (it.results && it.results.length) || it.claim; });
+  var CARD = { y: 0, h: RICH ? 330 : 196, gap: 12 };
+  var W = 1040, H = CARD.h + 22 + 74;
 
   var cv = null;
   var n = {};
@@ -16,7 +18,7 @@ SceneDirector.register('experience', function(container, manifest, reduced) {
 
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'experience' });
+    cv = S.canvas(container, W, H, { id: 'experience', refHeight: 520 });
     n = { cards: [] };
     done = false;
     var root = cv.el;

@@ -27,7 +27,7 @@ SceneDirector.register('qualify-and-prove', function(container, manifest, reduce
 
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'qualify-and-prove' });
+    cv = S.canvas(container, W, H, { id: 'qualify-and-prove', refHeight: 520 });
     n = { sprint: [], lanes: [], scale: [], arrows: [] };
     done = false;
     var root = cv.el;

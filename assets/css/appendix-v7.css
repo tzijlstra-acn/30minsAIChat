@@ -34,3 +34,6 @@
 .apx-sprint-gate { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--amber); }
 
 .apx-option.is-first { border-color: rgba(180,76,255,.55); }
+
+/* v8: five waves fit their row (they rose into the subtitle at 1024 wide), and boxes grow with their text */
+.apx-waves.is-five .apx-wave { height: auto; min-height: calc(40% + var(--apx-wave) * 15%); }

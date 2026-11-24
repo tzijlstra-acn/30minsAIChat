@@ -725,9 +725,12 @@
 
     function fit() {
       var r = root.getBoundingClientRect();
-      var s = Math.min(r.width / w, r.height / h, opts.maxScale || 1.3);
+      // refHeight: a shorter canvas scales as if it were this tall, so text keeps one size across screens
+      var s = Math.min(r.width / w, r.height / Math.max(h, opts.refHeight || 0), opts.maxScale || 1.3);
       if (!isFinite(s) || s <= 0) s = 1;
-      cv.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+      // ...and starts where that taller canvas would start, so it sits under the headline, not mid-stage
+      var lift = Math.max(0, (Math.max(h, opts.refHeight || 0) - h) * s / 2);
+      cv.style.transform = 'translate(-50%,-50%)' + (lift ? ' translateY(-' + lift.toFixed(1) + 'px)' : '') + ' scale(' + s + ')';
       cv.dataset.scale = s.toFixed(3);
     }
     fit();

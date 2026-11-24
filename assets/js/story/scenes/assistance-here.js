@@ -1,69 +1,84 @@
 // Scene: assistance-here (screen 04)
-// Causal story: AI can already help with individual activities. Email, chat, documents,
-// meetings and policy questions light up around one professional. Underneath, the
-// remaining operating gap appears: eight steps that assistance does not carry. The
-// assistant helps the person; the Workspace carries the work.
+// Causal story: standalone AI sees one system. One NFR question (the one the live
+// product answers in act 3) needs eight sources, each living in its own system. The
+// email, document and GRC assistants each see one of them; the chat assistant sees only
+// what is pasted in. Five sources stay unseen, so the professional joins the picture by
+// hand. NFR Workspace brings every system's content into one picture, within the
+// user's permissions.
 SceneDirector.register('assistance-here', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
+  var A = D.sees;
   var W = 1040, H = 520;
-  var TILE = { y: 0, w: 188, h: 108, gap: 15, x0: 16 };
-  var PERSON = { x: 520, y: 196, r: 30 };
-  var GAP = { y: 318, w: 243, h: 52, gap: 12 };
+  var Q = { y: 0, h: 56 };
+  var CHIP = { y: 108, w: 243, h: 54, gap: 12, row: 10 };
+  var TOOL = { y: 292, w: 243, h: 84 };
+  var PERSON = { y: 396, h: 40 };
 
   var cv = null;
   var n = {};
   var done = false;
 
-  function tileX(i) { return TILE.x0 + i * (TILE.w + TILE.gap); }
+  function colX(i) { return 16 + i * (CHIP.w + CHIP.gap); }
+  function chipY(row) { return CHIP.y + row * (CHIP.h + CHIP.row); }
+  function seenBy(id) { for (var i = 0; i < A.tools.length; i++) if (A.tools[i].covers === id) return A.tools[i]; return null; }
 
   function build() {
     if (cv) cv.destroy();
     cv = S.canvas(container, W, H, { id: 'assistance-here' });
-    n = { tiles: [], links: [], nodes: [], gaps: [], marks: [] };
+    n = { row1: [], row2: [], tools: [], links: [] };
     done = false;
     var root = cv.el;
     var g = cv.svg;
 
-    D.channels.forEach(function(ch, i) {
-      var x = tileX(i);
-      var t = S.el('div', 'ts-obj ts-c-ai ah-tile ts-hide ts-up', null, { left: x, top: TILE.y, width: TILE.w, height: TILE.h });
-      var head = S.el('div', 'ah-head');
-      head.appendChild(S.icon(ch.icon, 'ts-ink'));
-      head.appendChild(S.el('span', 'ts-title', ch.label));
-      t.appendChild(head);
-      t.appendChild(S.el('div', 'ts-text', ch.helps));
-      var ok = S.el('div', 'ah-ok');
-      ok.appendChild(S.icon('ti-circle-check'));
-      ok.appendChild(S.el('span', null, 'Helps here'));
-      t.appendChild(ok);
-      root.appendChild(t);
-      n.tiles.push(t);
-      var sx = x + TILE.w / 2, sy = TILE.y + TILE.h;
-      n.links.push(S.path(g, 'M' + sx + ' ' + sy + ' C' + sx + ' ' + (sy + 50) + ' ' + PERSON.x + ' ' + (PERSON.y - 70) + ' ' + PERSON.x + ' ' + (PERSON.y - PERSON.r - 4), 'ts-s-ai ah-link'));
-    });
+    // The question, as it arrives
+    n.q = S.el('div', 'ts-obj ts-c-neutral ah-q ts-hide ts-up', null, { left: 16, top: Q.y, width: 1008, height: Q.h });
+    n.q.appendChild(S.el('span', 'ah-q-k', A.question.label));
+    n.q.appendChild(S.el('span', 'ah-q-t', A.question.text));
+    root.appendChild(n.q);
 
-    var person = S.el('div', 'ah-person ts-hide ts-pop', null, { left: PERSON.x - PERSON.r, top: PERSON.y - PERSON.r, width: PERSON.r * 2, height: PERSON.r * 2 });
-    person.appendChild(S.icon('ti-user'));
-    root.appendChild(person);
-    n.person = person;
-    n.personLabel = S.el('div', 'ts-text ah-person-label ts-hide', 'One professional, one activity at a time', { left: PERSON.x - 170, top: PERSON.y + PERSON.r + 8, width: 340 });
-    root.appendChild(n.personLabel);
-
-    // The remaining operating gap: what assistance does not carry
-    n.laneLabel = S.el('div', 'ts-label ts-ink ts-c-human ts-hide', D.gapTitle, { left: 16, top: GAP.y - 30, width: 600 });
-    root.appendChild(n.laneLabel);
-    D.gap.forEach(function(t, i) {
+    // What the answer needs, and where each part lives: row 2 sits above the tools
+    n.needsLabel = S.el('div', 'ts-label ts-hide', A.needsTitle, { left: 16, top: CHIP.y - 26, width: 700 });
+    root.appendChild(n.needsLabel);
+    var at = {};
+    A.needs.forEach(function(nd, i) {
       var col = i % 4, row = Math.floor(i / 4);
-      var chip = S.el('div', 'ts-obj ts-c-gap ah-gapstep ts-hide ts-up', null, { left: 16 + col * (GAP.w + GAP.gap), top: GAP.y + row * (GAP.h + 10), width: GAP.w, height: GAP.h });
-      chip.appendChild(S.el('span', 'ah-gap-n', String(i + 1)));
-      chip.appendChild(S.el('span', 'ah-gap-t', t));
-      root.appendChild(chip);
-      n.nodes.push(chip);
+      var seen = !!seenBy(nd.id);
+      var c = S.el('div', 'ts-obj ' + (seen ? 'ts-c-ai is-seen' : 'ts-c-gap is-unseen') + ' ah-need ts-hide ts-up', null, { left: colX(col), top: chipY(row), width: CHIP.w, height: CHIP.h });
+      c.appendChild(S.el('span', 'ah-need-l', nd.label));
+      c.appendChild(S.el('span', 'ah-need-s', nd.system));
+      if (seen) c.appendChild(S.icon('ti-eye', 'ah-need-eye'));
+      root.appendChild(c);
+      (row ? n.row2 : n.row1).push(c);
+      at[nd.id] = { x: colX(col) + CHIP.w / 2, y: chipY(row) + CHIP.h };
     });
-    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: 462, width: 1008 });
-    n.note.appendChild(S.el('span', 'ah-note-strong', D.difference[0]));
-    n.note.appendChild(S.el('span', 'ts-text', D.difference[1]));
+
+    // Each AI tool and the one source it sees
+    A.tools.forEach(function(t, i) {
+      var x = colX(i);
+      var b = S.el('div', 'ts-obj ts-c-ai ah-tool ts-hide ts-up', null, { left: x, top: TOOL.y, width: TOOL.w, height: TOOL.h });
+      var head = S.el('div', 'ah-head');
+      head.appendChild(S.icon(t.icon, 'ts-ink'));
+      head.appendChild(S.el('span', 'ts-title', t.label));
+      b.appendChild(head);
+      var sees = S.el('div', 'ah-tool-sees');
+      sees.appendChild(S.el('span', 'ah-tool-k', A.seesLabel));
+      sees.appendChild(S.el('span', 'ah-tool-v', t.sees));
+      b.appendChild(sees);
+      root.appendChild(b);
+      n.tools.push(b);
+      var to = t.covers && at[t.covers];
+      if (to) n.links.push(S.path(g, 'M' + (x + TOOL.w / 2) + ' ' + (TOOL.y - 4) + ' L' + to.x + ' ' + (to.y + 6), 'ts-s-ai ah-seeline', cv.marker('ai')));
+    });
+
+    n.person = S.el('div', 'ah-joins ts-hide', null, { left: 16, top: PERSON.y, width: 1008, height: PERSON.h });
+    n.person.appendChild(S.icon('ti-user'));
+    n.person.appendChild(S.el('span', null, A.person));
+    root.appendChild(n.person);
+
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: 452, width: 1008 });
+    n.note.appendChild(S.el('span', 'ah-note-strong', A.note[0]));
+    n.note.appendChild(S.el('span', 'ts-text', A.note[1]));
     root.appendChild(n.note);
   }
 
@@ -74,17 +89,14 @@ SceneDirector.register('assistance-here', function(container, manifest, reduced)
   }
 
   var steps = [
-    { delay: 200,  run: function() { S.on(n.tiles[0]); } },
-    { delay: 450,  run: function() { S.on(n.tiles[1]); } },
-    { delay: 700,  run: function() { S.on(n.tiles[2]); } },
-    { delay: 950,  run: function() { S.on(n.tiles[3]); } },
-    { delay: 1200, run: function() { S.on(n.tiles[4]); } },
-    { delay: 1600, run: function() { S.on(n.links); S.on(n.person); } },
-    { delay: 2200, run: function() { S.on(n.personLabel); } },
-    { delay: 2900, run: function() { S.on(n.laneLabel); S.on(n.nodes.slice(0, 4)); } },
-    { delay: 3500, run: function() { S.on(n.nodes.slice(4)); } },
-    { delay: 4300, run: function() { S.on(n.note); } },
-    { delay: 4900, run: complete }
+    { delay: 200,  run: function() { S.on(n.q); } },
+    { delay: 800,  run: function() { S.on(n.needsLabel); S.on(n.row1); } },
+    { delay: 1200, run: function() { S.on(n.row2); } },
+    { delay: 1900, run: function() { S.on(n.tools); } },
+    { delay: 2500, run: function() { S.on(n.links); } },
+    { delay: 3200, run: function() { S.on(n.person); } },
+    { delay: 3900, run: function() { S.on(n.note); } },
+    { delay: 4500, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -99,8 +111,10 @@ SceneDirector.register('assistance-here', function(container, manifest, reduced)
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return 'AI assistance already helps in ' + D.channels.map(function(c) { return c.label.toLowerCase(); }).join(', ')
-        + ', each marked helps here around one professional. ' + D.gapTitle + ': ' + D.gap.join(', ').toLowerCase() + '. ' + D.difference.join(' ');
+      return A.question.label + ': ' + A.question.text + ' ' + A.needsTitle + ': '
+        + A.needs.map(function(x) { return x.label.toLowerCase() + ' in the ' + x.system.toLowerCase(); }).join(', ') + '. '
+        + A.tools.map(function(t) { return 'the ' + t.label.toLowerCase() + ' sees ' + t.sees.toLowerCase(); }).join('; ') + '. '
+        + A.person + ' ' + A.note.join(' ');
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };
