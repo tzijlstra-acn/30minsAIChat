@@ -4,6 +4,8 @@
 // reusable NFR methods, governed execution services, a connected NFR core and approved
 // integrations sit underneath it. The real product is shown live between screens 07
 // and 08. Everything is synthetic and bank-neutral.
+// v9: every screen has one point a first-time viewer gets at a glance, with an example
+// the audience recognises. The comment above each block names that point.
 // The internal edition (built locally, never published) may replace a few objects
 // through window.NFR_STORY_INTERNAL before this object is frozen; the public build has
 // no such file.
@@ -38,36 +40,41 @@
       foot: 'Prepared for one role. Decided by a person. Recorded by the system.'
     },
 
-    // ── 02 This is how the work arrives ──
+    // ── 02 The point: questions come from everywhere, and each needs sources, a method and people ──
     arrives: {
-      queue: 'Risk and controls: one queue',
+      needsTitle: 'To answer it',
+      whoTitle: 'Who has to help',
       asks: [
-        { channel: 'Email', icon: 'ti-mail', text: 'Which controls duplicate across our entities, and which are deliberately different?', needs: 'Two inventories, descriptions, owners' },
-        { channel: 'Meeting', icon: 'ti-users', text: 'What does the new regulation require beyond our current framework?', needs: 'Clauses, policies, mapped controls' },
-        { channel: 'Audit request', icon: 'ti-file-text', text: 'Can we prove that our key controls are operating, not only documented?', needs: 'Tests, evidence, attestations' },
-        { channel: 'Chat', icon: 'ti-message-circle', text: 'Which critical third-party services are deteriorating, and why?', needs: 'Indicators, incidents, issues, dependencies' }
+        { channel: 'Email', icon: 'ti-mail', from: 'From the Chief Operating Officer', text: 'Which controls duplicate across our entities, and which are deliberately different?',
+          needs: ['Control inventories of each entity', 'Control descriptions and owners', 'The risks each control covers'], who: 'Control owners in every entity' },
+        { channel: 'Meeting', icon: 'ti-users', from: 'Regulatory change forum', text: 'What does the new regulation require beyond our current framework?',
+          needs: ['The regulatory text, clause by clause', 'Current policies and standards', 'Controls already mapped to them'], who: 'Compliance and legal' },
+        { channel: 'Audit request', icon: 'ti-file-search', from: 'From Internal Audit', text: 'Can we prove that our key controls operate, not only that they are documented?',
+          needs: ['Control test results', 'The evidence behind each test', 'Signed attestations'], who: 'Control testers and owners' },
+        { channel: 'Chat', icon: 'ti-message-circle', from: 'From the Head of Procurement', text: 'Which critical third-party services are deteriorating, and why?',
+          needs: ['Supplier risk indicators', 'Incidents and open issues', 'Service dependencies'], who: 'Supplier owners and IT' }
       ],
       strong: 'No request arrives labelled with a method.',
       line: 'The answer sits across several systems; no single tool holds it.'
     },
 
-    // ── 03 Regulation from above, drift from below ──
+    // ── 03 The point: change comes from above, drift from below, and the chain between them breaks ──
     chain: {
-      above: { label: 'Change from above', icon: 'ti-arrow-down', items: ['New regulation', 'Revised policy or standard', 'Supervisory or audit finding', 'Internal policy update'] },
-      below: { label: 'Drift from below', icon: 'ti-arrow-up', items: ['Control no longer addresses the risk', 'Control not performed as designed', 'Evidence stale or missing', 'Attestation no longer reflects reality'] },
+      above: { label: 'Change from above', icon: 'ti-arrow-down', items: ['New regulation', 'Revised policy or standard', 'Audit or supervisory finding', 'Internal policy update'], hits: [0, 1] },
+      below: { label: 'Drift from below', icon: 'ti-arrow-up', items: ['Control misses the risk', 'Not performed as designed', 'Evidence stale or missing', 'Attestation no longer true'], hits: [2, 3, 4] },
       links: ['Obligation', 'Risk or process', 'Control', 'Evidence', 'Assessment', 'Decision'],
       // Links that no longer tell the same story (between link i and i + 1)
       broken: [1, 2, 3],
-      person: 'The NFR professional re-maps the chain by hand',
       consequences: [
-        { label: 'Fragmented', text: 'No traced line from obligation to evidence.' },
-        { label: 'Falsely assured', text: 'Attestations state what is no longer true.' },
-        { label: 'Burdensome', text: 'Every new rule and every audit becomes a project.' }
+        { label: 'Fragmented', icon: 'ti-puzzle', text: 'No traced line from obligation to evidence.' },
+        { label: 'Falsely assured', icon: 'ti-shield-x', text: 'Attestations state what is no longer true.' },
+        { label: 'Burdensome', icon: 'ti-weight', text: 'Every new rule and every audit becomes a project.' }
       ],
-      line: 'Not a lack of documents or dashboards: the cost is keeping context, evidence and decisions aligned.'
+      person: 'The NFR professional re-maps the chain by hand.',
+      line: 'The cost is keeping context, evidence and decisions aligned, not a lack of documents.'
     },
 
-    // ── 04 Standalone AI sees one system; the NFR answer needs all of them ──
+    // ── 04 The point: standalone AI sees one system; the NFR answer needs all of them ──
     // The question is the one the live product answers in act 3. Needs 1 to 4 are the
     // top row; needs 5 to 8 sit above tools 1 to 4. A tool "covers" the one need it sees.
     sees: {
@@ -94,49 +101,57 @@
       note: ['Each assistant helps with its own slice.', "NFR Workspace brings every system's content into one picture, within the user's permissions."]
     },
 
-    // ── 05 Four ways to work: plain verb, product, when to use it, one concrete example ──
+    // ── 05 The point: four ways of working, told apart by one supplier example each ──
     capabilities: [
       { id: 'assist', verb: 'Ask', product: 'NFR Assist', icon: 'ti-message-circle',
-        line: 'Role-steered help in chat, email, documents and the Workspace.',
-        when: 'You need help within the current activity',
-        example: 'Summarise what changed in this review.',
+        line: 'Ask a question and get an answer with its sources, in the moment.',
+        when: 'A one-off question, answered now',
+        example: "What changed in this supplier's latest SOC 2 report?",
         authority: 'Draft and explain',
         value: 'Faster search, drafting, explanation and communication' },
       { id: 'app', verb: 'Use', product: 'NFR Apps', icon: 'ti-apps',
-        line: 'A connected app with the approved method, evidence, permissions and actions.',
-        when: 'You need to complete a defined specialist task',
-        example: 'Complete a periodic third-party review.',
+        line: 'Do a standard task in an app with the approved method, form and sign-off.',
+        when: 'A standard task, one case at a time',
+        example: 'Complete the annual review of one critical supplier.',
         authority: 'Prepare and validate a defined task',
         value: 'Better evidence quality, consistency and task execution' },
       { id: 'automation', verb: 'Run', product: 'NFR Automations', icon: 'ti-route',
-        line: 'Controlled automation across systems and human gates.',
-        when: 'You need a repeatable cross-system process',
-        example: 'Collect evidence, check completeness, route challenge, record the approved outcome.',
+        line: 'Let a process run across systems and cases, pausing for people at the gates.',
+        when: 'The same steps, across many cases',
+        example: 'Every month, chase missing evidence from all critical suppliers.',
         authority: 'Execute approved steps and pause at human gates',
         value: 'Fewer handoffs, shorter cycles, timely escalation, scalable processing' },
       { id: 'builder', verb: 'Create', product: 'Agent Builder', icon: 'ti-wand',
-        line: 'A governed ad hoc report, analysis or agent using inherited access.',
-        when: 'You need a new or temporary multi-source analysis',
-        example: 'Build a temporary concentration briefing from approved records.',
+        line: 'Build your own analysis or agent for a new question, with your existing access.',
+        when: 'A new question no app covers yet',
+        example: 'Track our dependence on one cloud provider, weekly, this quarter.',
         authority: 'Read, analyse, draft and monitor within explicit permissions',
         value: 'Faster answers to new questions, broader coverage of ad hoc work' }
     ],
     foundation: ['Same identity', 'Same permissions', 'Same evidence', 'Same control record'],
 
-    // ── 06 Three layers that mature together ──
+    // ── 06 The point: scale comes from three layers improving together, one role at a time ──
+    stages: [
+      { id: 'today', label: 'Today', sub: 'AI pilots', icon: 'ti-circle-dashed', tone: 'gap' },
+      { id: 'first', label: 'First loop', sub: 'One NFR role', icon: 'ti-user-check', tone: 'ai' },
+      { id: 'scale', label: 'At scale', sub: 'Every NFR role', icon: 'ti-users-group', tone: 'proof' }
+    ],
     layers: [
       { id: 'work', label: 'Work & roles', icon: 'ti-users',
-        today: 'People assemble context and coordinate handoffs.',
-        future: 'A role queue, clear decision rights, challenge and approval, adoption in the working day.' },
+        today: 'Each person uses AI in their own way',
+        first: 'One role works from a prepared queue',
+        scale: 'Every NFR role works the same way' },
       { id: 'process', label: 'Process & controls', icon: 'ti-route',
-        today: 'AI helps single steps; controls and handoffs stay manual.',
-        future: 'A case lifecycle, evidence requirements, rules and exceptions, human gates, write-back and monitoring.' },
+        today: 'AI helps one step; handoffs stay manual',
+        first: 'One process with evidence, gates and approval',
+        scale: 'Proven methods reused across processes' },
       { id: 'platform', label: 'Data & platform', icon: 'ti-database',
-        today: 'Pilots rely on isolated data and one-off integrations.',
-        future: 'Identity and entitlement, source connections, case state, reusable methods, audit and observability.' }
+        today: 'Each pilot copies its own data',
+        first: 'Approved connections to the systems it needs',
+        scale: 'One connected core for every role' }
     ],
-    layersLine: 'Improving only the AI component creates another pilot.',
-    layersLine2: 'NFR Workspace is where all three meet.',
+    layersLine: 'NFR Workspace is where all three meet.',
+    layersLine2: 'Improving only the AI component creates another pilot.',
 
     // ── 07 The doorway into the live product ──
     enter: {
@@ -152,76 +167,95 @@
       liveUrl: 'http://localhost:3200/'
     },
 
-    // ── 08 What happened beneath the experience ──
+    // ── 08 The point: the answer they just saw was calculated and checked, step by step ──
+    // Facts from the live product's act 3 and act 4 (synthetic records).
     beneath: {
-      steps: [
-        { kind: 'context', icon: 'ti-user-check', label: 'Understand the request and the case', detail: 'Role, case, scope and permitted actions' },
-        { kind: 'plan', icon: 'ti-list-check', label: 'Select narrow methods and governed data', detail: 'A plan of small steps, not one prompt' },
-        { kind: 'method', icon: 'ti-calculator', label: 'Calculate, compare and verify', detail: 'Rules first; narrow model calls checked against the source' },
-        { kind: 'human', icon: 'ti-hand-stop', label: 'Pause where judgement is required', detail: 'The human gate is a step in the plan' },
-        { kind: 'record', icon: 'ti-file-certificate', label: 'Record the approved outcome and evidence', detail: 'Receipt, sources, versions, who and when' }
+      question: { label: 'The question from the demonstration', text: 'Which critical third-party services are deteriorating, and why?' },
+      producedLabel: 'Produced',
+      trail: [
+        { kind: 'rule', label: 'Find the critical services', out: 'Read from the third-party register' },
+        { kind: 'data', label: 'Gather what changed', out: 'Indicators, incidents and issues from 12 sources' },
+        { kind: 'rule', label: 'Calculate each change', out: '3 deteriorating, led by Novalink, up 23 points' },
+        { kind: 'ai', label: 'Explain why', out: '2 share one cloud provider; each claim cites its source' },
+        { kind: 'person', label: 'Decide the next step', out: 'Evidence request approved and recorded' }
       ],
-      typesTitle: 'Three kinds of step',
-      types: [
-        { id: 'rule', label: 'Deterministic', flow: ['Input', 'Rule', 'Output'], text: 'Counting, matching, set difference, thresholds and dates. No model involved.' },
-        { id: 'model', label: 'Narrow model call', flow: ['Input', 'Model', 'Check', 'Output'], text: 'One narrow question about language, with the answer checked against the source.' },
-        { id: 'human', label: 'Human judgement', flow: ['Prepared', 'Decide', 'Recorded'], text: 'Materiality, challenge, acceptance and treatment stay with a named person.' }
-      ],
-      inDemo: 'In the demonstration: every figure was computed from the records; the professional approved before anything was written.',
-      line: 'Complex outcomes are assembled from small, testable steps.'
+      kinds: {
+        rule: { label: 'Rule', icon: 'ti-calculator', tone: 'data', text: 'Counts, compares and calculates. No model involved.' },
+        data: { label: 'Connected data', icon: 'ti-database', tone: 'data', text: 'Read through approved connections, with each source and its date.' },
+        ai: { label: 'AI, checked', icon: 'ti-sparkles', tone: 'ai', text: 'One narrow language task, checked against the sources.' },
+        person: { label: 'Person', icon: 'ti-user-check', tone: 'human', text: 'Judgement, materiality and approval stay with a named person.' }
+      },
+      legend: ['rule', 'ai', 'person'],
+      line: ['Model risk is judged step by step.', 'Each step has one job, a defined input and a check, so it can be tested on its own.']
     },
 
-    // ── 09 Connected context keeps the answer true ──
+    // ── 09 The point: connected records show at once what one change affects ──
     connected: {
-      nodes: [
-        { label: 'Obligation', id: 'OBL-12', system: 'Regulatory library' },
-        { label: 'Risk or process', id: 'R-21', system: 'Process inventory' },
-        { label: 'Control', id: 'CTL-0417', system: 'GRC platform', meet: true },
-        { label: 'Evidence', id: 'Q3 test missing', system: 'Testing tool', gap: true },
-        { label: 'Assessment', id: 'RCSA Q3', system: 'RCSA tool' },
-        { label: 'Decision', id: 'Attestation', system: 'Attestation workflow' }
+      event: { label: 'A control test fails', id: 'CTL-0417', name: 'Supplier access review', system: 'Testing tool' },
+      affected: [
+        { type: 'Risk', icon: 'ti-shield', id: 'R-21', name: 'Unauthorised supplier access', system: 'Risk register', impact: 'Rating needs review' },
+        { type: 'Obligation', icon: 'ti-gavel', id: 'OBL-12', name: 'Third-party ICT access', system: 'Regulatory library', impact: 'Now relies on an untested control' },
+        { type: 'Self-assessment', icon: 'ti-clipboard-data', id: 'RCSA Q3', name: 'Supplier management', system: 'RCSA tool', impact: 'Still rates the control effective' },
+        { type: 'Attestation', icon: 'ti-file-certificate', id: 'Q3 sign-off', name: 'Head of Procurement', system: 'Attestation workflow', impact: 'Flagged before it is signed' }
       ],
-      topDown: { label: 'Top-down', trigger: 'A new obligation arrives', steps: ['Tied to its clause', 'Linked risks and controls found', 'Gaps and touched links go to review'] },
-      bottomUp: { label: 'Bottom-up', trigger: 'A control test fails', steps: ['The failure is recorded', 'Traced up to risks and obligations', 'Attestations flagged before sign-off'] },
-      meet: 'Both traces meet on CTL-0417: the new obligation relies on a control with a missing test.',
-      line: 'The connected core computes the ripple. People decide what to do about it.'
+      compare: [
+        { label: 'Today', tone: 'gap', icon: 'ti-clock', text: 'Found by hand, often at audit, after the attestation is signed.' },
+        { label: 'With NFR Workspace', tone: 'proof', icon: 'ti-bolt', text: 'Flagged the same day, before anyone signs.' }
+      ],
+      line: ['It works the other way too.', 'A new obligation shows at once which controls it relies on, and which of them are untested.']
     },
 
-    // ── 10 Human authority is designed into the process ──
+    // ── 10 The point: who does what, shown with the step from the demonstration ──
     boundary: {
+      demoLabel: 'In the demonstration',
       columns: [
-        { key: 'ai', tone: 'ai', icon: 'ti-sparkles', label: 'AI-assisted preparation', items: ['Retrieve and summarise evidence', 'Extract and compare information', 'Identify anomalies and changes', 'Draft findings and actions', 'Explain the sources'] },
-        { key: 'rules', tone: 'data', icon: 'ti-route', label: 'Deterministic control', items: ['Entitlements', 'Mandatory evidence checks', 'Thresholds and routing', 'Write-back constraints', 'Audit logging'] },
-        { key: 'human', tone: 'human', icon: 'ti-user-check', label: 'Human authority', gate: 'Named decision maker', items: ['Challenge the evidence', 'Determine materiality', 'Approve the risk conclusion', 'Accept, reject or amend treatment', 'Approve material system changes'] }
+        { key: 'ai', tone: 'ai', icon: 'ti-sparkles', label: 'AI prepares', demo: 'Drafted the evidence request and the reason for it.',
+          items: ['Finds and summarises evidence', 'Spots changes and gaps', 'Drafts findings and actions'] },
+        { key: 'human', tone: 'human', icon: 'ti-user-check', label: 'Professionals decide', demo: 'Reviewed every field and approved it as their own judgement.',
+          items: ['Challenges the evidence', 'Decides what is material', 'Approves any change to a record'] },
+        { key: 'system', tone: 'data', icon: 'ti-database', label: 'Systems record', demo: 'Checked permissions, wrote the change and issued a receipt.',
+          items: ['Enforces permissions and required evidence', 'Writes only approved changes', 'Keeps who, what and when'] }
       ],
-      tableTitle: 'Default authority by capability',
-      tableNote: 'Executing a step grants no authority.',
-      noteText: 'Automation does not acquire authority merely because it can execute a step. Accountability stays with named people.'
+      line: ['Running a step grants no authority.', "Every material change needs a named person's approval, and the record shows who decided and when."]
     },
 
-    // ── 11 Value comes from three places ──
+    // ── 11 The point: three kinds of value, each measured on its own ──
     value: {
+      improvesLabel: 'What improves',
+      measureLabel: 'How we measure it',
       outcomes: [
-        { id: 'risk', label: 'Risk outcomes', items: ['More complete and current evidence', 'Earlier detection of material change', 'Consistent policy and method', 'More complete decision trace', 'Fewer unsupported conclusions'] },
-        { id: 'operating', label: 'Operating performance', items: ['Shorter cycle time', 'Fewer handoffs and follow-ups', 'Fewer overdue reviews', 'Faster escalation', 'Less rework'] },
-        { id: 'capacity', label: 'Capacity and economics', items: ['Lower human touch time', 'Lower cost per prepared case', 'Capacity redirected to challenge', 'Reuse across later journeys'] }
+        { id: 'risk', tone: 'proof', icon: 'ti-shield-check', label: 'Risk outcomes',
+          items: ['Evidence complete and current', 'Material change spotted earlier', 'Every decision traceable'],
+          measure: 'Share of critical suppliers with current, complete evidence' },
+        { id: 'operating', tone: 'data', icon: 'ti-clock', label: 'Operating performance',
+          items: ['Shorter review cycles', 'Fewer handoffs and chasers', 'Fewer overdue reviews'],
+          measure: 'Days from trigger to decision, per case' },
+        { id: 'capacity', tone: 'human', icon: 'ti-users', label: 'Capacity and economics',
+          items: ['Less time preparing each case', 'Time moved to challenge and judgement', 'Later journeys reuse the first'],
+          measure: 'Hours of preparation per case, before and after' }
       ],
-      measureNote: 'Capacity, cycle time and control quality are measured separately. Waiting time saved is not converted into labour savings.'
+      line: ['Waiting time saved is not counted as headcount.', 'The business case is built from your own baseline during the five weeks.']
     },
 
-    // ── 12 Qualify in five weeks, prove the loop in six months ──
+    // ── 12 The point: start small and earn each next step ──
     path: {
-      sprint: { label: 'Phase 0', title: 'Five-week qualification', steps: [
-        { label: 'Baseline', when: 'Weeks 1 and 2', text: 'Goals, scope, process, data and authority map' },
-        { label: 'Configure', when: 'Week 3', text: 'Source onboarding, method fit, first run', gate: 'Fit gate' },
-        { label: 'Challenge', when: 'Weeks 4 and 5', text: 'Full representative run, expert challenge, findings, value case, roadmap' }
-      ] },
-      loop: { label: 'Phase 1', title: 'Six-month working loop', lanes: [
-        { id: 'work', label: 'Work & roles', text: 'Role, decisions and authority; test the journey; embed and measure adoption' },
-        { id: 'process', label: 'Process & controls', text: 'Case map, evidence and gates; automate bounded steps; operate and prove control' },
-        { id: 'platform', label: 'Data & platform', text: 'Sources and access; integrations, methods and audit; harden, monitor, reuse' }
-      ] },
-      scale: { label: 'Phase 2', title: 'Scale', items: ['Reuse shared services', 'Promote proven ad hoc agents', 'Add role apps and processes', 'Extend the connected core'] },
+      goalLabel: 'Goal',
+      getLabel: 'You get',
+      phases: [
+        { id: 'qualify', label: 'Qualify', when: 'Five weeks', icon: 'ti-flask', tone: 'ai',
+          goal: 'Answer one real question on your own data',
+          steps: ['Baseline', 'Configure', 'Challenge'],
+          get: 'Findings, a value case and a clear go or stop' },
+        { id: 'prove', label: 'Prove', when: 'Six months', icon: 'ti-refresh', tone: 'human',
+          goal: "Run one role's loop live, end to end",
+          steps: ['Work', 'Process', 'Data'],
+          get: 'A working loop, measured against the baseline' },
+        { id: 'scale', label: 'Scale', when: 'After month six', icon: 'ti-trending-up', tone: 'proof',
+          goal: 'Add roles and processes on the same core',
+          steps: ['Methods', 'Connectors', 'Agents'],
+          get: 'Each new journey reuses what the first one built' }
+      ],
+      gates: ['Go decision', 'Scale decision'],
       line: 'Five weeks proves fit and value. Six months proves the operating model.'
     },
 
@@ -238,15 +272,16 @@
       note: 'Accenture delivery experience with the same methods. Client examples and measured results are shared separately, subject to permission.'
     },
 
-    // ── 14 The decision for the room ──
+    // ── 14 The point: four things to agree today, each with an example answer ──
     decision: {
       label: 'Agree today',
+      exampleLabel: 'For example',
       question: 'Which role, decision and bounded process should become the first working loop?',
       agree: [
-        { icon: 'ti-user-check', label: 'Target role', hint: 'Who does the work today, and who decides' },
-        { icon: 'ti-route', label: 'Target decision or process', hint: 'One bounded journey with a clear outcome' },
-        { icon: 'ti-database', label: 'Representative data and cases', hint: "Real records, under the bank's own controls" },
-        { icon: 'ti-target', label: 'Proof criteria at five weeks and six months', hint: 'What each gate shows to earn the next step' }
+        { icon: 'ti-user-check', label: 'Target role', hint: 'Who does the work today, and who decides', example: 'Third-party risk manager' },
+        { icon: 'ti-route', label: 'Target decision or process', hint: 'One bounded journey with a clear outcome', example: 'Annual review of critical suppliers' },
+        { icon: 'ti-database', label: 'Representative data and cases', hint: "Real records, under the bank's own controls", example: "Last year's files for 20 critical suppliers" },
+        { icon: 'ti-target', label: 'Proof criteria at five weeks and six months', hint: 'What each gate shows to earn the next step', example: 'Review time and evidence completeness' }
       ],
       secondary: 'Which existing AI, workflow, GRC and data capabilities should the Workspace reuse rather than rebuild?'
     },

@@ -1,77 +1,54 @@
 // Scene: authority-boundary (screen 10)
-// Causal story: human authority is designed into the process. Three columns, left to
-// right: AI-assisted preparation, deterministic control, human authority (with the
-// named decision maker). Below, each capability's default authority:
-// Assist drafts and explains, a role app prepares and validates, an automation runs
-// approved steps and pauses at human gates, an ad hoc agent reads, analyses and drafts.
-// No capability owns the risk.
+// Causal story: AI prepares, professionals decide, systems record. Three columns follow
+// the headline, left to right, each opening with what happened in the demonstration
+// (AI drafted the evidence request, the professional approved it as their own judgement,
+// the system checked permissions, wrote the change and issued a receipt), then what that
+// part may do. Running a step grants no authority.
 SceneDirector.register('authority-boundary', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
-  var W = 1040, H = 520;
-  var COL = { y: 0, w: 310, h: 292, gap: 39, x0: 16 };
-  var TBL = { x: 16, y: 318, w: 690 };
-
-  var COLS = D.boundary.columns;
+  var B = D.boundary;
+  var W = 1040, H = 360;
+  var COL = { y: 0, w: 316, h: 232, gap: 30 };
 
   var cv = null;
   var n = {};
   var done = false;
 
-  function colX(i) { return COL.x0 + i * (COL.w + COL.gap); }
+  function colX(i) { return 16 + i * (COL.w + COL.gap); }
 
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'authority-boundary' });
-    n = { cols: [], arrows: [], rows: [] };
+    cv = S.canvas(container, W, H, { id: 'authority-boundary', refHeight: 520 });
+    n = { cols: [], arrows: [] };
     done = false;
     var root = cv.el;
-    var g = cv.svg;
-    var B = D.boundary;
-
-    COLS.forEach(function(c, i) {
-      var spec = c;
-      var x = colX(i);
-      var col = S.el('div', 'ts-obj ts-c-' + c.tone + ' cb-col ts-hide ts-up', null, { left: x, top: COL.y, width: COL.w, height: COL.h });
-      var head = S.el('div', 'cb-head');
-      head.appendChild(S.icon(c.icon, 'ts-ink'));
-      head.appendChild(S.el('span', 'cb-head-text ts-ink', spec.label));
-      col.appendChild(head);
-      var ul = S.el('ul', 'cb-items');
-      spec.items.forEach(function(it) { ul.appendChild(S.el('li', null, it)); });
-      col.appendChild(ul);
-      if (c.gate) {
-        var gate = S.DecisionGate.create(col, { size: 'small', label: c.gate });
-        gate.el.classList.add('cb-gate');
-        n.gate = gate;
-      }
-      root.appendChild(col);
-      n.cols.push(col);
-      if (i < COLS.length - 1) {
-        var ax = x + COL.w + 6, bx = colX(i + 1) - 6, ay = COL.y + COL.h / 2;
-        n.arrows.push(S.path(g, 'M' + ax + ' ' + ay + ' L' + bx + ' ' + ay, 'ts-s-' + COLS[i + 1].tone + ' cb-arrow', cv.marker(COLS[i + 1].tone)));
+    B.columns.forEach(function(c, i) {
+      var b = S.el('div', 'ts-obj ts-c-' + c.tone + ' ab-col ts-hide ts-up', null, { left: colX(i), top: COL.y, width: COL.w, height: COL.h });
+      var head = S.el('div', 'ab-head ts-ink');
+      head.appendChild(S.icon(c.icon));
+      head.appendChild(S.el('span', 'ab-head-t', c.label));
+      b.appendChild(head);
+      var demo = S.el('div', 'ab-demo');
+      demo.appendChild(S.el('div', 'ab-k', B.demoLabel));
+      demo.appendChild(S.el('div', 'ab-demo-t', c.demo));
+      b.appendChild(demo);
+      var ul = S.el('ul', 'ab-list');
+      c.items.forEach(function(t) { ul.appendChild(S.el('li', null, t)); });
+      b.appendChild(ul);
+      root.appendChild(b);
+      n.cols.push(b);
+      if (i < B.columns.length - 1) {
+        var a = S.el('div', 'ab-arrow ts-hide', null, { left: colX(i) + COL.w, top: COL.y + COL.h / 2 - 11, width: COL.gap, height: 22 });
+        a.appendChild(S.icon('ti-arrow-right'));
+        root.appendChild(a);
+        n.arrows.push(a);
       }
     });
-
-    n.tblLabel = S.el('div', 'ts-label ts-hide', B.tableTitle, { left: TBL.x, top: TBL.y, width: TBL.w });
-    root.appendChild(n.tblLabel);
-    D.capabilities.forEach(function(c, i) {
-      var r = S.el('div', 'cb-row ts-hide ts-left', null, { left: TBL.x, top: TBL.y + 26 + i * 42, width: TBL.w, height: 36 });
-      var who = S.el('div', 'cb-who');
-      who.appendChild(S.icon(c.icon));
-      who.appendChild(S.el('span', 'cb-verb', c.verb));
-      who.appendChild(S.el('span', 'cb-product', c.product));
-      r.appendChild(who);
-      r.appendChild(S.el('div', 'cb-auth', c.authority));
-      root.appendChild(r);
-      n.rows.push(r);
-    });
-
-    var note = S.el('div', 'cb-note ts-hide ts-pop', null, { left: 734, top: TBL.y + 26, width: 290, height: 162 });
-    note.appendChild(S.el('div', 'cb-note-main', B.tableNote));
-    note.appendChild(S.el('div', 'ts-text', B.noteText));
-    root.appendChild(note);
-    n.note = note;
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: COL.y + COL.h + 24, width: 1008 });
+    n.note.appendChild(S.el('span', 'ah-note-strong', B.line[0]));
+    n.note.appendChild(S.el('span', 'ts-text', B.line[1]));
+    root.appendChild(n.note);
   }
 
   function complete() {
@@ -82,16 +59,10 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
 
   var steps = [
     { delay: 200,  run: function() { S.on(n.cols[0]); } },
-    { delay: 900,  run: function() { S.on(n.arrows[0]); } },
-    { delay: 1200, run: function() { S.on(n.cols[1]); } },
-    { delay: 1900, run: function() { S.on(n.arrows[1]); } },
-    { delay: 2200, run: function() { S.on(n.cols[2]); if (n.gate) n.gate.activate(); } },
-    { delay: 3000, run: function() { S.on(n.tblLabel); S.on(n.rows[0]); } },
-    { delay: 3300, run: function() { S.on(n.rows[1]); } },
-    { delay: 3600, run: function() { S.on(n.rows[2]); } },
-    { delay: 3900, run: function() { S.on(n.rows[3]); } },
-    { delay: 4500, run: function() { S.on(n.note); } },
-    { delay: 5100, run: complete }
+    { delay: 900,  run: function() { S.on(n.arrows[0]); S.on(n.cols[1]); } },
+    { delay: 1600, run: function() { S.on(n.arrows[1]); S.on(n.cols[2]); } },
+    { delay: 2400, run: function() { S.on(n.note); } },
+    { delay: 3000, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -106,9 +77,7 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      var B = D.boundary;
-      return B.columns.map(function(c) { return c.label + ': ' + c.items.join(', ').toLowerCase(); }).join('. ') + '. Default authority: '
-        + D.capabilities.map(function(c) { return c.product + ', ' + c.authority.toLowerCase(); }).join('; ') + '. ' + B.tableNote;
+      return B.columns.map(function(c) { return c.label + '. ' + B.demoLabel + ': ' + c.demo + ' ' + c.items.join(', ') + '.'; }).join(' ') + ' ' + B.line.join(' ');
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

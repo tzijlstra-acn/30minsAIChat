@@ -1,19 +1,20 @@
 // Scene: assistance-here (screen 04)
-// Causal story: standalone AI sees one system. One NFR question (the one the live
-// product answers in act 3) needs eight sources, each living in its own system. The
-// email, document and GRC assistants each see one of them; the chat assistant sees only
-// what is pasted in. Five sources stay unseen, so the professional joins the picture by
-// hand. NFR Workspace brings every system's content into one picture, within the
-// user's permissions.
+// Causal story: standalone AI sees one system. The question is typed out first, as a
+// professional would ask it (the one the live product answers in act 3). Then the eight
+// sources the answer needs appear, each in its own system. The email, document and GRC
+// assistants each see one of them; the chat assistant sees only what is pasted in. Five
+// sources stay unseen, so the professional joins the picture by hand. NFR Workspace
+// brings every system's content into one picture, within the user's permissions.
 SceneDirector.register('assistance-here', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var A = D.sees;
   var W = 1040, H = 520;
-  var Q = { y: 0, h: 56 };
-  var CHIP = { y: 108, w: 243, h: 54, gap: 12, row: 10 };
-  var TOOL = { y: 292, w: 243, h: 84 };
-  var PERSON = { y: 396, h: 40 };
+  var Q = { x: 96, y: 0, w: 848, h: 64 };
+  var CHIP = { y: 118, w: 243, h: 54, gap: 12, row: 10 };
+  var TOOL = { y: 302, w: 243, h: 84 };
+  var PERSON = { y: 404, h: 40 };
+  var TYPE = { start: 500, every: 40, chars: 2 };
 
   var cv = null;
   var n = {};
@@ -31,10 +32,15 @@ SceneDirector.register('assistance-here', function(container, manifest, reduced)
     var root = cv.el;
     var g = cv.svg;
 
-    // The question, as it arrives
-    n.q = S.el('div', 'ts-obj ts-c-neutral ah-q ts-hide ts-up', null, { left: 16, top: Q.y, width: 1008, height: Q.h });
+    // The question, typed as the professional asks it
+    n.q = S.el('div', 'ts-obj ts-c-ai ts-soft ah-q ts-hide ts-pop', null, { left: Q.x, top: Q.y, width: Q.w, height: Q.h });
+    n.q.appendChild(S.icon('ti-search', 'ah-q-icon ts-ink'));
     n.q.appendChild(S.el('span', 'ah-q-k', A.question.label));
-    n.q.appendChild(S.el('span', 'ah-q-t', A.question.text));
+    var line = S.el('span', 'ah-q-line');
+    n.qText = S.el('span', 'ah-q-t', '');
+    line.appendChild(n.qText);
+    line.appendChild(S.el('span', 'ah-caret'));
+    n.q.appendChild(line);
     root.appendChild(n.q);
 
     // What the answer needs, and where each part lives: row 2 sits above the tools
@@ -76,7 +82,7 @@ SceneDirector.register('assistance-here', function(container, manifest, reduced)
     n.person.appendChild(S.el('span', null, A.person));
     root.appendChild(n.person);
 
-    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: 452, width: 1008 });
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: 458, width: 1008 });
     n.note.appendChild(S.el('span', 'ah-note-strong', A.note[0]));
     n.note.appendChild(S.el('span', 'ts-text', A.note[1]));
     root.appendChild(n.note);
@@ -88,16 +94,23 @@ SceneDirector.register('assistance-here', function(container, manifest, reduced)
     S.complete(container);
   }
 
-  var steps = [
-    { delay: 200,  run: function() { S.on(n.q); } },
-    { delay: 800,  run: function() { S.on(n.needsLabel); S.on(n.row1); } },
-    { delay: 1200, run: function() { S.on(n.row2); } },
-    { delay: 1900, run: function() { S.on(n.tools); } },
-    { delay: 2500, run: function() { S.on(n.links); } },
-    { delay: 3200, run: function() { S.on(n.person); } },
-    { delay: 3900, run: function() { S.on(n.note); } },
-    { delay: 4500, run: complete }
-  ];
+  // Typing: a few characters per step, so seek, pause and finish all land on whole text
+  var full = A.question.text;
+  var steps = [{ delay: 150, run: function() { S.on(n.q); } }];
+  for (var k = TYPE.chars; k < full.length + TYPE.chars; k += TYPE.chars) {
+    steps.push({ delay: TYPE.start + (k / TYPE.chars) * TYPE.every, run: (function(m) { return function() { n.qText.textContent = full.slice(0, m); }; })(Math.min(k, full.length)) });
+  }
+  var typed = TYPE.start + Math.ceil(full.length / TYPE.chars) * TYPE.every;
+  steps.push(
+    { delay: typed + 200,  run: function() { n.q.classList.add('is-typed'); } },
+    { delay: typed + 600,  run: function() { S.on(n.needsLabel); S.on(n.row1); } },
+    { delay: typed + 1000, run: function() { S.on(n.row2); } },
+    { delay: typed + 1700, run: function() { S.on(n.tools); } },
+    { delay: typed + 2300, run: function() { S.on(n.links); } },
+    { delay: typed + 3000, run: function() { S.on(n.person); } },
+    { delay: typed + 3700, run: function() { S.on(n.note); } },
+    { delay: typed + 4300, run: complete }
+  );
   var tl = createTimeline(steps);
 
   return {

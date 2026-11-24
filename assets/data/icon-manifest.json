@@ -3,6 +3,9 @@
   "icons": [
     { "name": "alert-triangle",       "class": "ti-alert-triangle",       "semantic": "risk" },
     { "name": "unlink",             "class": "ti-unlink",             "semantic": "risk" },
+    { "name": "puzzle",             "class": "ti-puzzle",            "semantic": "risk" },
+    { "name": "shield-x",           "class": "ti-shield-x",          "semantic": "risk" },
+    { "name": "weight",             "class": "ti-weight",            "semantic": "risk" },
     { "name": "arrow-down",         "class": "ti-arrow-down",         "semantic": "navigation" },
     { "name": "arrow-up",           "class": "ti-arrow-up",           "semantic": "navigation" },
     { "name": "diamond",            "class": "ti-diamond",            "semantic": "decision" },

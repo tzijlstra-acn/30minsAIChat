@@ -8,9 +8,9 @@ SceneDirector.register('workshop-decision', function(container, manifest, reduce
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var X = D.decision;
-  var W = 1040, H = 312;
-  var CARD = { y: 30, w: 243, gap: 12, h: 172 };
-  var SEC = { y: 228, h: 76 };
+  var W = 1040, H = 356;
+  var CARD = { y: 30, w: 243, gap: 12, h: 216 };
+  var SEC = { y: 272, h: 76 };
 
   var cv = null;
   var n = {};
@@ -32,6 +32,12 @@ SceneDirector.register('workshop-decision', function(container, manifest, reduce
       c.appendChild(h);
       c.appendChild(S.el('div', 'wd-agree-label', a.label));
       if (a.hint) c.appendChild(S.el('div', 'wd-agree-hint', a.hint));
+      if (a.example) {
+        var ex = S.el('div', 'wd-agree-ex');
+        ex.appendChild(S.el('div', 'wd-agree-ex-k', X.exampleLabel));
+        ex.appendChild(S.el('div', 'wd-agree-ex-t', a.example));
+        c.appendChild(ex);
+      }
       root.appendChild(c);
       n.cards.push(c);
     });
@@ -68,7 +74,7 @@ SceneDirector.register('workshop-decision', function(container, manifest, reduce
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return X.label + ': ' + X.agree.map(function(a) { return a.label.toLowerCase() + (a.hint ? ', ' + a.hint.toLowerCase() : ''); }).join('; ') + '. ' + X.secondary;
+      return X.label + ': ' + X.agree.map(function(a) { return a.label.toLowerCase() + (a.hint ? ', ' + a.hint.toLowerCase() : '') + (a.example ? ', for example ' + a.example.toLowerCase() : ''); }).join('; ') + '. ' + X.secondary;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

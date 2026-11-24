@@ -161,3 +161,20 @@ An audit before management presents the deck: text in boxes, font sizes, the sto
 | Fixes | Screen 08 flow on one line (text left its box); screen 02 request text at 15 px (was the largest body text in the deck); screen 13 boxes sized to content; screen 14 drops the repeated question and adds one line per item to agree; five-wave visual (S6) no longer rises into the subtitle |
 | Tests | Layout runs also at 1366 x 650 (a browser window on a 1366 x 768 laptop); text must stay inside its canvas box and its appendix box; appendix visuals must stay below the subtitle |
 | Presenter guide | Opens with the idea in sixty seconds: three messages, the ask, what not to say |
+
+## 12. v9 changes (one point per screen, release v34)
+
+From the owner's review: each screen lands one point at a glance, with an example the audience recognises.
+
+| Screen | Change |
+|---|---|
+| 02 | Four questions with who asked, what it takes to answer and who has to help; the queue box is gone |
+| 03 | Change comes down from a band above the chain and drift comes up from a band below, with straight arrows; icons on the three consequences |
+| 04 | The question types itself out before the sources appear (a few characters per timeline step, so seek and finish land on the whole text) |
+| 05 | One supplier example per way of working: a one-off question, one case, many cases, a new question |
+| 06 | Today, first loop, at scale across the three layers, read as an improvement |
+| 08 | The answer from act 3 replayed as five steps, each tagged rule, connected data, AI checked or person, with what it produced |
+| 09 | One failed control test and the four records it affects, each in its own system; today against with the Workspace |
+| 10 to 12 | Three columns each: the demonstration step per role; one measure per kind of value; goal, parts and what you get per phase, with a decision gate between phases |
+| 14 | An example answer on each card |
+| Fallbacks | `node scripts/build-fallbacks.js <port>` (`npm run fallbacks:scenes`) renders each scene's final state into `assets/img/fallback/<id>.jpg` and points its `<svg data-scene-fallback>` at it. Rerun after changing a screen. The cover and the doorway keep their vector fallbacks |

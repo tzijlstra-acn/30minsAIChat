@@ -1,78 +1,75 @@
-// Scene: three-layers (v2 screen 05)
-// Causal story: three lanes, work and roles, process and controls, data and platform,
-// each with a fragmented today. The three move to their future state at the same time
-// (one "in parallel" bracket, three arrows drawing together), then converge into the
-// NFR Workspace. Improving only the AI component creates another pilot.
+// Scene: three-layers (screen 06)
+// Causal story: AI scales when work, process and data improve together, one role at a
+// time. Three stages run left to right: today (AI pilots), the first loop (one NFR role
+// in the Workspace), at scale (every NFR role). Three layers run top to bottom: work and
+// roles, process and controls, data and platform. Today's cells show the pilot problem;
+// the next two columns show each layer improving. NFR Workspace is where all three meet.
 SceneDirector.register('three-layers', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
-  var W = 1040, H = 520;
-  var LBL = { x: 16, w: 168 };
-  var TODAY = { x: 196, w: 244 };
-  var FUT = { x: 566, w: 270 };
-  var WS = { x: 880, w: 144 };
-  var ROW = { y0: 30, h: 104, gap: 16 };
+  var W = 1040, H = 440;
+  var LABEL = { x: 16, w: 160 };
+  var COL = { x0: 190, w: 254, gap: 36 };
+  var HEAD = { y: 0, h: 60 };
+  var ROW = { y0: 76, h: 82, gap: 10 };
 
   var cv = null;
   var n = {};
   var done = false;
 
-  function rowY(i) { return ROW.y0 + i * (ROW.h + ROW.gap); }
+  function colX(i) { return COL.x0 + i * (COL.w + COL.gap); }
+  function rowY(r) { return ROW.y0 + r * (ROW.h + ROW.gap); }
 
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'three-layers' });
-    n = { labels: [], today: [], future: [], arrows: [], merge: [] };
+    cv = S.canvas(container, W, H, { id: 'three-layers', refHeight: 520 });
+    n = { heads: [], labels: [], cols: [[], [], []], arrows: [[], []] };
     done = false;
     var root = cv.el;
-    var g = cv.svg;
-    var bottom = rowY(2) + ROW.h;
 
-    n.hToday = S.el('div', 'ts-label ts-hide', 'Today', { left: TODAY.x, top: 2, width: TODAY.w });
-    n.hFut = S.el('div', 'ts-label ts-ink ts-c-ai ts-hide', 'With NFR Workspace', { left: FUT.x, top: 2, width: FUT.w });
-    root.appendChild(n.hToday);
-    root.appendChild(n.hFut);
-
-    D.layers.forEach(function(l, i) {
-      var y = rowY(i);
-      var lab = S.el('div', 'tl-lane ts-hide ts-left', null, { left: LBL.x, top: y, width: LBL.w, height: ROW.h });
-      lab.appendChild(S.icon(l.icon));
-      lab.appendChild(S.el('span', 'tl-lane-name', l.label));
-      root.appendChild(lab);
-      n.labels.push(lab);
-      var t = S.el('div', 'tl-today ts-hide', null, { left: TODAY.x, top: y, width: TODAY.w, height: ROW.h });
-      t.appendChild(S.el('span', 'ts-text', l.today));
-      root.appendChild(t);
-      n.today.push(t);
-      var f = S.el('div', 'ts-obj ts-c-ai tl-future ts-hide ts-right', null, { left: FUT.x, top: y, width: FUT.w, height: ROW.h });
-      f.appendChild(S.el('span', 'tl-future-text', l.future));
-      root.appendChild(f);
-      n.future.push(f);
-      var cy = y + ROW.h / 2;
-      n.arrows.push(S.path(g, 'M' + (TODAY.x + TODAY.w + 8) + ' ' + cy + ' L' + (FUT.x - 8) + ' ' + cy, 'ts-s-ai tl-arrow', cv.marker('ai')));
-      var mx = WS.x - 4;
-      var wy = ROW.y0 + 30 + i * ((bottom - ROW.y0 - 60) / 2);
-      n.merge.push(S.path(g, 'M' + (FUT.x + FUT.w + 4) + ' ' + cy + ' C' + (FUT.x + FUT.w + 30) + ' ' + cy + ' ' + (mx - 20) + ' ' + wy + ' ' + mx + ' ' + wy, 'ts-s-ai tl-merge'));
+    D.stages.forEach(function(st, c) {
+      var h = S.el('div', 'tl-stage ts-c-' + st.tone + ' ts-hide ts-up', null, { left: colX(c), top: HEAD.y, width: COL.w, height: HEAD.h });
+      var top = S.el('div', 'tl-stage-top ts-ink');
+      top.appendChild(S.icon(st.icon));
+      top.appendChild(S.el('span', null, st.label));
+      h.appendChild(top);
+      h.appendChild(S.el('div', 'tl-stage-sub', st.sub));
+      root.appendChild(h);
+      n.heads.push(h);
+      if (c < D.stages.length - 1) {
+        var a = S.el('div', 'tl-arrow tl-arrow-head ts-hide', null, { left: colX(c) + COL.w, top: HEAD.y + HEAD.h / 2 - 11, width: COL.gap, height: 22 });
+        a.appendChild(S.icon('ti-arrow-right'));
+        root.appendChild(a);
+        n.arrows[c].push(a);
+      }
     });
 
-    // One bracket: the three layers move in parallel, not in sequence
-    n.par = S.el('div', 'tl-parallel ts-hide', null, { left: TODAY.x + TODAY.w + 14, top: ROW.y0 - 4, width: FUT.x - TODAY.x - TODAY.w - 28, height: bottom - ROW.y0 + 8 });
-    root.appendChild(n.par);
-    var px = TODAY.x + TODAY.w + 14, pw = FUT.x - TODAY.x - TODAY.w - 28;
-    n.parLabel = S.el('div', 'ts-label ts-ink ts-c-ai tl-par-label ts-hide', 'In parallel', { left: px - 20, top: 2, width: pw + 40 });
-    root.appendChild(n.parLabel);
+    D.layers.forEach(function(l, r) {
+      var lab = S.el('div', 'tl-layer ts-hide ts-left', null, { left: LABEL.x, top: rowY(r), width: LABEL.w, height: ROW.h });
+      lab.appendChild(S.icon(l.icon));
+      lab.appendChild(S.el('span', null, l.label));
+      root.appendChild(lab);
+      n.labels.push(lab);
+      D.stages.forEach(function(st, c) {
+        var text = l[st.id];
+        var cell = S.el('div', 'ts-obj ts-c-' + st.tone + ' tl-cell' + (c === 0 ? ' ts-dash is-today' : ' ts-soft') + ' ts-hide ts-up', null, { left: colX(c), top: rowY(r), width: COL.w, height: ROW.h });
+        cell.appendChild(S.icon(c === 0 ? 'ti-x' : 'ti-check', 'tl-mark ts-ink'));
+        cell.appendChild(S.el('span', 'tl-cell-t', text));
+        root.appendChild(cell);
+        n.cols[c].push(cell);
+        if (c < D.stages.length - 1) {
+          var a = S.el('div', 'tl-arrow ts-hide', null, { left: colX(c) + COL.w, top: rowY(r) + ROW.h / 2 - 11, width: COL.gap, height: 22 });
+          a.appendChild(S.icon('ti-arrow-right'));
+          root.appendChild(a);
+          n.arrows[c].push(a);
+        }
+      });
+    });
 
-    var ws = S.el('div', 'tl-ws ts-hide ts-pop', null, { left: WS.x, top: ROW.y0, width: WS.w, height: bottom - ROW.y0 });
-    ws.appendChild(S.el('span', 'ws-mark tl-mark'));
-    ws.appendChild(S.el('span', 'tl-ws-name', D.product));
-    ws.appendChild(S.el('span', 'ts-text tl-ws-sub', 'Roles, process and platform improve together'));
-    root.appendChild(ws);
-    n.ws = ws;
-
-    n.quote = S.el('div', 'tl-quote ts-hide', null, { left: 16, top: 404, width: 1008, height: 96 });
-    n.quote.appendChild(S.el('div', 'tl-quote-main', D.layersLine));
-    n.quote.appendChild(S.el('div', 'ts-text', D.layersLine2));
-    root.appendChild(n.quote);
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: rowY(3) + 18, width: 1008 });
+    n.note.appendChild(S.el('span', 'ah-note-strong', D.layersLine));
+    n.note.appendChild(S.el('span', 'ts-text', D.layersLine2));
+    root.appendChild(n.note);
   }
 
   function complete() {
@@ -82,15 +79,12 @@ SceneDirector.register('three-layers', function(container, manifest, reduced) {
   }
 
   var steps = [
-    { delay: 200,  run: function() { S.on(n.labels); } },
-    { delay: 700,  run: function() { S.on(n.hToday); S.on(n.today); } },
-    { delay: 1700, run: function() { S.on(n.par); S.on(n.parLabel); } },
-    { delay: 2100, run: function() { S.on(n.arrows); } },
-    { delay: 2700, run: function() { S.on(n.hFut); S.on(n.future); } },
-    { delay: 3600, run: function() { S.on(n.merge); } },
-    { delay: 4100, run: function() { S.on(n.ws); } },
-    { delay: 4900, run: function() { S.on(n.quote); } },
-    { delay: 5500, run: complete }
+    { delay: 200,  run: function() { S.on(n.heads); } },
+    { delay: 700,  run: function() { S.on(n.labels); S.on(n.cols[0]); } },
+    { delay: 1500, run: function() { S.on(n.arrows[0]); S.on(n.cols[1]); } },
+    { delay: 2300, run: function() { S.on(n.arrows[1]); S.on(n.cols[2]); } },
+    { delay: 3000, run: function() { S.on(n.note); } },
+    { delay: 3600, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -105,8 +99,9 @@ SceneDirector.register('three-layers', function(container, manifest, reduced) {
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return 'Three layers move in parallel into the NFR Workspace. ' + D.layers.map(function(l) { return l.label + ': today, ' + l.today.toLowerCase() + ' Future: ' + l.future.toLowerCase(); }).join(' ')
-        + ' ' + D.layersLine + ' ' + D.layersLine2;
+      return D.layers.map(function(l) {
+        return l.label + ': ' + D.stages.map(function(st) { return st.label.toLowerCase() + ', ' + l[st.id].toLowerCase(); }).join('; ');
+      }).join('. ') + '. ' + D.layersLine + ' ' + D.layersLine2;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

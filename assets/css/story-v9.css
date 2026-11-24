@@ -1,0 +1,124 @@
+/* v9 core route: one point per screen, an example the audience recognises.
+   Loaded after story-v7.css; rules here win where class names repeat. */
+
+/* 02 how the work arrives */
+.wa2-card { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; }
+.wa2-from { font-size: 13px; color: var(--text-3); line-height: 1.3; }
+.wa2-q { font-family: 'Space Grotesk', sans-serif; font-size: 15.5px; font-weight: 600; line-height: 1.36; color: var(--text-1); margin-top: 2px; }
+.wa2-sec { margin-top: auto; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed var(--border-2); padding-top: 8px; }
+.wa2-k { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.wa2-list { list-style: none; margin: 0 0 6px; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.wa2-list li { font-size: 13.5px; color: var(--text-1); line-height: 1.3; padding-left: 14px; position: relative; }
+.wa2-list li::before { content: ''; position: absolute; left: 2px; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--amber); }
+.wa2-who { font-size: 13.5px; color: var(--text-2); line-height: 1.3; }
+
+/* 03 change from above, drift from below */
+.cd-band { display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 10px 16px; }
+.cd-band-head { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; }
+.cd-band-items { display: flex; flex-wrap: wrap; gap: 8px; }
+.cd-item { font-size: 13.5px; color: var(--text-1); border: 1px solid var(--border-2); border-radius: 999px; padding: 3px 12px; background: var(--surface-0, #13151C); }
+.cd-arrow { stroke-width: 1.6; fill: none; }
+.cd-cons { display: flex; align-items: center; gap: 14px; padding: 12px 16px; }
+.cd-cons-icon { font-size: 28px; flex: none; }
+.cd-cons-body { display: flex; flex-direction: column; gap: 3px; }
+.cd-cons-label { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: var(--pink); }
+
+/* 04 the typed question */
+.ah-q { display: flex; align-items: center; gap: 14px; padding: 0 22px; border-width: 2px; }
+.ah-q-icon { font-size: 22px; flex: none; }
+.ah-q-line { display: inline-flex; align-items: center; min-width: 0; }
+.ah-q .ah-q-t { font-size: 20px; }
+.ah-caret { display: inline-block; width: 2px; height: 22px; margin-left: 3px; background: var(--accent); animation: ah-blink 1s steps(1) infinite; }
+.ah-q.is-typed .ah-caret { visibility: hidden; animation: none; }
+@keyframes ah-blink { 50% { opacity: 0; } }
+
+/* 06 from pilots to scale */
+.tl-stage { display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 0 14px; border-bottom: 2px solid var(--ts-c); }
+.tl-stage-top { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; }
+.tl-stage-top .ti { font-size: 20px; }
+.tl-stage-sub { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.tl-arrow { display: flex; align-items: center; justify-content: center; color: var(--text-3); font-size: 18px; }
+.tl-arrow-head { color: var(--text-2); }
+.tl-layer { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-1); }
+.tl-layer .ti { font-size: 20px; color: var(--text-2); }
+.tl-cell { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+.tl-cell .tl-mark { font-size: 18px; flex: none; }
+.tl-cell-t { font-size: 14.5px; line-height: 1.35; color: var(--text-1); }
+.tl-cell.is-today .tl-cell-t { color: var(--text-2); }
+
+/* 08 how the answer was built */
+.mp-q { display: flex; align-items: center; gap: 14px; padding: 0 16px; }
+.mp-q-k { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); flex: none; }
+.mp-q-t { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-1); }
+.mp-step { display: flex; flex-direction: column; gap: 8px; padding: 12px 13px; }
+.mp-step-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.mp-step-n { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-2); border: 1px solid var(--border-2); border-radius: 50%; width: 24px; height: 24px; display: grid; place-items: center; flex: none; }
+.mp-kind { display: inline-flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+.mp-kind .ti { font-size: 15px; }
+.mp-step-label { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-1); line-height: 1.25; }
+.mp-out { margin-top: auto; display: flex; flex-direction: column; gap: 3px; border-top: 1px dashed var(--border-2); padding-top: 8px; }
+.mp-out-k { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.mp-out-v { font-size: 13.5px; color: var(--text-1); line-height: 1.35; }
+.mp-arrow { display: flex; align-items: center; justify-content: center; color: var(--text-3); font-size: 15px; }
+.mp-leg { display: flex; flex-direction: column; gap: 5px; padding: 10px 14px; }
+.mp-leg-head { display: flex; align-items: center; gap: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; }
+
+/* 09 one failed test, everything it touches */
+.cc-event { display: flex; align-items: center; gap: 14px; padding: 0 18px; border-width: 2px; }
+.cc-event-icon { font-size: 26px; flex: none; }
+.cc-event-body { display: flex; flex-direction: column; gap: 3px; }
+.cc-event-label { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-1); }
+.cc-event-meta, .cc-card-meta { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-3); }
+.cc-wire { stroke-width: 1.6; fill: none; }
+.cc-card { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; }
+.cc-card-head { display: flex; align-items: center; gap: 7px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+.cc-card-head .ti { font-size: 16px; }
+.cc-card-name { font-family: 'Space Grotesk', sans-serif; font-size: 15.5px; font-weight: 700; color: var(--text-1); line-height: 1.25; }
+.cc-impact { margin-top: auto; display: flex; align-items: flex-start; gap: 4px; font-size: 13.5px; font-weight: 600; color: var(--pink); line-height: 1.3; }
+.cc-impact .ti { font-size: 16px; flex: none; }
+.cc-cmp { display: flex; align-items: center; gap: 14px; padding: 0 18px; }
+.cc-cmp-icon { font-size: 24px; flex: none; }
+.cc-cmp-body { display: flex; flex-direction: column; gap: 2px; }
+.cc-cmp-label { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; }
+.cc-cmp-text { font-size: 14px; color: var(--text-1); line-height: 1.35; }
+
+/* 10 who does what */
+.ab-col { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; }
+.ab-head { display: flex; align-items: center; gap: 9px; }
+.ab-head .ti { font-size: 22px; }
+.ab-head-t { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; color: var(--text-1); }
+.ab-demo { display: flex; flex-direction: column; gap: 4px; border-radius: 8px; background: color-mix(in srgb, var(--ts-c) 9%, transparent); padding: 8px 10px; }
+.ab-k, .vd-k, .qp-k { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.ab-demo-t { font-size: 14.5px; font-style: italic; color: var(--text-1); line-height: 1.4; }
+.ab-list, .vd-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ab-list li, .vd-list li { font-size: 14px; color: var(--text-2); line-height: 1.35; padding-left: 14px; position: relative; }
+.ab-list li::before, .vd-list li::before { content: ''; position: absolute; left: 2px; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--ts-c); }
+.ab-arrow { display: flex; align-items: center; justify-content: center; color: var(--text-3); font-size: 18px; }
+
+/* 11 three kinds of value */
+.vd-col { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; }
+.vd-head { display: flex; align-items: center; gap: 9px; }
+.vd-head .ti { font-size: 22px; }
+.vd-head-t { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-1); }
+.vd-measure { margin-top: auto; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed var(--border-2); padding-top: 10px; }
+.vd-measure-t { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; line-height: 1.35; }
+
+/* 12 qualify, prove, scale */
+.qp-phase2 { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; }
+.qp-head2 { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.qp-title { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; }
+.qp-title .ti { font-size: 22px; }
+.qp-when { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--text-2); border: 1px solid var(--border-2); border-radius: 999px; padding: 3px 10px; }
+.qp-goal { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-1); line-height: 1.35; }
+.qp-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+.qp-chip { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1); border: 1px solid var(--border-2); border-radius: 6px; padding: 3px 8px; background: var(--surface-0, #13151C); }
+.qp-get { margin-top: auto; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed var(--border-2); padding-top: 10px; }
+.qp-get-t { font-size: 14.5px; color: var(--text-1); line-height: 1.4; }
+.qp-gate2 { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; color: var(--amber); }
+.qp-gate2 .ti { font-size: 22px; }
+.qp-gate2 span { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .03em; text-transform: uppercase; line-height: 1.2; }
+
+/* 14 an example answer on each card */
+.wd-agree-ex { margin-top: auto; display: flex; flex-direction: column; gap: 3px; border-top: 1px dashed var(--border-2); padding-top: 8px; }
+.wd-agree-ex-k { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.wd-agree-ex-t { font-size: 14px; font-style: italic; color: var(--amber); line-height: 1.35; }

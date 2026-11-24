@@ -1,79 +1,78 @@
 // Scene: connected-context (screen 09)
-// Causal story: every answer keeps the line from obligation to evidence. The chain sits
-// in the middle. A new obligation arrives from the top and is traced down to its risks
-// and controls; a failed control test arrives from below and is traced up to risks,
-// obligations and attestations. Both traces meet on one control: the new obligation
-// relies on a control with a missing test. The connected core computes the ripple;
-// people decide what to do about it.
+// Causal story: connected records show at once what one change affects. A control test
+// fails. Straight connectors run from it to the four records it touches, each in its own
+// system: the risk it mitigates, the obligation that relies on it, the self-assessment
+// that still rates it effective, and the attestation due for sign-off. Then the contrast:
+// today it is found by hand, often at audit; with NFR Workspace it is flagged the same
+// day, before anyone signs. It works the other way for a new obligation too.
 SceneDirector.register('connected-context', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var C = D.connected;
-  var W = 1040, H = 520;
-  var PANEL = { y: 0, w: 496, h: 132 };
-  var NODE = { y: 184, w: 152, h: 90 };
-  var MEET = { y: 318, h: 60 };
+  var W = 1040, H = 470;
+  var EV = { x: 262, y: 0, w: 516, h: 66 };
+  var BUS = 94;
+  var CARD = { y: 122, w: 243, h: 134, gap: 12 };
+  var CMP = { y: 280, w: 498, h: 64, gap: 12 };
 
   var cv = null;
   var n = {};
   var done = false;
 
-  function nodeX(i) { var gap = (W - 32 - C.nodes.length * NODE.w) / (C.nodes.length - 1); return 16 + i * (NODE.w + gap); }
-  function meetIndex() { for (var i = 0; i < C.nodes.length; i++) if (C.nodes[i].meet) return i; return 2; }
-  function gapIndex() { for (var i = 0; i < C.nodes.length; i++) if (C.nodes[i].gap) return i; return 3; }
-
-  function panel(spec, x, tone, icon) {
-    var b = S.el('div', 'ts-obj ts-c-' + tone + ' cc-panel ts-hide ts-up', null, { left: x, top: PANEL.y, width: PANEL.w, height: PANEL.h });
-    var h = S.el('div', 'cc-panel-head');
-    h.appendChild(S.icon(icon, 'ts-ink'));
-    h.appendChild(S.el('span', 'ts-ink', spec.label));
-    h.appendChild(S.el('span', 'cc-trigger', spec.trigger));
-    b.appendChild(h);
-    var ol = S.el('ol', 'cc-steps');
-    spec.steps.forEach(function(t) { ol.appendChild(S.el('li', null, t)); });
-    b.appendChild(ol);
-    return b;
-  }
+  function cardX(i) { return 16 + i * (CARD.w + CARD.gap); }
 
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'connected-context' });
-    n = { nodes: [], joins: [] };
+    cv = S.canvas(container, W, H, { id: 'connected-context', refHeight: 520 });
+    n = { cards: [], drops: [], cmp: [] };
     done = false;
     var root = cv.el;
     var g = cv.svg;
-    var cy = NODE.y + NODE.h / 2;
-    C.nodes.forEach(function(nd, i) {
-      var x = nodeX(i);
-      var cls = nd.meet ? 'ts-c-human is-meet' : nd.gap ? 'ts-c-gap' : 'ts-c-data';
-      var b = S.el('div', 'ts-obj ' + cls + ' cc-node ts-hide', null, { left: x, top: NODE.y, width: NODE.w, height: NODE.h });
-      b.appendChild(S.el('div', 'cc-node-label ts-ink', nd.label));
-      b.appendChild(S.el('div', 'cc-node-id', nd.id));
-      if (nd.system) b.appendChild(S.el('div', 'cc-node-sys', nd.system));
-      root.appendChild(b);
-      n.nodes.push(b);
-      if (i < C.nodes.length - 1) {
-        var p = S.svg('path', { d: 'M' + (x + NODE.w + 3) + ' ' + cy + ' L' + (nodeX(i + 1) - 3) + ' ' + cy }, 'ts-s-data cc-join');
-        g.appendChild(p);
-        n.joins.push(p);
-      }
+    var E = C.event;
+
+    n.event = S.el('div', 'ts-obj ts-c-gap ts-soft cc-event ts-hide ts-pop', null, { left: EV.x, top: EV.y, width: EV.w, height: EV.h });
+    n.event.appendChild(S.icon('ti-alert-triangle', 'cc-event-icon ts-ink'));
+    var eb = S.el('div', 'cc-event-body');
+    eb.appendChild(S.el('div', 'cc-event-label', E.label));
+    eb.appendChild(S.el('div', 'cc-event-meta', [E.id, E.name, E.system].join('  ·  ')));
+    n.event.appendChild(eb);
+    root.appendChild(n.event);
+
+    // Straight connectors: a trunk down from the event, a bus across, a drop to each record
+    var first = cardX(0) + CARD.w / 2, last = cardX(C.affected.length - 1) + CARD.w / 2;
+    n.trunk = S.path(g, 'M' + (EV.x + EV.w / 2) + ' ' + (EV.y + EV.h + 2) + ' V' + BUS + ' M' + first + ' ' + BUS + ' H' + last, 'ts-s-gap cc-wire');
+    C.affected.forEach(function(a, i) {
+      var x = cardX(i) + CARD.w / 2;
+      n.drops.push(S.path(g, 'M' + x + ' ' + BUS + ' V' + (CARD.y - 6), 'ts-s-gap cc-wire', cv.marker('gap')));
+      var c = S.el('div', 'ts-obj ts-c-data cc-card ts-hide ts-up', null, { left: cardX(i), top: CARD.y, width: CARD.w, height: CARD.h });
+      var head = S.el('div', 'cc-card-head ts-ink');
+      head.appendChild(S.icon(a.icon));
+      head.appendChild(S.el('span', null, a.type));
+      c.appendChild(head);
+      c.appendChild(S.el('div', 'cc-card-name', a.name));
+      c.appendChild(S.el('div', 'cc-card-meta', a.id + '  ·  ' + a.system));
+      var imp = S.el('div', 'cc-impact');
+      imp.appendChild(S.icon('ti-point'));
+      imp.appendChild(S.el('span', null, a.impact));
+      c.appendChild(imp);
+      root.appendChild(c);
+      n.cards.push(c);
     });
-    n.top = panel(C.topDown, 16, 'data', 'ti-arrow-down');
-    n.bottom = panel(C.bottomUp, W - 16 - PANEL.w, 'gap', 'ti-arrow-up');
-    root.appendChild(n.top);
-    root.appendChild(n.bottom);
-    var m = meetIndex(), gi = gapIndex();
-    var mx = nodeX(m) + NODE.w / 2, gx = nodeX(gi) + NODE.w / 2;
-    // Top-down: from the obligation side into the meeting control; bottom-up: from evidence to it
-    n.traceDown = S.path(g, 'M' + (16 + PANEL.w / 2) + ' ' + (PANEL.h + 4) + ' C' + (16 + PANEL.w / 2) + ' ' + (PANEL.h + 30) + ' ' + mx + ' ' + (NODE.y - 30) + ' ' + (mx - 20) + ' ' + (NODE.y - 6), 'ts-s-data cc-trace', cv.marker('data'));
-    n.traceUp = S.path(g, 'M' + (W - 16 - PANEL.w / 2) + ' ' + (PANEL.h + 4) + ' C' + (W - 16 - PANEL.w / 2) + ' ' + (PANEL.h + 30) + ' ' + gx + ' ' + (NODE.y - 30) + ' ' + gx + ' ' + (NODE.y - 6), 'ts-s-gap cc-trace', cv.marker('gap'));
-    n.ripple = S.path(g, 'M' + (gx - NODE.w / 2 - 4) + ' ' + (NODE.y + NODE.h + 14) + ' C' + (gx - 40) + ' ' + (NODE.y + NODE.h + 34) + ' ' + (mx + 40) + ' ' + (NODE.y + NODE.h + 34) + ' ' + (mx + 10) + ' ' + (NODE.y + NODE.h + 8), 'ts-s-human cc-ripple', cv.marker('human'));
-    n.meet = S.el('div', 'cc-meet ts-hide ts-pop', null, { left: 120, top: MEET.y, width: 800, height: MEET.h });
-    n.meet.appendChild(S.icon('ti-target'));
-    n.meet.appendChild(S.el('span', null, C.meet));
-    root.appendChild(n.meet);
-    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: 430, width: 1008 });
-    n.note.appendChild(S.el('span', 'ah-note-strong', C.line));
+
+    C.compare.forEach(function(x, i) {
+      var b = S.el('div', 'ts-obj ts-c-' + x.tone + (i ? ' ts-soft' : ' ts-dash') + ' cc-cmp ts-hide ts-up', null, { left: 16 + i * (CMP.w + CMP.gap), top: CMP.y, width: CMP.w, height: CMP.h });
+      b.appendChild(S.icon(x.icon, 'cc-cmp-icon ts-ink'));
+      var body = S.el('div', 'cc-cmp-body');
+      body.appendChild(S.el('div', 'cc-cmp-label ts-ink', x.label));
+      body.appendChild(S.el('div', 'cc-cmp-text', x.text));
+      b.appendChild(body);
+      root.appendChild(b);
+      n.cmp.push(b);
+    });
+
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: CMP.y + CMP.h + 22, width: 1008 });
+    n.note.appendChild(S.el('span', 'ah-note-strong', C.line[0]));
+    n.note.appendChild(S.el('span', 'ts-text', C.line[1]));
     root.appendChild(n.note);
   }
 
@@ -84,15 +83,16 @@ SceneDirector.register('connected-context', function(container, manifest, reduce
   }
 
   var steps = [
-    { delay: 200,  run: function() { S.on(n.nodes); S.on(n.joins); } },
-    { delay: 900,  run: function() { S.on(n.top); } },
-    { delay: 1400, run: function() { S.on(n.traceDown); } },
-    { delay: 2000, run: function() { S.on(n.bottom); } },
-    { delay: 2500, run: function() { S.on(n.traceUp); S.on(n.ripple); } },
-    { delay: 3200, run: function() { S.on(n.meet); } },
-    { delay: 3900, run: function() { S.on(n.note); } },
-    { delay: 4400, run: complete }
+    { delay: 200,  run: function() { S.on(n.event); } },
+    { delay: 800,  run: function() { S.on(n.trunk); S.on(n.drops); } }
   ];
+  C.affected.forEach(function(a, i) { steps.push({ delay: 1300 + i * 300, run: function() { S.on(n.cards[i]); } }); });
+  steps.push(
+    { delay: 2800, run: function() { S.on(n.cmp[0]); } },
+    { delay: 3300, run: function() { S.on(n.cmp[1]); } },
+    { delay: 3900, run: function() { S.on(n.note); } },
+    { delay: 4500, run: complete }
+  );
   var tl = createTimeline(steps);
 
   return {
@@ -106,9 +106,10 @@ SceneDirector.register('connected-context', function(container, manifest, reduce
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return 'The chain ' + C.nodes.map(function(x) { return x.label.toLowerCase() + ' ' + x.id + (x.system ? ' from the ' + x.system.toLowerCase() : ''); }).join(', ') + '. '
-        + C.topDown.label + ': ' + C.topDown.trigger.toLowerCase() + ', ' + C.topDown.steps.join(', ').toLowerCase() + '. '
-        + C.bottomUp.label + ': ' + C.bottomUp.trigger.toLowerCase() + ', ' + C.bottomUp.steps.join(', ').toLowerCase() + '. ' + C.meet + ' ' + C.line;
+      var E = C.event;
+      return E.label + ': ' + E.id + ', ' + E.name.toLowerCase() + ', in the ' + E.system.toLowerCase() + '. It affects '
+        + C.affected.map(function(a) { return a.type.toLowerCase() + ' ' + a.id + ' in the ' + a.system.toLowerCase() + ': ' + a.impact.toLowerCase(); }).join('; ')
+        + '. ' + C.compare.map(function(x) { return x.label + ': ' + x.text; }).join(' ') + ' ' + C.line.join(' ');
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

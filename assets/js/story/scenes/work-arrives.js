@@ -1,15 +1,15 @@
 // Scene: work-arrives (screen 02)
-// Causal story: NFR work arrives as a question, not as a method, a data set or a system
-// workflow. Four requests arrive from different channels, one by one, and converge into
-// one role queue. Each says what its answer needs: several records, documents, rules,
-// judgements and owners.
+// Causal story: NFR work arrives as a question, not a method. Four requests a risk team
+// recognises arrive from four places (an email from the COO, a regulatory meeting, an
+// audit request, a chat from procurement). Each card then shows what it takes to answer:
+// the records needed and the people who have to help. None arrives labelled with a
+// method; the answer sits across several systems.
 SceneDirector.register('work-arrives', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var A = D.arrives;
-  var W = 1040, H = 520;
-  var CARD = { y: 0, w: 243, h: 196, gap: 12, x0: 16 };
-  var Q = { x: 220, y: 290, w: 600, h: 82 };
+  var W = 1040, H = 444;
+  var CARD = { x0: 16, y: 0, w: 243, gap: 12, h: 346 };
 
   var cv = null;
   var n = {};
@@ -19,40 +19,31 @@ SceneDirector.register('work-arrives', function(container, manifest, reduced) {
 
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'work-arrives' });
-    n = { cards: [], links: [], slots: [] };
+    cv = S.canvas(container, W, H, { id: 'work-arrives', refHeight: 520 });
+    n = { cards: [], secs: [] };
     done = false;
     var root = cv.el;
-    var g = cv.svg;
     A.asks.forEach(function(a, i) {
-      var x = cardX(i);
-      var c = S.el('div', 'ts-obj ts-c-human wa2-card ts-hide ts-up', null, { left: x, top: CARD.y, width: CARD.w, height: CARD.h });
-      var head = S.el('div', 'wa2-chan');
-      head.appendChild(S.icon(a.icon, 'ts-ink'));
-      head.appendChild(S.el('span', null, a.channel));
-      c.appendChild(head);
+      var c = S.el('div', 'ts-obj ts-c-human wa2-card ts-hide ts-up', null, { left: cardX(i), top: CARD.y, width: CARD.w, height: CARD.h });
+      var chan = S.el('div', 'wa2-chan ts-ink');
+      chan.appendChild(S.icon(a.icon));
+      chan.appendChild(S.el('span', null, a.channel));
+      c.appendChild(chan);
+      c.appendChild(S.el('div', 'wa2-from', a.from));
       c.appendChild(S.el('div', 'wa2-q', a.text));
-      var needs = S.el('div', 'wa2-needs');
-      needs.appendChild(S.el('span', 'wa2-needs-k', 'Needs'));
-      needs.appendChild(S.el('span', null, a.needs));
-      c.appendChild(needs);
+      var sec = S.el('div', 'wa2-sec ts-hide');
+      sec.appendChild(S.el('div', 'wa2-k', A.needsTitle));
+      var ul = S.el('ul', 'wa2-list');
+      a.needs.forEach(function(t) { ul.appendChild(S.el('li', null, t)); });
+      sec.appendChild(ul);
+      sec.appendChild(S.el('div', 'wa2-k', A.whoTitle));
+      sec.appendChild(S.el('div', 'wa2-who', a.who));
+      c.appendChild(sec);
       root.appendChild(c);
       n.cards.push(c);
-      var sx = x + CARD.w / 2, sy = CARD.y + CARD.h + 4;
-      var tx = Q.x + 40 + i * ((Q.w - 80) / 3), ty = Q.y - 4;
-      n.links.push(S.path(g, 'M' + sx + ' ' + sy + ' C' + sx + ' ' + (sy + 50) + ' ' + tx + ' ' + (ty - 40) + ' ' + tx + ' ' + ty, 'ts-s-human wa2-link', cv.marker('human')));
+      n.secs.push(sec);
     });
-    var q = S.el('div', 'wa2-queue ts-hide ts-pop', null, { left: Q.x, top: Q.y, width: Q.w, height: Q.h });
-    var qh = S.el('div', 'wa2-queue-head');
-    qh.appendChild(S.icon('ti-inbox'));
-    qh.appendChild(S.el('span', null, A.queue));
-    q.appendChild(qh);
-    var slots = S.el('div', 'wa2-slots');
-    A.asks.forEach(function(a, i) { var sl = S.el('span', 'wa2-slot', 'Request ' + (i + 1)); slots.appendChild(sl); n.slots.push(sl); });
-    q.appendChild(slots);
-    root.appendChild(q);
-    n.queue = q;
-    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: 430, width: 1008 });
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: CARD.y + CARD.h + 22, width: 1008 });
     n.note.appendChild(S.el('span', 'ah-note-strong', A.strong));
     n.note.appendChild(S.el('span', 'ts-text', A.line));
     root.appendChild(n.note);
@@ -66,12 +57,12 @@ SceneDirector.register('work-arrives', function(container, manifest, reduced) {
 
   var steps = [
     { delay: 200,  run: function() { S.on(n.cards[0]); } },
-    { delay: 700,  run: function() { S.on(n.cards[1]); } },
-    { delay: 1200, run: function() { S.on(n.cards[2]); } },
-    { delay: 1700, run: function() { S.on(n.cards[3]); } },
-    { delay: 2300, run: function() { S.on(n.links); S.on(n.queue); } },
-    { delay: 3100, run: function() { S.on(n.note); } },
-    { delay: 3700, run: complete }
+    { delay: 600,  run: function() { S.on(n.cards[1]); } },
+    { delay: 1000, run: function() { S.on(n.cards[2]); } },
+    { delay: 1400, run: function() { S.on(n.cards[3]); } },
+    { delay: 2100, run: function() { S.on(n.secs); } },
+    { delay: 2900, run: function() { S.on(n.note); } },
+    { delay: 3400, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -86,7 +77,9 @@ SceneDirector.register('work-arrives', function(container, manifest, reduced) {
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return 'Four requests arrive in one role queue: ' + A.asks.map(function(a) { return a.channel.toLowerCase() + ', ' + a.text; }).join(' ') + ' ' + A.strong + ' ' + A.line;
+      return 'Four requests arrive: ' + A.asks.map(function(a) {
+        return a.channel.toLowerCase() + ', ' + a.from.toLowerCase() + ': ' + a.text + ' ' + A.needsTitle + ': ' + a.needs.join(', ').toLowerCase() + '. ' + A.whoTitle + ': ' + a.who.toLowerCase() + '.';
+      }).join(' ') + ' ' + A.strong + ' ' + A.line;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

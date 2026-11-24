@@ -100,19 +100,21 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 
 ### 02 NFR work arrives as a question, not a method
 
-- **Remember:** requests come by email, meeting, audit request and chat, and none of them names a method, a data set or an owner.
-- **Talk track (45 s):** read two of the four requests aloud. "None of these arrives labelled. The answer sits across several systems, no single tool holds it, and they all land in one role's queue."
+- **Remember:** four everyday questions, from four places. Each needs several sources and several people before anyone can answer.
+- **Talk track (45 s):** "Your week looks like this. The COO emails: which controls duplicate across our entities? The regulatory forum asks what the new regulation adds. Internal Audit asks you to prove key controls operate. Procurement asks which critical suppliers are deteriorating. Look at what each one needs: inventories, clauses, test results, indicators, and the people who hold them. None arrives with a method. The answer sits across several systems; no single tool holds it."
+- **Ask the room:** "Which of these did you get this month?"
 - **Deep dive:** V1 (where to start; its detail lists the nine kinds of request risk functions bring).
 
 ### 03 Regulation changes from above. Practice drifts from below.
 
 - **Remember:** not regulation, not people: rules are re-mapped by hand and drift stays unseen until audit.
-- **Talk track (50 s):** "From above: new regulation, revised standards, findings, policy updates. From below: controls that no longer address the risk, are not performed as designed, rely on stale evidence, or attestations that no longer reflect reality. The chain from obligation to decision stops telling one story, and the professional re-maps it by hand. The result is fragmented, falsely assured and burdensome."
+- **Talk track (50 s):** point at the middle row first. "This is the chain every NFR function maintains: obligation, risk, control, evidence, assessment, decision. From above, change keeps arriving: new regulation, revised policy, audit findings. It lands on the obligations and the risks. From below, practice drifts: a control no longer covers the risk, it is not performed as designed, the evidence goes stale, an attestation is no longer true. The links in the middle break. Three consequences: the picture is fragmented, the bank is falsely assured, and every audit becomes a project. Today the professional re-maps the chain by hand."
 - **Deep dive:** D4 (the connected NFR core).
 
 ### 04 Standalone AI sees one system. NFR needs the whole picture.
 
 - **Remember:** this is the key screen of the first chapter. Each assistant sees one system; the NFR answer needs all of them.
+- **Visual:** the question types itself out first. Let it finish before speaking.
 - **Talk track (60 s):** "Take one question: which critical third-party services are deteriorating, and why? The answer needs eight things, and each lives in its own system: the third-party register, contracts and SLAs, incidents, risk indicators, supplier mail, assurance reports, controls and issues, service dependencies. The email assistant sees the mailbox. The document assistant sees the open file. The GRC assistant sees the GRC records. The chat assistant sees what you paste in. Nobody sees the other five, so the professional joins them by hand, for every question. NFR Workspace brings every system's content into one picture, within the user's permissions. You will see it answer exactly this question in a few minutes."
 - **Business owner asks:** "So our assistant rollout was wasted?" **Answer:** "No. Each assistant helps with its own slice. The Workspace joins the slices."
 - **IT strategist asks:** "Does that mean one big data lake?" **Answer:** "No. The Workspace reads through approved connections under the user's own access (D2, D9)."
@@ -121,13 +123,14 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 
 ### 05 One Workspace. Four ways to get work done.
 
-- **Talk track (60 s):** Ask, Use, Run, Create, each with its rule and example. "Same identity, same permissions, same evidence, same control record."
+- **Remember:** one supplier, four ways of working. The difference is how often and how standard the work is.
+- **Talk track (60 s):** "Ask: a one-off question, answered now: what changed in this supplier's SOC 2 report? Use: a standard task, one case at a time: the annual review of one critical supplier, in an app with the approved method and sign-off. Run: the same steps across many cases: every month, chase missing evidence from all critical suppliers, pausing for people at the gates. Create: a new question no app covers yet: track our dependence on one cloud provider this quarter. All four share the same identity, permissions, evidence and control record."
 - **Deep dive:** M1 (which capability handles which work).
 
-### 06 Scaling requires three layers to move together
+### 06 AI scales when work, process and data move together
 
-- **Remember:** improving only the AI component creates another pilot. NFR Workspace is where all three meet.
-- **Talk track (45 s):** work and roles, process and controls, data and platform, maturing together.
+- **Remember:** read left to right as an improvement: today's pilots, the first loop for one role, then every role.
+- **Talk track (45 s):** "Today, each person uses AI their own way, handoffs stay manual, and every pilot copies its own data. That is why pilots do not scale. In the first loop, one role works from a prepared queue, one process has evidence, gates and approval, and the data comes through approved connections. At scale, every NFR role works that way, proven methods are reused, and one connected core serves every role. Improving only the AI component creates another pilot."
 
 ### Transition into the product
 
@@ -165,35 +168,36 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 | The day shows earlier work | Account menu, **Reset demonstration**, then **Confirm reset** |
 | The network is blocked | The product and the deck both run locally; nothing needs the internet after the first load |
 
-### 08 No single large model worked this out
+### 08 Every number in that answer was calculated, not guessed
 
-- **Remember:** complex outcomes are assembled from small, testable steps; you see a plan, not a model.
-- **Talk track (50 s):** the five steps (understand the request and the case; select narrow methods and governed data; calculate, compare and verify; pause where judgement is required; record the approved outcome). Then the three kinds of step: deterministic, narrow model call, human judgement. "In the demonstration, every figure was computed from the records, and the professional approved before anything was written."
+- **Remember:** this screen answers the question every NFR audience asks after a demo: can I trust it? It replays the answer they just saw, step by step.
+- **Talk track (50 s):** "Here is how the answer you just saw was built. A rule found the critical services in the register. The Workspace gathered what changed from 12 sources. A rule calculated each change: three deteriorating, Novalink up 23 points. Only then did AI explain why, two share one cloud provider, with every claim pointing at its source. And a person decided the next step. Rules do the maths, AI does one narrow language task and is checked, a person decides. So model risk is judged step by step, not for one big model."
 - **Deep dives:** M2 (why small methods), D8 (how a question becomes a visual answer).
 
-### 09 Every answer keeps the line from obligation to evidence
+### 09 One failed test shows everything it affects
 
-- **Remember:** the connected core computes the ripple; people decide what to do about it.
-- **Talk track (45 s):** "Each record on this line lives in a different system: the regulatory library, the process inventory, the GRC platform, the testing tool, the RCSA tool, the attestation workflow." Then top-down, a new obligation arrives and finds its risks and controls; bottom-up, a control test fails and is traced up to obligations and attestations. "Both traces meet on one control: the new obligation relies on a control with a missing test. Only a connected view sees that."
+- **Remember:** connected records turn a surprise at audit into a flag on the same day.
+- **Talk track (45 s):** "A control test fails: the supplier access review. On its own, that is one line in a testing tool. Connected, you see at once what it touches: the risk it mitigates needs a new rating; the third-party obligation now relies on an untested control; the self-assessment still rates it effective; and the quarterly attestation is due. Four records, four systems. Today this is found by hand, often at audit, after someone has signed. Here it is flagged the same day, before anyone signs. It works the other way too: a new obligation shows which controls it relies on."
 - **Deep dives:** D4 (the connected core), D5 (when a knowledge graph adds value).
 
 ### 10 AI prepares. Professionals decide. Systems record.
 
-- **Remember:** human authority is designed into the process. Executing a step grants no authority.
-- **Talk track (45 s):** the three columns: AI-assisted preparation, deterministic control, human authority with a named decision maker.
+- **Remember:** read the three columns with the demonstration: AI drafted the evidence request, the professional approved it, the system wrote it and issued a receipt.
+- **Talk track (45 s):** "In the demo, AI drafted the evidence request and its reason. The professional reviewed every field and approved it as their own judgement. The system checked the permissions, wrote the change and issued a receipt. Running a step does not make the software the decision maker: every material change needs a named person, and the record shows who and when."
 - **Deep dives:** M6 (AI, rules and people), M7 (governed write-back).
 
 ## Chapter 4: the path
 
 ### 11 Prove better risk outcomes, and the capacity returned
 
-- **Remember:** risk outcomes, operating performance and capacity are measured separately, and none of them is headcount.
+- **Remember:** three kinds of value, each with one measure the five weeks baselines. None of them is headcount.
+- **Talk track (40 s):** "Risk outcomes: we measure the share of critical suppliers with current, complete evidence. Operating performance: days from trigger to decision. Capacity: hours of preparation per case, before and after. Each is measured on its own, from your baseline."
 - **Deep dives:** V2 (value tree), V3 (the unit-economics calculator: change adoption or efficiency live if the economic buyer engages).
 
 ### 12 Qualify in five weeks. Prove the loop in six months.
 
-- **Remember:** five weeks proves fit and value; six months proves the operating model.
-- **Talk track (60 s):** the five weeks: baseline, configure with a fit gate, challenge. Then the six-month loop in three lanes, then scale through reuse.
+- **Remember:** start small and earn each step. Each phase ends in a decision you make.
+- **Talk track (45 s):** "Five weeks: we answer one real question on your own data, and you get findings, a value case and a clear go or stop. Six months: one role's loop runs live, end to end, measured against the baseline. Then scale: new roles and processes reuse what the first one built."
 - **Deep dives:** S1 (the five-week qualification), S2 (the six-month working loop).
 
 ### 13 The approach has been applied before
@@ -204,7 +208,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 
 ### 14 Which role, decision and process becomes the first loop?
 
-- **Remember:** agree four things today: the target role, the decision or process, representative data and cases, and the proof criteria at five weeks and six months. Each card says what a good answer looks like; ask the room to fill them in.
+- **Remember:** agree four things today: the target role, the decision or process, representative data and cases, and the proof criteria at five weeks and six months. Each card says what a good answer looks like and shows an example answer (third-party risk manager, annual review of critical suppliers, last year's files for 20 suppliers, review time and evidence completeness). Ask the room for their own answers.
 - **Secondary question:** which existing AI, workflow, GRC and data capabilities the Workspace should reuse rather than rebuild.
 - **Deep dive:** V1 (where to start).
 
