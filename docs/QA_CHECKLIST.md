@@ -11,7 +11,7 @@ node scripts/visual-qa.js 8190 artifacts/visual-qa/v36
 node scripts/export-fallback.js 8190
 ```
 
-Last full run: 353 passed, 0 failed on the five desktop projects (see the release note at the end).
+Last full run: 353 passed, 0 failed on the five desktop projects (v36; see the release note at the end).
 
 ## 1. Meeting-survival tests (v7 plan)
 
@@ -73,6 +73,8 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 - Claim review of the internal credentials (engagement lead) and of the indicative commercials (deal team, legal).
 
 ## Release note
+
+v36 (`v36-e8663bd`), 2026-11-24: presentable by any consultant, clear to the NFR business owner; sharper product captures and a rotating cover; the answer's evidence count corrected to the product's (15 items from six registers). Desktop matrix 353 passed, 0 failed. Audits, dash check, copy lint and term scan pass. Against the public build: visual QA 56 screenshots at each of four sizes, 0 console errors; 125 percent zoom clean; PDF fallback 56 pages, 0 console errors. Box audit at eight sizes: no text outside its box.
 
 v34 (`v34-ce4b3d5`), 2026-11-24: screens 02 to 14 reworked so each lands one point with a recognisable example. Desktop matrix 353 passed, 0 failed. Audits, dash check, copy lint and term scan pass. Against the public build: visual QA 56 screenshots at each of four sizes, 0 console errors; 125 percent zoom clean; PDF fallback 56 pages, 0 console errors. Box audit at eight sizes: no text outside its box. Body text medians 13.0 to 14.8 px across core screens; smallest labels 9.46 px only in the 1366 x 650 window. Scene fallbacks regenerated from the scenes (12 pictures, about 1 MB).
 
