@@ -10,7 +10,7 @@ npm run qa:visual
 npm run fallback
 ```
 
-Last full run: see the release note at the end of this file.
+Last full run: 345 passed, 0 failed (see the release note at the end).
 
 ## 1. Meeting-survival tests (plan section 17)
 
@@ -74,3 +74,7 @@ Every appendix page carries one claim status: *Shown in the live product* (C4 wr
 - The product branch `feat/demo-readiness-v6` is not merged into `feat/nfr-workspace-v3`: another session was editing that checkout. Until the merge, `Launch NFROS.cmd` in the main checkout is the old launcher.
 - The product's model-written narration work (other session) could add a live AI dependency to the scripted path; check it before the meeting.
 - Proposed product changes not made (they sit in the insight area of the other session): four figures instead of five, and the shared-provider point in the chart title.
+
+## Release note
+
+v31 (`v31-41a31e4`), 2026-11-24: full desktop matrix 345 passed, 0 failed (the remaining tests are per-project skips by design); all audits, the dash check and the copy lint pass; visual QA 47 screenshots at each of 1920 x 1080, 1600 x 900, 1440 x 900 and 1366 x 768 with 0 console errors; 125 percent zoom pass clean; PDF fallback 47 pages, 0 console errors.
