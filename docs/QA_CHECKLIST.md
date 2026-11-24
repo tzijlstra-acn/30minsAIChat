@@ -1,17 +1,17 @@
-# NFR Workspace pitch: QA checklist (release v32, merged proposition v7)
+# NFR Workspace pitch: QA checklist (release v33, presentability audit v8)
 
-Status as of 2026-11-24 on branch `feat/pitch-v7`. The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
+Status as of 2026-11-24 on branch `feat/pitch-v8`. The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
 ```
 npm run build:public && node scripts/build.js scan-repo
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
 node scripts/serve.js 8190 dist     # then, against the public build:
-node scripts/visual-qa.js 8190 artifacts/visual-qa/v32
+node scripts/visual-qa.js 8190 artifacts/visual-qa/v33
 node scripts/export-fallback.js 8190
 ```
 
-Last full run: 350 passed, 0 failed on the five desktop projects (see the release note at the end).
+Last full run: 353 passed, 0 failed on the five desktop projects (see the release note at the end).
 
 ## 1. Meeting-survival tests (v7 plan)
 
@@ -45,10 +45,11 @@ Last full run: 350 passed, 0 failed on the five desktop projects (see the releas
 
 | Check | Status |
 |---|---|
-| Core screens at 1024 x 768 to 1920 x 1080: no clipping, no element outside its canvas, text above the floor | Pass, automated |
-| Appendix pages and the fallback at every size: no horizontal overflow, text above the floor, each page under 1.8 screens | Pass, automated |
+| Core screens at 1024 x 768 to 1920 x 1080, and 1366 x 650 (a browser window on a 1366 x 768 laptop): no clipping, no element outside its canvas, no text outside its box, text above the floor | Pass, automated. Floor 10 px at 1366 x 768 and up; 9.4 px at 1366 x 650, where every screen's smallest labels render at about 9.5 px (the guide says full screen) |
+| Appendix pages and the fallback at every size: no horizontal overflow, text above the floor, no text outside its box, visuals below the subtitle, each page under 1.8 screens | Pass, automated |
+| One type size across screens: body text median 12.9 to 15.1 px on every core screen at 1366 x 768 (v32: screen 02 at 17 px, screen 14 at 19 px; screens 11 to 14 scaled 9 to 18 percent larger) | Pass, scripted measurement |
 | 125 percent zoom (1536 x 864 and 1152 x 720 at 1.25) | Pass, scripted check on the public build: 14 screens at each size, 0 issues, 0 errors |
-| Contact sheet of all core screens at 1366 x 768 | Pass: reviewed by eye; icons render once |
+| Contact sheets at 1366 x 768 and 1920 x 1080 | Pass: reviewed by eye; wrapped headlines break into two even lines |
 
 ## 4. Claim review
 
@@ -72,5 +73,7 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 - Claim review of the internal credentials (engagement lead) and of the indicative commercials (deal team, legal).
 
 ## Release note
+
+v33 (`v33-73f05f2`), 2026-11-24: desktop matrix 353 passed, 0 failed (the 452 skips are per-project by design; `mobile` needs WebKit, not installed here). Audits, dash check, copy lint and the term scan pass. Against the public build: visual QA 56 screenshots at each of four sizes, 0 console errors; 125 percent zoom clean; PDF fallback 56 pages, 0 console errors. Box audit at eight sizes (including 1366 x 650, 1536 x 730 and 1920 x 960): no text outside its box, nothing clipped, no overlapping boxes.
 
 v32 (`v32-5492c5a`), 2026-11-24: desktop matrix (chromium, 1366 x 768, 1440 x 900, 1920 x 1080, 1024 x 768) 350 passed, 0 failed; the 440 skips are per-project by design. The `mobile` project needs WebKit, which is not installed on this machine, and is not part of the matrix. All audits, the dash check and the copy lint pass. Against the public build served from `dist/`: visual QA 56 screenshots at each of 1920 x 1080, 1600 x 900, 1440 x 900 and 1366 x 768 with 0 console errors; 125 percent zoom clean; PDF fallback 56 pages, 0 console errors. Internal edition PDF: 60 pages, 0 console errors, kept in `internal/fallback/` (git-ignored).

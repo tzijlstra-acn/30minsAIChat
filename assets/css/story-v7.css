@@ -133,3 +133,6 @@
 
 /* v8 14: one line on what a good answer looks like */
 .wd-agree-hint { font-size: 14.5px; line-height: 1.4; color: var(--text-2); }
+
+/* v8: a headline that wraps breaks into two even lines, not one long line and an orphan */
+.scene-screen:not(.app-screen) .slide-h, .apx-page .slide-h { text-wrap: balance; }
