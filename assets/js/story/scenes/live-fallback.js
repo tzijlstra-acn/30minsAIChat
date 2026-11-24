@@ -2,7 +2,8 @@
 // The captured fallback for the live demonstration: the five acts as screenshots taken
 // from the real product on its deterministic demo day (NFR_LIVE_CAPTURES). Act tabs and
 // a counter orient the room; Space steps through the captures and, after the last one,
-// continues to the principle screen, exactly where the live demonstration returns.
+// continues to screen 08 (what happened beneath the experience), exactly where the
+// live demonstration returns.
 // A missing capture shows a labelled placeholder, never a broken image.
 SceneDirector.register('live-fallback', function(container, manifest, reduced) {
   var S = window.StoryKit;
@@ -102,7 +103,7 @@ SceneDirector.register('live-fallback', function(container, manifest, reduced) {
 
   function advance() {
     if (at < shots.length - 1) { show(at + 1); return true; }
-    if (typeof goToId === 'function') goToId('authority-boundary');
+    if (typeof goToId === 'function') goToId('method-plan');
     return true;
   }
 

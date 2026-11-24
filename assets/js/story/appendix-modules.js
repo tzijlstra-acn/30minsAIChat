@@ -1,4 +1,4 @@
-// -- APPENDIX MODULES -- v6 --
+// -- APPENDIX MODULES -- v7 --
 // Renders the four-module appendix from NFR_APPENDIX into the section shells in
 // pitch.html: the index (#appendix, four doors) and one page per question
 // (section[data-apx-page]). Each page gets its chrome (module, code, kind, claim status,
@@ -76,6 +76,11 @@
   // V2: value tree, root to three branches
   V.tree = function(c, v) {
     var t = el('div', 'apx-tree');
+    if (v.chain) {
+      var ch = el('ol', 'apx-tree-chain');
+      v.chain.forEach(function(x) { ch.appendChild(el('li', null, x)); });
+      t.appendChild(ch);
+    }
     t.appendChild(el('div', 'apx-tree-root', v.root));
     var row = el('div', 'apx-tree-branches');
     v.branches.forEach(function(b) {
@@ -155,6 +160,7 @@
       cols.appendChild(box);
     });
     c.appendChild(cols);
+    if (v.principles) c.appendChild(chips(v.principlesTitle, v.principles, 'is-strip'));
   };
 
   // C2, D2: a matrix with a corner label, column heads and row labels
@@ -183,7 +189,7 @@
 
   // C3: stages, promotion gates and retirement
   V.lifecycle = function(c, v) {
-    var row = el('ol', 'apx-stages');
+    var row = el('ol', 'apx-stages' + (v.stages.length === 5 ? ' is-five' : ''));
     v.stages.forEach(function(s, i) {
       var li = el('li', 'apx-stage');
       li.appendChild(el('span', 'apx-stage-num', String(i + 1)));
@@ -212,7 +218,7 @@
       ol.appendChild(li);
     });
     c.appendChild(ol);
-    if (v.strip && v.strip.length) c.appendChild(chips('Controls', v.strip, 'is-strip'));
+    if (v.strip && v.strip.length) c.appendChild(chips(v.stripTitle || 'Controls', v.strip, 'is-strip'));
   };
 
   // C5: monitoring groups and incident ownership
@@ -298,7 +304,7 @@
 
   // D5: a readable domain graph, nodes and named relationships
   V.graph = function(c, v) {
-    var W = 1000, H = 440, NW = 132, NH = 34;
+    var W = v.w || 1000, H = v.h || 440, NW = 132, NH = 34;
     var byId = {};
     v.nodes.forEach(function(nd) { byId[nd.id] = nd; });
     var g = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, 'class': 'apx-graph', role: 'img', 'aria-label': 'NFR knowledge graph: ' + v.edges.map(function(e) { return byId[e[0]].label + ' ' + e[2].replace(/_/g, ' ') + ' ' + byId[e[1]].label; }).join('; ') });
@@ -328,7 +334,7 @@
 
   // D6: incremental phases and quality controls
   V.phases = function(c, v) {
-    var row = el('ol', 'apx-stages');
+    var row = el('ol', 'apx-stages' + (v.phases.length === 5 ? ' is-five' : ''));
     v.phases.forEach(function(s, i) {
       var li = el('li', 'apx-stage');
       li.appendChild(el('span', 'apx-stage-num', 'Phase ' + (i + 1)));
@@ -393,7 +399,9 @@
     var w = el('div', 'apx-bands');
     v.bands.forEach(function(b) {
       var row = el('div', 'apx-band is-' + b.id);
-      row.appendChild(el('div', 'apx-band-label', b.label));
+      var lab = el('div', 'apx-band-label', b.label);
+      if (b.owner) lab.appendChild(el('span', 'apx-band-owner', 'Owner: ' + b.owner));
+      row.appendChild(lab);
       var pills = el('div', 'apx-pills');
       b.items.forEach(function(it) { pills.appendChild(el('span', 'apx-pill', it)); });
       row.appendChild(pills);
@@ -406,12 +414,19 @@
   V.lanes = function(c, v) {
     var grid = el('div', 'apx-lanes');
     grid.appendChild(el('div', 'apx-lanes-corner'));
-    v.gates.forEach(function(g, i) { var h = el('div', 'apx-lanes-gate'); h.appendChild(el('span', 'apx-gate-num', 'Gate ' + (i + 1))); h.appendChild(el('span', null, g)); grid.appendChild(h); });
+    if (v.heads) {
+      grid.classList.add('is-three');
+      v.heads.forEach(function(hd) { var h = el('div', 'apx-lanes-gate'); h.appendChild(el('span', null, hd)); grid.appendChild(h); });
+    } else {
+      v.gates.forEach(function(g, i) { var h = el('div', 'apx-lanes-gate'); h.appendChild(el('span', 'apx-gate-num', 'Gate ' + (i + 1))); h.appendChild(el('span', null, g)); grid.appendChild(h); });
+    }
     v.lanes.forEach(function(l) {
       grid.appendChild(el('div', 'apx-lanes-label', l.label));
       l.steps.forEach(function(s) { grid.appendChild(el('div', 'apx-lanes-cell', s)); });
     });
     c.appendChild(grid);
+    if (v.heads && v.gates) c.appendChild(chips(v.gatesTitle || 'Gates', v.gates, 'is-gate'));
+    if (v.entry) c.appendChild(chips(v.entryTitle || 'Entry conditions', v.entry, 'is-strip'));
   };
 
   // P4: ownership by role and type
@@ -440,7 +455,7 @@
 
   // P5: four rising waves and the criteria to move on
   V.waves = function(c, v) {
-    var row = el('ol', 'apx-waves');
+    var row = el('ol', 'apx-waves' + (v.waves.length === 5 ? ' is-five' : ''));
     v.waves.forEach(function(w, i) {
       var li = el('li', 'apx-wave');
       li.style.setProperty('--apx-wave', String(i));
@@ -451,6 +466,87 @@
     });
     c.appendChild(row);
     c.appendChild(chips(v.criteriaTitle, v.criteria, 'is-gate'));
+  };
+
+  // M2: three kinds of step, and a worked example assembled from them
+  V.methods = function(c, v) {
+    var cols = el('div', 'apx-cols');
+    var LBL = {};
+    v.types.forEach(function(t) {
+      LBL[t.id] = t.label;
+      var box = el('div', 'apx-col is-' + (t.id === 'model' ? 'ai' : t.id === 'rule' ? 'rules' : 'human'));
+      box.appendChild(el('div', 'apx-col-title', t.label));
+      var pills = el('div', 'apx-pills');
+      t.items.forEach(function(it) { pills.appendChild(el('span', 'apx-pill', it)); });
+      box.appendChild(pills);
+      cols.appendChild(box);
+    });
+    c.appendChild(cols);
+    c.appendChild(el('div', 'apx-sub-title', v.exampleTitle));
+    var ol = el('ol', 'apx-chain');
+    v.example.forEach(function(s, i) {
+      var li = el('li', 'apx-chain-step is-' + s.kind);
+      li.appendChild(el('span', 'apx-chain-kind', LBL[s.kind] || s.kind));
+      li.appendChild(el('span', 'apx-chain-label', s.label));
+      ol.appendChild(li);
+    });
+    c.appendChild(ol);
+  };
+
+  // M3: method pools, each a short chain of steps
+  V.pools = function(c, v) {
+    var grid = el('div', 'apx-pools');
+    v.pools.forEach(function(pl) {
+      var box = el('div', 'apx-pool' + (pl.live ? ' is-live' : ''));
+      box.appendChild(el('div', 'apx-col-title', pl.label));
+      box.appendChild(el('div', 'apx-pool-purpose', pl.purpose));
+      var chain = el('div', 'apx-pool-steps');
+      pl.steps.forEach(function(st, i) {
+        chain.appendChild(el('span', 'apx-pill', st));
+        if (i < pl.steps.length - 1) chain.appendChild(icon('ti-arrow-right'));
+      });
+      box.appendChild(chain);
+      if (pl.live) box.appendChild(el('div', 'apx-pool-live', 'Shown in the live product'));
+      grid.appendChild(box);
+    });
+    c.appendChild(grid);
+  };
+
+  // S1: five weeks, three phases, one gate, and the team
+  V.sprint = function(c, v) {
+    var grid = el('div', 'apx-sprint');
+    grid.style.gridTemplateColumns = 'repeat(' + v.weeks.length + ', minmax(0, 1fr))';
+    v.weeks.forEach(function(w) { grid.appendChild(el('div', 'apx-sprint-week', w)); });
+    v.phases.forEach(function(ph) {
+      var b = el('div', 'apx-sprint-phase' + (ph.gate ? ' has-gate' : ''));
+      b.style.gridColumn = (ph.from + 1) + ' / ' + (ph.to + 2);
+      b.appendChild(el('div', 'apx-col-title', ph.label));
+      b.appendChild(list(ph.items));
+      var out = el('div', 'apx-sprint-out');
+      out.appendChild(el('span', 'apx-chips-title', 'Output'));
+      out.appendChild(el('span', null, ph.output));
+      b.appendChild(out);
+      if (ph.gate) { var gt = el('div', 'apx-sprint-gate'); gt.appendChild(icon('ti-diamond')); gt.appendChild(el('span', null, ph.gate)); b.appendChild(gt); }
+      grid.appendChild(b);
+    });
+    c.appendChild(grid);
+    var team = el('div', 'apx-owners');
+    team.appendChild(el('span', 'apx-chips-title', v.teamTitle));
+    v.team.forEach(function(r) { var it = el('div', 'apx-owner'); it.appendChild(el('b', null, r[0])); it.appendChild(el('span', null, r[1])); team.appendChild(it); });
+    c.appendChild(team);
+  };
+
+  // S5: delivery options side by side
+  V.options = function(c, v) {
+    var cols = el('div', 'apx-cols');
+    v.options.forEach(function(o, i) {
+      var box = el('div', 'apx-col apx-option' + (i === 0 ? ' is-first' : ''));
+      box.appendChild(el('div', 'apx-col-title', o.label));
+      box.appendChild(el('div', 'apx-pool-purpose', o.sub));
+      box.appendChild(list(o.items));
+      cols.appendChild(box);
+    });
+    c.appendChild(cols);
   };
 
   // ── V3: the unit-economics calculator ──

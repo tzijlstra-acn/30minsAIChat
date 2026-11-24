@@ -1,7 +1,7 @@
-// Scene: authority-boundary (v2 screen 10)
-// Causal story: the principle behind every screen of the demo. Three columns, left to
-// right: AI and automation prepare, professionals decide, systems record. The record
-// is acknowledged only after the decision. Below, each capability's default authority:
+// Scene: authority-boundary (screen 10)
+// Causal story: human authority is designed into the process. Three columns, left to
+// right: AI-assisted preparation, deterministic control, human authority (with the
+// named decision maker). Below, each capability's default authority:
 // Assist drafts and explains, a role app prepares and validates, an automation runs
 // approved steps and pauses at human gates, an ad hoc agent reads, analyses and drafts.
 // No capability owns the risk.
@@ -12,11 +12,7 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
   var COL = { y: 0, w: 310, h: 292, gap: 39, x0: 16 };
   var TBL = { x: 16, y: 318, w: 690 };
 
-  var COLS = [
-    { key: 'prepare', tone: 'ai', icon: 'ti-sparkles' },
-    { key: 'decide', tone: 'human', icon: 'ti-user-check' },
-    { key: 'record', tone: 'proof', icon: 'ti-database' }
-  ];
+  var COLS = D.boundary.columns;
 
   var cv = null;
   var n = {};
@@ -34,7 +30,7 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
     var B = D.boundary;
 
     COLS.forEach(function(c, i) {
-      var spec = B[c.key];
+      var spec = c;
       var x = colX(i);
       var col = S.el('div', 'ts-obj ts-c-' + c.tone + ' cb-col ts-hide ts-up', null, { left: x, top: COL.y, width: COL.w, height: COL.h });
       var head = S.el('div', 'cb-head');
@@ -44,12 +40,8 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
       var ul = S.el('ul', 'cb-items');
       spec.items.forEach(function(it) { ul.appendChild(S.el('li', null, it)); });
       col.appendChild(ul);
-      if (c.key === 'record') {
-        var rc = S.ReceiptState.create(col, { state: 'acknowledged', label: 'Recorded after the decision' });
-        rc.el.classList.add('cb-receipt');
-      }
-      if (c.key === 'decide') {
-        var gate = S.DecisionGate.create(col, { size: 'small', label: 'Named decision maker' });
+      if (c.gate) {
+        var gate = S.DecisionGate.create(col, { size: 'small', label: c.gate });
         gate.el.classList.add('cb-gate');
         n.gate = gate;
       }
@@ -77,7 +69,7 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
 
     var note = S.el('div', 'cb-note ts-hide ts-pop', null, { left: 734, top: TBL.y + 26, width: 290, height: 162 });
     note.appendChild(S.el('div', 'cb-note-main', B.tableNote));
-    note.appendChild(S.el('div', 'ts-text', 'Authority changes only through an explicit control decision. Capability can grow; accountability stays with named people.'));
+    note.appendChild(S.el('div', 'ts-text', B.noteText));
     root.appendChild(note);
     n.note = note;
   }
@@ -91,9 +83,9 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
   var steps = [
     { delay: 200,  run: function() { S.on(n.cols[0]); } },
     { delay: 900,  run: function() { S.on(n.arrows[0]); } },
-    { delay: 1200, run: function() { S.on(n.cols[1]); n.gate.activate(); } },
+    { delay: 1200, run: function() { S.on(n.cols[1]); } },
     { delay: 1900, run: function() { S.on(n.arrows[1]); } },
-    { delay: 2200, run: function() { S.on(n.cols[2]); } },
+    { delay: 2200, run: function() { S.on(n.cols[2]); if (n.gate) n.gate.activate(); } },
     { delay: 3000, run: function() { S.on(n.tblLabel); S.on(n.rows[0]); } },
     { delay: 3300, run: function() { S.on(n.rows[1]); } },
     { delay: 3600, run: function() { S.on(n.rows[2]); } },
@@ -115,8 +107,7 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
       var B = D.boundary;
-      return B.prepare.label + ': ' + B.prepare.items.join(', ').toLowerCase() + '. ' + B.decide.label + ': ' + B.decide.items.join(', ').toLowerCase() + '. '
-        + B.record.label + ': ' + B.record.items.join(', ').toLowerCase() + '. Default authority: '
+      return B.columns.map(function(c) { return c.label + ': ' + c.items.join(', ').toLowerCase(); }).join('. ') + '. Default authority: '
         + D.capabilities.map(function(c) { return c.product + ', ' + c.authority.toLowerCase(); }).join('; ') + '. ' + B.tableNote;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }

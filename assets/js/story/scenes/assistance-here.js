@@ -1,22 +1,21 @@
-// Scene: assistance-here (v2 screen 02)
-// Causal story: banks already have useful AI assistance. Email, chat, documents,
-// meetings and search each light up with a "helps here" mark around one professional.
-// Then the case underneath is revealed: it still runs through several systems and
-// handoffs, and the assistance helps one person with one activity at a time.
+// Scene: assistance-here (screen 04)
+// Causal story: AI can already help with individual activities. Email, chat, documents,
+// meetings and policy questions light up around one professional. Underneath, the
+// remaining operating gap appears: eight steps that assistance does not carry. The
+// assistant helps the person; the Workspace carries the work.
 SceneDirector.register('assistance-here', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var W = 1040, H = 520;
   var TILE = { y: 0, w: 188, h: 108, gap: 15, x0: 16 };
   var PERSON = { x: 520, y: 196, r: 30 };
-  var LANE = { y: 330, w: 150, h: 54 };
+  var GAP = { y: 318, w: 243, h: 52, gap: 12 };
 
   var cv = null;
   var n = {};
   var done = false;
 
   function tileX(i) { return TILE.x0 + i * (TILE.w + TILE.gap); }
-  function nodeX(i, count) { var gap = (W - 32 - count * LANE.w) / (count - 1); return 16 + i * (LANE.w + gap); }
 
   function build() {
     if (cv) cv.destroy();
@@ -51,31 +50,20 @@ SceneDirector.register('assistance-here', function(container, manifest, reduced)
     n.personLabel = S.el('div', 'ts-text ah-person-label ts-hide', 'One professional, one activity at a time', { left: PERSON.x - 170, top: PERSON.y + PERSON.r + 8, width: 340 });
     root.appendChild(n.personLabel);
 
-    // The case underneath: several systems, joined by handoffs
-    var span = D.caseSpan;
-    n.laneLabel = S.el('div', 'ts-label ts-ink ts-c-human ts-hide', span.label + ' still spans systems and handoffs', { left: 16, top: LANE.y - 34, width: 600 });
+    // The remaining operating gap: what assistance does not carry
+    n.laneLabel = S.el('div', 'ts-label ts-ink ts-c-human ts-hide', D.gapTitle, { left: 16, top: GAP.y - 30, width: 600 });
     root.appendChild(n.laneLabel);
-    var cy = LANE.y + LANE.h / 2;
-    span.systems.forEach(function(s, i) {
-      var x = nodeX(i, span.systems.length);
-      var node = S.el('div', 'ts-obj ts-c-data ah-node ts-hide', null, { left: x, top: LANE.y, width: LANE.w, height: LANE.h });
-      node.appendChild(S.el('span', 'ah-node-text', s));
-      root.appendChild(node);
-      n.nodes.push(node);
-      if (i < span.systems.length - 1) {
-        var x2 = nodeX(i + 1, span.systems.length);
-        var gp = S.svg('path', { d: 'M' + (x + LANE.w + 4) + ' ' + cy + ' L' + (x2 - 4) + ' ' + cy }, 'ts-s-gap ah-gap');
-        g.appendChild(gp);
-        n.gaps.push(gp);
-        var mid = (x + LANE.w + x2) / 2;
-        var mark = S.el('div', 'ah-handoff ts-hide', span.handoffs[i], { left: mid - 46, top: LANE.y + LANE.h + 12, width: 92 });
-        root.appendChild(mark);
-        n.marks.push(mark);
-      }
+    D.gap.forEach(function(t, i) {
+      var col = i % 4, row = Math.floor(i / 4);
+      var chip = S.el('div', 'ts-obj ts-c-gap ah-gapstep ts-hide ts-up', null, { left: 16 + col * (GAP.w + GAP.gap), top: GAP.y + row * (GAP.h + 10), width: GAP.w, height: GAP.h });
+      chip.appendChild(S.el('span', 'ah-gap-n', String(i + 1)));
+      chip.appendChild(S.el('span', 'ah-gap-t', t));
+      root.appendChild(chip);
+      n.nodes.push(chip);
     });
     n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: 462, width: 1008 });
-    n.note.appendChild(S.el('span', 'ah-note-strong', 'Assistance helps one person with one activity.'));
-    n.note.appendChild(S.el('span', 'ts-text', 'The case still needs someone to carry it from system to system.'));
+    n.note.appendChild(S.el('span', 'ah-note-strong', D.difference[0]));
+    n.note.appendChild(S.el('span', 'ts-text', D.difference[1]));
     root.appendChild(n.note);
   }
 
@@ -93,8 +81,8 @@ SceneDirector.register('assistance-here', function(container, manifest, reduced)
     { delay: 1200, run: function() { S.on(n.tiles[4]); } },
     { delay: 1600, run: function() { S.on(n.links); S.on(n.person); } },
     { delay: 2200, run: function() { S.on(n.personLabel); } },
-    { delay: 2900, run: function() { S.on(n.laneLabel); S.on(n.nodes); } },
-    { delay: 3500, run: function() { S.on(n.gaps); S.on(n.marks); } },
+    { delay: 2900, run: function() { S.on(n.laneLabel); S.on(n.nodes.slice(0, 4)); } },
+    { delay: 3500, run: function() { S.on(n.nodes.slice(4)); } },
     { delay: 4300, run: function() { S.on(n.note); } },
     { delay: 4900, run: complete }
   ];
@@ -112,8 +100,7 @@ SceneDirector.register('assistance-here', function(container, manifest, reduced)
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
       return 'AI assistance already helps in ' + D.channels.map(function(c) { return c.label.toLowerCase(); }).join(', ')
-        + ', each marked helps here around one professional. Underneath, one NFR case still spans ' + D.caseSpan.systems.join(', ').toLowerCase()
-        + ', joined by handoffs: ' + D.caseSpan.handoffs.join(', ').toLowerCase() + '. Assistance helps one person with one activity.';
+        + ', each marked helps here around one professional. ' + D.gapTitle + ': ' + D.gap.join(', ').toLowerCase() + '. ' + D.difference.join(' ');
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

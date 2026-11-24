@@ -6,6 +6,10 @@
 
 (function() {
   var SPRITE_PATH = 'assets/icons/tabler-sprite.svg';
+  // v7: the upgrade is off. The vendored icon font renders every icon on its own, offline
+  // and without a second request; with the sprite also drawn, upgraded icons showed twice.
+  // Scenes may still call NFRIconRegistry.upgrade() explicitly.
+  var AUTO = false;
   // v6: the sprite is fetched once and inlined, so icons never need the network again
   // (the deck keeps working offline after the first load). Until it is inlined, icons
   // reference the file; afterwards they reference the inline symbols.
@@ -83,15 +87,15 @@
   }
 
   // Upgrade on DOMContentLoaded, then watch for dynamic additions
-  if (document.readyState === 'loading') {
+  if (AUTO && document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() { upgradeAll(); inlineSprite(); });
-  } else {
+  } else if (AUTO) {
     upgradeAll();
     inlineSprite();
   }
 
   // MutationObserver fallback: catch icons injected after load (scene renders, etc.)
-  if (window.MutationObserver) {
+  if (AUTO && window.MutationObserver) {
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(m) {
         m.addedNodes.forEach(function(node) {

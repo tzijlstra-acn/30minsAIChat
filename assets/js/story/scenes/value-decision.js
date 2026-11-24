@@ -1,4 +1,4 @@
-// Scene: value-decision (screen 09)
+// Scene: value-decision (screen 11)
 // Causal story: value grows as assistance becomes operational work. A four-step ladder
 // rises from Assist to role apps to automations to the Agent Builder, each with its
 // primary value. Three outcome groups are measured separately: risk, operating
@@ -7,9 +7,9 @@
 SceneDirector.register('value-decision', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
-  var W = 1040, H = 380;
+  var W = 1040, H = 400;
   var STEP = { x0: 16, w: 246, gap: 8, base: 150, heights: [96, 112, 128, 144] };
-  var OUT = { y: 168, w: 330, gap: 9, h: 156 };
+  var OUT = { y: 168, w: 330, gap: 9, h: 180 };
 
   var cv = null;
   var n = {};

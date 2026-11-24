@@ -3,8 +3,8 @@
 // wordmark appears, the role context and the current decisions load, the Workspace
 // reports ready, and a cue invites the presenter to open the live product. The five acts
 // the audience is about to see sit underneath. About two and a half seconds; Space skips
-// the start-up and then moves on to the principle screen, which is where the presenter
-// returns after the live demonstration. L opens the live product; F the captured fallback.
+// the start-up and then moves on to screen 08, which is where the presenter returns
+// after the live demonstration. L opens the live product; F the captured fallback.
 SceneDirector.register('enter-workspace', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
@@ -27,7 +27,7 @@ SceneDirector.register('enter-workspace', function(container, manifest, reduced)
     root.appendChild(n.mark);
     n.word = S.el('div', 'ew-word ts-hide', D.product, { left: 220, top: 80, width: 600 });
     root.appendChild(n.word);
-    var list = S.el('div', 'ew-status', null, { left: 360, top: 138, width: 320 });
+    var list = S.el('div', 'ew-status', null, { left: 350, top: 132, width: 340 });
     E.statuses.forEach(function(label, i) {
       var row = S.el('div', 'ew-st ts-hide ts-left' + (i === E.statuses.length - 1 ? ' is-ready' : ''));
       row.appendChild(S.icon('ti-circle-dashed', 'ew-wait'));
@@ -38,7 +38,7 @@ SceneDirector.register('enter-workspace', function(container, manifest, reduced)
     });
     root.appendChild(list);
 
-    var cue = S.el('div', 'ew-cue ts-hide ts-up', null, { left: 220, top: 252, width: 600, height: 120 });
+    var cue = S.el('div', 'ew-cue ts-hide ts-up', null, { left: 220, top: 272, width: 600, height: 116 });
     var open = document.createElement('button');
     open.type = 'button';
     open.className = 'ew-open';
@@ -58,7 +58,7 @@ SceneDirector.register('enter-workspace', function(container, manifest, reduced)
     n.cue = cue;
     n.open = open;
 
-    var acts = S.el('div', 'ew-acts', null, { left: 16, top: 404, width: 1008, height: 96 });
+    var acts = S.el('div', 'ew-acts', null, { left: 16, top: 410, width: 1008, height: 96 });
     E.acts.forEach(function(a, i) {
       var c = S.el('div', 'ew-act ts-hide ts-up');
       c.appendChild(S.el('span', 'ew-act-n', 'Act ' + (i + 1)));
@@ -81,13 +81,15 @@ SceneDirector.register('enter-workspace', function(container, manifest, reduced)
   var steps = [
     { delay: 40,   run: function() { if (window.NFRExperience) NFRExperience.set('entering-workspace'); S.on(n.mark); } },
     { delay: 260,  run: function() { S.on(n.word); } },
-    { delay: 520,  run: function() { S.on(n.st[0]); } },
-    { delay: 960,  run: function() { loaded(0); S.on(n.st[1]); } },
-    { delay: 1400, run: function() { loaded(1); S.on(n.st[2]); loaded(2); } },
-    { delay: 1800, run: function() { S.on(n.cue); n.open.classList.add('is-ready'); } },
-    { delay: 2050, run: function() { S.on(n.acts); } },
-    { delay: 2500, run: complete }
+    { delay: 1900, run: function() { S.on(n.cue); n.open.classList.add('is-ready'); } },
+    { delay: 2150, run: function() { S.on(n.acts); } },
+    { delay: 2600, run: complete }
   ];
+  // One status every 380 ms from 520 ms: each check completes as the next appears
+  E.statuses.forEach(function(s, i) {
+    steps.push({ delay: 520 + i * 380, run: function() { if (i > 0) loaded(i - 1); S.on(n.st[i]); if (i === E.statuses.length - 1) loaded(i); } });
+  });
+  steps.sort(function(a, b) { return a.delay - b.delay; });
   var tl = createTimeline(steps);
 
   return {

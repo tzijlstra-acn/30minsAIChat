@@ -2,6 +2,12 @@
   "version": "18",
   "icons": [
     { "name": "alert-triangle",       "class": "ti-alert-triangle",       "semantic": "risk" },
+    { "name": "unlink",             "class": "ti-unlink",             "semantic": "risk" },
+    { "name": "arrow-down",         "class": "ti-arrow-down",         "semantic": "navigation" },
+    { "name": "arrow-up",           "class": "ti-arrow-up",           "semantic": "navigation" },
+    { "name": "diamond",            "class": "ti-diamond",            "semantic": "decision" },
+    { "name": "inbox",              "class": "ti-inbox",              "semantic": "work" },
+    { "name": "calculator",         "class": "ti-calculator",         "semantic": "method" },
     { "name": "arrow-left",         "class": "ti-arrow-left",         "semantic": "navigation" },
     { "name": "chart-line",         "class": "ti-chart-line",         "semantic": "measure" },
     { "name": "circle-x",           "class": "ti-circle-x",           "semantic": "status" },

@@ -1,4 +1,4 @@
-// -- PRESENTER CONTROLS -- v6 --
+// -- PRESENTER CONTROLS -- v7 --
 // Experience state, presenter keys, safe mode, the shortcut overlay, the hand-off to the
 // live product and appendix navigation. navigation.js hands every keydown to handleKey()
 // first.
@@ -14,22 +14,23 @@
   'use strict';
 
   var WORKSPACE_ENTRY = 'enter-workspace';
-  var STORY_RETURN = 'authority-boundary';
+  var STORY_RETURN = 'method-plan';
   var STORY_END = 'workshop-decision';
   var FALLBACK = 'live-fallback';
 
   // Experience states for the story screens; the doorway and the fallback set their own
   var STATE_BY_SCREEN = {
-    'cover': 'cover', 'assistance-here': 'assistance', 'remaining-burden': 'integration-burden',
-    'four-ways': 'four-ways', 'three-layers': 'three-layers', 'authority-boundary': 'control-boundary',
-    'six-month-route': 'roadmap', 'value-decision': 'value', 'workshop-decision': 'workshop'
+    'cover': 'cover', 'work-arrives': 'work-arrives', 'chain-drift': 'chain-drift', 'assistance-here': 'assistance',
+    'four-ways': 'four-ways', 'three-layers': 'three-layers', 'method-plan': 'beneath', 'connected-context': 'connected',
+    'authority-boundary': 'control-boundary', 'value-decision': 'value', 'qualify-and-prove': 'qualify',
+    'experience': 'experience', 'workshop-decision': 'decision'
   };
 
   // ── The experience state model: every state the deck can be in, in route order ──
   var STATES = [
-    'cover', 'assistance', 'integration-burden', 'four-ways', 'three-layers',
+    'cover', 'work-arrives', 'chain-drift', 'assistance', 'four-ways', 'three-layers',
     'entering-workspace', 'live-handoff', 'live-fallback',
-    'control-boundary', 'roadmap', 'value', 'workshop', 'appendix'
+    'beneath', 'connected', 'control-boundary', 'value', 'qualify', 'experience', 'decision', 'appendix'
   ];
 
   var _state = 'cover';
