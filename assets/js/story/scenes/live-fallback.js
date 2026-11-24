@@ -5,6 +5,7 @@
 // continues to the principle screen, exactly where the live demonstration returns.
 // A missing capture shows a labelled placeholder, never a broken image.
 SceneDirector.register('live-fallback', function(container, manifest, reduced) {
+  var S = window.StoryKit;
   var L = window.NFR_LIVE_CAPTURES;
   var shots = [];
   var at = 0;
@@ -20,7 +21,10 @@ SceneDirector.register('live-fallback', function(container, manifest, reduced) {
   }
 
   function build() {
+    // Keep the accessible summary the director injected
+    var summary = container.querySelector('.scene-accessible-summary');
     container.innerHTML = '';
+    if (summary) container.appendChild(summary);
     flatten();
     done = false;
     at = 0;
@@ -104,7 +108,7 @@ SceneDirector.register('live-fallback', function(container, manifest, reduced) {
   function complete() {
     if (done) return;
     done = true;
-    if (window.StoryKit) StoryKit.complete(container);
+    S.complete(container);
   }
 
   var tl = createTimeline([{ delay: 60, run: complete }]);

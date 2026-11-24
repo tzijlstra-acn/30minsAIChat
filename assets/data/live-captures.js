@@ -22,4 +22,8 @@
         shots: [{ file: DIR + 'receipt.png', caption: 'The audit receipt and the changed record.' }] }
     ]
   });
+  // Load every capture once the deck has loaded, so the fallback also works offline
+  if (global.addEventListener) global.addEventListener('load', function() {
+    global.NFR_LIVE_CAPTURES.acts.forEach(function(a) { a.shots.forEach(function(s) { var im = new Image(); im.src = s.file; }); });
+  });
 }(typeof window !== 'undefined' ? window : globalThis));

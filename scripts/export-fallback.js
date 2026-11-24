@@ -6,9 +6,8 @@
  * Start the server first: npm run serve
  *
  * Renders at 1920x1080 in reduced motion (every screen in its final state), in story
- * order: the twelve core screens with every Workspace demo beat in place (insight,
- * source detail, hand-off, role app, trace, decision, write-back preview, receipt,
- * Agent Builder steps), then the appendix index and pages A to G.
+ * order: the ten core screens, with the five acts captured from the live product after
+ * Enter NFR Workspace, then the appendix index and its 23 question pages.
  * Writes <out>/NFR-Workspace-<release>.pdf, one screen per page, plus the JPEG frames.
  * Exits 1 on any console error. artifacts/ is gitignored: the PDF is not published.
  */
@@ -52,24 +51,18 @@ async function run() {
   }
   async function key(k) { await page.keyboard.press(k); await page.waitForTimeout(250); }
 
+  // The story, with the five captured acts where the live product would be shown
   var core = await page.evaluate(function() { return sections.filter(function(x) { return x.dataset.route === 'core'; }).map(function(x) { return x.id; }); });
   for (var i = 0; i < core.length; i++) {
-    var id = core[i];
-    await go(id);
-    await shot(id);
-    if (id === 'workspace-home') {
-      await key('Space'); await shot('home-insight');
-      await page.click('.wi-drivers .ws-source'); await shot('home-source-detail'); await key('Escape');
-      await key('Space'); await shot('home-handoff');
-    } else if (id === 'workspace-journey') {
-      var beats = ['role-app', 'trace', 'decision', 'writeback-preview', 'receipt'];
-      for (var b = 0; b < beats.length; b++) { await key('Space'); await shot('journey-' + beats[b]); }
-    } else if (id === 'workspace-builder') {
-      var steps = ['goal', 'permissions', 'plan', 'result', 'reuse', 'saved', 'template'];
-      for (var t = 0; t < steps.length; t++) { await key('Space'); await shot('builder-' + steps[t]); }
+    await go(core[i]);
+    await shot(core[i]);
+    if (core[i] === 'enter-workspace') {
+      await go('live-fallback');
+      var n = await page.evaluate(function() { return NFR_LIVE_CAPTURES.acts.reduce(function(t, a) { return t + a.shots.length; }, 0); });
+      for (var c = 0; c < n; c++) { await shot('live-act-capture-' + (c + 1)); if (c < n - 1) await key('Space'); }
     }
   }
-  var apx = ['appendix', 'appendix-capability-choice', 'appendix-authority', 'appendix-architecture', 'appendix-writeback', 'appendix-agent-lifecycle', 'appendix-runtime-reuse', 'appendix-proof-gates'];
+  var apx = await page.evaluate(function() { return ['appendix'].concat(NFR_APPENDIX.pages.map(function(p) { return p.id; })); });
   for (var a = 0; a < apx.length; a++) { await go(apx[a]); await shot(apx[a]); }
 
   // One page per frame, full bleed

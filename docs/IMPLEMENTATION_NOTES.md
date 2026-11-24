@@ -114,3 +114,21 @@ Audit of the repository as found on 2026-11-23, and the decisions taken for v2.
 | Keys | Page Up and Page Down (clickers) in `navigation.js`; S (safe mode) in `presenter-controls.js` |
 | Static fallback | `npm run fallback` (`scripts/export-fallback.js`): a PDF of the route, demo beats and appendix A to G at 1920x1080 in `artifacts/fallback/` (git-ignored) |
 | Manifest generator | `scripts/build-manifest.js` |
+
+## 9. v6 changes (live demo and deep-dive appendix, release v31)
+
+v6 replaces the deck's mock of the product with the real product. Sections 7 and 8 above describe code that v6 removed (the Workspace kit, the mock scenes, appendix A to G, the technical drawer); the history keeps it (tag `baseline-pre-pitch-v6`).
+
+| Concern | Where |
+|---|---|
+| Audit before v6 | `docs/APPENDIX_AND_DEMO_AUDIT.md` |
+| Core route | Ten screens. Copy in `assets/data/workspace-demo.js` (story only; no product data) |
+| Doorway to the live product | Scene `enter-workspace` (about 2.5 seconds). `PresenterControls.openLive()` opens `NFR_WORKSPACE_DEMO.enter.liveUrl` (default `http://localhost:3200/`; `?live=<url>` overrides it for the session) |
+| Captured fallback | Section `#live-fallback`, scene `live-fallback`; captures listed in `assets/data/live-captures.js`, files in `assets/img/product/` (taken by the product's own capture script). Preloaded after page load, so the fallback works offline |
+| Cover | A capture of the product's Today (`NFR_WORKSPACE_DEMO.cover.capture`); placeholder lines if it cannot load |
+| Appendix | Content in `assets/data/appendix-modules.js` (four modules, 23 pages); renderer and navigation in `assets/js/story/appendix-modules.js` (`window.AppendixNav`); styles in `assets/css/appendix.css`. Section shells in `pitch.html` are generated from the data (one per page id) |
+| Visual types | matrix, tree, calculator, reuse, tco, columns, grid, lifecycle, flow, groups, landscape, envelope, decision, graph, phases, pipeline, layers, bands, lanes, raci, waves. A visual that throws is replaced by a note and a console warning; the page still renders |
+| Unit economics (V3) | `assets/js/story/unit-economics.js`: pure functions (`compute`, `sensitivity`), formulas in the header comment, unit-tested |
+| Keys | A index, 1 to 4 modules, M main story, L live product, F fallback; Escape goes back one level (page, index, story). On the fallback, arrows and Page Up and Page Down step through the captures |
+| States | `cover`, `assistance`, `integration-burden`, `four-ways`, `three-layers`, `entering-workspace`, `live-handoff`, `live-fallback`, `control-boundary`, `roadmap`, `value`, `workshop`, `appendix` |
+| Removed | Mock product scenes and kit, appendix A to G and the technical drawer, the business-case scene, legacy appendix A1 to A5. The Evidence Atlas stays as a reference library (its economics view still uses `roi-model.js`). Candidate runtime reuse is internal only (local notes) |

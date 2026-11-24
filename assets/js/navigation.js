@@ -134,18 +134,13 @@ function buildAgendaDrawer(){
     }).join('');
     return '<div class="agenda-chapter"><div class="agenda-ch-head"><div class="agenda-ch-name">'+c.title+'</div><div class="agenda-ch-method">'+method+'</div></div><div class="agenda-slides">'+slides+'</div></div>';
   }).join('')
-  // Quick jump: straight to the business-case assumptions drawer
+  // Quick jumps: the live product, its captured fallback, the appendix and the calculator
   +'<div class="agenda-chapter"><div class="agenda-ch-head"><div class="agenda-ch-name">QUICK JUMP</div></div><div class="agenda-slides">'
-  +'<a class="agenda-slide-link" id="agendaRoiJump" href="#business-case" onclick="closeAgenda();openRoiAssumptions();return false;"><div class="agenda-slide-dot"></div>Business-case assumptions</a>'
+  +'<a class="agenda-slide-link" id="agendaLiveJump" href="#enter-workspace" onclick="closeAgenda();if(window.PresenterControls)PresenterControls.openLive();return false;"><div class="agenda-slide-dot"></div>Open the live Workspace</a>'
+  +'<a class="agenda-slide-link" id="agendaFallbackJump" href="#live-fallback" onclick="closeAgenda();goToId(this.hash.slice(1));return false;"><div class="agenda-slide-dot"></div>Live demonstration, captured</a>'
+  +'<a class="agenda-slide-link" id="agendaAppendixJump" href="#appendix" onclick="closeAgenda();goToId(this.hash.slice(1));return false;"><div class="agenda-slide-dot"></div>Appendix: four doors</a>'
+  +'<a class="agenda-slide-link" id="agendaRoiJump" href="#appendix-v3" onclick="closeAgenda();goToId(this.hash.slice(1));return false;"><div class="agenda-slide-dot"></div>Unit economics calculator</a>'
   +'</div></div>';
-}
-
-// Opens the ROI assumptions drawer from anywhere: scrolls to the business case first.
-function openRoiAssumptions(){
-  goToId('business-case');
-  setTimeout(function(){
-    if(window.BusinessCaseScene&&typeof window.BusinessCaseScene.openAssumptions==='function')window.BusinessCaseScene.openAssumptions();
-  },450);
 }
 
 function setupRouteMode(){

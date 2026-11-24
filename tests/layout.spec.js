@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Layout and platform tests -- NFR Workspace v2 (release v28, twelve-screen core route)
+ * Layout and platform tests -- NFR Workspace v6 (release v31, ten-screen core route)
  * Run: npx playwright test tests/layout.spec.js
  * The suite's web server is node scripts/serve.js 8080 (see playwright.config.js).
  *
@@ -27,8 +27,7 @@ const VIEWPORTS = [
 
 const CORE_SLIDES = [
   'cover', 'assistance-here', 'remaining-burden', 'four-ways', 'three-layers',
-  'workspace-boot', 'workspace-home', 'workspace-journey', 'workspace-builder',
-  'authority-boundary', 'six-month-route', 'value-decision'
+  'enter-workspace', 'authority-boundary', 'six-month-route', 'value-decision', 'workshop-decision'
 ];
 
 async function gotoPage(page, url) {
@@ -71,7 +70,7 @@ for (const vp of VIEWPORTS) {
       expect(overflowing).toEqual([]);
     });
 
-    test('all 12 core screens are attached to the DOM', async ({ page }) => {
+    test('all 10 core screens are attached to the DOM', async ({ page }) => {
       await gotoPage(page);
       for (const id of CORE_SLIDES) {
         await expect(page.locator(`#${id}`), `${id} missing at ${vp.name}`).toBeAttached();
@@ -141,7 +140,7 @@ test('store is initialised with defaults', async ({ page }) => {
   expect(state).not.toBeNull();
 });
 
-test('exactly 12 core screens, appendix excluded from the core route', async ({ page }) => {
+test('exactly 10 core screens, appendix excluded from the core route', async ({ page }) => {
   await gotoPage(page);
   const ids = await page.$$eval('section[data-route="core"]', (s) => s.map((x) => x.id));
   expect(ids).toEqual(CORE_SLIDES);
@@ -151,7 +150,7 @@ test('exactly 12 core screens, appendix excluded from the core route', async ({ 
 test('counter total comes from the DOM', async ({ page }) => {
   await gotoPage(page);
   await page.waitForTimeout(500);
-  await expect(page.locator('#counter')).toHaveText('1 / 12');
+  await expect(page.locator('#counter')).toHaveText('1 / 10');
 });
 
 test('nav bar has an Evidence Atlas button', async ({ page }) => {
@@ -159,13 +158,13 @@ test('nav bar has an Evidence Atlas button', async ({ page }) => {
   await expect(page.locator('.nav button[title*="Evidence Atlas"]')).toBeAttached();
 });
 
-test('agenda lists the four chapters, the appendix and a business-case quick jump', async ({ page }) => {
+test('agenda lists the four chapters, the appendix and the quick jumps', async ({ page }) => {
   await gotoPage(page);
   const chapters = await page.$$eval('#agendaStory .agenda-ch-name', (e) => e.map((x) => x.textContent));
   for (const c of ['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'THE PATH', 'APPENDIX']) {
     expect(chapters).toContain(c);
   }
-  await expect(page.locator('#agendaRoiJump')).toBeAttached();
+  for (const id of ['agendaLiveJump', 'agendaFallbackJump', 'agendaAppendixJump', 'agendaRoiJump']) await expect(page.locator('#' + id)).toBeAttached();
 });
 
 test('SceneDirector is defined and exposes getState', async ({ page }) => {
@@ -231,10 +230,10 @@ test('Evidence Atlas hides its loading hint after init', async ({ page }) => {
 test.describe('Static checks', () => {
   chromiumOnly();
 
-  test('build fingerprint is v30', () => {
+  test('build fingerprint is v31', () => {
     const html = read('pitch.html');
-    expect(html).toMatch(/<meta name="nfr-build" content="v30-[0-9a-f]{7}">/);
-    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v30'/);
+    expect(html).toMatch(/<meta name="nfr-build" content="v31-[0-9a-f]{7}">/);
+    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v31'/);
   });
 
   test('all local asset ?v= strings share one fingerprint', () => {
@@ -242,9 +241,9 @@ test.describe('Static checks', () => {
     expect([...shas]).toHaveLength(1);
   });
 
-  test('story manifest is version 30 with four chapters and twelve core screens', () => {
+  test('story manifest is version 31 with four chapters and ten core screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('30');
+    expect(m.version).toBe('31');
     expect(m.chapters.map((c) => c.id)).toEqual(['shift', 'model', 'workspace', 'path']);
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE_SLIDES);
   });
@@ -282,9 +281,9 @@ test.describe('Static checks', () => {
     expect(src).toContain("querySelectorAll('section[data-scene]')");
   });
 
-  test('visual grammar exposes the V26 primitives and the story kit; the Workspace kit exposes the shell', () => {
-    const kit = read('assets/js/story/workspace-kit.js');
-    ['shell', 'queueCard', 'assistPanel', 'stepper', 'sequence'].forEach((k) => expect(kit).toContain(k + ':'));
+  test('visual grammar exposes the V26 primitives and the story kit; the appendix renderer exposes its navigation', () => {
+    const nav = read('assets/js/story/appendix-modules.js');
+    ['go:', 'index:', 'module:', 'step:', 'isPage:'].forEach((k) => expect(nav).toContain(k));
     const src = read('assets/js/story/visual-grammar.js');
     ['SystemField', 'WorkLane', 'MetricStrip', 'ReuseMarker', 'StoryKit', 'CaseBadge', 'EvidenceChip', 'UncertaintyBadge', 'DecisionGate', 'ReceiptState', 'ProofGate'].forEach((k) => expect(src).toContain(k));
   });

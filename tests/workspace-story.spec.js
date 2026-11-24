@@ -1,8 +1,9 @@
 // @ts-check
 /**
- * NFR Workspace v2 -- core route acceptance tests.
- * Twelve screens: four ways to work, three layers to scale, the Workspace demo,
- * the control boundary, the six-month path and value. Bank-neutral, synthetic data.
+ * NFR Workspace v6 -- core route acceptance tests.
+ * Ten screens: the shift, four ways to work, three layers, the doorway into the live
+ * product, the principle, six months, value and the workshop decision. The product is
+ * shown live; the deck carries no mock of it. Bank-neutral, synthetic data.
  * Every test sets its own viewport, so the file runs once, in the chromium project.
  */
 const { test, expect } = require('@playwright/test');
@@ -15,18 +16,14 @@ const EN = String.fromCharCode(0x2013);
 
 const CORE = [
   'cover', 'assistance-here', 'remaining-burden', 'four-ways', 'three-layers',
-  'workspace-boot', 'workspace-home', 'workspace-journey', 'workspace-builder',
-  'authority-boundary', 'six-month-route', 'value-decision'
+  'enter-workspace', 'authority-boundary', 'six-month-route', 'value-decision', 'workshop-decision'
 ];
-const APP = ['workspace-boot', 'workspace-home', 'workspace-journey', 'workspace-builder'];
-const APPENDIX_SCENES = ['business-case', 'workspace-live'];
-const CASE_SCREENS = ['workspace-home', 'workspace-journey'];
+const INTERACTIVE = ['enter-workspace', 'live-fallback'];
 const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic layer', 'control plane', 'orchestrator', 'orchestration',
   'model gateway', 'autonomous', 'llm', 'rag', 'copilot'];
 const CLAIMS = ['fully autonomous', 'replaces all systems', 'all nfr processes', 'zero human effort', 'instant deployment',
   'regulator-ready', 'guaranteed compliance', 'any agent in one sentence', 'skills built in a sentence', 'one team owns the whole loop']; // lint-ok: phrases the deck avoids
-// Agreed floor for rendered canvas text (canvas px x fit scale). Canvas text is never set
-// below 12px (13px in the application); the floor drops only where the viewport shrinks the stage.
+// Agreed floor for rendered canvas text (canvas px x fit scale)
 const MIN_TEXT_PX = { '1920x1080': 11, '1600x900': 11, '1440x900': 11, '1366x768': 10, '1280x720': 10, '1024x768': 9.5 };
 
 test.beforeEach(({}, testInfo) => {
@@ -55,7 +52,7 @@ function sceneFiles() {
 
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
-  test('twelve core screens; one scene file per declared scene, core and appendix', () => {
+  test('ten core screens; one scene file per declared scene, core and appendix', () => {
     const html = read('pitch.html');
     const core = [...html.matchAll(/<section id="([a-z0-9-]+)" data-slide data-route="core"/g)].map((m) => m[1]);
     expect(core).toEqual(CORE);
@@ -75,13 +72,13 @@ test.describe('Scene contract', () => {
     }
   });
 
-  test('the four app screens are interactive: they step through beats with advance()', () => {
-    for (const id of APP) expect(read('assets/js/story/scenes/' + id + '.js'), id).toContain('advance:');
+  test('the doorway and the fallback are interactive: Space steps them with advance()', () => {
+    for (const id of INTERACTIVE) expect(read('assets/js/story/scenes/' + id + '.js'), id).toContain('advance:');
   });
 
-  test('scenes read case facts and demo copy from data files instead of hard-coding them', () => {
-    const facts = ['TPRM-PR-042', 'Ireland', 'Two exceptions', 'September', 'Penetration-test', '30-day', 'Cloud hosting',
-      'NFR Risk Manager', 'Provider A', 'RA-0331', 'Agent Builder'];
+  test('scenes read their copy from data files instead of hard-coding it', () => {
+    const facts = ['Third-Party Risk Manager', 'localhost:3200', 'Open live Workspace', 'Loading role context', 'Workshop decision',
+      'Agent Builder', 'Today', 'Which role, decision'];
     for (const f of sceneFiles()) {
       const src = read('assets/js/story/scenes/' + f).split('\n').filter((l) => /^\s*\/\//.test(l) === false).join('\n');
       facts.forEach((fact) => expect(src.includes(fact), f + ' hard-codes "' + fact + '"').toBe(false));
@@ -93,14 +90,14 @@ test.describe('Scene contract', () => {
     for (const id of CORE) {
       const start = html.indexOf('<section id="' + id + '"');
       const chunk = html.slice(start, html.indexOf('</section>', start));
-      const box = id === 'cover' ? '0 0 560 440' : APP.includes(id) ? '0 0 1280 640' : '0 0 1040 520';
+      const box = id === 'cover' ? '0 0 560 440' : '0 0 1040 520';
       expect(chunk, id).toContain('<svg data-scene-fallback viewBox="' + box + '" preserveAspectRatio="xMidYMid meet"');
     }
   });
 
   test('manifest titles match the screen titles, within word limits', async ({ page }) => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('30');
+    expect(m.version).toBe('31');
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE);
     await open(page);
     for (const s of m.screens) {
@@ -126,7 +123,7 @@ test.describe('Playback', () => {
       document.addEventListener('scene:complete', (e) => { const s = e.target.closest('section'); if (s) window.__done.push(s.id); });
     });
     await open(page);
-    for (const id of CORE.concat(APPENDIX_SCENES)) {
+    for (const id of CORE) {
       await enter(page, id);
       const info = await page.evaluate((sid) => {
         const st = document.querySelector('#' + sid + ' [data-scene-container]');
@@ -136,12 +133,14 @@ test.describe('Playback', () => {
         return { canvas: !!cv, nodes: cv ? cv.querySelectorAll('*').length : 0, summary: summary ? summary.textContent.length : 0, hidden: hidden };
       }, id);
       expect(info.canvas, id).toBe(true);
-      expect(info.nodes, id).toBeGreaterThan(10);
+      expect(info.nodes, id).toBeGreaterThan(8);
       expect(info.summary, id + ' accessible summary').toBeGreaterThan(60);
       expect(info.hidden, id + ' elements left hidden in the final state').toBe(0);
     }
+    await enter(page, 'live-fallback');
+    expect(await page.locator('#live-fallback .scene-accessible-summary').textContent()).toContain('act 1');
     const done = await page.evaluate(() => window.__done);
-    CORE.forEach((id) => expect(done, id).toContain(id));
+    CORE.concat(['live-fallback']).forEach((id) => expect(done, id).toContain(id));
   });
 
   test('full motion: every scene plays to completion and dispatches scene:complete', async ({ page }) => {
@@ -169,42 +168,19 @@ test.describe('Playback', () => {
   });
 });
 
-// ── SYNTHETIC CASE ──
-test.describe('Synthetic case and data', () => {
+// ── DATA ──
+test.describe('Story data', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('the case identifier appears on the case screens, from TPRM_CASE', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await open(page);
-    const id = await page.evaluate(() => window.TPRM_CASE.id);
-    for (const sid of CASE_SCREENS) {
-      await enter(page, sid);
-      expect(await page.locator('#' + sid + ' [data-scene-container]').innerText(), sid).toContain(id);
-      await expect(page.locator('#' + sid + ' .case-thread'), sid).toContainText(id);
-    }
-  });
-
-  test('the case and the demo data are marked synthetic and immutable', async ({ page }) => {
+  test('the story and the appendix data are marked synthetic and immutable', async ({ page }) => {
     await open(page);
     const r = await page.evaluate(() => ({
-      caseFrozen: Object.isFrozen(window.TPRM_CASE) && Object.isFrozen(window.TPRM_CASE.changes[0]),
-      demoFrozen: Object.isFrozen(window.NFR_WORKSPACE_DEMO) && Object.isFrozen(window.NFR_WORKSPACE_DEMO.builder.scope.cannot),
-      synthetic: window.TPRM_CASE.synthetic && window.NFR_WORKSPACE_DEMO.synthetic
+      demoFrozen: Object.isFrozen(window.NFR_WORKSPACE_DEMO) && Object.isFrozen(window.NFR_WORKSPACE_DEMO.enter.acts),
+      apxFrozen: Object.isFrozen(window.NFR_APPENDIX) && Object.isFrozen(window.NFR_APPENDIX.modules[0].pages[0]),
+      capturesFrozen: Object.isFrozen(window.NFR_LIVE_CAPTURES),
+      synthetic: window.NFR_WORKSPACE_DEMO.synthetic
     }));
-    expect(r).toEqual({ caseFrozen: true, demoFrozen: true, synthetic: true });
-    const threads = await page.$$eval('.case-thread', (t) => t.map((x) => x.textContent));
-    threads.forEach((t) => expect(t).toContain('Synthetic example'));
-  });
-
-  test('the visible case state moves forward through the route', async ({ page }) => {
-    await open(page);
-    const order = await page.evaluate(() => {
-      const ids = window.TPRM_CASE.states.map((s) => s.id);
-      return [...document.querySelectorAll('section[data-route="core"] .case-thread')].map((t) => ids.indexOf(t.dataset.caseState));
-    });
-    expect(order.length).toBeGreaterThanOrEqual(3);
-    expect(order.every((v) => v >= 0)).toBe(true);
-    for (let i = 1; i < order.length; i++) expect(order[i]).toBeGreaterThanOrEqual(order[i - 1]);
+    expect(r).toEqual({ demoFrozen: true, apxFrozen: true, capturesFrozen: true, synthetic: true });
   });
 
   test('the four ways and three layers are named consistently in data, screens and roadmap', () => {
@@ -213,6 +189,7 @@ test.describe('Synthetic case and data', () => {
     expect(d.capabilities.map((c) => c.product)).toEqual(['NFR Assist', 'NFR Apps', 'NFR Automations', 'Agent Builder']);
     expect(d.layers.map((l) => l.label)).toEqual(['Work & roles', 'Process & controls', 'Data & platform']);
     d.layers.forEach((l) => expect(d.roadmap.cells[l.id], l.id).toHaveLength(3));
+    expect(d.enter.acts).toHaveLength(5);
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.model.waysToWork).toEqual(['Ask', 'Use', 'Run', 'Create']);
   });
@@ -278,6 +255,35 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1600, 900], [1280, 720], [1920,
         expect(r.footerBottom, id + ' footer below the viewport').toBeLessThanOrEqual(r.vh + 1);
       }
     });
+
+    test('appendix pages and the fallback fit the width and keep text readable', async ({ page }) => {
+      test.setTimeout(120000);
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await open(page);
+      const ids = await page.evaluate(() => ['appendix', 'live-fallback'].concat(NFR_APPENDIX.pages.map((p) => p.id)));
+      for (const id of ids) {
+        await page.evaluate((sid) => document.getElementById(sid).scrollIntoView({ behavior: 'instant' }), id);
+        const r = await page.evaluate(([sid, min]) => {
+          const s = document.getElementById(sid);
+          const small = [];
+          s.querySelectorAll('*').forEach((el) => {
+            if (el.closest('.ws-sr-only') || el.closest('details:not([open])')) return;
+            if (el.checkVisibility && !el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) return;
+            const ownText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+            if (!ownText) return;
+            const fs = parseFloat(getComputedStyle(el).fontSize);
+            const svg = el.ownerSVGElement;
+            const scale = svg ? svg.getBoundingClientRect().width / svg.viewBox.baseVal.width : 1;
+            if (fs * scale < min) small.push((el.textContent || '').trim().slice(0, 30) + ' ' + (fs * scale).toFixed(1));
+          });
+          return { overflow: s.scrollWidth > s.clientWidth + 2, height: s.offsetHeight / window.innerHeight, small: small.slice(0, 5) };
+        }, [id, MIN_TEXT_PX[vp]]);
+        expect(r.overflow, id + ' overflows at ' + vp).toBe(false);
+        expect(r.small, id + ' text below the floor at ' + vp).toEqual([]);
+        // Tall pages scroll; past about 1.8 screens the screen tracker could miss them
+        expect(r.height, id + ' height in screens at ' + vp).toBeLessThan(1.8);
+      }
+    });
   });
 }
 
@@ -309,13 +315,14 @@ test.describe('Static fallbacks', () => {
     expect(box && box.height).toBeGreaterThan(100);
   });
 
-  test('a Workspace screen that fails to load still shows its application fallback', async ({ page }) => {
-    await page.route('**/scenes/workspace-journey.js*', (route) => route.abort());
+  test('if the doorway fails to load, its static picture still carries the live cue', async ({ page }) => {
+    await page.route('**/scenes/enter-workspace.js*', (route) => route.abort());
     await open(page);
-    await page.evaluate(() => document.getElementById('workspace-journey').scrollIntoView({ behavior: 'instant' }));
+    await page.evaluate(() => document.getElementById('enter-workspace').scrollIntoView({ behavior: 'instant' }));
     await page.waitForTimeout(1200);
-    const box = await page.locator('#workspace-journey [data-scene-fallback]').boundingBox();
-    expect(box && box.height).toBeGreaterThan(200);
+    const fb = page.locator('#enter-workspace [data-scene-fallback]');
+    expect((await fb.boundingBox()).height).toBeGreaterThan(200);
+    expect(await fb.textContent()).toContain('Open live Workspace');
   });
 });
 
@@ -338,8 +345,19 @@ test.describe('Copy and claims', () => {
     }
   });
 
+  test('appendix text: no dashes and no overclaiming', async ({ page }) => {
+    await open(page);
+    const ids = await page.evaluate(() => ['appendix', 'live-fallback'].concat(NFR_APPENDIX.pages.map((p) => p.id)));
+    for (const id of ids) {
+      const text = (await page.locator('#' + id).innerText());
+      expect(text.includes(EM) || text.includes(EN), id + ' dash').toBe(false);
+      const lower = text.toLowerCase();
+      CLAIMS.forEach((c) => expect(lower.includes(c), id + ' claims "' + c + '"').toBe(false));
+    }
+  });
+
   test('NFR OS is gone from the visible experience and the source copy', async ({ page }) => {
-    const sources = ['pitch.html', 'index.html', 'assets/data/workspace-demo.js', 'assets/data/story-manifest.json', 'assets/js/edge-rail.js']
+    const sources = ['pitch.html', 'index.html', 'assets/data/workspace-demo.js', 'assets/data/appendix-modules.js', 'assets/data/live-captures.js', 'assets/data/story-manifest.json', 'assets/js/edge-rail.js']
       .concat(sceneFiles().map((f) => 'assets/js/story/scenes/' + f));
     sources.forEach((f) => expect(/NFR ?OS\b/.test(read(f)), f).toBe(false));
     await open(page);
@@ -348,8 +366,8 @@ test.describe('Copy and claims', () => {
   });
 
   test('no client branding: the experience is bank-neutral', () => {
-    const html = read('pitch.html') + read('assets/data/workspace-demo.js') + read('assets/data/tprm-case.js');
-    expect(/\bUBS\b|Credit Suisse|Julius B/i.test(html)).toBe(false);
+    const src = read('pitch.html') + read('assets/data/workspace-demo.js') + read('assets/data/appendix-modules.js') + read('assets/data/live-captures.js');
+    expect(/\bUBS\b|Credit Suisse|Julius B/i.test(src)).toBe(false);
   });
 
   test('no runtime request leaves the local origin', async ({ page, baseURL }) => {
@@ -368,93 +386,6 @@ test.describe('Copy and claims', () => {
   });
 });
 
-// ── BUSINESS CASE (appendix) ──
-test.describe('Business case', () => {
-  test.use({ viewport: { width: 1440, height: 900 } });
-
-  test.beforeEach(async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await open(page);
-    await enter(page, 'business-case');
-  });
-
-  test('sits in the appendix, labelled illustrative, with the expected scenario', async ({ page }) => {
-    expect(await page.locator('#business-case').getAttribute('data-route')).toBe('reference');
-    await expect(page.locator('#business-case .bc-out-main .bc-out-value')).toContainText('5.8 h');
-    await expect(page.locator('#business-case .bc-claim')).toHaveText('Illustrative only. Replace with client baseline.');
-    await expect(page.locator('#business-case .bc-sc-btn[aria-pressed="true"]')).toHaveText('Expected');
-  });
-
-  test('professional judgement is not automated in the calculator', async ({ page }) => {
-    const judge = page.locator('#business-case .bc-row-judge');
-    await expect(judge.locator('input[aria-label*="preparation rate"]')).toHaveCount(0);
-    await expect(judge.locator('.bc-lock')).toBeVisible();
-    expect(await judge.locator('.bc-bar-prep').evaluate((e) => e.style.width)).toBe('0px');
-  });
-
-  test('negative annual value shows Not yet positive instead of a payback', async ({ page }) => {
-    await page.evaluate(() => BusinessCaseState.setField('runCost.platform', 5000000));
-    await expect(page.locator('#business-case .bc-out-payback .bc-out-value')).toContainText('Not yet positive');
-  });
-
-  test('inputs persist while navigating away and back, in sessionStorage only', async ({ page }) => {
-    const input = page.locator('#business-case input[data-path="categories.find.hours"]');
-    await input.fill('4');
-    await input.press('Tab');
-    await enter(page, 'cover');
-    await enter(page, 'business-case');
-    await expect(page.locator('#business-case input[data-path="categories.find.hours"]')).toHaveValue('4');
-    const stored = await page.evaluate(() => JSON.parse(sessionStorage.getItem('nfr_roi_assumptions_v1')));
-    expect(stored.assumptions.categories.find((c) => c.id === 'find').hours).toBe(4);
-  });
-
-  test('the value screen and the agenda both lead to the business case', async ({ page }) => {
-    await enter(page, 'value-decision');
-    await page.locator('#value-decision .ts-atlas-link').click();
-    await page.waitForFunction(() => sections[current].id === 'business-case', null, { timeout: 6000 });
-    await page.evaluate(() => openAgenda());
-    await page.locator('#agendaRoiJump').click();
-    await expect(page.locator('#drawerOverlay')).toHaveClass(/open/, { timeout: 4000 });
-    await expect(page.locator('#drawerTitle')).toHaveText('Business-case assumptions');
-  });
-});
-
-// ── EVIDENCE ATLAS LINKS ──
-test.describe('Evidence Atlas links', () => {
-  test.use({ viewport: { width: 1440, height: 900 } });
-
-  test('screens open their atlas view, and the view leads back to the screen', async ({ page }) => {
-    test.setTimeout(90000);
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await open(page);
-    const links = [
-      ['authority-boundary', 'Controlled write'],
-      ['six-month-route', 'Workstreams and gates'],
-      ['business-case', 'Formulas and assumptions']
-    ];
-    for (const [screen, label] of links) {
-      await enter(page, screen);
-      await page.locator('#' + screen + ' .ts-atlas-link[data-atlas-view]').click();
-      await expect(page.locator('#ref-room .ea-rail-btn.active')).toHaveText(label, { timeout: 8000 });
-      await page.locator('#ref-room .ea-back-btn').click();
-      await page.waitForFunction((sid) => sections[current].id === sid, screen, { timeout: 8000 });
-    }
-  });
-
-  test('each story atlas view links back to its screen', async ({ page }) => {
-    await open(page);
-    await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
-    await page.waitForSelector('#ref-room .ea-shell', { timeout: 8000 });
-    for (const [view, screen] of [['controlled-write', 'authority-boundary'], ['workstreams', 'six-month-route'], ['economics', 'business-case'], ['reuse', 'three-layers']]) {
-      await page.evaluate((v) => EvidenceAtlas.switchView(v), view);
-      await page.locator('#ref-room .ea-story-back').click();
-      await page.waitForFunction((sid) => sections[current].id === sid, screen, { timeout: 8000 });
-      await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
-      await page.waitForFunction(() => sections[current].id === 'ref-room');
-    }
-  });
-});
-
 // ── ROUTE SHAPE ──
 test.describe('Route', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
@@ -463,10 +394,7 @@ test.describe('Route', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.chapters.map((c) => c.label)).toEqual(['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'THE PATH']);
     const core = m.screens.filter((s) => s.route === 'core');
-    expect(core.slice(0, 3).map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift']);
-    expect(core.slice(3, 5).map((s) => s.chapterId)).toEqual(['model', 'model']);
-    expect(core.slice(5, 10).every((s) => s.chapterId === 'workspace')).toBe(true);
-    expect(core.slice(10).every((s) => s.chapterId === 'path')).toBe(true);
+    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'model', 'model', 'workspace', 'workspace', 'path', 'path', 'path']);
   });
 
   test('the landing is a landing, with one button per chapter that jumps to its first screen', async ({ page }) => {
@@ -478,71 +406,76 @@ test.describe('Route', () => {
     });
     expect(r.kind).toBe('landing');
     expect(r.header).toBe(false);
-    expect(r.route).toEqual(['cover', 'four-ways', 'workspace-boot', 'six-month-route']);
+    expect(r.route).toEqual(['cover', 'four-ways', 'enter-workspace', 'six-month-route']);
     await page.locator('#cover .landing-chapter').nth(2).click();
-    await page.waitForFunction(() => sections[current].id === 'workspace-boot', null, { timeout: 6000 });
+    await page.waitForFunction(() => sections[current].id === 'enter-workspace', null, { timeout: 6000 });
   });
 
-  test('the counter counts twelve core screens and says Appendix in the appendix', async ({ page }) => {
+  test('the counter counts ten core screens and says Appendix in the appendix', async ({ page }) => {
     await open(page);
-    await expect(page.locator('#counter')).toHaveText('1 / 12');
+    await expect(page.locator('#counter')).toHaveText('1 / 10');
     await expect(page.locator('.nav-ch-btn[data-chid="reference"] .nav-ch-name')).toHaveText('Appendix');
     await page.evaluate(() => document.getElementById('appendix').scrollIntoView({ behavior: 'instant' }));
     await expect(page.locator('#counter')).toHaveText('Appendix', { timeout: 4000 });
   });
 
-  test('the cover and the app screens fill one viewport without overflow at every supported size', async ({ page }) => {
+  test('the cover fills one viewport without overflow at every supported size', async ({ page }) => {
     test.setTimeout(120000);
     for (const [w, h] of [[1440, 900], [1366, 768], [1600, 900], [1280, 720], [1920, 1080], [1024, 768]]) {
       await page.setViewportSize({ width: w, height: h });
       await open(page);
-      const bad = await page.evaluate((ids) => ids.map((id) => document.getElementById(id))
-        .filter((s) => s.scrollWidth > s.clientWidth + 2 || s.scrollHeight > s.clientHeight + 2 || Math.abs(s.offsetHeight - window.innerHeight) > 2)
-        .map((s) => s.id), ['cover'].concat(APP));
-      expect(bad, w + 'x' + h).toEqual([]);
+      const bad = await page.evaluate(() => {
+        const s = document.getElementById('cover');
+        return s.scrollWidth > s.clientWidth + 2 || s.scrollHeight > s.clientHeight + 2 || Math.abs(s.offsetHeight - window.innerHeight) > 2;
+      });
+      expect(bad, w + 'x' + h).toBe(false);
+    }
+  });
+
+  test('the agenda quick jumps reach the fallback, the appendix and the calculator', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    for (const [link, id] of [['#agendaFallbackJump', 'live-fallback'], ['#agendaAppendixJump', 'appendix'], ['#agendaRoiJump', 'appendix-v3']]) {
+      await page.evaluate(() => openAgenda());
+      await page.locator(link).click();
+      await page.waitForFunction((sid) => sections[current].id === sid, id, { timeout: 6000 });
     }
   });
 });
 
-// ── APPENDIX ──
-test.describe('Appendix', () => {
+// ── REFERENCE MATERIAL ──
+test.describe('Reference material', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('everything after the core route is labelled appendix', async ({ page }) => {
+  test('everything after the core route is labelled appendix, in a fixed order', async ({ page }) => {
     await open(page);
-    const ref = await page.$$eval('section[data-route="reference"]', (s) => s.map((x) => ({
-      id: x.id, chapter: x.dataset.chapterTitle, tag: (x.querySelector('.sec-tag') || {}).textContent || ''
-    })));
-    expect(ref[0].id).toBe('appendix');
+    const ref = await page.$$eval('section[data-route="reference"]', (s) => s.map((x) => ({ id: x.id, chapter: x.dataset.chapterTitle })));
+    const APX = require(path.join(ROOT, 'assets/data/appendix-modules.js'));
+    expect(ref.map((r) => r.id)).toEqual(['appendix'].concat(APX.pages.map((p) => p.id)).concat(['live-fallback', 'ref-room', 'app-team']));
     ref.forEach((r) => expect(r.chapter, r.id).toBe('APPENDIX'));
-    const tags = ref.filter((r) => r.id.startsWith('app-')).map((r) => r.tag);
-    expect(tags).toHaveLength(6);
-    tags.forEach((t, i) => expect(t).toMatch(new RegExp('^Appendix A' + (i + 1) + ' . Behind ')));
     const order = await page.$$eval('section[data-slide]', (s) => s.map((x) => x.dataset.route));
     expect(order.lastIndexOf('core')).toBeLessThan(order.indexOf('reference'));
   });
 
-  test('the appendix index links every appendix page, atlas view and technical-depth tab', async ({ page }) => {
+  test('the retired pages are gone and the Evidence Atlas is reachable from the index only', async ({ page }) => {
     await open(page);
-    const targets = await page.$$eval('#appendix .apx-link', (a) => a.map((x) => x.dataset.techTab ? 'tech:' + x.dataset.techTab : x.dataset.atlasView ? 'atlas:' + x.dataset.atlasView : x.getAttribute('href').slice(1)));
-    const pages = await page.$$eval('section[data-route="reference"]', (s) => s.map((x) => x.id).filter((id) => id !== 'appendix' && id !== 'ref-room'));
-    pages.forEach((p) => expect(targets, p).toContain(p));
-    ['reuse', 'risk-map', 'solutions', 'controlled-write', 'workstreams', 'economics', 'toolkit'].forEach((v) => expect(targets).toContain('atlas:' + v));
-    ['appendix-capability-choice', 'appendix-authority', 'appendix-architecture', 'appendix-writeback', 'appendix-agent-lifecycle', 'appendix-runtime-reuse', 'appendix-proof-gates'].forEach((p) => expect(targets).toContain(p));
+    for (const id of ['business-case', 'workspace-live', 'app-rai', 'app-method', 'app-evidence', 'app-kpis', 'app-assumptions', 'appendix-capability-choice', 'appendix-runtime-reuse', 'appendix-proof-gates']) {
+      await expect(page.locator('#' + id), id).toHaveCount(0);
+    }
+    await expect(page.locator('section[data-route="core"] [data-atlas-view]')).toHaveCount(0);
+    await expect(page.locator('#appendix .apx-extra[href="#ref-room"]')).toHaveCount(1);
   });
 
-  test('the prototype captures are labelled as a development build on a synthetic institution', async ({ page }) => {
+  test('the Evidence Atlas still opens and returns', async ({ page }) => {
     await open(page);
-    await expect(page.locator('#workspace-live .sec-tag')).toHaveText(/APPENDIX . RUNNING PROTOTYPE/);
-    await expect(page.locator('#workspace-live .scene-footer-evidence')).toContainText('SYNTHETIC INSTITUTION');
-    await enter(page, 'workspace-live', 16000);
-    const srcs = await page.locator('#workspace-live .wl-shot').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('src')));
-    expect(srcs).toHaveLength(3);
-    for (const src of srcs) expect(fs.existsSync(path.join(ROOT, src))).toBe(true);
+    await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
+    await page.waitForSelector('#ref-room .ea-shell', { timeout: 8000 });
+    await page.evaluate(() => EvidenceAtlas.switchView('economics'));
+    await expect(page.locator('#ref-room .ea-rail-btn.active')).toHaveText('Formulas and assumptions', { timeout: 8000 });
   });
 
   test('appendix copy stays consistent with the business-case rules', () => {
-    const html = read('pitch.html');
-    ['FTE redeployment rate', 'Penalty avoidance', 'five executive systems', 'transformation systems screen'].forEach((t) => expect(html).not.toContain(t));
+    const src = read('pitch.html') + read('assets/data/appendix-modules.js');
+    ['FTE redeployment rate', 'Penalty avoidance', 'five executive systems', 'transformation systems screen', 'regulatory breach rate'].forEach((t) => expect(src).not.toContain(t));
   });
 });

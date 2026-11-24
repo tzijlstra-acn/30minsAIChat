@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * visual-qa -- repeatable screenshots of the v2 route and the Workspace demo.
+ * visual-qa -- repeatable screenshots of the v6 route, the captured fallback and the appendix.
  * Usage: node scripts/visual-qa.js [port] [out]      (default 8080, artifacts/visual-qa)
  * Start the server first: npm run serve
  *
  * For each presentation size (1920x1080, 1600x900, 1440x900, 1366x768) it captures:
  *   - every core screen in its final state (reduced motion), and
- *   - every beat of the Workspace demo (insight, source detail, hand-off, write-back
- *     preview, receipt), driven with the presenter keys, and the appendix pages A to G.
+ *   - every capture of the live-demo fallback, and
+ *   - the appendix index and every question page.
  * It prints console errors and the experience state at each beat, and exits 1 on errors.
  * Screenshots land in <out>/<size>/; artifacts/ is gitignored.
  */
@@ -50,25 +50,13 @@ async function run() {
       await shot(ids[i]);
     }
 
-    // The demo, beat by beat, with the presenter keys
+    // The captured fallback, capture by capture, then every appendix page
     var key = async function(k) { await page.keyboard.press(k); await page.waitForTimeout(200); };
-    var state = function() { return page.evaluate(function() { return sections[current].id + ' ' + (document.body.dataset.wsState || '') + ' ' + (document.body.dataset.builderState || ''); }); };
-    await page.evaluate(function() { document.getElementById('workspace-home').scrollIntoView({ behavior: 'instant' }); });
-    await page.waitForFunction(function() { return sections[current].id === 'workspace-home' && SceneDirector.getState() === 'complete'; });
-    await key('Space'); await shot('home-insight');
-    await page.click('.wi-drivers .ws-source'); await shot('home-source-detail'); await key('Escape');
-    await key('Space'); await shot('home-handoff');
-    await page.evaluate(function() { document.getElementById('workspace-journey').scrollIntoView({ behavior: 'instant' }); });
-    await page.waitForFunction(function() { return sections[current].id === 'workspace-journey' && SceneDirector.getState() === 'complete'; });
-    var beats = ['journey-role-app', 'journey-trace', 'journey-decision', 'journey-preview', 'journey-recorded'];
-    for (var b = 0; b < beats.length; b++) { await key('Space'); await shot(beats[b]); console.log('  ' + w + 'x' + h + ' ' + (await state())); }
-    await key('Space');
-    await page.waitForFunction(function() { return sections[current].id === 'workspace-builder' && SceneDirector.getState() === 'complete'; });
-    var steps = ['builder-goal', 'builder-permissions', 'builder-plan', 'builder-result', 'builder-reuse', 'builder-saved', 'builder-template'];
-    for (var t = 0; t < steps.length; t++) { await key('Space'); await shot(steps[t]); }
-    console.log('  ' + w + 'x' + h + ' ' + (await state()));
-    await key('t'); await shot('technical-depth'); await key('Escape');
-    var apx = ['appendix-capability-choice', 'appendix-authority', 'appendix-architecture', 'appendix-writeback', 'appendix-agent-lifecycle', 'appendix-runtime-reuse', 'appendix-proof-gates'];
+    await page.evaluate(function() { document.getElementById('live-fallback').scrollIntoView({ behavior: 'instant' }); });
+    await page.waitForFunction(function() { return sections[current].id === 'live-fallback'; });
+    var shots = await page.evaluate(function() { return NFR_LIVE_CAPTURES.acts.reduce(function(t, a) { return t + a.shots.length; }, 0); });
+    for (var c = 0; c < shots; c++) { await shot('fallback-' + c); if (c < shots - 1) await key('Space'); }
+    var apx = await page.evaluate(function() { return ['appendix'].concat(NFR_APPENDIX.pages.map(function(p) { return p.id; })); });
     for (var a = 0; a < apx.length; a++) {
       await page.evaluate(function(id) { document.getElementById(id).scrollIntoView({ behavior: 'instant' }); }, apx[a]);
       await page.waitForFunction(function(id) { return sections[current].id === id; }, apx[a]);
