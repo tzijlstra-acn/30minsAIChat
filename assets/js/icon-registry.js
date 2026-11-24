@@ -6,6 +6,26 @@
 
 (function() {
   var SPRITE_PATH = 'assets/icons/tabler-sprite.svg';
+  // v6: the sprite is fetched once and inlined, so icons never need the network again
+  // (the deck keeps working offline after the first load). Until it is inlined, icons
+  // reference the file; afterwards they reference the inline symbols.
+  var INLINE = false;
+  function inlineSprite() {
+    if (!window.fetch) return;
+    fetch(SPRITE_PATH).then(function(r) { return r.ok ? r.text() : null; }).then(function(text) {
+      if (!text || !document.body) return;
+      var holder = document.createElement('div');
+      holder.setAttribute('aria-hidden', 'true');
+      holder.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+      holder.innerHTML = text;
+      document.body.insertBefore(holder, document.body.firstChild);
+      INLINE = true;
+      document.querySelectorAll('use').forEach(function(u) {
+        var h = u.getAttribute('href') || '';
+        if (h.indexOf(SPRITE_PATH + '#') === 0) u.setAttribute('href', h.slice(SPRITE_PATH.length));
+      });
+    }).catch(function() {});
+  }
 
   // Known sprite symbols (matches tabler-sprite.svg)
   var SPRITE_SYMBOLS = {
@@ -43,7 +63,7 @@
                       + 'stroke-width:2;stroke-linecap:round;stroke-linejoin:round;';
 
     var use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-    use.setAttribute('href', SPRITE_PATH + '#' + name);
+    use.setAttribute('href', (INLINE ? '' : SPRITE_PATH) + '#' + name);
     svg.appendChild(use);
 
     // Transfer class and style to wrapper span (keep ti class for CSS fallback)
@@ -64,9 +84,10 @@
 
   // Upgrade on DOMContentLoaded, then watch for dynamic additions
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', upgradeAll);
+    document.addEventListener('DOMContentLoaded', function() { upgradeAll(); inlineSprite(); });
   } else {
     upgradeAll();
+    inlineSprite();
   }
 
   // MutationObserver fallback: catch icons injected after load (scene renders, etc.)

@@ -78,7 +78,7 @@ test.describe('Scene contract', () => {
 
   test('scenes read their copy from data files instead of hard-coding it', () => {
     const facts = ['Third-Party Risk Manager', 'localhost:3200', 'Open live Workspace', 'Loading role context', 'Workshop decision',
-      'Agent Builder', 'Today', 'Which role, decision'];
+      'Agent Builder', 'Today, in the live product', 'Which role, decision'];
     for (const f of sceneFiles()) {
       const src = read('assets/js/story/scenes/' + f).split('\n').filter((l) => /^\s*\/\//.test(l) === false).join('\n');
       facts.forEach((fact) => expect(src.includes(fact), f + ' hard-codes "' + fact + '"').toBe(false));

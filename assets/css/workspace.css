@@ -873,7 +873,7 @@ body.in-appendix #storyReturn { display: inline-flex; }
 .tc-shot-skel i { display: block; height: 12px; border-radius: 6px; background: rgba(255,255,255,.07); }
 .tc-shot.is-loaded .tc-shot-skel { display: none; }
 .tc-shot.is-missing .tc-shot-img { display: none; }
-.tc-shot-label { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .04em; color: var(--text-1); background: rgba(19,21,28,.86); border: 1px solid rgba(88,201,148,.55); border-radius: 6px; padding: 3px 9px; }
+.tc-shot-label { font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: .04em; color: var(--text-1); background: rgba(19,21,28,.86); border: 1px solid rgba(88,201,148,.55); border-radius: 6px; padding: 3px 9px; }
 
 /* v6: Enter NFR Workspace, the doorway to the live product */
 .ew-mark .ew-mark-sq { width: 64px; height: 64px; border-radius: 16px; }

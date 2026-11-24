@@ -95,7 +95,8 @@ SceneDirector.register('live-fallback', function(container, manifest, reduced) {
     n.takeaway.textContent = s.act.takeaway;
     n.caption.textContent = s.shot.caption;
     n.prev.disabled = at === 0;
-    container.setAttribute('data-capture', String(at));
+    var sec = container.closest('section');
+    if (sec) sec.setAttribute('data-capture', String(at));
     if (window.NFRExperience) NFRExperience.set('live-fallback');
   }
 
