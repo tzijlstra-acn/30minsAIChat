@@ -865,3 +865,72 @@ body.in-appendix #storyReturn { display: inline-flex; }
 .at-measure-v { color: var(--text-1); }
 .pc-drawer .at-measures { grid-template-columns: minmax(0, 1fr); }
 .pc-drawer .at-proof-gates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* v6: the cover shows a capture of the real product */
+.tc-shot { position: absolute; left: 0; right: 0; top: 40px; bottom: 0; overflow: hidden; background: var(--surface-0, #13151C); }
+.tc-shot-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+.tc-shot-skel { position: absolute; inset: 16px; display: flex; flex-direction: column; gap: 14px; }
+.tc-shot-skel i { display: block; height: 12px; border-radius: 6px; background: rgba(255,255,255,.07); }
+.tc-shot.is-loaded .tc-shot-skel { display: none; }
+.tc-shot.is-missing .tc-shot-img { display: none; }
+.tc-shot-label { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .04em; color: var(--text-1); background: rgba(19,21,28,.86); border: 1px solid rgba(88,201,148,.55); border-radius: 6px; padding: 3px 9px; }
+
+/* v6: Enter NFR Workspace, the doorway to the live product */
+.ew-mark .ew-mark-sq { width: 64px; height: 64px; border-radius: 16px; }
+.ew-word { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; color: var(--text-1); text-align: center; }
+.ew-status { display: flex; flex-direction: column; gap: 8px; }
+.ew-st { display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 15px; color: var(--text-2); }
+.ew-st .ti { font-size: 18px; }
+.ew-st .ew-done { display: none; color: var(--green); }
+.ew-st.is-done .ew-wait { display: none; }
+.ew-st.is-done .ew-done { display: inline-block; }
+.ew-st .ew-wait { color: var(--text-3); }
+.ew-st.is-ready.is-done { color: var(--green); }
+.ew-cue { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
+.ew-open, .ew-fallback { display: inline-flex; align-items: center; gap: 9px; font: inherit; font-size: 18px; font-weight: 600; border-radius: 10px; padding: 12px 22px; cursor: pointer; }
+.ew-open { color: #fff; background: var(--accent); border: 1px solid var(--accent); }
+.ew-open.is-ready { box-shadow: 0 0 0 6px rgba(180,76,255,.2); }
+.ew-open:hover, .ew-open:focus-visible { filter: brightness(1.1); outline: none; }
+.ew-fallback { color: var(--text-2); background: var(--surface-1); border: 1px solid var(--border-2); font-size: 15px; padding: 10px 16px; }
+.ew-fallback:hover, .ew-fallback:focus-visible { color: var(--text-1); border-color: var(--text-3); outline: none; }
+.ew-open .ti, .ew-fallback .ti { font-size: 20px; }
+.ew-hint { flex-basis: 100%; text-align: center; font-size: 14px; color: var(--text-3); }
+.ew-acts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.ew-act { border-radius: 10px; border: 1px solid var(--border-1); background: var(--surface-1); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.ew-act-n { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.ew-act-t { font-size: 14px; font-weight: 600; color: var(--text-1); line-height: 1.3; }
+
+/* v6: the workshop decision */
+.wd-question { border-radius: 14px; border: 1.5px solid var(--amber); background: color-mix(in srgb, var(--amber) 7%, var(--surface-1)); padding: 18px 26px; display: flex; align-items: center; gap: 24px; }
+.wd-gate { flex-shrink: 0; }
+.wd-q-body { display: flex; flex-direction: column; gap: 8px; }
+.wd-q-text { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: var(--text-1); line-height: 1.22; }
+.wd-q-next { font-size: 19px; color: var(--text-2); line-height: 1.3; }
+.wd-card { border-radius: 12px; border: 1px solid var(--border-1); background: var(--surface-1); padding: 14px 18px; }
+.wd-card.is-good { border-color: rgba(88,201,148,.5); }
+.wd-card.is-bring { border-color: rgba(85,199,232,.5); }
+.wd-card.is-leave { border-color: rgba(180,76,255,.5); }
+.wd-card-head { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-1); margin-bottom: 10px; }
+.wd-card-head .ti { font-size: 20px; color: var(--accent); }
+.wd-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.wd-list li { font-size: 16px; line-height: 1.35; color: var(--text-1); padding-left: 14px; position: relative; }
+.wd-list li::before { content: ''; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+
+/* v6: the captured fallback for the live demonstration */
+.lf { display: flex; flex-direction: column; gap: 10px; height: 100%; width: 100%; }
+.lf-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.lf-tab { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; font: inherit; color: var(--text-2); background: var(--surface-1); border: 1px solid var(--border-1); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+.lf-tab.is-active { color: var(--text-1); border-color: var(--accent); box-shadow: inset 0 -3px 0 var(--accent); }
+.lf-tab-n { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.lf-tab-t { font-size: 13.5px; font-weight: 600; line-height: 1.25; }
+.lf-stage { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 12px; }
+.lf-frame { min-height: 0; border-radius: 10px; border: 1px solid var(--border-2); background: var(--surface-0, #13151C); overflow: hidden; display: flex; align-items: flex-start; justify-content: center; }
+.lf-img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
+.lf-missing { margin: auto; font-size: 15px; color: var(--amber); padding: 24px; text-align: center; }
+.lf-side { display: flex; flex-direction: column; gap: 10px; }
+.lf-counter { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; letter-spacing: .04em; color: var(--text-3); }
+.lf-takeaway { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; line-height: 1.3; color: var(--text-1); }
+.lf-caption { font-size: 14px; line-height: 1.4; color: var(--text-2); }
+.lf-ctrl { display: flex; gap: 6px; margin-top: auto; }
+.lf-source { font-size: 12.5px; color: var(--text-3); }
+#live-fallback .scene-stage { display: flex; }

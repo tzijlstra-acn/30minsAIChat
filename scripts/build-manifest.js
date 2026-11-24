@@ -24,15 +24,12 @@ const META = {
   'remaining-burden':   { q: 'So what is still hard?', ms: 6400, token: 'integration-layer' },
   'four-ways':          { q: 'What is NFR Workspace?', ms: 5900, token: 'four-ways' },
   'three-layers':       { q: 'What has to change to scale it?', ms: 5800, token: 'three-layers' },
-  'workspace-boot':     { q: 'What does the working day look like?', ms: 2600, token: 'workspace', interactive: true, state: 'booting' },
-  'workspace-home':     { q: 'Where does the day start?', ms: 2800, token: 'workspace', interactive: true, state: 'workspace-home', caseState: 'prepared' },
-  'workspace-journey':  { q: 'How does standard work run end to end?', ms: 2400, token: 'workspace', interactive: true, state: 'case-open', caseState: 'decision' },
-  'workspace-builder':  { q: 'What about work no app covers?', ms: 2300, token: 'workspace', interactive: true, state: 'agent-builder-goal' },
-  'authority-boundary': { q: 'What does AI do, and what stays human?', ms: 5400, token: 'controlled-receipt', caseState: 'receipt', atlasView: 'controlled-write' },
-  'six-month-route':    { q: 'What is the first six-month proof?', ms: 5600, token: 'three-lanes', atlasView: 'workstreams' },
-  'value-decision':     { q: 'What is the value, and where do we start?', ms: 4900, token: 'first-loop' },
-  'business-case':      { q: 'What is the value and when does it pay back?', ms: 6000, token: 'business-case', interactive: true, caseState: 'measured', atlasView: 'economics' },
-  'workspace-live':     { q: 'Does this exist beyond the slides?', ms: 9000, token: 'prototype' }
+  'enter-workspace':    { q: 'What does the working day look like?', ms: 2600, token: 'live-handoff', interactive: true, state: 'live-handoff' },
+  'authority-boundary': { q: 'What did AI do, and what stayed human?', ms: 5400, token: 'controlled-receipt' },
+  'six-month-route':    { q: 'What is the first six-month proof?', ms: 5600, token: 'three-lanes' },
+  'value-decision':     { q: 'What is the value?', ms: 3800, token: 'value' },
+  'workshop-decision':  { q: 'Where do we start?', ms: 2100, token: 'first-loop' },
+  'live-fallback':      { q: 'What if the live product is unavailable?', ms: 100, token: 'captured-acts', interactive: true, state: 'live-fallback' }
 };
 
 const re = /<section id="([a-z0-9-]+)" data-slide data-route="(core|reference)"([^>]*)>/g;
@@ -72,8 +69,8 @@ const manifest = {
   version: current,
   story: 'NFR Workspace: from firefighting to prepared judgement',
   model: { waysToWork: ['Ask', 'Use', 'Run', 'Create'], layers: ['Work & roles', 'Process & controls', 'Data & platform'] },
-  anchorJourney: 'Periodic third-party review',
-  caseId: 'TPRM-PR-042',
+  anchorJourney: 'Periodic third-party review, shown in the live product',
+  liveProduct: 'NFR Workspace, standalone on port 3200',
   chapters: [
     { id: 'shift', label: 'THE SHIFT' },
     { id: 'model', label: 'THE MODEL' },

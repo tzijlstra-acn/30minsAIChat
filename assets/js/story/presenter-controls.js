@@ -1,69 +1,50 @@
-// -- PRESENTER CONTROLS -- v5 --
-// Experience state, presenter keys, safe mode, the shortcut overlay, the technical-depth
-// drawer and the return-to-story control. navigation.js hands every keydown to
-// handleKey() first.
+// -- PRESENTER CONTROLS -- v6 --
+// Experience state, presenter keys, safe mode, the shortcut overlay, the hand-off to the
+// live product and appendix navigation. navigation.js hands every keydown to handleKey()
+// first.
 //
-// Keys: Space advances the scripted demo, then moves on. W enters the Workspace.
-// A toggles the automation trace. T opens technical depth. R replays or resets the
-// current screen. S toggles safe mode. 0 resets the whole experience to the cover.
-// ? lists the keys. Arrows and Page Up / Page Down (clickers) move between screens.
-// Escape closes the top overlay; in the Workspace with nothing open it returns to the story.
+// Keys: Space advances a scene, then moves on. W goes to Enter NFR Workspace. L opens the
+// live product; F the captured fallback. A opens the appendix index; 1 to 4 a module;
+// M returns to the main story. R replays the screen. S toggles safe mode. 0 resets the
+// whole experience. Escape closes the top overlay, or returns one level (page, index,
+// story). ? lists the keys. Arrows and Page Up / Page Down move between screens.
 // Exposes: window.NFRExperience, window.PresenterControls
 
 (function() {
   'use strict';
 
-  var WORKSPACE_ENTRY = 'workspace-boot';
+  var WORKSPACE_ENTRY = 'enter-workspace';
   var STORY_RETURN = 'authority-boundary';
-  var STORY_END = 'value-decision';
+  var STORY_END = 'workshop-decision';
+  var FALLBACK = 'live-fallback';
 
-  // Experience states for the story screens; the app screens set their own
-  // (booting, workspace-home, insight-visible, case-open, decision-pending, ...)
+  // Experience states for the story screens; the doorway and the fallback set their own
   var STATE_BY_SCREEN = {
     'cover': 'cover', 'assistance-here': 'assistance', 'remaining-burden': 'integration-burden',
     'four-ways': 'four-ways', 'three-layers': 'three-layers', 'authority-boundary': 'control-boundary',
-    'six-month-route': 'roadmap', 'value-decision': 'value'
+    'six-month-route': 'roadmap', 'value-decision': 'value', 'workshop-decision': 'workshop'
   };
 
-  // ── The experience state model: every state the route can be in, in route order ──
-  // Story screens map through STATE_BY_SCREEN; the Workspace screens set their own beats.
+  // ── The experience state model: every state the deck can be in, in route order ──
   var STATES = [
     'cover', 'assistance', 'integration-burden', 'four-ways', 'three-layers',
-    'booting', 'workspace-home', 'insight-visible', 'source-detail-open',
-    'case-open', 'role-app-open', 'automation-trace-open', 'decision-pending', 'writeback-preview', 'writeback-complete',
-    'agent-builder-goal', 'agent-builder-permissions', 'agent-builder-plan', 'agent-builder-running', 'agent-builder-result', 'agent-builder-save',
-    'control-boundary', 'roadmap', 'value', 'appendix'
+    'entering-workspace', 'live-handoff', 'live-fallback',
+    'control-boundary', 'roadmap', 'value', 'workshop', 'appendix'
   ];
 
-  // ── Experience state, session flags and hand-offs between screens ──
   var _state = 'cover';
   var _flags = {};
-  var _handoff = null;
   var NFRExperience = {
-    get: function() { return _state; },
     states: function() { return STATES.slice(); },
+    get: function() { return _state; },
     set: function(s) {
       if (STATES.indexOf(s) < 0 && window.console) console.warn('NFRExperience: unknown state ' + s);
       _state = s;
       if (document.body) document.body.setAttribute('data-ws-state', s);
     },
-    // Flags remember what happened in this session (for example a recorded decision)
     setFlag: function(k, v) { _flags[k] = v; },
     getFlag: function(k) { return _flags[k]; },
-    // A screen can ask the next screen to open at a given beat (Assist to the role app)
-    handoff: function(target, beat) { _handoff = { target: target, beat: beat }; },
-    takeHandoff: function(target) {
-      if (!_handoff || _handoff.target !== target) return null;
-      var b = _handoff.beat;
-      _handoff = null;
-      return b;
-    },
-    reset: function() {
-      _flags = {};
-      _handoff = null;
-      NFRExperience.set('cover');
-      if (document.body) document.body.removeAttribute('data-builder-state');
-    }
+    reset: function() { _flags = {}; NFRExperience.set('cover'); }
   };
   window.NFRExperience = NFRExperience;
 
@@ -74,29 +55,46 @@
     if (text !== undefined && text !== null) n.textContent = text;
     return n;
   }
-  function currentSection() {
-    return (typeof sections !== 'undefined' && sections[current]) || null;
-  }
-  function isApp(sec) { return !!(sec && sec.dataset.kind === 'app'); }
+  function currentSection() { return (typeof sections !== 'undefined' && sections[current]) || null; }
   function isReference(sec) { return !!(sec && sec.dataset.route === 'reference'); }
+  function isApxPage(sec) { return !!(sec && sec.hasAttribute('data-apx-page')); }
+  function go(id) { if (typeof goToId === 'function') goToId(id); }
 
   // ── Called by navigation.js on every screen change ──
   var _lastStory = null;
   function onScreen(sec) {
     if (!sec) return;
-    if (isReference(sec)) NFRExperience.set('appendix');
+    if (isReference(sec) && sec.id !== FALLBACK) NFRExperience.set('appendix');
     else if (STATE_BY_SCREEN[sec.id]) NFRExperience.set(STATE_BY_SCREEN[sec.id]);
     if (sec.dataset.route === 'core') _lastStory = sec.id;
-    document.body.classList.toggle('in-workspace', isApp(sec));
-    // The return control shows on appendix pages; the atlas has its own back button
     document.body.classList.toggle('in-appendix', isReference(sec) && sec.id !== 'ref-room');
+    document.body.classList.toggle('in-apx-page', isApxPage(sec));
   }
-  function returnToStory() {
-    if (typeof goToId === 'function') goToId(_lastStory || STORY_END);
+  function returnToStory() { go(_lastStory || STORY_END); }
+
+  // ── The live product ──
+  // The URL comes from ?live=<url> (remembered for the session), else the default
+  function liveUrl() {
+    var fromQuery = null;
+    try { fromQuery = new URLSearchParams(location.search).get('live'); } catch (e) { fromQuery = null; }
+    if (fromQuery && /^https?:\/\//.test(fromQuery)) {
+      try { sessionStorage.setItem('nfr_live_url', fromQuery); } catch (e) {}
+      return fromQuery;
+    }
+    var stored = null;
+    try { stored = sessionStorage.getItem('nfr_live_url'); } catch (e) { stored = null; }
+    return stored || (D() && D().enter.liveUrl) || 'http://localhost:3200/';
+  }
+  function openLive() {
+    var url = liveUrl();
+    var w = null;
+    try { w = window.open(url, 'nfr-workspace-live'); } catch (e) { w = null; }
+    if (typeof showToast === 'function') showToast(w ? 'Live Workspace opened: ' + url : 'Could not open ' + url + '. Use the captured fallback (F).');
+    return !!w;
   }
 
   // ── Overlays ──
-  var _keys = null, _tech = null, _techTab = 'choice', _lastFocus = null;
+  var _keys = null, _lastFocus = null;
 
   function overlayShell(id, title, labelledBy) {
     var ov = el('div', 'pc-overlay');
@@ -123,7 +121,6 @@
     close.addEventListener('click', function() { closeOverlay(ov); });
     return { ov: ov, panel: panel, head: head };
   }
-
   function openOverlay(ov) {
     _lastFocus = document.activeElement;
     ov.classList.add('open');
@@ -139,16 +136,18 @@
   }
   function isOpen(ov) { return !!(ov && ov.classList.contains('open')); }
 
-  // Presenter keys
   var KEYS = [
     ['Right / Left, Page Down / Up', 'Next or previous screen (works with a clicker)'],
-    ['Space', 'Advance the demo step; at the last step, next screen'],
-    ['W', 'Enter the NFR Workspace'],
-    ['A', 'Show or hide the automation trace (case demo)'],
-    ['T', 'Technical depth: appendix A to G in a drawer'],
-    ['R', 'Replay the screen or reset the active demo'],
-    ['Escape', 'Close the open panel; in the Workspace or the appendix, back to the story'],
+    ['Space', 'Advance the scene; at its end, the next screen'],
+    ['W', 'Go to Enter NFR Workspace (screen 06)'],
+    ['L', 'Open the live NFR Workspace'],
+    ['F', 'The five acts, captured from the product (fallback)'],
+    ['A', 'Appendix index'],
+    ['1 to 4', 'Appendix module: value, control, data, platform'],
+    ['M', 'Back to the main story'],
+    ['R', 'Replay the current screen'],
     ['S', 'Safe mode on or off: final states, no animation'],
+    ['Escape', 'Close the open panel, or go back one level'],
     ['0', 'Reset everything and return to the cover'],
     ['G', 'Agenda'],
     ['?', 'This list']
@@ -157,69 +156,17 @@
     var o = overlayShell('keysOverlay', 'Presenter keys', 'keysTitle');
     o.panel.classList.add('pc-keys');
     var list = el('dl', 'pc-keylist');
-    KEYS.forEach(function(k) {
-      list.appendChild(el('dt', null, k[0]));
-      list.appendChild(el('dd', null, k[1]));
-    });
+    KEYS.forEach(function(k) { list.appendChild(el('dt', null, k[0])); list.appendChild(el('dd', null, k[1])); });
     o.panel.appendChild(list);
-    o.panel.appendChild(el('p', 'pc-note', 'Safe mode (S, the nav bar, or ?safe=1 in the address) shows every screen in its final state without animation. The demo controls keep working.'));
+    o.panel.appendChild(el('p', 'pc-note', 'Live product: ' + liveUrl() + '. Safe mode (S, the nav bar, or ?safe=1 in the address) shows every screen in its final state without animation.'));
     _keys = o.ov;
-  }
-
-  // Technical depth drawer: the same topics as appendix A to G, from one renderer
-  function buildTech() {
-    var o = overlayShell('techDrawer', 'Technical depth', 'techTitle');
-    o.ov.classList.add('pc-drawer');
-    o.panel.appendChild(el('p', 'pc-sub', 'Optional detail for risk, architecture and technology questions. The core story does not depend on it.'));
-    var tabs = el('div', 'pc-tabs');
-    tabs.setAttribute('role', 'tablist');
-    var body = el('div', 'pc-body');
-    var pageLink = el('button', 'ts-tech-link pc-page-link');
-    pageLink.type = 'button';
-    var btns = {};
-    window.AppendixTopics.tabs().forEach(function(tab) {
-      var b = el('button', 'pc-tab', tab.label);
-      b.type = 'button';
-      b.setAttribute('role', 'tab');
-      b.dataset.tab = tab.id;
-      b.addEventListener('click', function() { showTech(tab.id); });
-      btns[tab.id] = b;
-      tabs.appendChild(b);
-    });
-    o.panel.appendChild(tabs);
-    o.panel.appendChild(body);
-    o.panel.appendChild(pageLink);
-
-    function render(id) {
-      window.AppendixTopics.render(id, body, 'drawer');
-      var tab = window.AppendixTopics.tabs().filter(function(t) { return t.id === id; })[0];
-      pageLink.hidden = !(tab && tab.page);
-      if (tab && tab.page) {
-        pageLink.textContent = 'Open as an appendix page';
-        pageLink.onclick = function() { closeOverlay(_tech); if (typeof goToId === 'function') goToId(tab.page); };
-      }
-      Object.keys(btns).forEach(function(k) {
-        btns[k].classList.toggle('is-active', k === id);
-        btns[k].setAttribute('aria-selected', k === id ? 'true' : 'false');
-      });
-    }
-    _tech = o.ov;
-    _tech._render = render;
-  }
-
-  function showTech(tab) {
-    if (!window.AppendixTopics) return;
-    if (!_tech) buildTech();
-    if (tab && window.AppendixTopics.has(tab)) _techTab = tab;
-    _tech._render(_techTab);
-    if (!isOpen(_tech)) openOverlay(_tech);
   }
   function toggleKeys() {
     if (!_keys) buildKeys();
     if (isOpen(_keys)) closeOverlay(_keys); else openOverlay(_keys);
   }
 
-  // ── Safe mode toggle ──
+  // ── Safe mode ──
   function syncSafeButton() {
     var b = document.getElementById('safeModeBtn');
     if (!b || !window.SceneDirector) return;
@@ -236,7 +183,7 @@
 
   // ── Reset everything ──
   function resetAll() {
-    [_keys, _tech].forEach(function(o) { if (isOpen(o)) closeOverlay(o); });
+    if (isOpen(_keys)) closeOverlay(_keys);
     if (typeof closeAgenda === 'function') closeAgenda();
     if (typeof closeDrawer === 'function') closeDrawer();
     NFRExperience.reset();
@@ -250,24 +197,26 @@
   function handleKey(e) {
     var k = e.key;
     if (e.metaKey || e.ctrlKey || e.altKey) return false;
-    // Overlays first. While one is open the deck behind it does not move; other keys keep
-    // their browser default (Tab, arrows scrolling the panel).
+    // While the key list is open the deck behind it does not move
     if (isOpen(_keys)) {
       if (k === 'Escape' || k === '?') { e.preventDefault(); closeOverlay(_keys); }
       return true;
     }
-    if (isOpen(_tech)) {
-      if (k === 'Escape' || k === 't' || k === 'T') { e.preventDefault(); closeOverlay(_tech); }
-      return true;
-    }
+    var sec = currentSection();
+    var lower = typeof k === 'string' ? k.toLowerCase() : k;
     if (k === '?') { e.preventDefault(); toggleKeys(); return true; }
-    if (k === 't' || k === 'T') { e.preventDefault(); showTech(); return true; }
-    if (k === 'w' || k === 'W') { e.preventDefault(); if (typeof goToId === 'function') goToId(WORKSPACE_ENTRY); return true; }
+    if (lower === 'w') { e.preventDefault(); go(WORKSPACE_ENTRY); return true; }
+    if (lower === 'l') { e.preventDefault(); openLive(); return true; }
+    if (lower === 'f') { e.preventDefault(); go(FALLBACK); return true; }
+    if (lower === 'a') { e.preventDefault(); if (window.AppendixNav) AppendixNav.index(); return true; }
+    if (lower === 'm') { e.preventDefault(); returnToStory(); return true; }
+    if (k === '1' || k === '2' || k === '3' || k === '4') { e.preventDefault(); if (window.AppendixNav) AppendixNav.module(k); return true; }
     if (k === '0') { e.preventDefault(); resetAll(); return true; }
-    if (k === 's' || k === 'S') { e.preventDefault(); toggleSafe(); return true; }
-    if (k === 'a' || k === 'A') {
-      if (window.SceneDirector && SceneDirector.key('a')) { e.preventDefault(); return true; }
-      return false;
+    if (lower === 's') { e.preventDefault(); toggleSafe(); return true; }
+    // On the captured fallback the arrows and the clicker step through the captures
+    if (sec && sec.id === FALLBACK && window.SceneDirector) {
+      if (k === 'ArrowRight' || k === 'PageDown') { e.preventDefault(); SceneDirector.advance(); return true; }
+      if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); SceneDirector.key('prev'); return true; }
     }
     if (k === ' ') {
       e.preventDefault();
@@ -280,8 +229,10 @@
       var drawer = document.getElementById('drawerOverlay');
       if ((agenda && agenda.classList.contains('open')) || (drawer && drawer.classList.contains('open'))) return false;
       if (window.SceneDirector && SceneDirector.key('Escape')) { e.preventDefault(); return true; }
-      if (isApp(currentSection())) { e.preventDefault(); if (typeof goToId === 'function') goToId(STORY_RETURN); return true; }
-      if (isReference(currentSection())) { e.preventDefault(); returnToStory(); return true; }
+      // One level up: a question page goes to the index, the index to the story
+      if (isApxPage(sec)) { e.preventDefault(); if (window.AppendixNav) AppendixNav.index(); return true; }
+      if (sec && sec.id === 'appendix') { e.preventDefault(); returnToStory(); return true; }
+      if (isReference(sec)) { e.preventDefault(); if (window.AppendixNav) AppendixNav.index(); return true; }
       return false;
     }
     return false;
@@ -292,30 +243,30 @@
     if (safeBtn) safeBtn.addEventListener('click', toggleSafe);
     var keysBtn = document.getElementById('keysBtn');
     if (keysBtn) keysBtn.addEventListener('click', toggleKeys);
-    var techBtn = document.getElementById('techBtn');
-    if (techBtn) techBtn.addEventListener('click', function() { showTech(); });
     var back = document.getElementById('storyReturn');
     if (back) back.addEventListener('click', returnToStory);
-    document.querySelectorAll('[data-tech-tab]').forEach(function(a) {
-      a.addEventListener('click', function(e) { e.preventDefault(); showTech(a.dataset.techTab); });
+    // Deep links from the story into the appendix
+    document.querySelectorAll('[data-apx-link]').forEach(function(a) {
+      a.addEventListener('click', function(e) { e.preventDefault(); go(a.dataset.apxLink); });
     });
-    // A mouse click leaves focus on the button, and Space would then press it again
-    // (for example switching safe mode back off). Release focus after mouse clicks on
-    // presenter and demo controls; keyboard activation (detail 0) keeps its focus.
+    // A mouse click leaves focus on the button, and Space would then press it again.
+    // Release focus after mouse clicks on presenter and appendix controls; keyboard
+    // activation (detail 0) keeps its focus.
     document.addEventListener('click', function(e) {
       if (!e.detail) return;
       var b = e.target.closest && e.target.closest('button');
       if (!b) return;
-      if (b.closest('.nav') || b.classList.contains('ws-btn') || b.classList.contains('ws-source') || b.classList.contains('ws-nav-item') || b.classList.contains('landing-chapter') || b.classList.contains('wj-crumb')) b.blur();
-    }, true);  // capture phase: demo buttons stop propagation of their own clicks
+      if (b.closest('.nav') || b.classList.contains('apx-btn') || b.classList.contains('apx-tab') || b.classList.contains('apx-mod-chip') || b.classList.contains('apx-door-head')
+        || b.classList.contains('ew-open') || b.classList.contains('ew-fallback') || b.classList.contains('lf-tab') || b.classList.contains('ts-apx-link') || b.classList.contains('landing-chapter')) b.blur();
+    }, true);
     syncSafeButton();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
   window.PresenterControls = {
     handleKey: handleKey, onScreen: onScreen, returnToStory: returnToStory,
-    showTech: showTech, toggleKeys: toggleKeys, toggleSafe: toggleSafe, resetAll: resetAll,
-    isTechOpen: function() { return isOpen(_tech); },
-    STORY_RETURN: STORY_RETURN, WORKSPACE_ENTRY: WORKSPACE_ENTRY
+    toggleKeys: toggleKeys, toggleSafe: toggleSafe, resetAll: resetAll,
+    openLive: openLive, liveUrl: liveUrl,
+    STORY_RETURN: STORY_RETURN, WORKSPACE_ENTRY: WORKSPACE_ENTRY, FALLBACK: FALLBACK
   };
 }());

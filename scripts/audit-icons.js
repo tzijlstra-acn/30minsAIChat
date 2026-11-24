@@ -47,7 +47,7 @@ if (fs.existsSync(scenesDir)) {
 }
 
 // v2: the Workspace kit, presenter controls and demo data render icons too
-['assets/js/story/workspace-kit.js', 'assets/js/story/presenter-controls.js', 'assets/data/workspace-demo.js'].forEach(function(rel) {
+['assets/js/story/appendix-modules.js', 'assets/data/appendix-modules.js', 'assets/data/live-captures.js', 'assets/js/story/presenter-controls.js', 'assets/data/workspace-demo.js'].forEach(function(rel) {
   var p = path.join(ROOT, rel);
   if (!fs.existsSync(p)) return;
   var code = fs.readFileSync(p, 'utf8');

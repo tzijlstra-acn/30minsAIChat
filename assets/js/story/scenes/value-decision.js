@@ -1,17 +1,15 @@
-// Scene: value-decision (v2 screen 12)
+// Scene: value-decision (screen 09)
 // Causal story: value grows as assistance becomes operational work. A four-step ladder
 // rises from Assist to role apps to automations to the Agent Builder, each with its
 // primary value. Three outcome groups are measured separately: risk, operating
-// performance, capacity and economics. The conversation ends on one decision for the
-// room: which role, decision and bounded process becomes the first controlled loop, and
-// what evidence would authorise the next wave.
+// performance, capacity and economics. The decision for the room follows on the next
+// screen, the workshop decision.
 SceneDirector.register('value-decision', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
-  var W = 1040, H = 520;
+  var W = 1040, H = 380;
   var STEP = { x0: 16, w: 246, gap: 8, base: 150, heights: [96, 112, 128, 144] };
   var OUT = { y: 168, w: 330, gap: 9, h: 156 };
-  var Q = { y: 366, h: 132 };
 
   var cv = null;
   var n = {};
@@ -58,20 +56,6 @@ SceneDirector.register('value-decision', function(container, manifest, reduced) 
     n.measure = S.el('div', 'ts-note vd-measure ts-hide', V.measureNote, { left: 16, top: OUT.y + OUT.h + 10, width: 1008 });
     root.appendChild(n.measure);
 
-    var q = S.el('div', 'vd-question ts-hide ts-pop', null, { left: 16, top: Q.y, width: 1008, height: Q.h });
-    var gate = S.DecisionGate.create(q, { size: 'small' });
-    gate.el.classList.add('vd-gate');
-    n.gate = gate;
-    var body = S.el('div', 'vd-q-body');
-    body.appendChild(S.el('div', 'ts-label ts-ink ts-c-human', 'Workshop decision'));
-    body.appendChild(S.el('div', 'vd-q-text', V.question));
-    body.appendChild(S.el('div', 'vd-q-next', V.next));
-    var crit = S.el('div', 'vd-criteria');
-    V.criteria.forEach(function(c) { crit.appendChild(S.el('span', 'ts-chip ts-c-human', c)); });
-    body.appendChild(crit);
-    q.appendChild(body);
-    root.appendChild(q);
-    n.question = q;
   }
 
   function complete() {
@@ -89,8 +73,7 @@ SceneDirector.register('value-decision', function(container, manifest, reduced) 
     { delay: 2500, run: function() { S.on(n.outs[1]); } },
     { delay: 2800, run: function() { S.on(n.outs[2]); } },
     { delay: 3300, run: function() { S.on(n.measure); } },
-    { delay: 4000, run: function() { S.on(n.question); n.gate.activate(); } },
-    { delay: 4600, run: complete }
+    { delay: 3800, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -107,8 +90,7 @@ SceneDirector.register('value-decision', function(container, manifest, reduced) 
     getAccessibleSummary: function() {
       var V = D.value;
       return 'Value grows from ' + D.capabilities.map(function(c) { return c.product + ' (' + c.value.toLowerCase() + ')'; }).join(' to ') + '. '
-        + V.outcomes.map(function(o) { return o.label + ': ' + o.items.join(', ').toLowerCase(); }).join('. ') + '. ' + V.measureNote
-        + ' Workshop decision: ' + V.question + ' ' + V.next + ' Criteria: ' + V.criteria.join(', ').toLowerCase() + '.';
+        + V.outcomes.map(function(o) { return o.label + ': ' + o.items.join(', ').toLowerCase(); }).join('. ') + '. ' + V.measureNote;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };
