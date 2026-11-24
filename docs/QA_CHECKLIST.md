@@ -59,7 +59,7 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 | Check | Status |
 |---|---|
 | Repository | **Public**. From v32, Pages serves `dist/` (index.html, pitch.html, assets/) built by `npm run build:public`; `docs/`, `tests/` and `scripts/` are no longer served, though they remain readable in the repository |
-| Served public build |  and  return 404 from  |
+| Served public build | `docs/PRESENTER_GUIDE.md` and `internal/story-internal.js` return 404 from `dist/` |
 | Internal edition | Built only from the git-ignored `internal/` folder into the git-ignored `dist-internal/`. Not referenced from any tracked file; the public `pitch.html` has no overlay hook paths |
 | Term scan | Salted hashes in `scripts/forbidden-terms.json`; the public build fails on a hit. `dist/`: clean. Every committable file (`scan-repo`): clean. Full history (232 commits, vendor and images excluded): clean |
 | Product captures | Unchanged from v31: synthetic institution and names only |
