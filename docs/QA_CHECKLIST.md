@@ -11,7 +11,7 @@ node scripts/visual-qa.js 8190 artifacts/visual-qa/v32
 node scripts/export-fallback.js 8190
 ```
 
-Last full run: RESULTS_PENDING
+Last full run: 350 passed, 0 failed on the five desktop projects (see the release note at the end).
 
 ## 1. Meeting-survival tests (v7 plan)
 
@@ -47,8 +47,8 @@ Last full run: RESULTS_PENDING
 |---|---|
 | Core screens at 1024 x 768 to 1920 x 1080: no clipping, no element outside its canvas, text above the floor | Pass, automated |
 | Appendix pages and the fallback at every size: no horizontal overflow, text above the floor, each page under 1.8 screens | Pass, automated |
-| 125 percent zoom (1536 x 864 and 1152 x 720 at 1.25) | ZOOM_PENDING |
-| Contact sheet of all core screens at 1366 x 768 | VISUAL_PENDING |
+| 125 percent zoom (1536 x 864 and 1152 x 720 at 1.25) | Pass, scripted check on the public build: 14 screens at each size, 0 issues, 0 errors |
+| Contact sheet of all core screens at 1366 x 768 | Pass: reviewed by eye; icons render once |
 
 ## 4. Claim review
 
@@ -59,6 +59,7 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 | Check | Status |
 |---|---|
 | Repository | **Public**. From v32, Pages serves `dist/` (index.html, pitch.html, assets/) built by `npm run build:public`; `docs/`, `tests/` and `scripts/` are no longer served, though they remain readable in the repository |
+| Served public build |  and  return 404 from  |
 | Internal edition | Built only from the git-ignored `internal/` folder into the git-ignored `dist-internal/`. Not referenced from any tracked file; the public `pitch.html` has no overlay hook paths |
 | Term scan | Salted hashes in `scripts/forbidden-terms.json`; the public build fails on a hit. `dist/`: clean. Every committable file (`scan-repo`): clean. Full history (232 commits, vendor and images excluded): clean |
 | Product captures | Unchanged from v31: synthetic institution and names only |
@@ -72,4 +73,4 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 
 ## Release note
 
-RELEASE_PENDING
+v32 (`v32-5492c5a`), 2026-11-24: desktop matrix (chromium, 1366 x 768, 1440 x 900, 1920 x 1080, 1024 x 768) 350 passed, 0 failed; the 440 skips are per-project by design. The `mobile` project needs WebKit, which is not installed on this machine, and is not part of the matrix. All audits, the dash check and the copy lint pass. Against the public build served from `dist/`: visual QA 56 screenshots at each of 1920 x 1080, 1600 x 900, 1440 x 900 and 1366 x 768 with 0 console errors; 125 percent zoom clean; PDF fallback 56 pages, 0 console errors. Internal edition PDF: 60 pages, 0 console errors, kept in `internal/fallback/` (git-ignored).

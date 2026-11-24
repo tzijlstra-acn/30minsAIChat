@@ -3,11 +3,12 @@
  * export-fallback -- a static PDF of the whole presentation, for a meeting where the
  * live site is blocked or the interactive demo cannot run.
  * Usage: node scripts/export-fallback.js [port] [out]   (default 8080, artifacts/fallback)
- * Start the server first: npm run serve
+ * Start a server first: npm run serve, or node scripts/serve.js 8190 dist for the public
+ * build. For the internal edition, write the PDF inside internal/ so it stays git-ignored.
  *
  * Renders at 1920x1080 in reduced motion (every screen in its final state), in story
- * order: the ten core screens, with the five acts captured from the live product after
- * Enter NFR Workspace, then the appendix index and its 23 question pages.
+ * order: the core screens, with the five acts captured from the live product after
+ * Enter NFR Workspace, then the appendix index and every question page.
  * Writes <out>/NFR-Workspace-<release>.pdf, one screen per page, plus the JPEG frames.
  * Exits 1 on any console error. artifacts/ is gitignored: the PDF is not published.
  */
