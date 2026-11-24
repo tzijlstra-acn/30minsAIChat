@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * serve -- minimal static file server for local preview and the Playwright suite.
- * Usage: node scripts/serve.js [port]   (default 8080, serves the repository root)
+ * Usage: node scripts/serve.js [port] [root]   (default 8080 and the repository root;
+ *        root is a folder relative to the repository, such as dist or dist-internal)
  * Replaces python -m http.server for tests: under parallel workers on Windows the
  * Python server refuses connections, which made page-load tests flaky.
  */
@@ -10,7 +11,7 @@ var http = require('http');
 var fs = require('fs');
 var path = require('path');
 
-var ROOT = path.dirname(__dirname);
+var ROOT = path.resolve(path.dirname(__dirname), process.argv[3] || '.');
 var PORT = Number(process.argv[2] || process.env.PORT || 8080);
 var TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',

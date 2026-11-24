@@ -12,3 +12,9 @@ Thumbs.db
 # Internal-only notes: GitHub Pages publishes the repository root, so these never get committed
 *.local.md
 docs/internal/
+
+# v7: the internal edition overlay and both build outputs are never committed.
+# GitHub Pages publishes dist/ only, built in CI by `npm run build:public`.
+internal/
+dist/
+dist-internal/

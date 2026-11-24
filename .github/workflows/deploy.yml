@@ -25,10 +25,15 @@ jobs:
         uses: actions/checkout@v5
       - name: Setup Pages
         uses: actions/configure-pages@v6
+      # Only the public edition is ever published: index.html, pitch.html and assets/,
+      # scanned for internal terms (the build fails on any hit). docs/, tests/ and
+      # scripts/ stay in the repository and are no longer served.
+      - name: Build the public edition
+        run: node scripts/build.js public
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: '.'
+          path: 'dist'
 
   deploy:
     needs: build

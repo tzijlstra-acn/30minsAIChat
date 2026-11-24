@@ -1,13 +1,14 @@
 // @ts-check
 /**
- * NFR Workspace v6 -- the hand-off to the live product, the captured fallback, the
- * four-module appendix, the unit-economics calculator, presenter keys, history, safe
+ * NFR Workspace v7 -- the hand-off to the live product, the captured fallback and the
+ * return to the plan beneath it (screen 08), the four-domain appendix, the unit-economics calculator, presenter keys, history, safe
  * mode, the state model and an offline run. The deck carries no mock of the product.
  * Every test sets its own viewport, so the file runs once, in the chromium project.
  */
 const { test, expect } = require('@playwright/test');
 const APX = require('../assets/data/appendix-modules.js');
 const U = require('../assets/js/story/unit-economics.js');
+const B = require('../scripts/build.js');
 
 test.beforeEach(({}, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'demo tests set their own viewport and run once');
@@ -43,22 +44,22 @@ test.describe('Enter NFR Workspace', () => {
     await page.waitForFunction(() => sections[current].id === 'enter-workspace' && SceneDirector.getState() === 'complete', null, { timeout: 6000 });
     expect(Date.now() - t0).toBeLessThan(5000);
     const S = page.locator('#enter-workspace');
-    await expect(S.locator('.ew-st.is-done')).toHaveCount(3);
+    await expect(S.locator('.ew-st.is-done')).toHaveCount(await page.evaluate(() => NFR_WORKSPACE_DEMO.enter.statuses.length));
     await expect(S.locator('.ew-open')).toBeVisible();
     await expect(S.locator('.ew-open')).toContainText('Open live Workspace');
     await expect(S.locator('.ew-act')).toHaveCount(5);
     expect(await ws(page)).toBe('live-handoff');
   });
 
-  test('Space skips the doorway, then moves on to the principle screen', async ({ page }) => {
+  test('Space skips the doorway, then returns to the plan beneath the answer', async ({ page }) => {
     await open(page);
     await page.evaluate(() => document.getElementById('enter-workspace').scrollIntoView({ behavior: 'instant' }));
     await page.waitForFunction(() => sections[current].id === 'enter-workspace' && SceneDirector.getState() === 'playing', null, { timeout: 6000 });
     await press(page, 'Space');
     await page.waitForFunction(() => SceneDirector.getState() === 'complete', null, { timeout: 2000 });
     await press(page, 'Space');
-    await page.waitForFunction(() => sections[current].id === 'authority-boundary', null, { timeout: 4000 });
-    expect(await ws(page)).toBe('control-boundary');
+    await page.waitForFunction(() => sections[current].id === 'method-plan', null, { timeout: 4000 });
+    expect(await ws(page)).toBe('beneath');
   });
 
   test('L opens the live product; ?live= points it elsewhere', async ({ page }) => {
@@ -87,7 +88,7 @@ test.describe('Enter NFR Workspace', () => {
 
 // ── THE CAPTURED FALLBACK ──
 test.describe('Captured fallback', () => {
-  test('F opens the five acts; Space steps through, then continues to the principle', async ({ page }) => {
+  test('F opens the five acts; Space steps through, then continues to the plan beneath', async ({ page }) => {
     await reduced(page);
     await open(page);
     await land(page, 'four-ways');
@@ -107,7 +108,7 @@ test.describe('Captured fallback', () => {
     expect(await F.getAttribute('data-capture')).toBe(String(shots - 2));
     await press(page, 'Space');
     await press(page, 'Space');
-    await page.waitForFunction(() => sections[current].id === 'authority-boundary', null, { timeout: 5000 });
+    await page.waitForFunction(() => sections[current].id === 'method-plan', null, { timeout: 5000 });
   });
 
   test('every capture exists and loads', async ({ page }) => {
@@ -129,7 +130,7 @@ test.describe('Captured fallback', () => {
   });
 });
 
-// ── THE APPENDIX: FOUR DOORS ──
+// ── THE APPENDIX: FOUR DOMAINS ──
 test.describe('Appendix modules', () => {
   test('the index has four doors listing every page', async ({ page }) => {
     await reduced(page);
@@ -141,7 +142,10 @@ test.describe('Appendix modules', () => {
       await expect(doors.nth(i).locator('.apx-door-link')).toHaveCount(APX.modules[i].pages.length);
       await expect(doors.nth(i).locator('.apx-door-trigger')).toContainText('Asked as');
     }
-    expect(APX.modules.map((m) => m.pages.length)).toEqual([5, 5, 8, 5]);
+    expect(APX.modules.map((m) => m.id)).toEqual(['value', 'methods', 'data', 'delivery']);
+    expect(APX.modules.map((m) => m.pages.length)).toEqual([5, 8, 9, 6]);
+    expect(APX.edition).toBe('public');
+    expect(PAGES.filter((id) => /^appendix-[cp]\d/.test(id))).toEqual([]);
     await expect(page.locator('#appendix .apx-extra')).toHaveCount(3);
   });
 
@@ -169,7 +173,7 @@ test.describe('Appendix modules', () => {
   test('each page has its own hash and loads from it', async ({ page }) => {
     await reduced(page);
     await open(page);
-    for (const id of [PAGES[0], 'appendix-c4', 'appendix-d5', PAGES[PAGES.length - 1]]) {
+    for (const id of [PAGES[0], 'appendix-m4', 'appendix-d5', PAGES[PAGES.length - 1]]) {
       await page.goto('/pitch.html#' + id);
       await page.waitForFunction((sid) => typeof sections !== 'undefined' && sections[current] && sections[current].id === sid, id, { timeout: 8000 });
       await expect(page.locator('#' + id + ' .apx-visual')).toBeVisible();
@@ -181,24 +185,24 @@ test.describe('Appendix modules', () => {
     await open(page);
     await land(page, 'four-ways');
     await press(page, '2');
-    await page.waitForFunction(() => sections[current].id === 'appendix-c1', null, { timeout: 4000 });
-    await expect(page.locator('#appendix-c1 .apx-nav-prev')).toBeDisabled();
-    await page.locator('#appendix-c1 .apx-nav-next').click();
-    await page.waitForFunction(() => sections[current].id === 'appendix-c2', null, { timeout: 4000 });
-    await page.locator('#appendix-c2 .apx-nav-prev').click();
-    await page.waitForFunction(() => sections[current].id === 'appendix-c1', null, { timeout: 4000 });
+    await page.waitForFunction(() => sections[current].id === 'appendix-m1', null, { timeout: 4000 });
+    await expect(page.locator('#appendix-m1 .apx-nav-prev')).toBeDisabled();
+    await page.locator('#appendix-m1 .apx-nav-next').click();
+    await page.waitForFunction(() => sections[current].id === 'appendix-m2', null, { timeout: 4000 });
+    await page.locator('#appendix-m2 .apx-nav-prev').click();
+    await page.waitForFunction(() => sections[current].id === 'appendix-m1', null, { timeout: 4000 });
     await press(page, 'Escape');
     await page.waitForFunction(() => sections[current].id === 'appendix', null, { timeout: 4000 });
     await press(page, 'Escape');
     await page.waitForFunction(() => sections[current].id === 'four-ways', null, { timeout: 4000 });
-    for (const [k, id] of [['1', 'appendix-v1'], ['3', 'appendix-d1'], ['4', 'appendix-p1']]) {
+    for (const [k, id] of [['1', 'appendix-v1'], ['3', 'appendix-d1'], ['4', 'appendix-s1']]) {
       await press(page, k);
       await page.waitForFunction((sid) => sections[current].id === sid, id, { timeout: 4000 });
     }
     await press(page, 'a');
     await page.waitForFunction(() => sections[current].id === 'appendix', null, { timeout: 4000 });
     await page.locator('#appendix .apx-door-link', { hasText: 'How does governed write-back work?' }).click();
-    await page.waitForFunction(() => sections[current].id === 'appendix-c4', null, { timeout: 4000 });
+    await page.waitForFunction(() => sections[current].id === 'appendix-m7', null, { timeout: 4000 });
     await press(page, 'm');
     await page.waitForFunction(() => sections[current].id === 'four-ways', null, { timeout: 4000 });
   });
@@ -207,10 +211,12 @@ test.describe('Appendix modules', () => {
     await reduced(page);
     await open(page);
     const links = await page.$$eval('section[data-route="core"] [data-apx-link]', (b) => b.map((x) => x.closest('section').id + '>' + x.dataset.apxLink));
-    expect(links).toEqual(['four-ways>appendix-c2', 'authority-boundary>appendix-c1', 'authority-boundary>appendix-c4', 'six-month-route>appendix-p3', 'value-decision>appendix-v2', 'value-decision>appendix-v3', 'workshop-decision>appendix-v1']);
-    await land(page, 'six-month-route');
-    await page.locator('#six-month-route [data-apx-link]').click();
-    await page.waitForFunction(() => sections[current].id === 'appendix-p3', null, { timeout: 4000 });
+    expect(links).toEqual(['four-ways>appendix-m1', 'method-plan>appendix-m2', 'method-plan>appendix-d8', 'connected-context>appendix-d4', 'connected-context>appendix-d5',
+      'authority-boundary>appendix-m6', 'authority-boundary>appendix-m7', 'value-decision>appendix-v2', 'value-decision>appendix-v3',
+      'qualify-and-prove>appendix-s1', 'qualify-and-prove>appendix-s2', 'experience>appendix-s5', 'workshop-decision>appendix-v1']);
+    await land(page, 'qualify-and-prove');
+    await page.locator('#qualify-and-prove [data-apx-link="appendix-s1"]').click();
+    await page.waitForFunction(() => sections[current].id === 'appendix-s1', null, { timeout: 4000 });
   });
 
   test('browser Back from a page returns to the screen that opened it', async ({ page }) => {
@@ -218,20 +224,25 @@ test.describe('Appendix modules', () => {
     await open(page);
     await land(page, 'authority-boundary');
     await page.waitForTimeout(600);
-    await page.locator('#authority-boundary [data-apx-link="appendix-c4"]').click();
-    await page.waitForFunction(() => sections[current].id === 'appendix-c4', null, { timeout: 4000 });
+    await page.locator('#authority-boundary [data-apx-link="appendix-m7"]').click();
+    await page.waitForFunction(() => sections[current].id === 'appendix-m7', null, { timeout: 4000 });
     await page.goBack();
     await page.waitForFunction(() => sections[current].id === 'authority-boundary', null, { timeout: 4000 });
     await page.goForward();
-    await page.waitForFunction(() => sections[current].id === 'appendix-c4', null, { timeout: 4000 });
+    await page.waitForFunction(() => sections[current].id === 'appendix-m7', null, { timeout: 4000 });
   });
 
   test('the public pages name no internal asset or developer tooling', async ({ page }) => {
     await open(page);
     await expect(page.locator('#appendix-runtime-reuse')).toHaveCount(0);
-    for (const id of PAGES.concat(['appendix', 'live-fallback'])) {
+    await expect(page.locator('section[data-internal]')).toHaveCount(0);
+    const hashes = B.loadHashes();
+    const ids = await page.evaluate(() => sections.map((x) => x.id));
+    for (const id of ids) {
       const text = (await page.locator('#' + id).innerText()).toLowerCase();
-      ['studio', 'matrix', 'podman', 'github', 'pull request', 'claude', 'harness', 'mcp', 'accenture runtime'].forEach((t) => expect(text.includes(t), id + ' mentions ' + t).toBe(false));
+      ['studio', 'podman', 'github', 'pull request', 'claude', 'harness', 'mcp', 'accenture runtime'].forEach((t) => expect(text.includes(t), id + ' mentions ' + t).toBe(false));
+      // Internal terms are checked by salted hash, so this public file does not name them
+      expect(B.scanText(text, hashes).length, id + ' contains an internal term').toBe(0);
     }
   });
 });
@@ -301,15 +312,15 @@ test.describe('Presenter controls and resilience', () => {
   test('Space and the arrows move through the story; Page Down and Page Up work for a clicker', async ({ page }) => {
     await reduced(page);
     await open(page);
-    await land(page, 'assistance-here');
+    await land(page, 'chain-drift');
     await press(page, 'Space');
-    await page.waitForFunction(() => sections[current].id === 'remaining-burden', null, { timeout: 4000 });
+    await page.waitForFunction(() => sections[current].id === 'assistance-here', null, { timeout: 4000 });
     await press(page, 'PageDown');
     await page.waitForFunction(() => sections[current].id === 'four-ways', null, { timeout: 4000 });
     await press(page, 'PageUp');
-    await page.waitForFunction(() => sections[current].id === 'remaining-burden', null, { timeout: 4000 });
-    await press(page, 'ArrowLeft');
     await page.waitForFunction(() => sections[current].id === 'assistance-here', null, { timeout: 4000 });
+    await press(page, 'ArrowLeft');
+    await page.waitForFunction(() => sections[current].id === 'chain-drift', null, { timeout: 4000 });
   });
 
   test('every state the default route reaches is in the experience state model', async ({ page }) => {
@@ -320,14 +331,15 @@ test.describe('Presenter controls and resilience', () => {
     await land(page, 'cover');
     const known = await page.evaluate(() => NFRExperience.states());
     const seen = new Set([await ws(page)]);
-    for (let i = 0; i < 30 && (await here(page)) !== 'workshop-decision'; i++) {
+    for (let i = 0; i < 40 && (await here(page)) !== 'workshop-decision'; i++) {
       await press(page, 'Space');
       await page.waitForTimeout(250);
       seen.add(await ws(page));
     }
     expect(await here(page)).toBe('workshop-decision');
     for (const s of seen) expect(known, s).toContain(s);
-    ['cover', 'four-ways', 'live-handoff', 'control-boundary', 'value', 'workshop'].forEach((s) => expect([...seen]).toContain(s));
+    ['cover', 'work-arrives', 'chain-drift', 'assistance', 'four-ways', 'three-layers', 'live-handoff', 'beneath', 'connected', 'control-boundary', 'value', 'qualify', 'experience', 'decision']
+      .forEach((s) => expect([...seen]).toContain(s));
     expect(warnings).toEqual([]);
   });
 

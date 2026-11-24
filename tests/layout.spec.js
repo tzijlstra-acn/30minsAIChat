@@ -26,8 +26,8 @@ const VIEWPORTS = [
 ];
 
 const CORE_SLIDES = [
-  'cover', 'assistance-here', 'remaining-burden', 'four-ways', 'three-layers',
-  'enter-workspace', 'authority-boundary', 'six-month-route', 'value-decision', 'workshop-decision'
+  'cover', 'work-arrives', 'chain-drift', 'assistance-here', 'four-ways', 'three-layers', 'enter-workspace',
+  'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'qualify-and-prove', 'experience', 'workshop-decision'
 ];
 
 async function gotoPage(page, url) {
@@ -70,7 +70,7 @@ for (const vp of VIEWPORTS) {
       expect(overflowing).toEqual([]);
     });
 
-    test('all 10 core screens are attached to the DOM', async ({ page }) => {
+    test('all 14 core screens are attached to the DOM', async ({ page }) => {
       await gotoPage(page);
       for (const id of CORE_SLIDES) {
         await expect(page.locator(`#${id}`), `${id} missing at ${vp.name}`).toBeAttached();
@@ -140,7 +140,7 @@ test('store is initialised with defaults', async ({ page }) => {
   expect(state).not.toBeNull();
 });
 
-test('exactly 10 core screens, appendix excluded from the core route', async ({ page }) => {
+test('exactly 14 core screens, appendix excluded from the core route', async ({ page }) => {
   await gotoPage(page);
   const ids = await page.$$eval('section[data-route="core"]', (s) => s.map((x) => x.id));
   expect(ids).toEqual(CORE_SLIDES);
@@ -243,7 +243,7 @@ test.describe('Static checks', () => {
 
   test('story manifest is version 31 with four chapters and ten core screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('31');
+    expect(m.version).toBe('32');
     expect(m.chapters.map((c) => c.id)).toEqual(['shift', 'model', 'workspace', 'path']);
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE_SLIDES);
   });

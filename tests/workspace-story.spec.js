@@ -1,9 +1,11 @@
 // @ts-check
 /**
- * NFR Workspace v6 -- core route acceptance tests.
- * Ten screens: the shift, four ways to work, three layers, the doorway into the live
- * product, the principle, six months, value and the workshop decision. The product is
- * shown live; the deck carries no mock of it. Bank-neutral, synthetic data.
+ * NFR Workspace v7 -- core route acceptance tests.
+ * Fourteen screens in four chapters: how the work arrives and drifts, the assistant and
+ * the Workspace; four ways and three layers; the doorway into the live product, the plan
+ * beneath it, connected context and the authority boundary; value, qualify and prove,
+ * experience and the workshop decision. The product is shown live; the deck carries no
+ * mock of it. Bank-neutral, synthetic data.
  * Every test sets its own viewport, so the file runs once, in the chromium project.
  */
 const { test, expect } = require('@playwright/test');
@@ -15,8 +17,8 @@ const EM = String.fromCharCode(0x2014);
 const EN = String.fromCharCode(0x2013);
 
 const CORE = [
-  'cover', 'assistance-here', 'remaining-burden', 'four-ways', 'three-layers',
-  'enter-workspace', 'authority-boundary', 'six-month-route', 'value-decision', 'workshop-decision'
+  'cover', 'work-arrives', 'chain-drift', 'assistance-here', 'four-ways', 'three-layers', 'enter-workspace',
+  'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'qualify-and-prove', 'experience', 'workshop-decision'
 ];
 const INTERACTIVE = ['enter-workspace', 'live-fallback'];
 const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic layer', 'control plane', 'orchestrator', 'orchestration',
@@ -52,7 +54,7 @@ function sceneFiles() {
 
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
-  test('ten core screens; one scene file per declared scene, core and appendix', () => {
+  test('fourteen core screens; one scene file per declared scene, core and appendix', () => {
     const html = read('pitch.html');
     const core = [...html.matchAll(/<section id="([a-z0-9-]+)" data-slide data-route="core"/g)].map((m) => m[1]);
     expect(core).toEqual(CORE);
@@ -97,7 +99,7 @@ test.describe('Scene contract', () => {
 
   test('manifest titles match the screen titles, within word limits', async ({ page }) => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('31');
+    expect(m.version).toBe('32');
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE);
     await open(page);
     for (const s of m.screens) {
@@ -156,13 +158,13 @@ test.describe('Playback', () => {
 
   test('pause holds the timeline and resume continues from the same point', async ({ page }) => {
     await open(page);
-    await page.evaluate(() => document.getElementById('remaining-burden').scrollIntoView({ behavior: 'instant' }));
-    await page.waitForFunction(() => sections[current].id === 'remaining-burden' && SceneDirector.getState() === 'playing');
+    await page.evaluate(() => document.getElementById('chain-drift').scrollIntoView({ behavior: 'instant' }));
+    await page.waitForFunction(() => sections[current].id === 'chain-drift' && SceneDirector.getState() === 'playing');
     await page.waitForTimeout(1600);
     await page.evaluate(() => SceneDirector.togglePause());
-    const shown = await page.evaluate(() => document.querySelectorAll('#remaining-burden .ts-on').length);
+    const shown = await page.evaluate(() => document.querySelectorAll('#chain-drift .ts-on').length);
     await page.waitForTimeout(1800);
-    expect(await page.evaluate(() => document.querySelectorAll('#remaining-burden .ts-on').length)).toBe(shown);
+    expect(await page.evaluate(() => document.querySelectorAll('#chain-drift .ts-on').length)).toBe(shown);
     await page.evaluate(() => SceneDirector.togglePause());
     await page.waitForFunction(() => SceneDirector.getState() === 'complete', null, { timeout: 12000 });
   });
@@ -394,7 +396,7 @@ test.describe('Route', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.chapters.map((c) => c.label)).toEqual(['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'THE PATH']);
     const core = m.screens.filter((s) => s.route === 'core');
-    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'model', 'model', 'workspace', 'workspace', 'path', 'path', 'path']);
+    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'shift', 'model', 'model', 'workspace', 'workspace', 'workspace', 'workspace', 'path', 'path', 'path', 'path']);
   });
 
   test('the landing is a landing, with one button per chapter that jumps to its first screen', async ({ page }) => {
@@ -406,14 +408,14 @@ test.describe('Route', () => {
     });
     expect(r.kind).toBe('landing');
     expect(r.header).toBe(false);
-    expect(r.route).toEqual(['cover', 'four-ways', 'enter-workspace', 'six-month-route']);
+    expect(r.route).toEqual(['cover', 'four-ways', 'enter-workspace', 'value-decision']);
     await page.locator('#cover .landing-chapter').nth(2).click();
     await page.waitForFunction(() => sections[current].id === 'enter-workspace', null, { timeout: 6000 });
   });
 
-  test('the counter counts ten core screens and says Appendix in the appendix', async ({ page }) => {
+  test('the counter counts fourteen core screens and says Appendix in the appendix', async ({ page }) => {
     await open(page);
-    await expect(page.locator('#counter')).toHaveText('1 / 10');
+    await expect(page.locator('#counter')).toHaveText('1 / 14');
     await expect(page.locator('.nav-ch-btn[data-chid="reference"] .nav-ch-name')).toHaveText('Appendix');
     await page.evaluate(() => document.getElementById('appendix').scrollIntoView({ behavior: 'instant' }));
     await expect(page.locator('#counter')).toHaveText('Appendix', { timeout: 4000 });
