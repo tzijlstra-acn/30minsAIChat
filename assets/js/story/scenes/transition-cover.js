@@ -44,7 +44,7 @@ SceneDirector.register('transition-cover', function(container, manifest, reduced
     root.appendChild(frame);
     n.frame = frame;
     n.img = img;
-    n.label = S.el('div', 'tc-shot-label ts-hide', C.label, { left: FRAME.x + 12, top: FRAME.y + BAR + 10 });
+    n.label = S.el('div', 'tc-shot-label ts-hide', C.label, { left: FRAME.x + 12, top: FRAME.y + FRAME.h - 38 });
     root.appendChild(n.label);
     n.foot = S.el('div', 'tc-foot ts-hide', C.foot, { left: FRAME.x, top: FRAME.y + FRAME.h + 16, width: FRAME.w });
     root.appendChild(n.foot);

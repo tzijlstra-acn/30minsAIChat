@@ -1,6 +1,6 @@
-# NFR Workspace pitch: QA checklist (release v30, meeting-ready plan v5)
+# NFR Workspace pitch: QA checklist (release v31, live-demo plan v6)
 
-Status as of 2026-11-23 on branch `feat/pitch-v5`. "Automated" names the Playwright test or audit that covers the item. "Visual" means checked on screenshots at 1920x1080, 1600x900, 1440x900 and 1366x768, plus 125 percent browser zoom (1536x864 and 1152x720 at 1.25 device pixel ratio).
+Status as of 2026-11-24 on branch `feat/pitch-v6`. The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
 ```
 npm run serve
@@ -10,113 +10,67 @@ npm run qa:visual
 npm run fallback
 ```
 
-Last full run: 360 passed, 0 failed (the remaining skips are per-project by design). All audits pass.
+Last full run: see the release note at the end of this file.
 
-## 1. Meeting-survival gates
+## 1. Meeting-survival tests (plan section 17)
 
-| Gate | Status | Evidence |
+| Test | Status | Evidence |
 |---|---|---|
-| 1. Five-minute comprehension | Pass on content, **people test not done** | Screens 01 to 05 cover what the Workspace is, the assistant difference, the four ways and the three layers by about 5:45; the principle is on the cover. See section 3 |
-| 2. One complete operating loop | Pass | Trigger (review due), prepared evidence, visual insight with sources, challenge at the human gate, previewed write-back, changed case and queue state, audit receipt. Automated |
-| 3. Controlled Agent Builder | Pass | Purpose, sources, inherited permissions, prohibited actions ("Cannot"), plan, human review, output, save and promotion path. Automated |
-| 4. Honest architecture | Pass | Appendix C separates experience, runtime services and authoritative systems; Appendix F is a candidate, not a dependency; nothing claims production readiness |
-| 5. Reliable presentation | Pass | No live AI, API, key or bank system. Automated: no request leaves the local origin; the route and the demo run offline after the first load |
-| 6. Fallback | Pass | Safe mode (S, `?safe=1`), the local copy (`npm run serve`), and a PDF of the whole route (`npm run fallback`, 35 pages) |
+| Comprehension: a first-time business viewer explains the assistant difference, Ask / Use / Run / Create, the three layers, where authority remains, what the first journey proves | **Not done.** Needs people | Screens 01 to 05 carry it by minute seven; the principle is on the cover and screen 07 |
+| Product credibility: role, work, question, visual insight, evidence, decision, write-back, changed state, audit receipt | Pass in the product | Product rehearsal script: 20 steps, 0 console errors, 2 of 2 end-to-end tests (product audit) |
+| Technical credibility: connections, what stays authoritative, identity, the graph, facts to visuals, controlled actions, a pluggable runtime | Pass | Appendix D1, D2, D3, D4 to D6, D7, D8, C4, P1 |
+| Economic credibility: capacity, cycle time, quality, one-off cost, recurring cost, first-journey cost, reuse economics | Pass | Appendix V2, V3 (interactive, tested model), V4, V5 |
+| Reliability: standalone launch after restart; no dependency on a development session; fast first query; reset; no console errors; fallback without internet | Pass on the product branch, **not yet merged** | Launcher rebuilt on `feat/demo-readiness-v6`: first answer 1.3 s (was 18.2 s), readiness check, warm-up, reset. The main checkout still has the old launcher until the merge |
 
-## 2. Critical path (brief 12.1)
+## 2. Deck critical path
 
 | # | Check | Status | How |
 |---|---|---|---|
-| 1 | Local and deployed URL open | Pass locally | Live check after each deploy |
-| 2 | Password gate works | Pass | Automated: redirect to `index.html` without the session flag |
-| 3 | `#cover` deep link works | Pass | Automated, after a reload |
-| 4 | Core route starts in a known state | Pass | Automated: `0` returns to the cover with state `cover` and no flags |
-| 5 | Next and previous controls | Pass | Automated: arrows, Space, Page Down and Page Up |
-| 6 | Browser Back and Forward do not corrupt state | Pass | Automated: Back from an appendix page returns to the screen that opened it; Forward goes back in. The deck owns scroll restoration |
-| 7 | Start-up plays, skips and replays | Pass | Automated: about 2.4 seconds; Space skips; R replays; Assist appears last |
-| 8 | Decision-first home | Pass | Automated: one Now card, Next, Watching, Done |
-| 9 | Standard case opens | Pass | Automated: Open case and the Assist hand-off |
-| 10 | Assist hands off to the role app | Pass | Automated: the journey opens at `role-app-open` |
-| 11 | Structured visual insight | Pass | Automated: conclusion, four decision facts, conclusion-titled charts with units, data tables, five ranked bars, trend line, drivers |
-| 12 | Evidence detail opens and closes | Pass | Automated: every source chip opens a read-only record (state `source-detail-open`); Escape and Space close it first |
-| 13 | Automation pauses at a human gate | Pass | Automated: eight steps, the last waiting |
-| 14 | Human action opens a write-back preview | Pass | Automated: target, record, decision, reason, action owner and due date, approver, evidence, field changes |
-| 15 | Confirmation visibly changes state | Pass | Automated: case status, queue, actions, monitoring; the home shows the review recorded |
-| 16 | Audit receipt | Pass | Automated: transaction, actor, role, time, action, target record, sources, policy, automation, model, acknowledgement |
-| 17 | Agent Builder: goal, permissions, prohibited actions, plan, result | Pass | Automated: permissions before any Run control exists |
-| 18 | Save and promotion lifecycle | Pass | Automated: run once, save, schedule, template; promotion path |
-| 19 | Roadmap matches three layers | Pass | Automated: three lanes from the same layer data |
-| 20 | Main route ends before the appendix | Pass | Automated |
-| 21 | Appendix opens and returns | Pass | Automated: A to G by hash, letters in order, Back to the story, Escape, browser Back |
-| 22 | Reset restores the known state | Pass | Automated |
-| 23 | Safe mode carries the story | Pass | Automated: `?safe=1`, the toggle and S; demo beats still work |
-| 24 | No uncaught console error | Pass | Automated per viewport; visual QA and the PDF export report zero |
+| 1 | Password gate and `#cover` deep link | Pass | Automated |
+| 2 | Ten core screens, four chapters, counter 1 / 10 | Pass | Automated |
+| 3 | No mock of the product in the deck | Pass | Automated: no app screens, no app shell, no mock case in core text |
+| 4 | Cover shows a capture of the real product | Pass | Automated: every capture file loads |
+| 5 | Enter NFR Workspace: about 2.5 seconds, ends on the live cue, Space skips | Pass | Automated |
+| 6 | L opens the live product; `?live=` changes the URL | Pass | Automated |
+| 7 | F opens the five acts captured from the product; Space, arrows and the clicker step through; the end continues to screen 07 | Pass | Automated |
+| 8 | The principle screen maps what the product showed | Pass | Copy aligned to the product's five acts |
+| 9 | Six months, value and the workshop decision are separate screens | Pass | Automated |
+| 10 | Appendix: four doors, 23 pages, each with question, answer, visual, implication, claim status, index, previous, next, main story | Pass | Automated |
+| 11 | Keys: A, 1 to 4, M, Escape one level; browser Back returns from a page | Pass | Automated |
+| 12 | Deep links from the story into the matching pages | Pass | Automated |
+| 13 | V3 calculator recalculates deterministically and resets | Pass | Automated, against the unit-tested model |
+| 14 | Safe mode (S, `?safe=1`) carries the story, the fallback and the appendix | Pass | Automated |
+| 15 | Offline after the first load: story, fallback and appendix | Pass | Automated; the icon sprite is inlined and captures are preloaded |
+| 16 | Reset (0) restores the cover; state model covers every state | Pass | Automated |
+| 17 | No console errors | Pass | Automated per viewport; visual QA and the PDF export report zero |
 
-## 3. Comprehension (brief 12.2)
+## 3. Visual
 
 | Check | Status |
 |---|---|
-| Two colleagues not involved in the build (one business or risk, one technology) watch the default route unbriefed and answer: what is NFR Workspace; how is it different from chat or a copilot; what are Ask, Use, Run and Create; what are the three layers; where does the professional decide; what changes in the system after approval; what would be proven in six months; what role could an enterprise agent runtime play | **Not done.** Needs people. Do not explain before they answer; fix any screen that produces a wrong or vague answer |
+| Core screens at 1024 x 768 to 1920 x 1080: no clipping, no element outside its canvas, text above the floor | Pass, automated |
+| Appendix pages and the fallback at every size: no horizontal overflow, text above the floor, each page under 1.8 screens | Pass, automated |
+| 125 percent zoom (1536 x 864 and 1152 x 720 at 1.25) | Pass, scripted check |
+| Charts and diagrams (matrix, waterfall, reuse, graph, pipeline) readable at 1366 x 768 | Pass, screenshots |
 
-## 4. Visual (brief 12.3)
+## 4. Claim review
 
-| Check | Status | How |
-|---|---|---|
-| No clipping, no tiny text | Pass | Automated per viewport (1024x768 to 1920x1080) with text floors of 9.5 to 11 px; 125 percent zoom pass: no element outside the viewport, no text under 9.5 px |
-| No chart overflow, no broken SVG | Pass | Visual; the trend chart has a fixed size; both charts carry a label and a data table |
-| No hidden primary action | Pass | Visual at 1366x768: the insight action bar, preview confirm, reuse panel and drawers sit inside the frame |
-| No off-screen drawer | Pass | Source detail, trace, decision panel and technical drawer inside the frame |
-| Stable application shell | Pass | Automated: app-to-app moves are instant and the frame does not shift |
-| Motion smooth or safely disabled | Pass | Full-motion walkthroughs; safe mode and reduced motion render final states |
-| Contrast | Pass | Dark theme tokens; meaning is carried by labels and icons as well as colour |
-| No layout jump after password entry | Pass | Same layout through the gate |
+Every appendix page carries one claim status: *Shown in the live product* (C4 write-back, D7 question to visual answer), *Target design*, *Illustrative, synthetic figures* (V3 to V5), or *Concept for validation*. The live demonstration shows synthetic records only. No page claims a production deployment, an enterprise connector, a knowledge-graph service or a specific runtime asset.
 
-## 5. Claim audit (brief 12.4)
-
-| Claim on screen | Class |
-|---|---|
-| Most banks already have AI assistance | Hypothesis requiring client validation (market observation; the room confirms its own maturity) |
-| The Workspace prepares a case, the professional decides, the system records | Demonstrated in the presentation (synthetic); target state for a product |
-| Assist hands work to a role app; insights are visual and source-linked | Demonstrated in the presentation; target state |
-| Charts come only from a validated registry, never from model-written code | Implemented in current code (the deck's chart registry and fallback); target state for a product |
-| Agents inherit the user's access and do not create new access | Demonstrated in the presentation; target state, to be validated in the chosen runtime |
-| Write-back is previewed, checked, approved, attributed and recorded | Demonstrated in the presentation; Appendix D is the target control pattern |
-| Six months prove one loop and reusable foundations | Hypothesis requiring client validation (entry conditions and proof gates on screen) |
-| Value across risk, operating performance and capacity | Hypothesis requiring client validation; the business case is labelled illustrative |
-| A validated runtime can provide execution and governance (Appendix F) | Candidate, stated as such. Asset-specific status ("documented as shipped" for some primitives, with gaps) lives only in local notes, verified against the source on 2026-11-23 |
-| The demo runs without live AI, APIs or a network after load | Implemented in current code (automated) |
-| Running prototype captures (appendix) | Implemented in a separate development prototype on a synthetic bank; labelled as a development build |
-
-No screen claims an internal asset is used, shipped or production-ready.
-
-## 6. Performance and reliability (brief 12.5)
+## 5. Confidentiality
 
 | Check | Status |
 |---|---|
-| Cold load, no large media, no remote assets | Pass: vendored fonts and libraries; every test starts cold |
-| No runtime API | Pass: automated "no runtime request leaves the local origin" |
-| Works offline after the first load | Pass: automated offline run of the core route and the periodic-review demo |
-| No memory growth from repeated replay | Pass: repeated replays of the home, journey and builder leave the JS heap flat |
-| No duplicate listeners after navigation | Pass: scenes are destroyed on departure and rebuilt on arrival; global key and history listeners are registered once |
-| No autoplay that blocks presenter control | Pass: Space skips or advances every timeline; keys work in every state |
-
-## 7. Security and confidentiality (brief 10)
-
-| Check | Status |
-|---|---|
-| Repository visibility | **Public**, and Pages serves every committed file (docs, tests, scripts). Treat everything committed as public |
-| Credentials, tokens, model keys | None (pattern scan of tracked files) |
-| Client names or branding | None; automated bank-neutral check |
-| Internal asset name | None in tracked files; none in the history of any branch (`git log --all -S`) |
-| Images from the uploaded asset | None: 58 asset images hashed, 0 match a tracked file |
-| Internal URLs | One link to the team's NFR AI Assets portal (restricted access) |
-| Personal information | Decided 2026-11-23 by the deck owner: the team appendix (seven colleagues' names, work emails and photos) and the owner email stay as they are. No other personal data |
-| Stale naming (`NFR OS`) | None on screen; automated |
-| Confidential presenter notes | Only in git-ignored `docs/PRESENTER_GUIDE_INTERNAL.local.md` |
-| Reliance on the password | None; the gate is presentation-only and the guide says so |
+| Repository | **Public**; Pages serves every committed file |
+| Product captures (13 files in `assets/img/product`) | Reviewed one by one: synthetic institution and names only (Arcadia Bank AG, Novalink, Basalt Cloud), no emails, no internal URLs, no browser chrome, no internal asset name, no old wordmark. The empty evidence drawer capture is excluded |
+| Candidate runtime reuse (plan P6) | Not in the public deck; talk track only in the git-ignored local notes |
+| Internal asset name, client names, secrets | None in tracked files or history (scan) |
+| Old prototype captures with the old wordmark | Removed |
+| Team appendix and owner email | Kept by the owner's decision of 2026-11-23 |
 
 ## Not covered
 
-- The `mobile` Playwright project (WebKit) does not run on this machine. Mobile is not a goal.
-- Microsoft Teams screen-sharing not tried end to end; the text floors and the 125 percent pass are the proxy.
-- The NFR AI Assets catalogue entry (separate repository) is not updated in this pass.
+- The two-person comprehension test (needs people) and an end-to-end Teams screen-share.
+- The product branch `feat/demo-readiness-v6` is not merged into `feat/nfr-workspace-v3`: another session was editing that checkout. Until the merge, `Launch NFROS.cmd` in the main checkout is the old launcher.
+- The product's model-written narration work (other session) could add a live AI dependency to the scripted path; check it before the meeting.
+- Proposed product changes not made (they sit in the insight area of the other session): four figures instead of five, and the shared-provider point in the chart title.

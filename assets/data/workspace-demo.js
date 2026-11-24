@@ -29,7 +29,7 @@
     // ── Cover: a capture of the real product, not a drawing of it ──
     cover: {
       role: 'Third-Party Risk Manager',
-      capture: 'assets/img/product/today.png',
+      capture: 'assets/img/product/act2-today.png',
       alt: 'NFR Workspace, Today for the Third-Party Risk Manager, on synthetic records',
       label: 'Today, in the live product',
       foot: 'Prepared for one role. Decided by a person. Recorded by the system.'
@@ -112,16 +112,17 @@
       fallback: 'Captured fallback',
       fallbackKey: 'F',
       hint: 'After the demonstration, return here and press Space.',
-      acts: ['The role and the work are already known', 'Ask the records: a decision product', 'Into the role app and the evidence', 'A professional decides; the system changes', 'Recorded and reusable'],
+      // The five acts of the product's own presenter guide
+      acts: ['The Workspace feels real', 'The next decision arrives prepared', 'A live question, a visual answer', 'From insight to action', 'The long tail, governed'],
       // The live product on the presenter's machine; ?live=<url> overrides it
       liveUrl: 'http://localhost:3200/'
     },
 
     // ── Screen seven: the principle, mapped to what the audience just saw ──
     boundary: {
-      prepare: { label: 'AI and automation prepared', items: ['Today\'s decisions for the role', 'The answer from the records, with charts', 'Evidence compared with the last period', 'Missing and stale evidence flagged', 'The drivers, ranked, with their sources', 'The proposed next action'] },
-      decide: { label: 'The professional decided', items: ['Challenged the evidence', 'Determined materiality', 'Chose the action', 'Approved the write-back', 'Kept authority over the conclusion'] },
-      record: { label: 'The system recorded', items: ['The changed case state', 'The audit receipt', 'Who decided, and when', 'Source and policy versions', 'The actions and owners', 'The next monitoring step'] },
+      prepare: { label: 'AI and automation prepared', items: ['Today\'s decision and its evidence', 'The answer from the records, with a ranked chart', 'Each finding with its sources', 'Stale evidence marked', 'The shared-provider concentration', 'The recommended next step'] },
+      decide: { label: 'The professional decided', items: ['Reviewed every field before anything was written', 'Confirmed the judgment and the reason are their own', 'Approved the evidence request', 'Saved the analysis as a weekly agent', 'Kept authority over the conclusion'] },
+      record: { label: 'The system recorded', items: ['The new evidence request', 'The audit receipt and transaction', 'The approval bound to that exact change', 'Who decided, and when', 'The source records used', 'The agent\'s schedule and run history'] },
       tableTitle: 'Default authority by capability',
       tableNote: 'No capability owns the risk.'
     },

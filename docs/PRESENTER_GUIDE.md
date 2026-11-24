@@ -22,7 +22,7 @@ Do not try to show every appendix module. Open one door when a buyer asks.
 
 ### The day before
 
-1. Start the standalone product with `Launch NFROS.cmd` (port 3200), not a development server. Confirm it reports ready and that the first question answers.
+1. Start the standalone product with `Launch NFROS.cmd` (port 3200), not a development server; on the meeting morning use `Launch NFROS.cmd --reset`. The window ends with **Ready. The showcase day is clean.** `http://localhost:3200/api/health/demo` shows the same checks. The first launch on a new laptop builds the product (about six minutes); later starts take seconds.
 2. Rehearse the five acts once, including the write-back; then reset the demonstration so the meeting starts on a clean day.
 3. Regenerate and check the fallbacks: the captured acts in the deck (key F), the product's screen recording, and the PDF of the deck (`npm run fallback`, then copy `artifacts/fallback/NFR-Workspace-<release>.pdf` to the desktop).
 4. Keep a local clone of this repository, so the deck also runs from `npm run serve` without the internet.
@@ -106,15 +106,15 @@ Do not try to show every appendix module. Open one door when a buyer asks.
 
 ## Live demonstration: five acts (in the product)
 
-Follow the product's guide. The five outcomes the audience must see, and the deck page that explains each one if a buyer asks how it works:
+Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-workos`); its five acts are the ones on screen 06 and in the captured fallback. Synthetic institution: Arcadia Bank AG, records as of 06.10.2026, 07:45. Six to eight minutes in all.
 
 | Act | What the audience sees | Takeaway | If asked how |
 |---|---|---|---|
-| 1 The role and the work are known | Start-up, sign in, Today for the Third-Party Risk Manager | The Workspace starts with the role and the next decision, not a blank chat box | C2, P1 |
-| 2 Ask the records | "Which critical third-party services are deteriorating, and why?" answered as a conclusion, figures, a chart, ranked drivers, evidence and a next action | Not prose: a visual, evidence-backed decision product | D7, D8 |
-| 3 Role app and evidence | From the answer into the periodic review: evidence, prior period, material changes, gaps, the method | The role application carries the task, evidence, controls and actions | C1, P2, D3 |
-| 4 Decide and write back | One governed action: propose, inspect, permission and policy check, human approval, commit, changed state | The professional retains authority; the Workspace makes the approved action operational | C4 |
-| 5 Recorded and reusable | The audit receipt, the updated record, a saved analysis or agent | The work becomes an attributable record and a reusable capability | C3, C5 |
+| 1 The Workspace feels real | Start-up, a refused wrong password, `Admin` / `Admin`; sign-in resolves the role, its authority and three decisions that need a person | The user does not start with a blank chatbot | C2, P1 |
+| 2 The next decision arrives prepared | Today: one item needs you now (the RepairDesk recovery time gap on supplier TP-0042), at most three next; Done today shows what ran without the person. **Record the decision** shows the five cited documents (do not use the Evidence button on the Now card in this build) | The case, the evidence and the action arrive together | C1, D3 |
+| 3 A live question, a visual answer | Ask the records: "Which critical third-party services are deteriorating, and why?" The answer: 3 critical third parties deteriorating, led by Novalink (up 23 points); 2 share Basalt Cloud; five figures; the ranked chart; findings with 12 sources and freshness; the Concentration follow-up | Not prose: a governed analysis from connected records; no number came from a model | D7, D4, D5 |
+| 4 From insight to action | Recommended next step, **Review and approve**: every field before and after, the evidence, the authority; tick *I confirm the judgment and the reason are my own*; commit; the receipt, the audit log, the new record | The professional approves; the system records | C4, D8 |
+| 5 The long tail, governed | **Save as agent**: outcome, scope and permissions (*inherits your access, does not create new access*), plan; **Save and run weekly**; My agents; the promotion path | Agents cover the long tail without bypassing controls | C3, C2 |
 
 **Return to the deck:** switch to the deck tab, still on screen 06, and press Space. Screen 07 maps what they just saw.
 
@@ -124,13 +124,14 @@ Follow the product's guide. The five outcomes the audience must see, and the dec
 |---|---|
 | A screen is slow | Keep talking about what it will show; the launcher pre-warms the scripted path, so a second click usually lands |
 | The expected state is missing | Reset the demonstration from the account menu, or switch to the deck and press F for that act |
-| The product will not start | Press F in the deck and walk the five acts from the captures; or play the product's screen recording |
+| The product will not start | Press F in the deck and walk the five acts from the captures; or play the product's recording, `exports\demo-fallback-v6\five-act-journey.webm` in `nfr-workos` |
+| The day shows earlier work | Account menu, **Reset demonstration**, then **Confirm reset** within four seconds |
 | The network is blocked | The product and the deck both run locally; nothing needs the internet after the first load |
 
 ## 07 AI prepares. Professionals decide. Systems record.
 
 - **Remember:** what the audience just saw, in three responsibilities; no capability owns the risk.
-- **Talk track (45 s):** "AI and automation prepared Today's decisions, the answer with its charts, the comparison with the last period, the gaps and the next action. The professional challenged the evidence, chose the action and approved the write-back. The system recorded the changed state, the receipt, who decided and when, and the next monitoring step."
+- **Talk track (45 s):** "AI and automation prepared today's decision and its evidence, the answer with its ranked chart and sources, the stale evidence, the concentration and the recommended step. The professional reviewed every field, confirmed the judgment was their own, approved the evidence request and saved the analysis as a weekly agent. The system recorded the new request, the receipt and transaction, the approval bound to that exact change, who decided and when, and the agent's run history."
 - **Deep dives:** C1 (AI, rules and people), C4 (governed write-back).
 
 ## 08 Six months to prove one loop on reusable foundations
