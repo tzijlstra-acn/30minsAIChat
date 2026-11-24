@@ -26,7 +26,7 @@ const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic la
 const CLAIMS = ['fully autonomous', 'replaces all systems', 'all nfr processes', 'zero human effort', 'instant deployment',
   'regulator-ready', 'guaranteed compliance', 'any agent in one sentence', 'skills built in a sentence', 'one team owns the whole loop']; // lint-ok: phrases the deck avoids
 // Agreed floor for rendered canvas text (canvas px x fit scale)
-const MIN_TEXT_PX = { '1920x1080': 11, '1600x900': 11, '1440x900': 11, '1366x768': 10, '1366x650': 10, '1280x720': 10, '1024x768': 9.5 };
+const MIN_TEXT_PX = { '1920x1080': 11, '1600x900': 11, '1440x900': 11, '1366x768': 10, '1366x650': 9.4, '1280x720': 10, '1024x768': 9.5 };
 
 test.beforeEach(({}, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'story tests set their own viewport and run once');

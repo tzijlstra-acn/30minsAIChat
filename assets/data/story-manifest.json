@@ -1,5 +1,5 @@
 {
-  "version": "32",
+  "version": "33",
   "story": "NFR Workspace: from firefighting to prepared judgement",
   "model": {
     "waysToWork": [
@@ -88,7 +88,7 @@
       "chapterId": "shift",
       "kind": "scene",
       "title": "Standalone AI sees one system. NFR needs the whole picture.",
-      "subtitle": "Email, document and GRC assistants each answer from their own data. One NFR answer spans contracts, controls, incidents, indicators and suppliers.",
+      "subtitle": "Each assistant answers from its own system. The NFR answer needs all of them.",
       "closingLine": "Each assistant sees a slice. The decision needs the whole picture.",
       "question": "Do we not have AI already?",
       "scene": "assistance-here",
@@ -165,7 +165,7 @@
       "chapterId": "workspace",
       "kind": "scene",
       "title": "Every answer keeps the line from obligation to evidence.",
-      "subtitle": "Obligations, risks, controls, tests and attestations come from different systems. Connected, the ripple is computed, not remembered.",
+      "subtitle": "Each record lives in a different system. Connected, the ripple is computed, not remembered.",
       "closingLine": "A change in one place reveals what else is affected.",
       "question": "How does the answer stay true?",
       "scene": "connected-context",

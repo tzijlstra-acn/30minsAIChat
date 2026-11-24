@@ -60,6 +60,7 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 | Edition | The public edition, unless an internal page has passed claim review. The internal edition shows a badge at the bottom of every screen |
 | Readiness | The product's readiness check reports ready; the first question has been asked once after the reset and the demo reset again |
 | Zoom and resolution | Browser zoom at 100 percent on both tabs; test the shared screen at the real resolution (1366 x 768 and up) |
+| Full screen | Put the deck tab in full screen (F11). In a browser window on a 1366 x 768 laptop the smallest labels shrink to about 9.5 px; full screen keeps them above 10 px |
 | Screen sharing | Share the browser window (both tabs are in it), not a single tab |
 | Deck | Press `0`: everything returns to the cover. If the laptop is slow, press `S` for safe mode |
 | Clicker | Page Down and Page Up move between screens |
