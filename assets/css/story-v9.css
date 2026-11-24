@@ -128,7 +128,7 @@
 .tc-slide.is-on { opacity: 1; }
 .tc-shot:not(.is-shown) .tc-slide { opacity: 0; }
 .tc-shot.is-missing .tc-slide { display: none; }
-.tc-cap { position: absolute; left: 12px; bottom: 12px; max-width: 72%; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .03em; color: var(--text-1); background: rgba(19,21,28,.9); border: 1px solid rgba(88,201,148,.55); border-radius: 6px; padding: 5px 10px; opacity: 0; transition: opacity .5s ease; }
+.tc-cap { position: absolute; left: 12px; bottom: 12px; max-width: 72%; font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: .03em; color: var(--text-1); background: rgba(19,21,28,.9); border: 1px solid rgba(88,201,148,.55); border-radius: 6px; padding: 5px 10px; opacity: 0; transition: opacity .5s ease; }
 .tc-shot.is-shown .tc-cap { opacity: 1; }
 .tc-dots { position: absolute; right: 12px; bottom: 18px; display: flex; gap: 6px; }
 .tc-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(19,21,28,.35); border: 1px solid rgba(19,21,28,.55); transition: background-color .4s, border-color .4s; }
