@@ -113,25 +113,25 @@
 
     // ── 05 The point: four ways of working, told apart by one supplier example each ──
     capabilities: [
-      { id: 'assist', verb: 'Ask', product: 'NFR Assist', icon: 'ti-message-circle',
+      { id: 'assist', verb: 'Ask', product: 'Ask the records', icon: 'ti-message-circle',
         line: 'Ask a question and get an answer with its sources, in the moment.',
         when: 'A one-off question, answered now',
         example: "What changed in this supplier's latest SOC 2 report?",
         authority: 'Draft and explain',
         value: 'Faster search, drafting, explanation and communication' },
-      { id: 'app', verb: 'Use', product: 'NFR Apps', icon: 'ti-apps',
+      { id: 'app', verb: 'Use', product: 'Work Hub', icon: 'ti-apps',
         line: 'Do a standard task in an app with the approved method, form and sign-off.',
         when: 'A standard task, one case at a time',
         example: 'Complete the annual review of one critical supplier.',
         authority: 'Prepare and validate a defined task',
         value: 'Better evidence quality, consistency and task execution' },
-      { id: 'automation', verb: 'Run', product: 'NFR Automations', icon: 'ti-route',
+      { id: 'automation', verb: 'Run', product: 'Processes', icon: 'ti-route',
         line: 'Let a process run across systems and cases, pausing for people at the gates.',
         when: 'The same steps, across many cases',
         example: 'Every month, chase missing evidence from all critical suppliers.',
         authority: 'Execute approved steps and pause at human gates',
         value: 'Fewer handoffs, shorter cycles, timely escalation, scalable processing' },
-      { id: 'builder', verb: 'Create', product: 'Agent Builder', icon: 'ti-wand',
+      { id: 'builder', verb: 'Create', product: 'Agents', icon: 'ti-wand',
         line: 'Build your own analysis or agent for a new question, with your existing access.',
         when: 'A new question no app covers yet',
         example: 'Track our dependence on one cloud provider, weekly, this quarter.',
@@ -143,7 +143,7 @@
     // ── 06 The point: scale comes from three layers improving together, one role at a time ──
     stages: [
       { id: 'today', label: 'Today', sub: 'AI pilots', icon: 'ti-circle-dashed', tone: 'gap' },
-      { id: 'first', label: 'First loop', sub: 'One NFR role', icon: 'ti-user-check', tone: 'ai' },
+      { id: 'first', label: 'First process', sub: 'One NFR role, live', icon: 'ti-user-check', tone: 'ai' },
       { id: 'scale', label: 'At scale', sub: 'Every NFR role', icon: 'ti-users-group', tone: 'proof' }
     ],
     layers: [
@@ -168,7 +168,7 @@
       statuses: ['Resolving role and permissions', 'Loading current decisions', 'Connecting approved applications', 'Workspace ready'],
       cue: 'Open live Workspace',
       cueKey: 'L',
-      fallback: 'Captured fallback',
+      fallback: 'Product walkthrough',
       fallbackKey: 'F',
       hint: 'After the demonstration, return here and press Space.',
       // The five acts of the product's own presenter guide
@@ -257,15 +257,16 @@
           steps: ['Baseline', 'Configure', 'Challenge'],
           get: 'Findings, a value case and a clear go or stop' },
         { id: 'prove', label: 'Prove', when: 'Six months', icon: 'ti-refresh', tone: 'human',
-          goal: "Run one role's loop live, end to end",
+          goal: "Run one role's process live, end to end",
           steps: ['Work', 'Process', 'Data'],
-          get: 'A working loop, measured against the baseline' },
+          get: 'A live process, measured against the baseline' },
         { id: 'scale', label: 'Scale', when: 'After month six', icon: 'ti-trending-up', tone: 'proof',
           goal: 'Add roles and processes on the same core',
           steps: ['Methods', 'Connectors', 'Agents'],
           get: 'Each new journey reuses what the first one built' }
       ],
       gates: ['Go decision', 'Scale decision'],
+      fromYou: { label: 'What we need from you', items: ['A role owner', 'A process expert', 'Read access to representative records'] },
       line: 'Five weeks proves fit and value. Six months proves the operating model.'
     },
 
@@ -286,7 +287,7 @@
     decision: {
       label: 'Agree today',
       exampleLabel: 'For example',
-      question: 'Which role, decision and bounded process should become the first working loop?',
+      question: 'Which role, decision and process do we start with?',
       agree: [
         { icon: 'ti-user-check', label: 'Target role', hint: 'Who does the work today, and who decides', example: 'Third-party risk manager' },
         { icon: 'ti-route', label: 'Target decision or process', hint: 'One bounded journey with a clear outcome', example: 'Annual review of critical suppliers' },

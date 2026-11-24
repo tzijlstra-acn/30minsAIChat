@@ -133,3 +133,8 @@
 .tc-dots { position: absolute; right: 12px; bottom: 18px; display: flex; gap: 6px; }
 .tc-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(19,21,28,.35); border: 1px solid rgba(19,21,28,.55); transition: background-color .4s, border-color .4s; }
 .tc-dot.is-on { background: var(--accent); border-color: var(--accent); }
+
+/* 12 what we need from you */
+.qp-need { display: flex; align-items: center; gap: 10px; padding: 0 16px; }
+.qp-need .ti { font-size: 19px; }
+.qp-need-k { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin-right: 6px; }

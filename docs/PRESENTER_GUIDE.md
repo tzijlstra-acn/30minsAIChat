@@ -18,11 +18,37 @@ A 30-minute conversation for two buyers: the NFR business owner first, the IT st
 
 The live product has its own script: `docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in the `nfr-workos` repository. It is authoritative for the five acts; this guide covers the deck, the hand-off, the return and the appendix.
 
+## Cue card (one page)
+
+Print this. One point per screen, one sentence to say, the key to press. The detailed talk tracks follow further down.
+
+| # | The point | Say | Key |
+|---|---|---|---|
+| 01 | A working product for one NFR role | "Work prepared for one role, decided by a person, recorded by the system." | Space |
+| 02 | Questions come from everywhere | "None of these arrives with a method. Which did you get this month?" | Space |
+| 03 | Change from above, drift from below | "The chain breaks in the middle, and today the professional re-maps it by hand." | Space |
+| 04 | Standalone AI sees one system | "Each assistant sees one slice. The answer needs all eight. You will see it answered in a moment." | Space |
+| 05 | Four ways of working | "One supplier: a question, one review, a monthly chase, a new watch. Same access and controls." | Space |
+| 06 | Three layers improve together | "Pilots do not scale. One role first, then every role, on one connected core." | Space |
+| 07 | The product itself | Live product: press L. No product on your laptop: press F for the walkthrough | L or F |
+| Demo | Five acts, at least act 3 | "No single assistant could answer this: 15 evidence items from six registers." | Space |
+| 08 | Calculated, not guessed | "Rules did the maths, AI explained it, checked, and a person decided." | Space |
+| 09 | One failed test, everything it touches | "Found at audit today. Flagged the same day here." | Space |
+| 10 | Who does what | "AI drafted, you approved, the system recorded who and when." | Space |
+| 11 | Three kinds of value, measured | "Each measured on its own from your baseline. None of it is headcount." | Space |
+| 12 | Start small, earn each step | "Five weeks on one question, six months live, then reuse. We need a role owner, a process expert and access." | Space |
+| 13 | Done before | "Client examples are shared separately, with permission." | Space |
+| 14 | What we agree today | "Role, process, data, proof criteria. Here is an example answer for each." | |
+
+Also useful: A (appendix index), 1 to 4 (appendix domains), M (back to the story), 0 (back to the cover), S (safe mode on a slow laptop).
+
+**Two rules.** Show at least act 3 of the demonstration before screen 08: screen 08 replays that answer. If the live product is not on your laptop, the walkthrough (F) is the demonstration; present it with confidence, it is the same product captured on the same records.
+
 ## Two editions
 
 | Edition | Built with | Where it runs | Contents |
 |---|---|---|---|
-| Public | `npm run build:public` (also what GitHub Pages publishes) | The Pages site, or `npm run serve:public` on port 8190 | Fourteen screens, 28 appendix pages, the captured fallback. No client details, no credentials, no commercial terms, no internal asset names |
+| Public | `npm run build:public` (also what GitHub Pages publishes) | The Pages site, or `npm run serve:public` on port 8190 | Fourteen screens, 28 appendix pages, the product walkthrough. No client details, no credentials, no commercial terms, no internal asset names |
 | Internal | `npm run build:internal` (needs the git-ignored `internal/` folder) | Locally only: `npm run serve:internal` on port 8191 | The public edition plus internal pages and an edition badge. Never shared by link; see `internal/README.local.md` |
 
 Use the public edition with clients unless every internal page you plan to show has passed its claim review.
@@ -46,9 +72,10 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 
 ### The day before
 
+0. Get the access code for the deck from its owner. It is not written in this guide or the repository, which is public. Without the live product on your laptop, skip step 1 and present the walkthrough (F) at screen 07.
 1. Start the standalone product with `Launch NFROS.cmd` (port 3200), not a development server; on the meeting morning use `Launch NFROS.cmd --reset`. The window ends with **Ready. The showcase day is clean.** `http://localhost:3200/api/health/demo` shows the same checks.
 2. Rehearse the five acts once, including the write-back; then reset the demonstration so the meeting starts on a clean day.
-3. Regenerate and check the fallbacks: the captured acts in the deck (key F), the product's screen recording, and the PDF of the deck (`npm run fallback`, then copy `artifacts/fallback/NFR-Workspace-<release>.pdf` to the desktop).
+3. Regenerate and check the fallbacks: the product walkthrough in the deck (key F), the product's screen recording, and the PDF of the deck (`npm run fallback`, then copy `artifacts/fallback/NFR-Workspace-<release>.pdf` to the desktop).
 4. Keep a local clone of this repository, so the deck also runs from `npm run serve:public` without the internet.
 
 ### Thirty minutes before
@@ -69,7 +96,7 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 
 | Key | What it does |
 |---|---|
-| Right / Left, Page Down / Page Up | Next or previous screen; on the captured fallback, next or previous capture |
+| Right / Left, Page Down / Page Up | Next or previous screen; in the product walkthrough, next or previous capture |
 | Space | Advance the scene; at its end, the next screen |
 | W | Go to Enter NFR Workspace (screen 07) |
 | L | Open the live product (`http://localhost:3200/`; add `?live=<url>` to the deck address to change it) |
@@ -123,14 +150,14 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 
 ### 05 One Workspace. Four ways to get work done.
 
-- **Remember:** one supplier, four ways of working. The difference is how often and how standard the work is.
+- **Remember:** one supplier, four ways of working. The difference is how often and how standard the work is. The labels under each verb are the names in the product's own menu: Ask the records, Work Hub, Processes, Agents.
 - **Talk track (60 s):** "Ask: a one-off question, answered now: what changed in this supplier's SOC 2 report? Use: a standard task, one case at a time: the annual review of one critical supplier, in an app with the approved method and sign-off. Run: the same steps across many cases: every month, chase missing evidence from all critical suppliers, pausing for people at the gates. Create: a new question no app covers yet: track our dependence on one cloud provider this quarter. All four share the same identity, permissions, evidence and control record."
 - **Deep dive:** M1 (which capability handles which work).
 
 ### 06 AI scales when work, process and data move together
 
-- **Remember:** read left to right as an improvement: today's pilots, the first loop for one role, then every role.
-- **Talk track (45 s):** "Today, each person uses AI their own way, handoffs stay manual, and every pilot copies its own data. That is why pilots do not scale. In the first loop, one role works from a prepared queue, one process has evidence, gates and approval, and the data comes through approved connections. At scale, every NFR role works that way, proven methods are reused, and one connected core serves every role. Improving only the AI component creates another pilot."
+- **Remember:** read left to right as an improvement: today's pilots, the first live process for one role, then every role.
+- **Talk track (45 s):** "Today, each person uses AI their own way, handoffs stay manual, and every pilot copies its own data. That is why pilots do not scale. In the first live process, one role works from a prepared queue, one process has evidence, gates and approval, and the data comes through approved connections. At scale, every NFR role works that way, proven methods are reused, and one connected core serves every role. Improving only the AI component creates another pilot."
 
 ### Transition into the product
 
@@ -156,7 +183,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 | 4 From insight to action | The professional approves; the system records | M7, D9 |
 | 5 The long tail, governed | Agents cover the long tail without bypassing controls | M8, M1 |
 
-**Return to the deck:** switch to the deck tab, still on screen 07, and press Space. The deck continues to screen 08, which explains what the audience just saw. From the captured fallback, Space at the last capture does the same.
+**Return to the deck:** switch to the deck tab, still on screen 07, and press Space. The deck continues to screen 08, which explains what the audience just saw. From the product walkthrough, Space at the last capture does the same.
 
 ### Recovery during the live demonstration
 
@@ -194,11 +221,12 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 - **Talk track (40 s):** "Risk outcomes: we measure the share of critical suppliers with current, complete evidence. Operating performance: days from trigger to decision. Capacity: hours of preparation per case, before and after. Each is measured on its own, from your baseline."
 - **Deep dives:** V2 (value tree), V3 (the unit-economics calculator: change adoption or efficiency live if the economic buyer engages).
 
-### 12 Qualify in five weeks. Prove the loop in six months.
+### 12 Qualify in five weeks. Prove it live in six months.
 
 - **Remember:** start small and earn each step. Each phase ends in a decision you make.
-- **Talk track (45 s):** "Five weeks: we answer one real question on your own data, and you get findings, a value case and a clear go or stop. Six months: one role's loop runs live, end to end, measured against the baseline. Then scale: new roles and processes reuse what the first one built."
-- **Deep dives:** S1 (the five-week qualification), S2 (the six-month working loop).
+- **Talk track (45 s):** "Five weeks: we answer one real question on your own data, and you get findings, a value case and a clear go or stop. Six months: one role's process runs live, end to end, measured against the baseline. Then scale: new roles and processes reuse what the first one built."
+- **Ask for:** a role owner, a process expert and read access to representative records (the strip under the phases). Effort per week and pricing follow the five-week scope; give them separately.
+- **Deep dives:** S1 (the five-week qualification), S2 (the six months live).
 
 ### 13 The approach has been applied before
 
@@ -206,7 +234,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 - **Public edition:** three areas of experience, without client details. If asked for names or figures: "We share client examples separately, with their permission."
 - **Deep dive:** S5 (how to bring this in).
 
-### 14 Which role, decision and process becomes the first loop?
+### 14 Which role, decision and process do we start with?
 
 - **Remember:** agree four things today: the target role, the decision or process, representative data and cases, and the proof criteria at five weeks and six months. Each card says what a good answer looks like and shows an example answer (third-party risk manager, annual review of critical suppliers, last year's files for 20 suppliers, review time and evidence completeness). Ask the room for their own answers.
 - **Secondary question:** which existing AI, workflow, GRC and data capabilities the Workspace should reuse rather than rebuild.
@@ -214,7 +242,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 
 ## Close
 
-> "The first step is not the universal NFR platform. It is one role, one bounded decision journey and one measurable loop, with the evidence that earns the next wave."
+> "The first step is not the universal NFR platform. It is one role, one decision and one process you can measure, with the evidence that earns the next wave."
 
 ---
 
@@ -263,7 +291,9 @@ Also from the index: the captured live demonstration, the team page, and the Evi
 - **Can the agent change risk records?** Material changes follow a proposed action, a permission check, human approval, a governed connector and an audit receipt (act 4, M7).
 - **How do we prevent uncontrolled personal agents?** Personal agents inherit existing access and begin constrained; scheduling, publication, write-back and standardisation need stronger review (M8).
 - **What is the business case?** Built per case from the client baseline: capacity returned, operating benefit, run cost and payback (V3). Waiting time is not converted into headcount.
-- **Why five weeks, then six months?** Five weeks qualifies one question against your data and fixes the scope at a gate; six months proves one complete loop (S1, S2).
+- **Why five weeks, then six months?** Five weeks qualifies one question against your data and fixes the scope at a gate; six months proves one complete process, live (S1, S2).
+
+- **What does it cost, and how much of my team's time?** "The five weeks are a fixed, bounded scope; we price them with you once we have agreed the question. From your side: a role owner, a process expert and read access to representative records." Do not quote figures that have not been agreed with the delivery lead.
 
 ### IT strategist
 

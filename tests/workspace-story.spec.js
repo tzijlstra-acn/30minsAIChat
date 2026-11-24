@@ -99,7 +99,7 @@ test.describe('Scene contract', () => {
 
   test('manifest titles match the screen titles, within word limits', async ({ page }) => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('35');
+    expect(m.version).toBe('36');
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE);
     await open(page);
     for (const s of m.screens) {
@@ -188,7 +188,7 @@ test.describe('Story data', () => {
   test('the four ways and three layers are named consistently in data, screens and roadmap', () => {
     const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
     expect(d.capabilities.map((c) => c.verb)).toEqual(['Ask', 'Use', 'Run', 'Create']);
-    expect(d.capabilities.map((c) => c.product)).toEqual(['NFR Assist', 'NFR Apps', 'NFR Automations', 'Agent Builder']);
+    expect(d.capabilities.map((c) => c.product)).toEqual(['Ask the records', 'Work Hub', 'Processes', 'Agents']);
     expect(d.layers.map((l) => l.label)).toEqual(['Work & roles', 'Process & controls', 'Data & platform']);
     d.layers.forEach((l) => expect(d.roadmap.cells[l.id], l.id).toHaveLength(3));
     expect(d.enter.acts).toHaveLength(5);

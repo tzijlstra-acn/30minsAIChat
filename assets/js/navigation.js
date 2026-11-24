@@ -137,7 +137,7 @@ function buildAgendaDrawer(){
   // Quick jumps: the live product, its captured fallback, the appendix and the calculator
   +'<div class="agenda-chapter"><div class="agenda-ch-head"><div class="agenda-ch-name">QUICK JUMP</div></div><div class="agenda-slides">'
   +'<a class="agenda-slide-link" id="agendaLiveJump" href="#enter-workspace" onclick="closeAgenda();if(window.PresenterControls)PresenterControls.openLive();return false;"><div class="agenda-slide-dot"></div>Open the live Workspace</a>'
-  +'<a class="agenda-slide-link" id="agendaFallbackJump" href="#live-fallback" onclick="closeAgenda();goToId(this.hash.slice(1));return false;"><div class="agenda-slide-dot"></div>Live demonstration, captured</a>'
+  +'<a class="agenda-slide-link" id="agendaFallbackJump" href="#live-fallback" onclick="closeAgenda();goToId(this.hash.slice(1));return false;"><div class="agenda-slide-dot"></div>Product walkthrough</a>'
   +'<a class="agenda-slide-link" id="agendaAppendixJump" href="#appendix" onclick="closeAgenda();goToId(this.hash.slice(1));return false;"><div class="agenda-slide-dot"></div>Appendix: four doors</a>'
   +'<a class="agenda-slide-link" id="agendaRoiJump" href="#appendix-v3" onclick="closeAgenda();goToId(this.hash.slice(1));return false;"><div class="agenda-slide-dot"></div>Unit economics calculator</a>'
   +'</div></div>';

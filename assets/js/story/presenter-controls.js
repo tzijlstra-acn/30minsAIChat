@@ -90,7 +90,7 @@
     var url = liveUrl();
     var w = null;
     try { w = window.open(url, 'nfr-workspace-live'); } catch (e) { w = null; }
-    if (typeof showToast === 'function') showToast(w ? 'Live Workspace opened: ' + url : 'Could not open ' + url + '. Use the captured fallback (F).');
+    if (typeof showToast === 'function') showToast(w ? 'Live Workspace opened: ' + url : 'Could not open ' + url + '. Use the product walkthrough (F).');
     return !!w;
   }
 
@@ -142,7 +142,7 @@
     ['Space', 'Advance the scene; at its end, the next screen'],
     ['W', 'Go to Enter NFR Workspace (screen 06)'],
     ['L', 'Open the live NFR Workspace'],
-    ['F', 'The five acts, captured from the product (fallback)'],
+    ['F', 'Product walkthrough: the five acts, captured from the live product'],
     ['A', 'Appendix index'],
     ['1 to 4', 'Appendix module: value, control, data, platform'],
     ['M', 'Back to the main story'],

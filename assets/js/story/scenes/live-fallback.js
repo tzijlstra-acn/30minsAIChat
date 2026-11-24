@@ -132,7 +132,7 @@ SceneDirector.register('live-fallback', function(container, manifest, reduced) {
       return false;
     },
     getAccessibleSummary: function() {
-      return 'Captured fallback of the live demonstration: ' + (L ? L.acts.map(function(a, i) { return 'act ' + (i + 1) + ', ' + a.title.toLowerCase(); }).join('; ') : 'no captures') + '.';
+      return 'Product walkthrough, captured from the live product: ' + (L ? L.acts.map(function(a, i) { return 'act ' + (i + 1) + ', ' + a.title.toLowerCase(); }).join('; ') : 'no captures') + '.';
     },
     destroy: function() { tl.destroy(); container.innerHTML = ''; }
   };

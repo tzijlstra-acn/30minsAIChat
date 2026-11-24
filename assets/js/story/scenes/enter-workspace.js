@@ -106,7 +106,7 @@ SceneDirector.register('enter-workspace', function(container, manifest, reduced)
     advance: function() { if (done) return false; if (cv) cv.setStatic(true); tl.finish(); return true; },
     getAccessibleSummary: function() {
       return D.product + ' starts: ' + E.statuses.join(', ').toLowerCase() + '. The presenter now opens the live product. The demonstration has five acts: '
-        + E.acts.join('; ').toLowerCase() + '. A captured fallback of the same acts is available.';
+        + E.acts.join('; ').toLowerCase() + '. A product walkthrough of the same acts, captured from the live product, is available.';
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

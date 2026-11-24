@@ -7,7 +7,8 @@ SceneDirector.register('qualify-and-prove', function(container, manifest, reduce
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var P = D.path;
-  var W = 1040, H = 380;
+  var W = 1040, H = 410;
+  var NEED = { y: 288, h: 46 };
   var PH = { y: 0, w: 288, h: 270, gap: 72 };
 
   var cv = null;
@@ -50,7 +51,14 @@ SceneDirector.register('qualify-and-prove', function(container, manifest, reduce
         n.gates.push(gate);
       }
     });
-    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: PH.y + PH.h + 24, width: 1008 });
+    if (P.fromYou) {
+      n.need = S.el('div', 'ts-obj ts-c-human ts-soft qp-need ts-hide ts-up', null, { left: 16, top: NEED.y, width: 1008, height: NEED.h });
+      n.need.appendChild(S.icon('ti-users', 'ts-ink'));
+      n.need.appendChild(S.el('span', 'qp-need-k ts-ink', P.fromYou.label));
+      P.fromYou.items.forEach(function(t) { n.need.appendChild(S.el('span', 'qp-chip', t)); });
+      root.appendChild(n.need);
+    }
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: NEED.y + NEED.h + 18, width: 1008 });
     n.note.appendChild(S.el('span', 'ah-note-strong', P.line));
     root.appendChild(n.note);
   }
@@ -65,8 +73,9 @@ SceneDirector.register('qualify-and-prove', function(container, manifest, reduce
     { delay: 200,  run: function() { S.on(n.phases[0]); } },
     { delay: 900,  run: function() { S.on(n.gates[0]); S.on(n.phases[1]); } },
     { delay: 1600, run: function() { S.on(n.gates[1]); S.on(n.phases[2]); } },
-    { delay: 2400, run: function() { S.on(n.note); } },
-    { delay: 3000, run: complete }
+    { delay: 2300, run: function() { S.on(n.need); } },
+    { delay: 2800, run: function() { S.on(n.note); } },
+    { delay: 3400, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -83,7 +92,7 @@ SceneDirector.register('qualify-and-prove', function(container, manifest, reduce
     getAccessibleSummary: function() {
       return P.phases.map(function(p, i) {
         return p.label + ', ' + p.when.toLowerCase() + '. ' + P.goalLabel + ': ' + p.goal.toLowerCase() + '. ' + P.getLabel + ': ' + p.get.toLowerCase() + '.' + (i < P.gates.length ? ' Then: ' + P.gates[i].toLowerCase() + '.' : '');
-      }).join(' ') + ' ' + P.line;
+      }).join(' ') + (P.fromYou ? ' ' + P.fromYou.label + ': ' + P.fromYou.items.join(', ').toLowerCase() + '.' : '') + ' ' + P.line;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

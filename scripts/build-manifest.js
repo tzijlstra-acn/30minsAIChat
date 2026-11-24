@@ -30,7 +30,7 @@ const META = {
   'connected-context':  { q: 'How does the answer stay true?', ms: 4500, token: 'connected-core' },
   'authority-boundary': { q: 'What does AI do, and what stays human?', ms: 3000, token: 'controlled-receipt' },
   'value-decision':     { q: 'What is the value?', ms: 3000, token: 'value' },
-  'qualify-and-prove':  { q: 'What do we commit to first?', ms: 3000, token: 'qualify' },
+  'qualify-and-prove':  { q: 'What do we commit to first?', ms: 3400, token: 'qualify' },
   'experience':         { q: 'Has this been done before?', ms: 2300, token: 'experience' },
   'workshop-decision':  { q: 'Where do we start?', ms: 2700, token: 'first-loop' },
   'live-fallback':      { q: 'What if the live product is unavailable?', ms: 100, token: 'captured-acts', interactive: true, state: 'live-fallback' }

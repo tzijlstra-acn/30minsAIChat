@@ -8,8 +8,9 @@
  * Start a server first (npm run serve, port 8080 by default). For each scene it renders
  * the final state in reduced motion at its design size, saves the canvas as
  * assets/img/fallback/<id>.jpg and points the scene's <svg data-scene-fallback> in
- * pitch.html at it. The cover and the doorway keep their hand-drawn vector fallbacks:
- * the doorway's carries the live cue as text, which a test checks.
+ * pitch.html at it. The doorway keeps its hand-drawn vector fallback: it carries the
+ * live cue as text, which a test checks. Core canvases are 1040 wide in a 1040 x 520
+ * view box; the cover keeps its own 560 x 440.
  */
 'use strict';
 var fs = require('fs');
@@ -18,7 +19,7 @@ var chromium = require('playwright').chromium;
 
 var ROOT = path.dirname(__dirname);
 var PORT = process.argv[2] || '8080';
-var KEEP = ['cover', 'enter-workspace'];
+var KEEP = ['enter-workspace'];
 var OUT = path.join(ROOT, 'assets', 'img', 'fallback');
 
 (async function() {
@@ -64,7 +65,8 @@ var OUT = path.join(ROOT, 'assets', 'img', 'fallback');
     var b = s.indexOf('<svg data-scene-fallback', a);
     var c = s.indexOf('</svg>', b) + '</svg>'.length;
     if (a < 0 || b < 0 || b > s.indexOf('</section>', a)) throw new Error('no fallback in ' + m.id);
-    var svg = '<svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'
+    var vb = '0 0 ' + m.w + ' ' + (m.w === 1040 ? 520 : m.h);
+    var svg = '<svg data-scene-fallback viewBox="' + vb + '" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'
       + '<image href="./assets/img/fallback/' + m.id + '.jpg?v=' + ver + '" x="0" y="0" width="' + m.w + '" height="' + m.h + '"/></svg>';
     s = s.slice(0, b) + svg + s.slice(c);
   });

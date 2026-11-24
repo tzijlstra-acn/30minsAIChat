@@ -58,12 +58,12 @@
             { title: 'Scoring dimensions', items: ['Case volume', 'Human effort', 'Evidence burden', 'Frequency of change', 'Control or regulatory significance', 'Source-data accessibility', 'Decision standardisation', 'Write-back complexity', 'Named business owner', 'Measurable baseline'] },
             { title: 'The questions risk functions bring', items: ['Show we meet a control framework, such as SOC 2', 'Review a control inventory before it moves to a new GRC platform', 'Reduce the control inventory by about a third', 'Understand what a new regulation adds to existing local requirements', 'Answer repeated control questionnaires from external parties', 'Make scenario analysis more meaningful', 'Show that key controls operate, not only that they are documented', 'Automate RCSA to meet a regulatory requirement', 'Improve control design'] }
           ],
-          implication: 'Pick the first loop from the top right: real value, a clear authority boundary and a measurable baseline.' },
+          implication: 'Pick the first process from the top right: real value, a clear authority boundary and a measurable baseline.' },
 
         { id: 'appendix-v2', code: 'V2', kind: 'economic', status: 'concept',
           title: 'Where does value come from?',
           answer: 'Better connected evidence leads to fewer late surprises, less rework and faster decisions, which return capacity to challenge and remediation.',
-          visual: { type: 'tree', root: 'Value of a controlled NFR loop',
+          visual: { type: 'tree', root: 'Value of a controlled NFR process',
             chain: ['Better connected evidence', 'Fewer missing items and late surprises', 'Less rework and faster decisions', 'More capacity for challenge and remediation'],
             branches: [
               { id: 'risk', label: 'Risk outcomes', icon: 'ti-shield-check', items: ['More complete and current evidence', 'Earlier detection of material change', 'Consistent policy and method', 'More complete decision trace', 'Fewer unsupported conclusions'] },
@@ -82,7 +82,7 @@
           detail: [
             { title: 'Assumptions and disclaimers', items: ['Every default is synthetic and illustrative; replace it with the client baseline before any proposal', 'Capacity, cycle time and control quality are kept apart, not added into one number', 'Waiting time removed is not converted into labour savings', 'Avoided losses and avoided findings are excluded from the base case', 'Payback is simple payback on recurring net benefit, before ramp and financing', 'Nothing here is regulatory or legal advice'] }
           ],
-          implication: 'Fund the first loop on measured capacity and operating benefit, then validate with client data in the qualification.' },
+          implication: 'Fund the first process on measured capacity and operating benefit, then validate with client data in the qualification.' },
 
         { id: 'appendix-v4', code: 'V4', kind: 'economic', status: 'illustrative',
           title: 'Why do later journeys cost less?',
@@ -132,7 +132,7 @@
           title: 'Which capability handles which work?',
           answer: 'Six questions decide the path: recurrence, systems, materiality, action, method stability and monitoring.',
           visual: { type: 'grid', corner: 'Question', columns: ['Ask', 'Use', 'Run', 'Create'],
-            products: ['NFR Assist', 'NFR Apps', 'NFR Automations', 'Agent Builder'],
+            products: ['Ask the records', 'Work Hub', 'Processes', 'Agents'],
             rows: [
               ['One-off or recurring?', 'One-off help', 'Recurring task', 'Recurring process', 'New or temporary need'],
               ['Several systems?', 'Current context', 'The app\'s approved sources', 'Yes, across systems', 'Yes, selected sources'],
@@ -270,7 +270,7 @@
           title: 'What sits between the experience and the systems?',
           answer: 'Four layers: the Workspace, a runtime gateway, approved execution services, and the authoritative systems that keep the record.',
           visual: { type: 'layers', layers: [
-            { label: 'NFR Workspace', note: 'Experience', items: ['Role experience', 'Role apps', 'Insights', 'Decisions', 'Write-back preview', 'Agent Builder'] },
+            { label: 'NFR Workspace', note: 'Experience', items: ['Role experience', 'Role apps', 'Insights', 'Decisions', 'Write-back preview', 'Agents'] },
             { label: 'NFR runtime gateway', note: 'Stable contract', items: ['Identity mapping', 'Case context', 'Output validation', 'Approvals', 'Audit correlation', 'Runtime abstraction'] },
             { label: 'Approved execution services', note: 'Execution', items: ['Analytics', 'Reusable NFR methods', 'Agents', 'Workflows and triggers', 'Rules', 'Memory and knowledge', 'Monitoring and cost control'] },
             { label: 'Authoritative systems', note: 'System of record', items: ['GRC', 'Policy', 'Issues', 'Incidents', 'Third parties', 'Evidence stores', 'Process and entity masters'] }
@@ -295,7 +295,7 @@
 
         { id: 'appendix-d3', code: 'D3', kind: 'technical', status: 'target',
           title: 'What context travels through the Workspace?',
-          answer: 'One context contract, shared by Assist, apps, automations and the Agent Builder, so every step works in the same scope.',
+          answer: 'One context contract, shared by questions, the Work Hub, processes and agents, so every step works in the same scope.',
           visual: { type: 'envelope', title: 'NFR context contract',
             groups: [
               { label: 'Who', items: ['User and role', 'Organisation and legal entity'] },
@@ -304,7 +304,7 @@
               { label: 'What is allowed', items: ['Permitted actions', 'Required approvals', 'Sensitivity classification'] },
               { label: 'How it is traced', items: ['Source-system identifiers', 'Audit correlation ID'] }
             ],
-            route: ['Assist', 'Role apps', 'Automations', 'Agent Builder', 'Governed connectors'] },
+            route: ['Ask the records', 'Work Hub', 'Processes', 'Agents', 'Governed connectors'] },
           detail: [],
           implication: 'This is why the Workspace is more than a chat interface: the case, not the conversation, carries the work.' },
 
@@ -437,12 +437,12 @@
             teamTitle: 'Team',
             team: [['Initiative lead', 'Sponsor; opens, attends the gate, presents'], ['Risk subject-matter expert', 'Owns the challenge that makes findings defensible'], ['Engagement lead', 'Runs delivery; single point of contact'], ['AI specialist', 'Builds and runs the methods, with a risk background']] },
           detail: [
-            { title: 'Outputs', items: ['Current-state architecture and process map', 'Target role and decision', 'Source and entitlement map', 'Method fit-gap', 'First statistics or findings', 'Risk and control boundary', 'Value baseline', 'Six-month working-loop roadmap'] }
+            { title: 'Outputs', items: ['Current-state architecture and process map', 'Target role and decision', 'Source and entitlement map', 'Method fit-gap', 'First statistics or findings', 'Risk and control boundary', 'Value baseline', 'Six-month roadmap to a live process'] }
           ],
           implication: 'Five weeks proves fit and value before the operating model is built.' },
 
         { id: 'appendix-s2', code: 'S2', kind: 'delivery', status: 'concept',
-          title: 'What happens in the six-month working loop?',
+          title: 'What happens in the six months live?',
           answer: 'Three layers move together through three phases and four gates, on real or production-representative cases.',
           visual: { type: 'lanes',
             heads: ['Months 0 to 2', 'Months 2 to 4', 'Months 4 to 6'],
@@ -454,7 +454,7 @@
             gatesTitle: 'Gates', gates: ['Process and data viability', 'Output quality', 'Control readiness', 'Live or representative proof'],
             entryTitle: 'Entry conditions', entry: ['A qualified journey', 'Named business and process owner', 'Representative cases and source access', 'Approved platform route', 'Agreed AI, rules and human boundary', 'Agreed proof thresholds'] },
           detail: [],
-          implication: 'Six months proves one operating loop, not an enterprise platform.' },
+          implication: 'Six months proves one live process, not an enterprise platform.' },
 
         { id: 'appendix-s3', code: 'S3', kind: 'delivery', status: 'target',
           title: 'What is reusable, and what is journey-specific?',
@@ -483,7 +483,7 @@
               ['Change and adoption lead', [1, 0, 0, 0, 0]]
             ] },
           detail: [],
-          implication: 'No single team owns the whole loop in a way that removes lines-of-defence independence.' },
+          implication: 'No single team owns the whole process in a way that removes lines-of-defence independence.' },
 
         { id: 'appendix-s5', code: 'S5', kind: 'delivery', status: 'option',
           title: 'How can we bring this in?',
@@ -501,7 +501,7 @@
           answer: 'From one question to a portfolio, one bounded step at a time, with reuse measured rather than assumed.',
           visual: { type: 'waves', waves: [
             { label: 'One question', text: 'Qualified in five weeks' },
-            { label: 'One bounded journey', text: 'One working loop in six months' },
+            { label: 'One bounded journey', text: 'One live process in six months' },
             { label: 'Reusable methods and connectors', text: 'Shared across adjacent journeys' },
             { label: 'Multiple role apps', text: 'Standard apps, monitored agents, common automations' },
             { label: 'Portfolio-wide NFR Workspace', text: 'Shared context across domains' }
@@ -520,7 +520,7 @@
     modules: MODULES,
     index: { id: 'appendix', title: 'Appendix: four doors into the detail', sub: 'Open a door when a buyer asks. Each page answers one question and returns to the story.' },
     extras: [
-      { id: 'live-fallback', label: 'Live demonstration, captured from the product', icon: 'ti-device-desktop' },
+      { id: 'live-fallback', label: 'Product walkthrough, captured from the live product', icon: 'ti-device-desktop' },
       { id: 'app-team', label: 'Team and credentials', icon: 'ti-users' },
       { id: 'ref-room', label: 'Reference library (Evidence Atlas)', icon: 'ti-book' }
     ]

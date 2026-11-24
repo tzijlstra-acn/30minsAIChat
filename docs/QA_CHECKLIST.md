@@ -1,4 +1,4 @@
-# NFR Workspace pitch: QA checklist (release v34, one point per screen v9)
+# NFR Workspace pitch: QA checklist (release v36, presentable by any consultant v10)
 
 Status as of 2026-11-24 on branch `feat/pitch-v8` (v9 work continues on it). The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
@@ -7,7 +7,7 @@ npm run build:public && node scripts/build.js scan-repo
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
 node scripts/serve.js 8190 dist     # then, against the public build:
-node scripts/visual-qa.js 8190 artifacts/visual-qa/v34
+node scripts/visual-qa.js 8190 artifacts/visual-qa/v36
 node scripts/export-fallback.js 8190
 ```
 
