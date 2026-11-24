@@ -1,13 +1,13 @@
-# NFR Workspace pitch: QA checklist (release v33, presentability audit v8)
+# NFR Workspace pitch: QA checklist (release v34, one point per screen v9)
 
-Status as of 2026-11-24 on branch `feat/pitch-v8`. The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
+Status as of 2026-11-24 on branch `feat/pitch-v8` (v9 work continues on it). The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
 ```
 npm run build:public && node scripts/build.js scan-repo
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
 node scripts/serve.js 8190 dist     # then, against the public build:
-node scripts/visual-qa.js 8190 artifacts/visual-qa/v33
+node scripts/visual-qa.js 8190 artifacts/visual-qa/v34
 node scripts/export-fallback.js 8190
 ```
 
@@ -73,6 +73,8 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 - Claim review of the internal credentials (engagement lead) and of the indicative commercials (deal team, legal).
 
 ## Release note
+
+v34 (`v34-ce4b3d5`), 2026-11-24: screens 02 to 14 reworked so each lands one point with a recognisable example. Desktop matrix 353 passed, 0 failed. Audits, dash check, copy lint and term scan pass. Against the public build: visual QA 56 screenshots at each of four sizes, 0 console errors; 125 percent zoom clean; PDF fallback 56 pages, 0 console errors. Box audit at eight sizes: no text outside its box. Body text medians 13.0 to 14.8 px across core screens; smallest labels 9.46 px only in the 1366 x 650 window. Scene fallbacks regenerated from the scenes (12 pictures, about 1 MB).
 
 v33 (`v33-73f05f2`), 2026-11-24: desktop matrix 353 passed, 0 failed (the 452 skips are per-project by design; `mobile` needs WebKit, not installed here). Audits, dash check, copy lint and the term scan pass. Against the public build: visual QA 56 screenshots at each of four sizes, 0 console errors; 125 percent zoom clean; PDF fallback 56 pages, 0 console errors. Box audit at eight sizes (including 1366 x 650, 1536 x 730 and 1920 x 960): no text outside its box, nothing clipped, no overlapping boxes.
 
