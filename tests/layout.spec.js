@@ -150,7 +150,7 @@ test('exactly 14 core screens, appendix excluded from the core route', async ({ 
 test('counter total comes from the DOM', async ({ page }) => {
   await gotoPage(page);
   await page.waitForTimeout(500);
-  await expect(page.locator('#counter')).toHaveText('1 / 10');
+  await expect(page.locator('#counter')).toHaveText('1 / 14');
 });
 
 test('nav bar has an Evidence Atlas button', async ({ page }) => {
@@ -230,10 +230,10 @@ test('Evidence Atlas hides its loading hint after init', async ({ page }) => {
 test.describe('Static checks', () => {
   chromiumOnly();
 
-  test('build fingerprint is v31', () => {
+  test('build fingerprint is v32', () => {
     const html = read('pitch.html');
-    expect(html).toMatch(/<meta name="nfr-build" content="v31-[0-9a-f]{7}">/);
-    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v31'/);
+    expect(html).toMatch(/<meta name="nfr-build" content="v32-[0-9a-f]{7}">/);
+    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v32'/);
   });
 
   test('all local asset ?v= strings share one fingerprint', () => {

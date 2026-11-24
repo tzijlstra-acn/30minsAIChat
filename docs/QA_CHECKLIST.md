@@ -1,48 +1,45 @@
-# NFR Workspace pitch: QA checklist (release v31, live-demo plan v6)
+# NFR Workspace pitch: QA checklist (release v32, merged proposition v7)
 
-Status as of 2026-11-24 on branch `feat/pitch-v6`. The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
+Status as of 2026-11-24 on branch `feat/pitch-v7`. The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
 ```
-npm run serve
+npm run build:public && node scripts/build.js scan-repo
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
-npm run qa:visual
-npm run fallback
+node scripts/serve.js 8190 dist     # then, against the public build:
+node scripts/visual-qa.js 8190 artifacts/visual-qa/v32
+node scripts/export-fallback.js 8190
 ```
 
-Last full run: 345 passed, 0 failed (see the release note at the end).
+Last full run: RESULTS_PENDING
 
-## 1. Meeting-survival tests (plan section 17)
+## 1. Meeting-survival tests (v7 plan)
 
 | Test | Status | Evidence |
 |---|---|---|
-| Comprehension: a first-time business viewer explains the assistant difference, Ask / Use / Run / Create, the three layers, where authority remains, what the first journey proves | **Not done.** Needs people | Screens 01 to 05 carry it by minute seven; the principle is on the cover and screen 07 |
-| Product credibility: role, work, question, visual insight, evidence, decision, write-back, changed state, audit receipt | Pass in the product | Product rehearsal script: 20 steps, 0 console errors, 2 of 2 end-to-end tests (product audit) |
-| Technical credibility: connections, what stays authoritative, identity, the graph, facts to visuals, controlled actions, a pluggable runtime | Pass | Appendix D1, D2, D3, D4 to D6, D7, D8, C4, P1 |
-| Economic credibility: capacity, cycle time, quality, one-off cost, recurring cost, first-journey cost, reuse economics | Pass | Appendix V2, V3 (interactive, tested model), V4, V5 |
-| Reliability: standalone launch after restart; no dependency on a development session; fast first query; reset; no console errors; fallback without internet | Pass on the product branch, **not yet merged** | Launcher rebuilt on `feat/demo-readiness-v6`: first answer 1.3 s (was 18.2 s), readiness check, warm-up, reset. The main checkout still has the old launcher until the merge |
+| Comprehension: a first-time viewer explains why work arrives as a question, why the chain drifts, why an assistant is not the Workspace, Ask / Use / Run / Create, the three layers, why small methods, where authority remains, what five weeks and six months prove | **Not done.** Needs people | Screens 02 to 04 carry the problem by minute six; screen 08 explains the demonstration; the principle is on the cover and screen 10 |
+| Business owner: which of my requests, what changes for my team, what it costs, how we start | Pass on paper | Screens 02, 11, 12, 14; appendix V1 to V3, S1, S2 |
+| IT strategist: what sits behind it, what stays authoritative, identity and access, model risk, the graph, facts to visuals, write-back, runtime dependency | Pass on paper | Appendix D1 to D9, M2, M5, M6, M7 |
+| Claims: every appendix page carries one claim status; no core screen claims production deployment, autonomy or guaranteed compliance | Pass | Automated: claim status on every page, banned-claims list on core and appendix text, copy lint |
+| Confidentiality: internal content is physically absent from the public bundle | Pass | Automated: `tests/build.spec.js`, term scan of `dist/`, every committable file and the full history (section 5) |
+| Technical: product readiness, standalone launch, reset, fallback without internet | Pass on the product branch, **not yet merged** | As v31: launcher on `feat/demo-readiness-v6`; deck fallback and offline run automated |
 
 ## 2. Deck critical path
 
 | # | Check | Status | How |
 |---|---|---|---|
-| 1 | Password gate and `#cover` deep link | Pass | Automated |
-| 2 | Ten core screens, four chapters, counter 1 / 10 | Pass | Automated |
-| 3 | No mock of the product in the deck | Pass | Automated: no app screens, no app shell, no mock case in core text |
-| 4 | Cover shows a capture of the real product | Pass | Automated: every capture file loads |
-| 5 | Enter NFR Workspace: about 2.5 seconds, ends on the live cue, Space skips | Pass | Automated |
-| 6 | L opens the live product; `?live=` changes the URL | Pass | Automated |
-| 7 | F opens the five acts captured from the product; Space, arrows and the clicker step through; the end continues to screen 07 | Pass | Automated |
-| 8 | The principle screen maps what the product showed | Pass | Copy aligned to the product's five acts |
-| 9 | Six months, value and the workshop decision are separate screens | Pass | Automated |
-| 10 | Appendix: four doors, 23 pages, each with question, answer, visual, implication, claim status, index, previous, next, main story | Pass | Automated |
-| 11 | Keys: A, 1 to 4, M, Escape one level; browser Back returns from a page | Pass | Automated |
-| 12 | Deep links from the story into the matching pages | Pass | Automated |
-| 13 | V3 calculator recalculates deterministically and resets | Pass | Automated, against the unit-tested model |
-| 14 | Safe mode (S, `?safe=1`) carries the story, the fallback and the appendix | Pass | Automated |
-| 15 | Offline after the first load: story, fallback and appendix | Pass | Automated; the icon sprite is inlined and captures are preloaded |
-| 16 | Reset (0) restores the cover; state model covers every state | Pass | Automated |
-| 17 | No console errors | Pass | Automated per viewport; visual QA and the PDF export report zero |
+| 1 | Fourteen core screens, four chapters (4, 2, 4, 4), counter 1 / 14, landing buttons to 01, 05, 07, 11 | Pass | Automated |
+| 2 | No mock of the product in the deck | Pass | Automated |
+| 3 | Enter NFR Workspace: four statuses, ends on the live cue, Space skips | Pass | Automated |
+| 4 | L opens the live product; `?live=` changes the URL | Pass | Automated |
+| 5 | After the demonstration, Space on screen 07 and the end of the captured fallback both continue to screen 08 | Pass | Automated |
+| 6 | Appendix: four domains (5, 8, 9, 6 pages), each page with question, answer, visual, implication, claim status, index, previous, next, main story; no v6 page ids left | Pass | Automated |
+| 7 | Keys: A, 1 to 4, M, Escape one level; browser Back returns from a page | Pass | Automated |
+| 8 | Thirteen deep links from eight core screens into the matching pages | Pass | Automated |
+| 9 | V3 calculator recalculates deterministically and resets | Pass | Automated |
+| 10 | Safe mode, offline run, reset (0), state model covers every state the route reaches | Pass | Automated |
+| 11 | No console errors | Pass | Automated per viewport; visual QA and the PDF export report zero |
+| 12 | Icons render once (v31 showed some twice) | Pass | Visual QA |
 
 ## 3. Visual
 
@@ -50,31 +47,29 @@ Last full run: 345 passed, 0 failed (see the release note at the end).
 |---|---|
 | Core screens at 1024 x 768 to 1920 x 1080: no clipping, no element outside its canvas, text above the floor | Pass, automated |
 | Appendix pages and the fallback at every size: no horizontal overflow, text above the floor, each page under 1.8 screens | Pass, automated |
-| 125 percent zoom (1536 x 864 and 1152 x 720 at 1.25) | Pass, scripted check |
-| Charts and diagrams (matrix, waterfall, reuse, graph, pipeline) readable at 1366 x 768 | Pass, screenshots |
+| 125 percent zoom (1536 x 864 and 1152 x 720 at 1.25) | ZOOM_PENDING |
+| Contact sheet of all core screens at 1366 x 768 | VISUAL_PENDING |
 
 ## 4. Claim review
 
-Every appendix page carries one claim status: *Shown in the live product* (C4 write-back, D7 question to visual answer), *Target design*, *Illustrative, synthetic figures* (V3 to V5), or *Concept for validation*. The live demonstration shows synthetic records only. No page claims a production deployment, an enterprise connector, a knowledge-graph service or a specific runtime asset.
+Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, synthetic figures*, *Delivery practice*, *Concept for validation*, *Implementation option*. The public edition shows no client names, no client figures, no credentials and no commercial terms; screen 13 describes areas of experience only and says examples are shared separately, subject to permission. The internal edition's credentials carry a claim-review line and need the engagement lead's sign-off before client use (local notes).
 
 ## 5. Confidentiality
 
 | Check | Status |
 |---|---|
-| Repository | **Public**; Pages serves every committed file |
-| Product captures (13 files in `assets/img/product`) | Reviewed one by one: synthetic institution and names only (Arcadia Bank AG, Novalink, Basalt Cloud), no emails, no internal URLs, no browser chrome, no internal asset name, no old wordmark. The empty evidence drawer capture is excluded |
-| Candidate runtime reuse (plan P6) | Not in the public deck; talk track only in the git-ignored local notes |
-| Internal asset name, client names, secrets | None in tracked files or history (scan) |
-| Old prototype captures with the old wordmark | Removed |
-| Team appendix and owner email | Kept by the owner's decision of 2026-11-23 |
+| Repository | **Public**. From v32, Pages serves `dist/` (index.html, pitch.html, assets/) built by `npm run build:public`; `docs/`, `tests/` and `scripts/` are no longer served, though they remain readable in the repository |
+| Internal edition | Built only from the git-ignored `internal/` folder into the git-ignored `dist-internal/`. Not referenced from any tracked file; the public `pitch.html` has no overlay hook paths |
+| Term scan | Salted hashes in `scripts/forbidden-terms.json`; the public build fails on a hit. `dist/`: clean. Every committable file (`scan-repo`): clean. Full history (232 commits, vendor and images excluded): clean |
+| Product captures | Unchanged from v31: synthetic institution and names only |
+| Limits | A term scan only sees text: images are reviewed by eye. Hashes of short terms can be guessed and confirmed, so the list is a tripwire, not a secret. The scan does not catch paraphrase |
 
 ## Not covered
 
 - The two-person comprehension test (needs people) and an end-to-end Teams screen-share.
-- The product branch `feat/demo-readiness-v6` is not merged into `feat/nfr-workspace-v3`: another session was editing that checkout. Until the merge, `Launch NFROS.cmd` in the main checkout is the old launcher.
-- The product's model-written narration work (other session) could add a live AI dependency to the scripted path; check it before the meeting.
-- Proposed product changes not made (they sit in the insight area of the other session): four figures instead of five, and the shared-provider point in the chart title.
+- The product branch `feat/demo-readiness-v6` is not merged into `feat/nfr-workspace-v3`.
+- Claim review of the internal credentials (engagement lead) and of the indicative commercials (deal team, legal).
 
 ## Release note
 
-v31 (`v31-41a31e4`), 2026-11-24: full desktop matrix 345 passed, 0 failed (the remaining tests are per-project skips by design); all audits, the dash check and the copy lint pass; visual QA 47 screenshots at each of 1920 x 1080, 1600 x 900, 1440 x 900 and 1366 x 768 with 0 console errors; 125 percent zoom pass clean; PDF fallback 47 pages, 0 console errors.
+RELEASE_PENDING

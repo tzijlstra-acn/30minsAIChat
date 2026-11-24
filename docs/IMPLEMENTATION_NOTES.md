@@ -132,3 +132,20 @@ v6 replaces the deck's mock of the product with the real product. Sections 7 and
 | Keys | A index, 1 to 4 modules, M main story, L live product, F fallback; Escape goes back one level (page, index, story). On the fallback, arrows and Page Up and Page Down step through the captures |
 | States | `cover`, `assistance`, `integration-burden`, `four-ways`, `three-layers`, `entering-workspace`, `live-handoff`, `live-fallback`, `control-boundary`, `roadmap`, `value`, `workshop`, `appendix` |
 | Removed | Mock product scenes and kit, appendix A to G and the technical drawer, the business-case scene, legacy appendix A1 to A5. The Evidence Atlas stays as a reference library (its economics view still uses `roi-model.js`). Candidate runtime reuse is internal only (local notes) |
+
+## 10. v7 changes (merged proposition, two editions, release v32)
+
+v7 merges the earlier control-platform proposition into NFR Workspace: one brand, fourteen screens, four appendix domains. The audit before v7 is `docs/MERGED_PROPOSITION_CURRENT_STATE.md`.
+
+| Concern | Where |
+|---|---|
+| Core route | Fourteen screens in four chapters (shift 01 to 04, model 05 and 06, Workspace 07 to 10, path 11 to 14). Copy in `assets/data/workspace-demo.js`; new scenes `work-arrives`, `chain-drift`, `method-plan`, `connected-context`, `qualify-and-prove`, `experience`; styles in `assets/css/story-v7.css`. Retired: `remaining-burden`, `six-month-route` |
+| Return after the demo | Space on screen 07, or at the end of the captured fallback, continues to screen 08 (`method-plan`); `STORY_RETURN` in `presenter-controls.js` |
+| Appendix | Four domains in `assets/data/appendix-modules.js`: Value & Economics (V1 to V5), Methods, Control & Assurance (M1 to M8), Data, Knowledge & Systems (D1 to D9), Delivery, Scale & Credentials (S1 to S6); 28 pages. New visuals `methods`, `pools`, `sprint`, `options`; claim statuses `option` and `credential`; styles in `assets/css/appendix-v7.css` |
+| States | `cover`, `work-arrives`, `chain-drift`, `assistance`, `four-ways`, `three-layers`, `entering-workspace`, `live-handoff`, `live-fallback`, `beneath`, `connected`, `control-boundary`, `value`, `qualify`, `experience`, `decision`, `appendix` |
+| Icons | `icon-registry.js` no longer swaps font icons for inline sprite icons at runtime (`AUTO = false`); v31 showed some icons twice |
+| Public edition | `npm run build:public` (`scripts/build.js public`): copies `index.html`, `pitch.html` and `assets/` into `dist/` and scans every text file against `scripts/forbidden-terms.json`. The Pages workflow runs it and uploads `dist/`, so `docs/`, `tests/` and `scripts/` are no longer served |
+| Term scan | Salted SHA-256 hashes of one- to four-word phrases after lowercasing and collapsing punctuation; the plain list stays outside the repository. `node scripts/build.js scan-repo` scans every committable file; `scan <dir>` scans a built folder; `hash-terms` regenerates the hash file. The hashes are a tripwire, not a secret: a short term can be guessed and confirmed |
+| Internal edition | `npm run build:internal` writes `dist-internal/` from the git-ignored `internal/` overlay: `story-internal.js` (merged into the story data before it is frozen, via `window.NFR_STORY_INTERNAL`), `appendix-internal.js` (pages appended per domain before freezing, via `window.NFR_APPENDIX_INTERNAL`; the build adds one section shell per page), `internal.css` (edition badge). Title suffix and `noindex`. Never published |
+| Tests | `tests/build.spec.js`: the public build holds only the site, no overlay reference, no hashed term; the workflow uploads `dist`; with the overlay present, its pages exist in the internal build and are absent from the public one |
+| Preview | `npm run serve:public` (port 8190), `npm run serve:internal` (port 8191); `scripts/serve.js <port> <root>` |
