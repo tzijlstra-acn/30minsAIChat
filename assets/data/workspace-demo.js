@@ -34,7 +34,17 @@
     // ── 01 Cover: a capture of the real product, not a drawing of it ──
     cover: {
       role: 'Third-Party Risk Manager',
-      capture: 'assets/img/product/act2-today.png',
+      capture: 'assets/img/product/act2-today.jpg',
+      // The cover rotates through four moments of the live product. focus: [x, y, width] of
+      // the region shown, in the capture's own pixels (captures are imageWidth wide).
+      imageWidth: 1920,
+      slides: [
+        { file: 'assets/img/product/act2-today.jpg', label: 'Today: the next decision, prepared', focus: [430, 80, 1350] },
+        { file: 'assets/img/product/act3-answer.jpg', label: 'A live question, a visual answer', focus: [300, 80, 1600] },
+        { file: 'assets/img/product/act4-review.jpg', label: 'Nothing is written until you commit', focus: [840, 0, 1080] },
+        { file: 'assets/img/product/act5-agent-builder.jpg', label: 'An agent inherits your access', focus: [300, 50, 1440] }
+      ],
+      every: 4500,
       alt: 'NFR Workspace, Today for the Third-Party Risk Manager, on synthetic records',
       label: 'Today, in the live product',
       foot: 'Prepared for one role. Decided by a person. Recorded by the system.'
@@ -174,7 +184,7 @@
       producedLabel: 'Produced',
       trail: [
         { kind: 'rule', label: 'Find the critical services', out: 'Read from the third-party register' },
-        { kind: 'data', label: 'Gather what changed', out: 'Indicators, incidents and issues from 12 sources' },
+        { kind: 'data', label: 'Gather what changed', out: '15 evidence items from six registers' },
         { kind: 'rule', label: 'Calculate each change', out: '3 deteriorating, led by Novalink, up 23 points' },
         { kind: 'ai', label: 'Explain why', out: '2 share one cloud provider; each claim cites its source' },
         { kind: 'person', label: 'Decide the next step', out: 'Evidence request approved and recorded' }

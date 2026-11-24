@@ -152,7 +152,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 |---|---|---|
 | 1 The Workspace feels real | The user does not start with a blank chatbot | M1, D1 |
 | 2 The next decision arrives prepared | The case, the evidence and the action arrive together | D3, M6 |
-| 3 A live question, a visual answer | The question from screen 04, answered. Say: "No single assistant could answer this: the answer drew on 12 sources." Not prose: a governed analysis from connected records; no number came from a model | D8, D4, D5 |
+| 3 A live question, a visual answer | The question from screen 04, answered. Say: "No single assistant could answer this: the answer drew on 15 evidence items from six registers." Not prose: a governed analysis from connected records; no number came from a model | D8, D4, D5 |
 | 4 From insight to action | The professional approves; the system records | M7, D9 |
 | 5 The long tail, governed | Agents cover the long tail without bypassing controls | M8, M1 |
 
@@ -171,7 +171,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 ### 08 Every number in that answer was calculated, not guessed
 
 - **Remember:** this screen answers the question every NFR audience asks after a demo: can I trust it? It replays the answer they just saw, step by step.
-- **Talk track (50 s):** "Here is how the answer you just saw was built. A rule found the critical services in the register. The Workspace gathered what changed from 12 sources. A rule calculated each change: three deteriorating, Novalink up 23 points. Only then did AI explain why, two share one cloud provider, with every claim pointing at its source. And a person decided the next step. Rules do the maths, AI does one narrow language task and is checked, a person decides. So model risk is judged step by step, not for one big model."
+- **Talk track (50 s):** "Here is how the answer you just saw was built. A rule found the critical services in the register. The Workspace gathered 15 evidence items from six registers: the third-party register, performance history, incidents, issues, risk acceptances and fourth-party dependencies. A rule calculated each change: three deteriorating, Novalink up 23 points. Only then did AI explain why, two share one cloud provider, with every claim pointing at its source. And a person decided the next step. Rules do the maths, AI does one narrow language task and is checked, a person decides. So model risk is judged step by step, not for one big model."
 - **Deep dives:** M2 (why small methods), D8 (how a question becomes a visual answer).
 
 ### 09 One failed test shows everything it affects
