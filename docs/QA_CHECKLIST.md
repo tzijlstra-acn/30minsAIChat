@@ -1,17 +1,17 @@
-# NFR Workspace pitch: QA checklist (release v38, presentable by any consultant v10)
+# NFR Workspace pitch: QA checklist (release v39, presentable by any consultant v10)
 
-Status as of 2026-11-24 on branch `feat/pitch-v8` (v9 work continues on it). The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
+Status as of 2026-11-25 on branch `feat/pitch-v8` (v9 work continues on it). The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
 ```
 npm run build:public && node scripts/build.js scan-repo
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
 node scripts/serve.js 8190 dist     # then, against the public build:
-node scripts/visual-qa.js 8190 artifacts/visual-qa/v38
+node scripts/visual-qa.js 8190 artifacts/visual-qa/v39
 node scripts/export-fallback.js 8190
 ```
 
-Last full run: 363 passed, 0 failed on the five desktop projects (v38; see the release note at the end).
+Last full run: 363 passed, 0 failed on the five desktop projects (v39; see the release note at the end).
 
 ## 1. Meeting-survival tests (v7 plan)
 
@@ -74,6 +74,8 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 - Claim review of the internal credentials (engagement lead) and of the indicative commercials (deal team, legal).
 
 ## Release note
+
+v39 (`v39-20c5309`), 2026-11-25: the opening chapter reworked from the owner's review. 01 positioning (the one place for AI in non-financial risk); 02 five levels per question, stepped through four questions with totals; 03 external and internal change on one chain, with a worked example; 04 missing systems in red, one by one, and the 360 view counted in two bars; 05 the information flow in five steps per role (access, live query or cached index, knowledge graph, rules, AI, answer). Desktop matrix 363 passed, 0 failed. Audits, dash check, copy lint and term scan pass; both editions build. Against the public build: visual QA 57 screenshots at each of four sizes, 0 console errors; PDF fallback 60 pages, 0 console errors. The cover fits 1366 x 650 and 1024 x 768.
 
 v38 (`v38-a56bf06`), 2026-11-25: a new screen 05, one connected picture with a view per role, opens chapter 2 (screens 05 to 14 are now 06 to 15; chapters 4, 3, 4, 4). Four roles in two groups; each role's question, the access each of the eight systems grants it, the records linked and the answer shaped for the role; the Head of NFR and control owner views are marked target design. Desktop matrix 363 passed, 0 failed (ten new tests for screen 05). Audits, dash check, copy lint and term scan pass; the internal edition builds. Against the public build: visual QA 57 screenshots at each of four sizes, 0 console errors; PDF fallback 60 pages (one per role on screen 05), 0 console errors. Every role checked for text inside its boxes and above the floor at eight sizes.
 
