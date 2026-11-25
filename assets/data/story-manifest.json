@@ -1,5 +1,5 @@
 {
-  "version": "37",
+  "version": "38",
   "story": "NFR Workspace: from firefighting to prepared judgement",
   "model": {
     "waysToWork": [
@@ -97,8 +97,23 @@
       "handoffToken": "channels"
     },
     {
-      "id": "four-ways",
+      "id": "role-views",
       "order": 4,
+      "route": "core",
+      "chapterId": "model",
+      "kind": "scene",
+      "title": "One connected picture. Each role sees its own answer.",
+      "subtitle": "Pick a role: what it asks, what it may read, and how the answer comes together.",
+      "closingLine": "Same records, same controls. What each person sees follows their role and access.",
+      "question": "Who sees what, and how does it connect?",
+      "scene": "role-views",
+      "durationMs": 4600,
+      "autoplay": true,
+      "handoffToken": "role-views"
+    },
+    {
+      "id": "four-ways",
+      "order": 5,
       "route": "core",
       "chapterId": "model",
       "kind": "scene",
@@ -113,7 +128,7 @@
     },
     {
       "id": "three-layers",
-      "order": 5,
+      "order": 6,
       "route": "core",
       "chapterId": "model",
       "kind": "scene",
@@ -128,7 +143,7 @@
     },
     {
       "id": "enter-workspace",
-      "order": 6,
+      "order": 7,
       "route": "core",
       "chapterId": "workspace",
       "kind": "scene",
@@ -145,7 +160,7 @@
     },
     {
       "id": "method-plan",
-      "order": 7,
+      "order": 8,
       "route": "core",
       "chapterId": "workspace",
       "kind": "scene",
@@ -160,7 +175,7 @@
     },
     {
       "id": "connected-context",
-      "order": 8,
+      "order": 9,
       "route": "core",
       "chapterId": "workspace",
       "kind": "scene",
@@ -175,7 +190,7 @@
     },
     {
       "id": "authority-boundary",
-      "order": 9,
+      "order": 10,
       "route": "core",
       "chapterId": "workspace",
       "kind": "scene",
@@ -190,7 +205,7 @@
     },
     {
       "id": "value-decision",
-      "order": 10,
+      "order": 11,
       "route": "core",
       "chapterId": "path",
       "kind": "scene",
@@ -205,7 +220,7 @@
     },
     {
       "id": "qualify-and-prove",
-      "order": 11,
+      "order": 12,
       "route": "core",
       "chapterId": "path",
       "kind": "scene",
@@ -220,7 +235,7 @@
     },
     {
       "id": "experience",
-      "order": 12,
+      "order": 13,
       "route": "core",
       "chapterId": "path",
       "kind": "scene",
@@ -235,7 +250,7 @@
     },
     {
       "id": "workshop-decision",
-      "order": 13,
+      "order": 14,
       "route": "core",
       "chapterId": "path",
       "kind": "scene",
@@ -250,7 +265,7 @@
     },
     {
       "id": "live-fallback",
-      "order": 14,
+      "order": 15,
       "route": "reference",
       "chapterId": "reference",
       "kind": "scene",

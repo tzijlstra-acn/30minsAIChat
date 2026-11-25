@@ -1,4 +1,4 @@
-// Scene: workshop-decision (screen 14)
+// Scene: workshop-decision (screen 15)
 // Causal story: the conversation ends on one decision for the room. The headline asks the
 // question, so the screen does not repeat it: four things to agree today (target role,
 // target decision or process, representative data and cases, proof criteria at five

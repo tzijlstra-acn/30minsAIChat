@@ -1,4 +1,4 @@
-// Scene: qualify-and-prove (screen 12)
+// Scene: qualify-and-prove (screen 13)
 // Causal story: start small and earn each next step. Three phases left to right: qualify
 // (five weeks, one real question on the bank's own data), prove (six months, one role's
 // loop live end to end), scale (add roles and processes on the same core). Each shows its

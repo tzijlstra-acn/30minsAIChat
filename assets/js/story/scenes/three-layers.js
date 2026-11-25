@@ -1,4 +1,4 @@
-// Scene: three-layers (screen 06)
+// Scene: three-layers (screen 07)
 // Causal story: AI scales when work, process and data improve together, one role at a
 // time. Three stages run left to right: today (AI pilots), the first loop (one NFR role
 // in the Workspace), at scale (every NFR role). Three layers run top to bottom: work and

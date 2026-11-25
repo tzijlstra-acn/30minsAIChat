@@ -1,4 +1,4 @@
-// Scene: connected-context (screen 09)
+// Scene: connected-context (screen 10)
 // Causal story: connected records show at once what one change affects. A control test
 // fails. Straight connectors run from it to the four records it touches, each in its own
 // system: the risk it mitigates, the obligation that relies on it, the self-assessment

@@ -1,8 +1,8 @@
 // @ts-check
 /**
  * NFR Workspace v7 -- core route acceptance tests.
- * Fourteen screens in four chapters: how the work arrives and drifts, the assistant and
- * the Workspace; four ways and three layers; the doorway into the live product, the plan
+ * Fifteen screens in four chapters: how the work arrives and drifts, the assistant and
+ * the Workspace; one connected picture with a view per role, four ways and three layers; the doorway into the live product, the plan
  * beneath it, connected context and the authority boundary; value, qualify and prove,
  * experience and the workshop decision. The product is shown live; the deck carries no
  * mock of it. Bank-neutral, synthetic data.
@@ -17,10 +17,10 @@ const EM = String.fromCharCode(0x2014);
 const EN = String.fromCharCode(0x2013);
 
 const CORE = [
-  'cover', 'work-arrives', 'chain-drift', 'assistance-here', 'four-ways', 'three-layers', 'enter-workspace',
+  'cover', 'work-arrives', 'chain-drift', 'assistance-here', 'role-views', 'four-ways', 'three-layers', 'enter-workspace',
   'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'qualify-and-prove', 'experience', 'workshop-decision'
 ];
-const INTERACTIVE = ['enter-workspace', 'live-fallback'];
+const INTERACTIVE = ['role-views', 'enter-workspace', 'live-fallback'];
 const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic layer', 'control plane', 'orchestrator', 'orchestration',
   'model gateway', 'autonomous', 'llm', 'rag', 'copilot'];
 const CLAIMS = ['fully autonomous', 'replaces all systems', 'all nfr processes', 'zero human effort', 'instant deployment',
@@ -54,7 +54,7 @@ function sceneFiles() {
 
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
-  test('fourteen core screens; one scene file per declared scene, core and appendix', () => {
+  test('fifteen core screens; one scene file per declared scene, core and appendix', () => {
     const html = read('pitch.html');
     const core = [...html.matchAll(/<section id="([a-z0-9-]+)" data-slide data-route="core"/g)].map((m) => m[1]);
     expect(core).toEqual(CORE);
@@ -99,7 +99,7 @@ test.describe('Scene contract', () => {
 
   test('manifest titles match the screen titles, within word limits', async ({ page }) => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('37');
+    expect(m.version).toBe('38');
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE);
     await open(page);
     for (const s of m.screens) {
@@ -197,6 +197,87 @@ test.describe('Story data', () => {
   });
 });
 
+// ── SCREEN 05: ONE CONNECTED PICTURE, A VIEW PER ROLE ──
+test.describe('Role views', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('four roles in two groups, each reading the eight systems of screen 04 within its own access', () => {
+    const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
+    const R = d.roles;
+    expect(R.list.map((r) => r.id)).toEqual(['head', 'tprm', 'orm', 'owner']);
+    expect(R.list.map((r) => r.group)).toEqual(['lead', 'work', 'work', 'work']);
+    // Space starts with the role the demonstration uses, asking the question screen 04 types
+    expect(R.order[0]).toBe('tprm');
+    expect([...R.order].sort()).toEqual(R.list.map((r) => r.id).sort());
+    expect(R.list.find((r) => r.id === 'tprm').question).toBe(d.sees.question.text);
+    // Only the roles available in the live product say so
+    expect(R.list.filter((r) => r.status === 'live').map((r) => r.id)).toEqual(['tprm', 'orm']);
+    const systems = d.sees.needs.map((n) => n.id);
+    R.list.forEach((r) => {
+      expect(Object.keys(r.access).sort(), r.id).toEqual([...systems].sort());
+      Object.values(r.access).forEach((a) => expect(typeof a === 'string' && a.length > 0 && a.length <= 13, r.id + ' ' + a).toBe(true));
+      expect(r.also, r.id).toHaveLength(2);
+      expect(r.links, r.id).toHaveLength(4);
+      expect(['dots', 'tiles', 'compare'], r.id).toContain(r.answer.visual.kind);
+    });
+    // The scopes differ: the leader reads summaries, the control owner only its own records
+    const reads = (id) => Object.values(R.list.find((r) => r.id === id).access).filter((a) => a !== 'none').length;
+    expect([reads('head'), reads('tprm'), reads('orm'), reads('owner')]).toEqual([7, 8, 6, 5]);
+  });
+
+  test('a click shows a role at once; Space steps through the roles in order, then moves on', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await enter(page, 'role-views');
+    const state = () => page.evaluate(() => {
+      const s = document.getElementById('role-views');
+      return { active: [...s.querySelectorAll('.rv-role')].findIndex((b) => b.classList.contains('is-active')),
+        pressed: [...s.querySelectorAll('.rv-role')].map((b) => b.getAttribute('aria-pressed')).join(','),
+        question: s.querySelector('.rv-q .ah-q-t').textContent, reads: s.querySelector('.rv-id-r').textContent,
+        rows: [...s.querySelectorAll('.rv-sys')].map((r) => (r.className.match(/is-(full|part|none)/) || [])[1]).join(','),
+        answer: s.querySelector('.rv-ans-t').textContent, here: sections[current].id };
+    });
+    let r = await state();
+    expect(r.active).toBe(1);
+    expect(r.pressed).toBe('false,true,false,false');
+    expect(r.question).toBe('Which critical third-party services are deteriorating, and why?');
+    expect(r.reads).toBe('Reads 8 of 8 systems');
+    expect(r.rows).toBe('full,full,full,full,part,full,full,full');
+    await page.locator('#role-views .rv-role').nth(3).click();
+    r = await state();
+    expect(r.active).toBe(3);
+    expect(r.question).toBe('Which of my controls need evidence before the Q3 sign-off?');
+    expect(r.reads).toBe('Reads 5 of 8 systems');
+    expect(r.rows).toBe('part,none,part,none,part,part,part,none');
+    expect(r.answer).toContain('Two of your six controls');
+    expect(await page.locator('#role-views .rv-sys.is-none').count()).toBe(3);
+    // Back to the start of the order, then Space walks it: manager, head, partner, owner, next screen
+    await page.locator('#role-views .rv-role').nth(1).click();
+    for (const [i, q] of [[0, 'Where is NFR risk'], [2, 'Which self-assessments'], [3, 'Which of my controls']]) {
+      await page.keyboard.press('Space');
+      r = await state();
+      expect(r.here).toBe('role-views');
+      expect(r.active).toBe(i);
+      expect(r.question.startsWith(q), r.question).toBe(true);
+    }
+    await page.keyboard.press('Space');
+    await page.waitForFunction(() => sections[current].id === 'four-ways', null, { timeout: 4000 });
+  });
+
+  test('full motion: a role switch types the question, then opens the systems, the links and the answer', async ({ page }) => {
+    await open(page);
+    await enter(page, 'role-views', 12000);
+    await page.locator('#role-views .rv-role').nth(0).click();
+    await page.waitForTimeout(250);
+    const early = await page.evaluate(() => ({ q: document.querySelector('#role-views .rv-q .ah-q-t').textContent.length, ans: document.querySelector('#role-views .rv-ans-t').classList.contains('ts-on') }));
+    expect(early.ans).toBe(false);
+    expect(early.q).toBeLessThan('Where is NFR risk moving towards its appetite limits?'.length);
+    await page.waitForFunction(() => document.querySelector('#role-views .rv-ans-t').classList.contains('ts-on'), null, { timeout: 6000 });
+    expect(await page.locator('#role-views .rv-q .ah-q-t').textContent()).toBe('Where is NFR risk moving towards its appetite limits?');
+    expect(await page.locator('#role-views .rv-sys.is-none').count()).toBe(1);
+  });
+});
+
 // ── LAYOUT AT SUPPORTED VIEWPORTS ──
 for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280, 720], [1920, 1080], [1024, 768]]) {
   const vp = w + 'x' + h;
@@ -248,6 +329,44 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280,
         expect(r.small, id + ' text below ' + MIN_TEXT_PX[vp] + 'px at ' + vp).toEqual([]);
         expect(r.cut, id + ' truncated text at ' + vp).toEqual([]);
         expect(r.spill, id + ' text outside its box at ' + vp).toEqual([]);
+      }
+    });
+
+    test('screen 05: every role fits its stage and keeps its text inside its boxes', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await open(page);
+      await enter(page, 'role-views');
+      const roles = await page.locator('#role-views .rv-role').count();
+      for (let i = 0; i < roles; i++) {
+        await page.locator('#role-views .rv-role').nth(i).click();
+        const r = await page.evaluate((min) => {
+          const st = document.querySelector('#role-views [data-scene-container]');
+          const cv = st.querySelector('.ts-canvas');
+          const scale = parseFloat(cv.dataset.scale || '1');
+          const sr = st.getBoundingClientRect(), cr = cv.getBoundingClientRect();
+          const out = [], small = [], spill = [];
+          if (cr.top < sr.top - 1 || cr.bottom > sr.bottom + 1 || cr.left < sr.left - 1 || cr.right > sr.right + 1) out.push('canvas');
+          cv.querySelectorAll('*').forEach((el) => {
+            if (el.closest('.ts-svg') || el.closest('.scene-accessible-summary')) return;
+            if (el.checkVisibility && !el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) return;
+            const q = el.getBoundingClientRect();
+            if (!q.width || !q.height) return;
+            if (q.left < cr.left - 2 || q.right > cr.right + 2 || q.top < cr.top - 2 || q.bottom > cr.bottom + 2) out.push(String(el.className).slice(0, 30));
+            if (![...el.childNodes].some((x) => x.nodeType === 3 && x.textContent.trim())) return;
+            if (parseFloat(getComputedStyle(el).fontSize) * scale < min) small.push(el.textContent.trim().slice(0, 30));
+            for (let box = el.parentElement; box && box !== cv; box = box.parentElement) {
+              const bs = getComputedStyle(box);
+              const framed = ['Top', 'Right', 'Bottom', 'Left'].every((s) => parseFloat(bs['border' + s + 'Width']) > 0 && bs['border' + s + 'Style'] !== 'none');
+              if (!framed && !box.classList.contains('ts-obj')) continue;
+              const b = box.getBoundingClientRect();
+              if (q.left < b.left - 2 || q.right > b.right + 2 || q.top < b.top - 2 || q.bottom > b.bottom + 2) { spill.push(el.textContent.trim().slice(0, 30)); break; }
+            }
+          });
+          return { out: out.slice(0, 5), small: small.slice(0, 5), spill: spill.slice(0, 5) };
+        }, MIN_TEXT_PX[vp]);
+        expect(r.out, 'role ' + i + ' outside the canvas at ' + vp).toEqual([]);
+        expect(r.small, 'role ' + i + ' text below the floor at ' + vp).toEqual([]);
+        expect(r.spill, 'role ' + i + ' text outside its box at ' + vp).toEqual([]);
       }
     });
 
@@ -423,7 +542,7 @@ test.describe('Route', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.chapters.map((c) => c.label)).toEqual(['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'THE PATH']);
     const core = m.screens.filter((s) => s.route === 'core');
-    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'shift', 'model', 'model', 'workspace', 'workspace', 'workspace', 'workspace', 'path', 'path', 'path', 'path']);
+    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'shift', 'model', 'model', 'model', 'workspace', 'workspace', 'workspace', 'workspace', 'path', 'path', 'path', 'path']);
   });
 
   test('the landing is a landing, with one button per chapter that jumps to its first screen', async ({ page }) => {
@@ -435,14 +554,14 @@ test.describe('Route', () => {
     });
     expect(r.kind).toBe('landing');
     expect(r.header).toBe(false);
-    expect(r.route).toEqual(['cover', 'four-ways', 'enter-workspace', 'value-decision']);
+    expect(r.route).toEqual(['cover', 'role-views', 'enter-workspace', 'value-decision']);
     await page.locator('#cover .landing-chapter').nth(2).click();
     await page.waitForFunction(() => sections[current].id === 'enter-workspace', null, { timeout: 6000 });
   });
 
-  test('the counter counts fourteen core screens and says Appendix in the appendix', async ({ page }) => {
+  test('the counter counts fifteen core screens and says Appendix in the appendix', async ({ page }) => {
     await open(page);
-    await expect(page.locator('#counter')).toHaveText('1 / 14');
+    await expect(page.locator('#counter')).toHaveText('1 / 15');
     await expect(page.locator('.nav-ch-btn[data-chid="reference"] .nav-ch-name')).toHaveText('Appendix');
     await page.evaluate(() => document.getElementById('appendix').scrollIntoView({ behavior: 'instant' }));
     await expect(page.locator('#counter')).toHaveText('Appendix', { timeout: 4000 });

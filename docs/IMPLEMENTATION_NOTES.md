@@ -179,3 +179,15 @@ From the owner's review: each screen lands one point at a glance, with an exampl
 | 14 | An example answer on each card |
 | v10 (release v36) | Presentable by any consultant, clear to the NFR business owner. Product captures re-taken at 1280 x 800 and 1.5x (JPEG) with a copy of the product's rehearsal script; the cover crossfades through four focal crops (`cover.slides`, `focus` in capture pixels; still in reduced motion and safe mode). The captured demo is the "Product walkthrough" everywhere. "Loop" became "live process" in the story and the appendix. Screen 05 and the appendix use the product's menu names (Ask the records, Work Hub, Processes, Agents). Screen 12 names what the bank provides (`path.fromYou`). The evidence count is the product's: 15 items from six registers |
 | Fallbacks | `node scripts/build-fallbacks.js <port>` (`npm run fallbacks:scenes`) renders each scene's final state into `assets/img/fallback/<id>.jpg` and points its `<svg data-scene-fallback>` at it. Rerun after changing a screen. The cover and the doorway keep their vector fallbacks |
+
+## 13. v11 changes (a view per role, release v38)
+
+From the internal review: show the roles, the Head of NFR against the people who run the work, and how the data connects and differs by permission. A new screen 05 opens chapter 2, right after screen 04 says the Workspace brings every system into one picture within the user's permissions. Screens 05 to 14 became 06 to 15; chapters are 4, 3, 4, 4.
+
+| Part | Where | Notes |
+|---|---|---|
+| Data | `assets/data/workspace-demo.js`, `roles` | Four roles in two groups (`lead`, `work`); `order` is the Space order and starts with the third-party risk manager asking the screen 04 question. `access` per system of `sees.needs`: `full`, `none` or a short note for partial access (13 characters at most). `status` is `live` only for roles available in the product (third-party risk manager, operational risk partner) |
+| Scene | `assets/js/story/scenes/role-views.js` | Role cards are buttons; `advance()` completes the current role, then selects the next in `order`, then returns false so Space moves on. A role switch types the question, sets each system's access state, draws the connectors (blocked systems get a dashed line and send nothing back), links the records and builds the answer (`dots`, `tiles` or `compare`) |
+| Styles | `assets/css/story-v9.css`, `.rv-*` | The moving dots on open connectors stop in reduced motion and safe mode |
+| Wiring | `presenter-controls.js`, `build-manifest.js`, `export-fallback.js` | State `roles`; role cards release focus after a mouse click; META entry; the PDF adds one page per role |
+| Tests | `tests/workspace-story.spec.js` | Role data rules, click and Space order, full-motion typing, and a per-role fit and box check at every supported size |

@@ -1,4 +1,4 @@
-// Scene: authority-boundary (screen 10)
+// Scene: authority-boundary (screen 11)
 // Causal story: AI prepares, professionals decide, systems record. Three columns follow
 // the headline, left to right, each opening with what happened in the demonstration
 // (AI drafted the evidence request, the professional approved it as their own judgement,

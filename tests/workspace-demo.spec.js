@@ -211,7 +211,7 @@ test.describe('Appendix modules', () => {
     await reduced(page);
     await open(page);
     const links = await page.$$eval('section[data-route="core"] [data-apx-link]', (b) => b.map((x) => x.closest('section').id + '>' + x.dataset.apxLink));
-    expect(links).toEqual(['four-ways>appendix-m1', 'method-plan>appendix-m2', 'method-plan>appendix-d8', 'connected-context>appendix-d4', 'connected-context>appendix-d5',
+    expect(links).toEqual(['role-views>appendix-d3', 'role-views>appendix-d9', 'four-ways>appendix-m1', 'method-plan>appendix-m2', 'method-plan>appendix-d8', 'connected-context>appendix-d4', 'connected-context>appendix-d5',
       'authority-boundary>appendix-m6', 'authority-boundary>appendix-m7', 'value-decision>appendix-v2', 'value-decision>appendix-v3',
       'qualify-and-prove>appendix-s1', 'qualify-and-prove>appendix-s2', 'experience>appendix-s5', 'workshop-decision>appendix-v1']);
     await land(page, 'qualify-and-prove');
@@ -316,7 +316,7 @@ test.describe('Presenter controls and resilience', () => {
     await press(page, 'Space');
     await page.waitForFunction(() => sections[current].id === 'assistance-here', null, { timeout: 4000 });
     await press(page, 'PageDown');
-    await page.waitForFunction(() => sections[current].id === 'four-ways', null, { timeout: 4000 });
+    await page.waitForFunction(() => sections[current].id === 'role-views', null, { timeout: 4000 });
     await press(page, 'PageUp');
     await page.waitForFunction(() => sections[current].id === 'assistance-here', null, { timeout: 4000 });
     await press(page, 'ArrowLeft');
@@ -338,7 +338,7 @@ test.describe('Presenter controls and resilience', () => {
     }
     expect(await here(page)).toBe('workshop-decision');
     for (const s of seen) expect(known, s).toContain(s);
-    ['cover', 'work-arrives', 'chain-drift', 'assistance', 'four-ways', 'three-layers', 'live-handoff', 'beneath', 'connected', 'control-boundary', 'value', 'qualify', 'experience', 'decision']
+    ['cover', 'work-arrives', 'chain-drift', 'assistance', 'roles', 'four-ways', 'three-layers', 'live-handoff', 'beneath', 'connected', 'control-boundary', 'value', 'qualify', 'experience', 'decision']
       .forEach((s) => expect([...seen]).toContain(s));
     expect(warnings).toEqual([]);
   });

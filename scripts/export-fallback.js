@@ -8,7 +8,8 @@
  *
  * Renders at 1920x1080 in reduced motion (every screen in its final state), in story
  * order: the core screens, with the five acts captured from the live product after
- * Enter NFR Workspace, then the appendix index and every question page.
+ * Enter NFR Workspace and one page per role on screen 05, then the appendix index and
+ * every question page.
  * Writes <out>/NFR-Workspace-<release>.pdf, one screen per page, plus the JPEG frames.
  * Exits 1 on any console error. artifacts/ is gitignored: the PDF is not published.
  */
@@ -57,6 +58,11 @@ async function run() {
   for (var i = 0; i < core.length; i++) {
     await go(core[i]);
     await shot(core[i]);
+    // Screen 05: one page per role, in the order Space steps through them
+    if (core[i] === 'role-views') {
+      var order = await page.evaluate(function() { return NFR_WORKSPACE_DEMO.roles.order; });
+      for (var r = 1; r < order.length; r++) { await key('Space'); await shot('role-views-' + order[r]); }
+    }
     if (core[i] === 'enter-workspace') {
       await go('live-fallback');
       var n = await page.evaluate(function() { return NFR_LIVE_CAPTURES.acts.reduce(function(t, a) { return t + a.shots.length; }, 0); });

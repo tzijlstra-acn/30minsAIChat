@@ -1,4 +1,4 @@
-// Scene: method-plan (screen 08, the return point after the live demonstration)
+// Scene: method-plan (screen 09, the return point after the live demonstration)
 // Causal story: every number in the answer the audience just saw was calculated, not
 // guessed. The question from act 3 sits on top; under it the five steps that produced the
 // answer, each tagged with what did the work (a rule, connected data, AI checked against

@@ -1,6 +1,13 @@
 {
   "version": "18",
   "icons": [
+    { "name": "user-star",          "class": "ti-user-star",           "semantic": "role" },
+    { "name": "briefcase",          "class": "ti-briefcase",           "semantic": "role" },
+    { "name": "clipboard-check",    "class": "ti-clipboard-check",     "semantic": "role" },
+    { "name": "circle-half-2",      "class": "ti-circle-half-2",       "semantic": "status" },
+    { "name": "affiliate",          "class": "ti-affiliate",           "semantic": "data" },
+    { "name": "id-badge-2",         "class": "ti-id-badge-2",          "semantic": "role" },
+    { "name": "eye-off",            "class": "ti-eye-off",             "semantic": "status" },
     { "name": "alert-triangle",       "class": "ti-alert-triangle",       "semantic": "risk" },
     { "name": "unlink",             "class": "ti-unlink",             "semantic": "risk" },
     { "name": "puzzle",             "class": "ti-puzzle",            "semantic": "risk" },

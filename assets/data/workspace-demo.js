@@ -2,8 +2,8 @@
 // One immutable object. Every core screen reads its words from here; no scene restates
 // them in its own code. v7: one proposition. NFR Workspace is the role-based experience;
 // reusable NFR methods, governed execution services, a connected NFR core and approved
-// integrations sit underneath it. The real product is shown live between screens 07
-// and 08. Everything is synthetic and bank-neutral.
+// integrations sit underneath it. The real product is shown live between screens 08
+// and 09. Everything is synthetic and bank-neutral.
 // v9: every screen has one point a first-time viewer gets at a glance, with an example
 // the audience recognises. The comment above each block names that point.
 // The internal edition (built locally, never published) may replace a few objects
@@ -111,7 +111,71 @@
       note: ['Each assistant helps with its own slice.', "NFR Workspace brings every system's content into one picture, within the user's permissions."]
     },
 
-    // ── 05 The point: four ways of working, told apart by one supplier example each ──
+    // ── 05 The point: one connected picture, and each role sees its own answer ──
+    // The eight systems are the ones screen 04 names. Each role asks its own question; the
+    // question travels with the user's identity, each system answers only within that
+    // user's access, the records that come back are linked, and the answer is shaped for
+    // the role. Synthetic records; the facts match the demonstration (act 3) and screen 10.
+    // Access per system: 'full', 'none', or a short note for partial access.
+    roles: {
+      tag: 'Illustrative, synthetic records',
+      groups: { lead: 'Leads NFR', work: 'Runs the work' },
+      status: { live: 'In the product today', target: 'Target design' },
+      asks: 'asks',
+      alsoLabel: 'Also asks',
+      steps: ['1 · Each system checks access', '2 · Records connected', '3 · Answer for this role'],
+      hub: { title: 'NFR Workspace', as: 'Asking as', reads: 'Reads {n} of {t} systems' },
+      access: {
+        full: { icon: 'ti-circle-check', tone: 'proof', label: 'Full' },
+        part: { icon: 'ti-circle-half-2', tone: 'human' },
+        none: { icon: 'ti-lock', tone: 'gap', label: 'No access' }
+      },
+      notShownLabel: 'Not shown:',
+      mayLabel: 'May do next:',
+      method: 'Rules calculate. AI explains. Each fact cites its source.',
+      order: ['tprm', 'head', 'orm', 'owner'],
+      list: [
+        { id: 'head', group: 'lead', icon: 'ti-user-star', label: 'Head of NFR', scope: 'Every register, summarised', status: 'target',
+          question: 'Where is NFR risk moving towards its appetite limits?',
+          also: ['What should the board report flag?', 'Where do we rely on one provider?'],
+          access: { register: 'Summary', contracts: 'Totals', incidents: 'Summary', kri: 'full', mail: 'none', assurance: 'Summary', controls: 'Summary', dependencies: 'full' },
+          links: [{ type: 'Risk types', text: '6 in the profile' }, { type: 'Third party', text: 'Amber, 3 services' }, { type: 'Concentration', text: '2 on one provider' }, { type: 'Board report', text: '1 item to flag' }],
+          answer: { text: 'Third-party risk is nearing its limit. Two services rely on one cloud provider.',
+            visual: { kind: 'tiles', items: [{ label: 'Third party', tone: 'human' }, { label: 'Resilience', tone: 'human' }, { label: 'Cyber', tone: 'proof' }, { label: 'Data', tone: 'proof' }, { label: 'Conduct', tone: 'proof' }, { label: 'Fraud', tone: 'proof' }] },
+            notShown: 'Personal mailboxes and case-level detail',
+            may: 'Approve a risk acceptance above the threshold' } },
+        { id: 'tprm', group: 'work', icon: 'ti-briefcase', label: 'Third-party risk manager', scope: 'All suppliers, full records', status: 'live',
+          question: 'Which critical third-party services are deteriorating, and why?',
+          also: ['Which annual reviews are due this month?', 'What evidence is still missing?'],
+          access: { register: 'full', contracts: 'full', incidents: 'full', kri: 'full', mail: 'Own mailbox', assurance: 'full', controls: 'full', dependencies: 'full' },
+          links: [{ type: 'Services', text: '11 critical' }, { type: 'Deteriorating', text: '3 services' }, { type: 'Leading', text: 'Novalink, up 23' }, { type: 'Shared provider', text: 'Basalt Cloud' }],
+          answer: { text: 'Three critical services are deteriorating. Novalink leads, up 23 points.',
+            visual: { kind: 'dots', total: 11, hit: 3, label: '3 of 11 critical services. Two rely on Basalt Cloud.' },
+            notShown: "Other people's mailboxes",
+            may: 'Request evidence, once approved' } },
+        { id: 'orm', group: 'work', icon: 'ti-shield-check', label: 'Operational risk partner', scope: 'Risks and controls, all units', status: 'live',
+          question: 'Which self-assessments still rate a failed control as effective?',
+          also: ['Which risks need reassessment after recent incidents?', 'Where is evidence out of date?'],
+          access: { register: 'full', contracts: 'none', incidents: 'full', kri: 'full', mail: 'none', assurance: 'full', controls: 'full', dependencies: 'full' },
+          links: [{ type: 'Control', text: 'CTL-0417 failed' }, { type: 'Self-assessment', text: 'RCSA Q3: effective' }, { type: 'Risk', text: 'R-21 to review' }, { type: 'Obligation', text: 'OBL-12 relies on it' }],
+          answer: { text: 'One self-assessment still rates a failed control as effective.',
+            visual: { kind: 'compare', rows: [{ label: 'RCSA Q3 rates CTL-0417', value: 'Effective', tone: 'proof' }, { label: 'Latest test of CTL-0417', value: 'Failed', tone: 'gap' }] },
+            notShown: 'Contract terms and mailboxes',
+            may: 'Record a second-line challenge' } },
+        { id: 'owner', group: 'work', icon: 'ti-clipboard-check', label: 'Control owner', scope: 'Own controls, in Procurement', status: 'target',
+          question: 'Which of my controls need evidence before the Q3 sign-off?',
+          also: ['What changed in my control tests?', 'What is due this week?'],
+          access: { register: 'Own only', contracts: 'none', incidents: 'Own unit', kri: 'none', mail: 'Own mailbox', assurance: 'Own only', controls: 'Own controls', dependencies: 'none' },
+          links: [{ type: 'Your controls', text: '6 in Procurement' }, { type: 'Control', text: 'CTL-0417 failed' }, { type: 'Evidence', text: '2 items missing' }, { type: 'Attestation', text: 'Q3 sign-off flagged' }],
+          answer: { text: 'Two of your six controls need evidence before the Q3 sign-off.',
+            visual: { kind: 'tiles', items: [{ label: 'CTL-0417', tone: 'gap' }, { label: 'CTL-0421', tone: 'human' }, { label: 'CTL-0402', tone: 'proof' }, { label: 'CTL-0409', tone: 'proof' }, { label: 'CTL-0411', tone: 'proof' }, { label: 'CTL-0433', tone: 'proof' }] },
+            notShown: 'Other units, contracts, risk indicators',
+            may: 'Upload evidence and attest' } }
+      ],
+      line: ['The AI sees only what the person asking may see.', 'Each system checks access before anything reaches the AI.']
+    },
+
+    // ── 06 The point: four ways of working, told apart by one supplier example each ──
     capabilities: [
       { id: 'assist', verb: 'Ask', product: 'Ask the records', icon: 'ti-message-circle',
         line: 'Ask a question and get an answer with its sources, in the moment.',
@@ -140,7 +204,7 @@
     ],
     foundation: ['Same identity', 'Same permissions', 'Same evidence', 'Same control record'],
 
-    // ── 06 The point: scale comes from three layers improving together, one role at a time ──
+    // ── 07 The point: scale comes from three layers improving together, one role at a time ──
     stages: [
       { id: 'today', label: 'Today', sub: 'AI pilots', icon: 'ti-circle-dashed', tone: 'gap' },
       { id: 'first', label: 'First process', sub: 'One NFR role, live', icon: 'ti-user-check', tone: 'ai' },
@@ -163,7 +227,7 @@
     layersLine: 'NFR Workspace is where all three meet.',
     layersLine2: 'Improving only the AI component creates another pilot.',
 
-    // ── 07 The doorway into the live product ──
+    // ── 08 The doorway into the live product ──
     enter: {
       statuses: ['Resolving role and permissions', 'Loading current decisions', 'Connecting approved applications', 'Workspace ready'],
       cue: 'Open live Workspace',
@@ -177,7 +241,7 @@
       liveUrl: 'http://localhost:3200/'
     },
 
-    // ── 08 The point: the answer they just saw was calculated and checked, step by step ──
+    // ── 09 The point: the answer they just saw was calculated and checked, step by step ──
     // Facts from the live product's act 3 and act 4 (synthetic records).
     beneath: {
       question: { label: 'The question from the demonstration', text: 'Which critical third-party services are deteriorating, and why?' },
@@ -199,7 +263,7 @@
       line: ['Model risk is judged step by step.', 'Each step has one job, a defined input and a check, so it can be tested on its own.']
     },
 
-    // ── 09 The point: connected records show at once what one change affects ──
+    // ── 10 The point: connected records show at once what one change affects ──
     connected: {
       event: { label: 'A control test fails', id: 'CTL-0417', name: 'Supplier access review', system: 'Testing tool' },
       affected: [
@@ -215,7 +279,7 @@
       line: ['It works the other way too.', 'A new obligation shows at once which controls it relies on, and which of them are untested.']
     },
 
-    // ── 10 The point: who does what, shown with the step from the demonstration ──
+    // ── 11 The point: who does what, shown with the step from the demonstration ──
     boundary: {
       demoLabel: 'In the demonstration',
       columns: [
@@ -229,7 +293,7 @@
       line: ['Running a step grants no authority.', "Every material change needs a named person's approval, and the record shows who decided and when."]
     },
 
-    // ── 11 The point: three kinds of value, each measured on its own ──
+    // ── 12 The point: three kinds of value, each measured on its own ──
     value: {
       improvesLabel: 'What improves',
       measureLabel: 'How we measure it',
@@ -247,7 +311,7 @@
       line: ['Waiting time saved is not counted as headcount.', 'The business case is built from your own baseline during the five weeks.']
     },
 
-    // ── 12 The point: start small and earn each next step ──
+    // ── 13 The point: start small and earn each next step ──
     path: {
       goalLabel: 'Goal',
       getLabel: 'You get',
@@ -270,7 +334,7 @@
       line: 'Five weeks proves fit and value. Six months proves the operating model.'
     },
 
-    // ── 13 Relevant experience ──
+    // ── 14 Relevant experience ──
     // Public edition: what the approach has been applied to, without client details.
     // The internal edition replaces this object with claim-reviewed credentials.
     experience: {
@@ -283,7 +347,7 @@
       note: 'Accenture delivery experience with the same methods. Client examples and measured results are shared separately, subject to permission.'
     },
 
-    // ── 14 The point: four things to agree today, each with an example answer ──
+    // ── 15 The point: four things to agree today, each with an example answer ──
     decision: {
       label: 'Agree today',
       exampleLabel: 'For example',

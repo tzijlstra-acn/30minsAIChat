@@ -23,6 +23,7 @@ const META = {
   'work-arrives':       { q: 'What does the risk function keep being asked?', ms: 3400, token: 'requests' },
   'chain-drift':        { q: 'Why is it hard to answer today?', ms: 4700, token: 'chain' },
   'assistance-here':    { q: 'Do we not have AI already?', ms: 6100, token: 'channels' },
+  'role-views':         { q: 'Who sees what, and how does it connect?', ms: 4600, token: 'role-views' },
   'four-ways':          { q: 'What is NFR Workspace?', ms: 5900, token: 'four-ways' },
   'three-layers':       { q: 'What has to change to scale it?', ms: 3600, token: 'three-layers' },
   'enter-workspace':    { q: 'What does the working day look like?', ms: 2600, token: 'live-handoff', interactive: true, state: 'live-handoff' },

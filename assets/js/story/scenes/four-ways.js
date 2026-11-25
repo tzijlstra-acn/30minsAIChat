@@ -1,4 +1,4 @@
-// Scene: four-ways (screen 04)
+// Scene: four-ways (screen 06)
 // Causal story: one Workspace, four ways to get work done, revealed one at a time:
 // Ask (NFR Assist), Use (NFR Apps), Run (NFR Automations), Create (Agent Builder).
 // Each card says what it is, when to use it and one concrete example from the same
