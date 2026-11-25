@@ -1,4 +1,4 @@
-# NFR Workspace pitch: QA checklist (release v36, presentable by any consultant v10)
+# NFR Workspace pitch: QA checklist (release v37, presentable by any consultant v10)
 
 Status as of 2026-11-24 on branch `feat/pitch-v8` (v9 work continues on it). The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
@@ -7,11 +7,11 @@ npm run build:public && node scripts/build.js scan-repo
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
 node scripts/serve.js 8190 dist     # then, against the public build:
-node scripts/visual-qa.js 8190 artifacts/visual-qa/v36
+node scripts/visual-qa.js 8190 artifacts/visual-qa/v37
 node scripts/export-fallback.js 8190
 ```
 
-Last full run: 353 passed, 0 failed on the five desktop projects (v36; see the release note at the end).
+Last full run: 353 passed, 0 failed on the five desktop projects (v37; see the release note at the end).
 
 ## 1. Meeting-survival tests (v7 plan)
 
@@ -73,6 +73,8 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 - Claim review of the internal credentials (engagement lead) and of the indicative commercials (deal team, legal).
 
 ## Release note
+
+v37 (`v37-000c1c0`), 2026-11-25: screen 14's two-line examples ran about 19 px below their cards; the cards are taller, the four "For example" strips line up, and the fallback picture is redrawn. The box test now checks every box framed on all four sides, not only `.ts-obj` (it fails on v36, passes on v37). Desktop matrix 353 passed, 0 failed. Audits, dash check, copy lint and term scan pass. Against the public build: visual QA 56 screenshots at each of four sizes, 0 console errors; PDF fallback 56 pages, 0 console errors.
 
 v36 (`v36-e8663bd`), 2026-11-24: presentable by any consultant, clear to the NFR business owner; sharper product captures and a rotating cover; the answer's evidence count corrected to the product's (15 items from six registers). Desktop matrix 353 passed, 0 failed. Audits, dash check, copy lint and term scan pass. Against the public build: visual QA 56 screenshots at each of four sizes, 0 console errors; 125 percent zoom clean; PDF fallback 56 pages, 0 console errors. Box audit at eight sizes: no text outside its box.
 
