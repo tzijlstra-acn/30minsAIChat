@@ -46,7 +46,7 @@ SceneDirector.register('role-views', function(container, manifest, reduced) {
   // ── The fixed frame: groups, role cards, question bar, three columns, closing line ──
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'role-views' });
+    cv = S.canvas(container, W, H, { id: 'role-views', align: 'top' });
     n = { chrome: [], cards: {}, rows: [], rowState: [], spokes: [], flows: [] };
     done = false;
     var root = cv.el;
