@@ -192,3 +192,15 @@ From the internal review: show the roles, the Head of NFR against the people who
 | Placement | `S.canvas(..., { align: 'top' })` in `visual-grammar.js` | The screen starts right under the headline at every size; on a tall window the spare space falls below the tool, not above it. Other screens keep centring |
 | Wiring | `presenter-controls.js`, `build-manifest.js`, `export-fallback.js` | State `roles`; role cards release focus after a mouse click; META entry; the PDF adds one page per role |
 | Tests | `tests/workspace-story.spec.js` | Role data rules, click and Space order, full-motion typing, and a per-role fit and box check at every supported size |
+
+## 14. v12 changes (screens 01 to 05, release v39)
+
+From the owner's review of the opening chapter: more salesy, more levels, a clearer why, a visible requirement for the full picture, and the information flow in detail.
+
+| Screen | Change |
+|---|---|
+| 01 | Positioning: "The one place for AI in non-financial risk", with three pillars (every NFR role, every system, every kind of AI work). The headline scales with the window height so the cover fits 1366 x 650 |
+| 02 | Five levels in rows (who asks, what they ask, where the answer lives, who has to help, how it is worked out). The screen steps through the four questions, lighting each one's links, ends on the screen 04 question and counts the whole from the data (`arrives`). Question cards are buttons |
+| 03 | External change (outside the bank) above the chain, internal change (inside the bank) below it, and one worked example of why it matters (`chain.example`) |
+| 04 | Sources start grey; the three an assistant sees turn purple; the five no assistant sees turn red one by one, marked Missing; a legend says so. Two bars count it: standalone AI three of eight, NFR Workspace eight of eight, the 360 view (`sees.legend`, `sees.context`) |
+| 05 | The information flow in five steps for the chosen role: access checked per system; read by a live query or from a cached index (`roles.modeOf`, `roles.modes`); linked in the knowledge graph; rules calculate, then AI explains (`rule`, `ai` per role); the answer. The screen names the knowledge graph at the owner's request; the jargon test exempts that term on this screen only |

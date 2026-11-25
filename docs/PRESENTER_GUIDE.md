@@ -6,6 +6,8 @@ A 30-minute conversation for two buyers: the NFR business owner first, the IT st
 
 **The idea.** Banks already have AI assistants, but each one sees a single system: the mailbox, the open file, the GRC records. An NFR question, such as which critical suppliers are deteriorating and why, needs contracts, incidents, indicators, assurance reports, controls and dependencies together, so today a professional joins them by hand. NFR Workspace connects the content of every system for each NFR role, prepares the answer in small steps that can be tested, and leaves the decision with a named person.
 
+**The positioning.** NFR Workspace is the one place for AI in non-financial risk: every NFR role, every system, every kind of AI work, under one set of controls.
+
 **Three messages to repeat.**
 
 1. Standalone AI sees one system. NFR answers need all of them.
@@ -24,11 +26,11 @@ Print this. One point per screen, one sentence to say, the key to press. The det
 
 | # | The point | Say | Key |
 |---|---|---|---|
-| 01 | A working product for one NFR role | "Work prepared for one role, decided by a person, recorded by the system." | Space |
-| 02 | Questions come from everywhere | "None of these arrives with a method. Which did you get this month?" | Space |
-| 03 | Change from above, drift from below | "The chain breaks in the middle, and today the professional re-maps it by hand." | Space |
-| 04 | Standalone AI sees one system | "Each assistant sees one slice. The answer needs all eight. Next, the same question, answered for each role." | Space |
-| 05 | Each role sees its own answer | "Same records for every role. The AI sees only what the person asking may see." Show the manager, then the Head of NFR. | Space (next role) or click a role |
+| 01 | The one place for AI in NFR | "One Workspace for every NFR role, every system and every kind of AI work. AI prepares, your people decide, every step on record." | Space |
+| 02 | Every question cuts across five levels | "Who asks, what, where the data lives, who helps, and how. Four questions: six askers, eight systems, five teams, four methods." | Space |
+| 03 | External and internal change, one chain | "Rules change outside the bank, practice inside it. Both break the same chain, and today someone re-maps it by hand." | Space |
+| 04 | Standalone AI sees three of eight | "Red is what no assistant sees. The answer needs all eight: the 360 view." | Space |
+| 05 | How the information flows, per role | "Access checked in each system, read live or from an index, linked in the knowledge graph, calculated by rules, explained by AI." | Space (next role) or click a role |
 | 06 | Four ways of working | "One supplier: a question, one review, a monthly chase, a new watch. Same access and controls." | Space |
 | 07 | Three layers improve together | "Pilots do not scale. One role first, then every role, on one connected core." | Space |
 | 08 | The product itself | Live product: press L. No product on your laptop: press F for the walkthrough | L or F |
@@ -121,44 +123,46 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 
 ## Chapter 1: the shift
 
-### 01 From firefighting to prepared judgement
+### 01 The one place for AI in non-financial risk
 
-- **Remember:** a working product for one NFR role, not a drawing of one.
-- **Talk track (30 s):** "On the right is the real product's Today screen for a third-party risk manager: work prepared for one role, decided by a person, recorded by the system. You will use it in about ten minutes."
+- **Remember:** this is the positioning. One Workspace for every NFR role, every system and every kind of AI work, with the decision left to a person.
+- **Talk track (40 s):** "NFR Workspace is the one place for AI in non-financial risk. One Workspace for every NFR role, from the Head of NFR to each control owner. Connected to your systems, within each user's own access. And one place for every kind of AI work: asking, using, running and creating, under one set of controls. On the right is the real product's Today screen for a third-party risk manager. You will use it in about ten minutes."
 - **If asked "is this real?":** "Yes, it runs on this laptop on synthetic records."
 
-### 02 NFR work arrives as a question, not a method
+### 02 Every NFR question cuts across roles, systems and teams
 
-- **Remember:** four everyday questions, from four places. Each needs several sources and several people before anyone can answer.
-- **Talk track (45 s):** "Your week looks like this. The COO emails: which controls duplicate across our entities? The regulatory forum asks what the new regulation adds. Internal Audit asks you to prove key controls operate. Procurement asks which critical suppliers are deteriorating. Look at what each one needs: inventories, clauses, test results, indicators, and the people who hold them. None arrives with a method. The answer sits across several systems; no single tool holds it."
+- **Remember:** the complexity is in the levels, not in any single question. Who asks, what they ask, where the answer lives, who has to help, and how it is worked out.
+- **Visual:** five rows. The screen steps through the four questions and lights what each one needs; let it run once. Click a question card to show its links again.
+- **Talk track (60 s):** "Read it top down. Six people or bodies ask: the board risk committee, the COO, the regulatory change forum, internal audit, the supervisor, procurement. Four everyday questions. Each one pulls in different systems: the COO's question needs the GRC platform and the policy library; procurement's needs vendor management, incidents, the service inventory and documents. Each needs different people to help, and each is worked out a different way: mapping, a gap analysis, testing, a trend. Four questions, six askers, eight systems, five teams, four methods. None arrives labelled with a method."
 - **Ask the room:** "Which of these did you get this month?"
 - **Deep dive:** V1 (where to start; its detail lists the nine kinds of request risk functions bring).
 
-### 03 Regulation changes from above. Practice drifts from below.
+### 03 External change and internal drift break the same chain
 
-- **Remember:** not regulation, not people: rules are re-mapped by hand and drift stays unseen until audit.
-- **Talk track (50 s):** point at the middle row first. "This is the chain every NFR function maintains: obligation, risk, control, evidence, assessment, decision. From above, change keeps arriving: new regulation, revised policy, audit findings. It lands on the obligations and the risks. From below, practice drifts: a control no longer covers the risk, it is not performed as designed, the evidence goes stale, an attestation is no longer true. The links in the middle break. Three consequences: the picture is fragmented, the bank is falsely assured, and every audit becomes a project. Today the professional re-maps the chain by hand."
+- **Remember:** two kinds of change, one chain. External change comes from outside the bank, internal change from inside it, and both have to be traced through the same links. That tracing is manual today, which is why it matters.
+- **Talk track (60 s):** point at the middle row first. "This is the chain every NFR function keeps: obligation, risk, control, evidence, assessment, decision. Above it, change from outside the bank: a new regulation such as DORA, a supervisory finding, a supplier changing its service, a new threat. It lands on the obligations and the risks. Below it, change inside the bank: a reorganisation, a new system, a control no longer performed, evidence going out of date. It lands on the controls, the evidence and the assessments. The links in between break. One example: DORA adds rules for ICT third parties, and in the same quarter procurement moves to a new sourcing tool. Today someone re-maps twelve controls by hand, the quarterly sign-off rests on old evidence, and audit finds it first. Fragmented, falsely assured, burdensome."
+- **If asked "is this internal or external change?":** "Both. External change arrives as rules and events; internal change arrives as drift. The damage is the same: the record falls behind what really happens."
 - **Deep dive:** D4 (the connected NFR core).
 
 ### 04 Standalone AI sees one system. NFR needs the whole picture.
 
-- **Remember:** this is the key screen of the first chapter. Each assistant sees one system; the NFR answer needs all of them.
-- **Visual:** the question types itself out first. Let it finish before speaking.
-- **Talk track (60 s):** "Take one question: which critical third-party services are deteriorating, and why? The answer needs eight things, and each lives in its own system: the third-party register, contracts and SLAs, incidents, risk indicators, supplier mail, assurance reports, controls and issues, service dependencies. The email assistant sees the mailbox. The document assistant sees the open file. The GRC assistant sees the GRC records. The chat assistant sees what you paste in. Nobody sees the other five, so the professional joins them by hand, for every question. NFR Workspace brings every system's content into one picture, within the user's permissions. You will see it answer exactly this question in a few minutes."
+- **Remember:** this is the key screen of the first chapter. Each assistant sees one system; the NFR answer needs all eight. Red marks the systems missing from every assistant.
+- **Visual:** the question types itself out first. The eight sources appear grey; the three that an assistant sees turn purple; then the five missing ones turn red, one by one, each marked Missing. The bars at the bottom count it: standalone AI sees three of eight, NFR Workspace fills to eight of eight, the 360 view. Let it finish before the last sentence.
+- **Talk track (60 s):** "Take one question: which critical third-party services are deteriorating, and why? The answer needs eight things, and each lives in its own system: the third-party register, contracts and SLAs, incidents, risk indicators, supplier mail, assurance reports, controls and issues, service dependencies. The email assistant sees the mailbox. The document assistant sees the open file. The GRC assistant sees the GRC records. The chat assistant sees what you paste in. The five in red: no assistant sees them, so the professional joins them by hand, for every question. Standalone AI gets three of eight. The answer needs eight of eight: the 360 view, which NFR Workspace brings together within the user's own access. Next, how that happens."
 - **Business owner asks:** "So our assistant rollout was wasted?" **Answer:** "No. Each assistant helps with its own slice. The Workspace joins the slices."
 - **IT strategist asks:** "Does that mean one big data lake?" **Answer:** "No. The Workspace reads through approved connections under the user's own access (D2, D9)."
 
 ## Chapter 2: the model
 
-### 05 One connected picture. Each role sees its own answer.
+### 05 From question to answer: how the information flows
 
-- **Remember:** the same connected records serve every NFR role, and each person sees only what their role may see. This is screen 04's "within the user's permissions", made visible.
+- **Remember:** the question first, then the five steps the information takes, for the role that asks: access checked in each system, read, connected, worked out, answered. Same steps for every role; what changes is what each role may read.
 - **Action:** the screen opens on the third-party risk manager, asking the question from screen 04. Space shows the next role (Head of NFR, operational risk partner, control owner); after the last role, Space moves on. Click a role card to jump to it. Show at least the manager and the Head of NFR; Page Down skips to screen 06.
-- **Visual, left to right:** each system checks the access of the person asking (green full, amber partial, pink no access); the Workspace links the records that came back; the answer is shaped for the role and says what was not shown and what the role may do next.
-- **Talk track (75 s):** "Same question as before, now asked by a third-party risk manager. The question travels with that person's identity, and each of the eight systems checks their access before anything comes back: everything here, except other people's mail. The Workspace links what came back: eleven critical services, three deteriorating, Novalink leading, and one cloud provider that two of them share. Now the Head of NFR: a different question, about the whole profile against appetite. Mostly summaries, no personal mailboxes, and the answer is a picture of the risk types, not a supplier file. A control owner in Procurement reads five of the eight systems, and only their own records in those. The AI sees only what the person asking may see."
+- **Visual, left to right:** 1 each system checks the access of the person asking (green full, amber partial, pink no access, dashed line: nothing comes back); 2 what may be read is read by a live query of exact records, or from a cached index of documents and mail, each with its date; 3 the knowledge graph links the records across systems; 4 rules calculate (deterministic, no model), then AI explains, each claim cited; 5 the answer for the role, with what was not shown and what the role may do next.
+- **Talk track (90 s):** "The question first: which critical third-party services are deteriorating, and why? It travels with the manager's identity, and each of the eight systems checks their access before anything comes back. Five are read live, at the source: exact records. Three are read from a cached index: documents and mail, each with its date. The knowledge graph links them: eleven critical services, three deteriorating, Novalink leading, Basalt Cloud shared by two. Rules calculate the scores: no model involved. AI writes the why, and every claim cites its source. Now the Head of NFR: a different question, mostly summaries, no personal mailboxes, and the answer is a picture of the risk types. A control owner reads five of the eight systems, and only their own records. The AI sees only what the person asking may see."
 - **Business owner asks:** "Can my team see what the Head of NFR sees?" **Answer:** "Only if their role allows it. Access comes from your existing systems and roles; the Workspace grants none of its own."
-- **IT strategist asks:** "Where is access enforced?" **Answer:** "In each source system, with the user's own identity, before anything reaches the AI. Read and write are separate permissions, and every answer cites its sources (D3, D9)."
-- **Be precise:** the third-party risk manager and the operational risk partner are roles in the product today, and their cards say so. The Head of NFR and control owner views are target design, also marked on their cards. All records are synthetic.
+- **IT strategist asks:** "Where is access enforced, and what is cached?" **Answer:** "In each source system, with the user's own identity, before anything reaches the AI. Structured records are queried live; documents and mail are indexed on change and carry their date and source; the graph holds relationships with provenance. Read and write are separate permissions (D2, D3, D4, D9)."
+- **Be precise:** the third-party risk manager and the operational risk partner are roles in the product today, and their cards say so. The Head of NFR and control owner views are target design, also marked on their cards. The flow is the target design, shown on synthetic records; appendix D8 has the full pipeline.
 - **Deep dives:** D3 (what travels with a question), D9 (access and audit).
 
 ### 06 One Workspace. Four ways to get work done.

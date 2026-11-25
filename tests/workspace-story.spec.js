@@ -99,7 +99,7 @@ test.describe('Scene contract', () => {
 
   test('manifest titles match the screen titles, within word limits', async ({ page }) => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('38');
+    expect(m.version).toBe('39');
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE);
     await open(page);
     for (const s of m.screens) {
@@ -216,11 +216,16 @@ test.describe('Role views', () => {
     R.list.forEach((r) => {
       expect(Object.keys(r.access).sort(), r.id).toEqual([...systems].sort());
       Object.values(r.access).forEach((a) => expect(typeof a === 'string' && a.length > 0 && a.length <= 13, r.id + ' ' + a).toBe(true));
-      expect(r.also, r.id).toHaveLength(2);
+      expect(typeof r.rule === 'string' && r.rule.length > 0, r.id + ' rule').toBe(true);
+      expect(typeof r.ai === 'string' && r.ai.length > 0, r.id + ' ai').toBe(true);
       expect(r.links, r.id).toHaveLength(4);
       expect(['dots', 'tiles', 'compare'], r.id).toContain(r.answer.visual.kind);
     });
     // The scopes differ: the leader reads summaries, the control owner only its own records
+    // Every system is read one way: a live query or a cached index
+    expect(Object.keys(R.modeOf).sort()).toEqual([...systems].sort());
+    Object.values(R.modeOf).forEach((m) => expect(['live', 'cache']).toContain(m));
+    expect(R.steps).toHaveLength(5);
     const reads = (id) => Object.values(R.list.find((r) => r.id === id).access).filter((a) => a !== 'none').length;
     expect([reads('head'), reads('tprm'), reads('orm'), reads('owner')]).toEqual([7, 8, 6, 5]);
   });
@@ -233,22 +238,24 @@ test.describe('Role views', () => {
       const s = document.getElementById('role-views');
       return { active: [...s.querySelectorAll('.rv-role')].findIndex((b) => b.classList.contains('is-active')),
         pressed: [...s.querySelectorAll('.rv-role')].map((b) => b.getAttribute('aria-pressed')).join(','),
-        question: s.querySelector('.rv-q .ah-q-t').textContent, reads: s.querySelector('.rv-id-r').textContent,
-        rows: [...s.querySelectorAll('.rv-sys')].map((r) => (r.className.match(/is-(full|part|none)/) || [])[1]).join(','),
+        question: s.querySelector('.rv-q .ah-q-t').textContent, reads: [...s.querySelectorAll('.rv-read-n')].map((x) => x.textContent).join(' | '),
+        rows: Object.fromEntries([...s.querySelectorAll('.rv-sys')].map((r) => [r.dataset.sys, (r.className.match(/is-(full|part|none)/) || [])[1]])),
+        rule: s.querySelector('.rv-work .rv-fact').textContent,
         answer: s.querySelector('.rv-ans-t').textContent, here: sections[current].id };
     });
     let r = await state();
     expect(r.active).toBe(1);
     expect(r.pressed).toBe('false,true,false,false');
     expect(r.question).toBe('Which critical third-party services are deteriorating, and why?');
-    expect(r.reads).toBe('Reads 8 of 8 systems');
-    expect(r.rows).toBe('full,full,full,full,part,full,full,full');
+    expect(r.reads).toBe('5 of 5 | 3 of 3');
+    expect(r.rows).toEqual({ register: 'full', incidents: 'full', kri: 'full', controls: 'full', dependencies: 'full', contracts: 'full', mail: 'part', assurance: 'full' });
+    expect(r.rule).toContain('3 of 11');
     await page.locator('#role-views .rv-role').nth(3).click();
     r = await state();
     expect(r.active).toBe(3);
     expect(r.question).toBe('Which of my controls need evidence before the Q3 sign-off?');
-    expect(r.reads).toBe('Reads 5 of 8 systems');
-    expect(r.rows).toBe('part,none,part,none,part,part,part,none');
+    expect(r.reads).toBe('3 of 5 | 2 of 3');
+    expect(r.rows).toEqual({ register: 'part', incidents: 'part', kri: 'none', controls: 'part', dependencies: 'none', contracts: 'none', mail: 'part', assurance: 'part' });
     expect(r.answer).toContain('Two of your six controls');
     expect(await page.locator('#role-views .rv-sys.is-none').count()).toBe(3);
     // Back to the start of the order, then Space walks it: manager, head, partner, owner, next screen
@@ -487,7 +494,8 @@ test.describe('Copy and claims', () => {
       expect(text.includes(EM) || text.includes(EN), id + ' dash').toBe(false);
       expect(text.includes('%'), id + ' shows a percentage').toBe(false);
       const lower = text.toLowerCase();
-      JARGON.forEach((j) => expect(new RegExp('\\b' + j + '\\b').test(lower), id + ' uses "' + j + '"').toBe(false));
+      // Screen 05 names the knowledge graph at the owner's request, next to a plain step label
+      JARGON.filter((j) => !(id === 'role-views' && j === 'knowledge graph')).forEach((j) => expect(new RegExp('\\b' + j + '\\b').test(lower), id + ' uses "' + j + '"').toBe(false));
       CLAIMS.forEach((c) => expect(lower.includes(c), id + ' claims "' + c + '"').toBe(false));
       expect(/\bad-hoc\b|\badhoc\b|paralel|parallell/.test(lower), id + ' misspells ad hoc or parallel').toBe(false);
     }

@@ -50,38 +50,61 @@
       foot: 'Prepared for one role. Decided by a person. Recorded by the system.'
     },
 
-    // ── 02 The point: questions come from everywhere, and each needs sources, a method and people ──
+    // ── 02 The point: every question pulls in askers, systems, teams and a method of its own ──
+    // Five levels, one row each. Each question links to the askers, systems, teams and
+    // method it needs; the screen steps through the four questions and ends on the last,
+    // the one screen 04 types out. The totals are counted from this data.
     arrives: {
-      needsTitle: 'To answer it',
-      whoTitle: 'Who has to help',
-      asks: [
-        { channel: 'Email', icon: 'ti-mail', from: 'From the Chief Operating Officer', text: 'Which controls duplicate across our entities, and which are deliberately different?',
-          needs: ['Control inventories of each entity', 'Control descriptions and owners', 'The risks each control covers'], who: 'Control owners in every entity' },
-        { channel: 'Meeting', icon: 'ti-users', from: 'Regulatory change forum', text: 'What does the new regulation require beyond our current framework?',
-          needs: ['The regulatory text, clause by clause', 'Current policies and standards', 'Controls already mapped to them'], who: 'Compliance and legal' },
-        { channel: 'Audit request', icon: 'ti-file-search', from: 'From Internal Audit', text: 'Can we prove that our key controls operate, not only that they are documented?',
-          needs: ['Control test results', 'The evidence behind each test', 'Signed attestations'], who: 'Control testers and owners' },
-        { channel: 'Chat', icon: 'ti-message-circle', from: 'From the Head of Procurement', text: 'Which critical third-party services are deteriorating, and why?',
-          needs: ['Supplier risk indicators', 'Incidents and open issues', 'Service dependencies'], who: 'Supplier owners and IT' }
+      levels: { who: 'Who asks', ask: 'What they ask', data: 'Where the answer lives', help: 'Who has to help', method: 'How it is worked out' },
+      askers: [
+        { id: 'board', label: 'Board risk committee' }, { id: 'coo', label: 'Chief Operating Officer' }, { id: 'forum', label: 'Regulatory change forum' },
+        { id: 'audit', label: 'Internal audit' }, { id: 'supervisor', label: 'Supervisor' }, { id: 'procurement', label: 'Head of Procurement' }
       ],
-      strong: 'No request arrives labelled with a method.',
-      line: 'The answer sits across several systems; no single tool holds it.'
+      systems: [
+        { id: 'grc', label: 'GRC platform' }, { id: 'policy', label: 'Policy library' }, { id: 'reg', label: 'Regulatory library' }, { id: 'testing', label: 'Testing tool' },
+        { id: 'docs', label: 'Document store' }, { id: 'vendor', label: 'Vendor management' }, { id: 'incidents', label: 'Incident register' }, { id: 'itsi', label: 'IT service inventory' }
+      ],
+      teams: [
+        { id: 'owners', label: 'Control owners' }, { id: 'compliance', label: 'Compliance and legal' }, { id: 'testers', label: 'Control testers' },
+        { id: 'suppliers', label: 'Supplier owners' }, { id: 'it', label: 'IT' }
+      ],
+      methods: [
+        { id: 'mapping', label: 'Control mapping' }, { id: 'gap', label: 'Regulatory gap analysis' }, { id: 'testing', label: 'Control testing' }, { id: 'trend', label: 'Trend analysis' }
+      ],
+      asks: [
+        { channel: 'Email', icon: 'ti-mail', text: 'Which controls duplicate across our entities?', who: ['coo', 'board'], data: ['grc', 'policy'], help: ['owners'], method: 'mapping' },
+        { channel: 'Meeting', icon: 'ti-users', text: 'What does the new regulation add to our framework?', who: ['forum', 'supervisor'], data: ['reg', 'policy', 'grc'], help: ['compliance'], method: 'gap' },
+        { channel: 'Audit request', icon: 'ti-file-search', text: 'Can we prove our key controls operate, not only exist?', who: ['audit', 'board'], data: ['testing', 'docs', 'grc'], help: ['testers', 'owners'], method: 'testing' },
+        { channel: 'Chat', icon: 'ti-message-circle', text: 'Which critical third-party services are deteriorating, and why?', who: ['procurement'], data: ['vendor', 'incidents', 'itsi', 'docs'], help: ['suppliers', 'it'], method: 'trend' }
+      ],
+      totals: [['askers', 'askers'], ['asks', 'questions'], ['systems', 'systems'], ['teams', 'teams'], ['methods', 'methods']],
+      strong: 'No question arrives labelled with a method.',
+      line: 'The answer sits across several systems, and each needs a different way to work it out.'
     },
 
-    // ── 03 The point: change comes from above, drift from below, and the chain between them breaks ──
+    // ── 03 The point: external change and internal change break the same chain ──
+    // Above the chain: change from outside the bank. Below it: change inside the bank. Both
+    // hit links of the same chain, some links break, and one worked example shows why it
+    // matters: one change of each kind, and what it costs today.
     chain: {
-      above: { label: 'Change from above', icon: 'ti-arrow-down', items: ['New regulation', 'Revised policy or standard', 'Audit or supervisory finding', 'Internal policy update'], hits: [0, 1] },
-      below: { label: 'Drift from below', icon: 'ti-arrow-up', items: ['Control misses the risk', 'Not performed as designed', 'Evidence stale or missing', 'Attestation no longer true'], hits: [2, 3, 4] },
+      above: { label: 'External change', sub: 'Outside the bank', icon: 'ti-world', items: ['New regulation, such as DORA', 'Supervisory finding', 'A supplier changes its service', 'A new cyber threat'], hits: [0, 1] },
+      below: { label: 'Internal change', sub: 'Inside the bank', icon: 'ti-building', items: ['Reorganisation or a new owner', 'A new system or process', 'A control no longer performed', 'Evidence out of date'], hits: [2, 3, 4] },
       links: ['Obligation', 'Risk or process', 'Control', 'Evidence', 'Assessment', 'Decision'],
       // Links that no longer tell the same story (between link i and i + 1)
       broken: [1, 2, 3],
-      consequences: [
-        { label: 'Fragmented', icon: 'ti-puzzle', text: 'No traced line from obligation to evidence.' },
-        { label: 'Falsely assured', icon: 'ti-shield-x', text: 'Attestations state what is no longer true.' },
-        { label: 'Burdensome', icon: 'ti-weight', text: 'Every new rule and every audit becomes a project.' }
+      exampleLabel: 'Why it matters, in one example',
+      example: [
+        { tone: 'data', k: 'External', text: 'DORA adds rules for ICT third parties' },
+        { tone: 'gap', k: 'Internal', text: 'Procurement moves to a new sourcing tool' },
+        { tone: 'human', k: 'Today', text: '12 controls re-mapped by hand. The Q3 sign-off rests on old evidence. Audit finds it first.' }
       ],
-      person: 'The NFR professional re-maps the chain by hand.',
-      line: 'The cost is keeping context, evidence and decisions aligned, not a lack of documents.'
+      consequences: [
+        { label: 'Fragmented', icon: 'ti-puzzle', text: 'No traced line from rule to evidence.' },
+        { label: 'Falsely assured', icon: 'ti-shield-x', text: 'Sign-offs state what is no longer true.' },
+        { label: 'Burdensome', icon: 'ti-weight', text: 'Every change becomes a project.' }
+      ],
+      person: 'Both kinds of change land on the same chain.',
+      line: 'Today a professional re-maps it by hand, so the record falls behind what really happens.'
     },
 
     // ── 04 The point: standalone AI sees one system; the NFR answer needs all of them ──
@@ -108,6 +131,15 @@
         { id: 'chat', label: 'Chat assistant', icon: 'ti-message-circle', sees: 'What you paste or upload', covers: null }
       ],
       person: 'The professional joins the other five by hand, for every question.',
+      // Red marks what no assistant sees. The two bars count it: what standalone AI sees,
+      // and what the answer needs, the 360 view NFR Workspace brings together.
+      legend: { seen: 'Seen by one assistant', missing: 'Missing: no assistant sees it' },
+      missingTag: 'Missing',
+      context: {
+        label: 'Context for this answer',
+        standalone: { label: 'Standalone AI', value: '{n} of {t}. The other {m} are joined by hand.' },
+        workspace: { label: 'NFR Workspace', value: "{t} of {t}. The 360 view, within the user's access." }
+      },
       note: ['Each assistant helps with its own slice.', "NFR Workspace brings every system's content into one picture, within the user's permissions."]
     },
 
@@ -122,9 +154,17 @@
       groups: { lead: 'Leads NFR', work: 'Runs the work' },
       status: { live: 'In the product today', target: 'Target design' },
       asks: 'asks',
-      alsoLabel: 'Also asks',
-      steps: ['1 · Each system checks access', '2 · Records connected', '3 · Answer for this role'],
-      hub: { title: 'NFR Workspace', as: 'Asking as', reads: 'Reads {n} of {t} systems' },
+      steps: ['1 · Access checked', '2 · Read', '3 · Connected', '4 · Worked out', '5 · Answer for this role'],
+      // How each system is read: a live query of exact records, or a cached index of documents
+      modeOf: { register: 'live', incidents: 'live', kri: 'live', controls: 'live', dependencies: 'live', contracts: 'cache', mail: 'cache', assurance: 'cache' },
+      modes: {
+        live: { label: 'Live query', icon: 'ti-bolt', text: 'Exact records, read at the source now' },
+        cache: { label: 'Cached index', icon: 'ti-archive', text: 'Documents and mail, each with its date' }
+      },
+      reads: '{n} of {t}',
+      graph: { label: 'Knowledge graph', icon: 'ti-affiliate', text: 'Links the records across systems' },
+      rules: { label: 'Rules calculate', icon: 'ti-calculator', text: 'Deterministic scores and thresholds. No model.' },
+      ai: { label: 'AI explains, checked', icon: 'ti-sparkles', text: 'Writes the why. Each claim cites its source.' },
       access: {
         full: { icon: 'ti-circle-check', tone: 'proof', label: 'Full' },
         part: { icon: 'ti-circle-half-2', tone: 'human' },
@@ -132,21 +172,20 @@
       },
       notShownLabel: 'Not shown:',
       mayLabel: 'May do next:',
-      method: 'Rules calculate. AI explains. Each fact cites its source.',
       order: ['tprm', 'head', 'orm', 'owner'],
       list: [
         { id: 'head', group: 'lead', icon: 'ti-user-star', label: 'Head of NFR', scope: 'Every register, summarised', status: 'target',
           question: 'Where is NFR risk moving towards its appetite limits?',
-          also: ['What should the board report flag?', 'Where do we rely on one provider?'],
+          rule: 'Ratings against appetite: 2 amber, 4 green', ai: 'Explains the concentration, citing both services',
           access: { register: 'Summary', contracts: 'Totals', incidents: 'Summary', kri: 'full', mail: 'none', assurance: 'Summary', controls: 'Summary', dependencies: 'full' },
           links: [{ type: 'Risk types', text: '6 in the profile' }, { type: 'Third party', text: 'Amber, 3 services' }, { type: 'Concentration', text: '2 on one provider' }, { type: 'Board report', text: '1 item to flag' }],
           answer: { text: 'Third-party risk is nearing its limit. Two services rely on one cloud provider.',
             visual: { kind: 'tiles', items: [{ label: 'Third party', tone: 'human' }, { label: 'Resilience', tone: 'human' }, { label: 'Cyber', tone: 'proof' }, { label: 'Data', tone: 'proof' }, { label: 'Conduct', tone: 'proof' }, { label: 'Fraud', tone: 'proof' }] },
-            notShown: 'Personal mailboxes and case-level detail',
-            may: 'Approve a risk acceptance above the threshold' } },
+            notShown: 'Personal mailboxes, case-level detail',
+            may: 'Approve large risk acceptances' } },
         { id: 'tprm', group: 'work', icon: 'ti-briefcase', label: 'Third-party risk manager', scope: 'All suppliers, full records', status: 'live',
           question: 'Which critical third-party services are deteriorating, and why?',
-          also: ['Which annual reviews are due this month?', 'What evidence is still missing?'],
+          rule: 'Deterioration score: 3 of 11 over threshold', ai: 'Explains why: two share Basalt Cloud, each claim cited',
           access: { register: 'full', contracts: 'full', incidents: 'full', kri: 'full', mail: 'Own mailbox', assurance: 'full', controls: 'full', dependencies: 'full' },
           links: [{ type: 'Services', text: '11 critical' }, { type: 'Deteriorating', text: '3 services' }, { type: 'Leading', text: 'Novalink, up 23' }, { type: 'Shared provider', text: 'Basalt Cloud' }],
           answer: { text: 'Three critical services are deteriorating. Novalink leads, up 23 points.',
@@ -155,7 +194,7 @@
             may: 'Request evidence, once approved' } },
         { id: 'orm', group: 'work', icon: 'ti-shield-check', label: 'Operational risk partner', scope: 'Risks and controls, all units', status: 'live',
           question: 'Which self-assessments still rate a failed control as effective?',
-          also: ['Which risks need reassessment after recent incidents?', 'Where is evidence out of date?'],
+          rule: 'Rating against test result: 1 mismatch', ai: 'Drafts the challenge, citing the test and the RCSA',
           access: { register: 'full', contracts: 'none', incidents: 'full', kri: 'full', mail: 'none', assurance: 'full', controls: 'full', dependencies: 'full' },
           links: [{ type: 'Control', text: 'CTL-0417 failed' }, { type: 'Self-assessment', text: 'RCSA Q3: effective' }, { type: 'Risk', text: 'R-21 to review' }, { type: 'Obligation', text: 'OBL-12 relies on it' }],
           answer: { text: 'One self-assessment still rates a failed control as effective.',
@@ -164,12 +203,12 @@
             may: 'Record a second-line challenge' } },
         { id: 'owner', group: 'work', icon: 'ti-clipboard-check', label: 'Control owner', scope: 'Own controls, in Procurement', status: 'target',
           question: 'Which of my controls need evidence before the Q3 sign-off?',
-          also: ['What changed in my control tests?', 'What is due this week?'],
+          rule: 'Evidence due before sign-off: 2 of 6 controls', ai: 'Lists what is missing, citing each control',
           access: { register: 'Own only', contracts: 'none', incidents: 'Own unit', kri: 'none', mail: 'Own mailbox', assurance: 'Own only', controls: 'Own controls', dependencies: 'none' },
           links: [{ type: 'Your controls', text: '6 in Procurement' }, { type: 'Control', text: 'CTL-0417 failed' }, { type: 'Evidence', text: '2 items missing' }, { type: 'Attestation', text: 'Q3 sign-off flagged' }],
           answer: { text: 'Two of your six controls need evidence before the Q3 sign-off.',
             visual: { kind: 'tiles', items: [{ label: 'CTL-0417', tone: 'gap' }, { label: 'CTL-0421', tone: 'human' }, { label: 'CTL-0402', tone: 'proof' }, { label: 'CTL-0409', tone: 'proof' }, { label: 'CTL-0411', tone: 'proof' }, { label: 'CTL-0433', tone: 'proof' }] },
-            notShown: 'Other units, contracts, risk indicators',
+            notShown: 'Other units and contracts',
             may: 'Upload evidence and attest' } }
       ],
       line: ['The AI sees only what the person asking may see.', 'Each system checks access before anything reaches the AI.']
