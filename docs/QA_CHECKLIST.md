@@ -17,8 +17,8 @@ Last full run: 363 passed, 0 failed on the five desktop projects (v40; see the r
 
 | Test | Status | Evidence |
 |---|---|---|
-| Comprehension: a first-time viewer explains why work arrives as a question, why the chain drifts, why an assistant is not the Workspace, what each role sees, Ask / Use / Run / Create, the three layers, why small methods, where authority remains, what five weeks and six months prove | **Not done.** Needs people | Screens 02 to 04 carry the problem by minute six; screen 05 shows each role's view; screen 09 explains the demonstration; the principle is on the cover and screen 11 |
-| Business owner: which of my requests, what changes for my team, what it costs, how we start | Pass on paper | Screens 02, 05, 12, 13, 15; appendix V1 to V3, S1, S2 |
+| Comprehension: a first-time viewer explains why work arrives as a question, why the chain drifts, why an assistant is not the Workspace, what each role sees, Ask / Use / Run / Create, the three layers, why small methods, where authority remains, what five weeks and six months prove | **Not done.** Needs people | Screens 02 to 04 carry the problem by minute six; screen 05 shows how the information flows per role; screen 09 explains the demonstration with four kinds of agent; the principle is on the cover and screen 11 |
+| Business owner: which of my requests, what changes for my team, what it costs, how we start | Pass on paper | Screens 02, 05, 07, 12, 13, 14; appendix V1 to V3, S1, S2 |
 | IT strategist: what sits behind it, what stays authoritative, identity and access, model risk, the graph, facts to visuals, write-back, runtime dependency | Pass on paper | Screen 05; appendix D1 to D9, M2, M5, M6, M7 |
 | Claims: every appendix page carries one claim status; no core screen claims production deployment, autonomy or guaranteed compliance | Pass | Automated: claim status on every page, banned-claims list on core and appendix text, copy lint |
 | Confidentiality: internal content is physically absent from the public bundle | Pass | Automated: `tests/build.spec.js`, term scan of `dist/`, every committable file and the full history (section 5) |
@@ -28,14 +28,14 @@ Last full run: 363 passed, 0 failed on the five desktop projects (v40; see the r
 
 | # | Check | Status | How |
 |---|---|---|---|
-| 1 | Fifteen core screens, four chapters (4, 3, 4, 4), counter 1 / 15, landing buttons to 01, 05, 08, 12 | Pass | Automated |
+| 1 | Fourteen core screens, four chapters (4, 3, 4, 3), counter 1 / 14, landing buttons to 01, 05, 08, 12 | Pass | Automated |
 | 2 | No mock of the product in the deck | Pass | Automated |
 | 3 | Enter NFR Workspace: four statuses, ends on the live cue, Space skips | Pass | Automated |
 | 4 | L opens the live product; `?live=` changes the URL | Pass | Automated |
 | 5 | After the demonstration, Space on screen 08 and the end of the captured fallback both continue to screen 09 | Pass | Automated |
 | 6 | Appendix: four domains (5, 8, 9, 6 pages), each page with question, answer, visual, implication, claim status, index, previous, next, main story; no v6 page ids left | Pass | Automated |
 | 7 | Keys: A, 1 to 4, M, Escape one level; browser Back returns from a page | Pass | Automated |
-| 8 | Fifteen deep links from nine core screens into the matching pages | Pass | Automated |
+| 8 | Seventeen deep links from nine core screens into the matching pages | Pass | Automated |
 | 9 | V3 calculator recalculates deterministically and resets | Pass | Automated |
 | 10 | Safe mode, offline run, reset (0), state model covers every state the route reaches | Pass | Automated |
 | 11 | No console errors | Pass | Automated per viewport; visual QA and the PDF export report zero |
@@ -54,7 +54,7 @@ Last full run: 363 passed, 0 failed on the five desktop projects (v40; see the r
 
 ## 4. Claim review
 
-Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, synthetic figures*, *Delivery practice*, *Concept for validation*, *Implementation option*. The public edition shows no client names, no client figures, no credentials and no commercial terms; screen 14 describes areas of experience only and says examples are shared separately, subject to permission. The internal edition's credentials carry a claim-review line and need the engagement lead's sign-off before client use (local notes).
+Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, synthetic figures*, *Delivery practice*, *Concept for validation*, *Implementation option*. The public edition shows no client names, no client figures, no credentials and no commercial terms; screen 13 says the commercial model is agreed with the client and shared separately. Credentials are no longer a core screen. The internal edition's screen 13 shows the indicative commercial models, which need deal-team and legal approval before client use. The internal edition's credentials carry a claim-review line and need the engagement lead's sign-off before client use (local notes).
 
 ## 5. Confidentiality
 

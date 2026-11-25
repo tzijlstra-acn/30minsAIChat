@@ -27,7 +27,7 @@ const VIEWPORTS = [
 
 const CORE_SLIDES = [
   'cover', 'work-arrives', 'chain-drift', 'assistance-here', 'role-views', 'four-ways', 'three-layers', 'enter-workspace',
-  'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'qualify-and-prove', 'experience', 'workshop-decision'
+  'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'bring-in', 'workshop-decision'
 ];
 
 async function gotoPage(page, url) {
@@ -70,7 +70,7 @@ for (const vp of VIEWPORTS) {
       expect(overflowing).toEqual([]);
     });
 
-    test('all 15 core screens are attached to the DOM', async ({ page }) => {
+    test('all 14 core screens are attached to the DOM', async ({ page }) => {
       await gotoPage(page);
       for (const id of CORE_SLIDES) {
         await expect(page.locator(`#${id}`), `${id} missing at ${vp.name}`).toBeAttached();
@@ -140,7 +140,7 @@ test('store is initialised with defaults', async ({ page }) => {
   expect(state).not.toBeNull();
 });
 
-test('exactly 15 core screens, appendix excluded from the core route', async ({ page }) => {
+test('exactly 14 core screens, appendix excluded from the core route', async ({ page }) => {
   await gotoPage(page);
   const ids = await page.$$eval('section[data-route="core"]', (s) => s.map((x) => x.id));
   expect(ids).toEqual(CORE_SLIDES);
@@ -150,7 +150,7 @@ test('exactly 15 core screens, appendix excluded from the core route', async ({ 
 test('counter total comes from the DOM', async ({ page }) => {
   await gotoPage(page);
   await page.waitForTimeout(500);
-  await expect(page.locator('#counter')).toHaveText('1 / 15');
+  await expect(page.locator('#counter')).toHaveText('1 / 14');
 });
 
 test('nav bar has an Evidence Atlas button', async ({ page }) => {
@@ -230,10 +230,10 @@ test('Evidence Atlas hides its loading hint after init', async ({ page }) => {
 test.describe('Static checks', () => {
   chromiumOnly();
 
-  test('build fingerprint is v40', () => {
+  test('build fingerprint is v41', () => {
     const html = read('pitch.html');
-    expect(html).toMatch(/<meta name="nfr-build" content="v40-[0-9a-f]{7}">/);
-    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v40'/);
+    expect(html).toMatch(/<meta name="nfr-build" content="v41-[0-9a-f]{7}">/);
+    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v41'/);
   });
 
   test('all local asset ?v= strings share one fingerprint', () => {
@@ -243,7 +243,7 @@ test.describe('Static checks', () => {
 
   test('story manifest is version 31 with four chapters and ten core screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('40');
+    expect(m.version).toBe('41');
     expect(m.chapters.map((c) => c.id)).toEqual(['shift', 'model', 'workspace', 'path']);
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE_SLIDES);
   });

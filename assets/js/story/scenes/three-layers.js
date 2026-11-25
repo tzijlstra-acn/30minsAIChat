@@ -1,74 +1,108 @@
 // Scene: three-layers (screen 07)
-// Causal story: AI scales when work, process and data improve together, one role at a
-// time. Three stages run left to right: today (AI pilots), the first loop (one NFR role
-// in the Workspace), at scale (every NFR role). Three layers run top to bottom: work and
-// roles, process and controls, data and platform. Today's cells show the pilot problem;
-// the next two columns show each layer improving. NFR Workspace is where all three meet.
+// Causal story: from AI pilots to a Workspace that grows by module. Left, how most banks
+// start with AI today, layer by layer (each person their own AI, handoffs manual, each
+// pilot its own copy of the data): pilots that do not scale, share or prove control.
+// Right, NFR Workspace: set up once (identity and access, approved connectors, the
+// connected core, controls and audit), with a first team live in six months; then the
+// next team on the same core, then further teams, one at a time. Run it your way:
+// in-house, managed by Accenture, or start managed and move in-house.
 SceneDirector.register('three-layers', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
-  var W = 1040, H = 440;
-  var LABEL = { x: 16, w: 160 };
-  var COL = { x0: 190, w: 254, gap: 36 };
-  var HEAD = { y: 0, h: 60 };
-  var ROW = { y0: 76, h: 82, gap: 10 };
+  var G = D.grow;
+  var W = 1040, H = 520;
+  var LEFT = { x: 16, y: 22, w: 300, h: 316 };
+  var RIGHT = { x: 360, w: 664 };
+  var MOD = { y: 44, h: 206, gap: 14 };
+  var FOUND = { y: 270, h: 68 };
+  var RUN = { y: 360, h: 46 };
+  var NOTE = 426;
 
   var cv = null;
   var n = {};
   var done = false;
 
-  function colX(i) { return COL.x0 + i * (COL.w + COL.gap); }
-  function rowY(r) { return ROW.y0 + r * (ROW.h + ROW.gap); }
+  function modX(i) { var w = (RIGHT.w - (G.modules.length - 1) * MOD.gap) / G.modules.length; return { x: RIGHT.x + i * (w + MOD.gap), w: w }; }
 
   function build() {
     if (cv) cv.destroy();
-    cv = S.canvas(container, W, H, { id: 'three-layers', refHeight: 520 });
-    n = { heads: [], labels: [], cols: [[], [], []], arrows: [[], []] };
+    cv = S.canvas(container, W, H, { id: 'three-layers', align: 'top' });
+    n = { rows: [], mods: [], arrows: [], drops: [] };
     done = false;
     var root = cv.el;
+    var g = cv.svg;
 
-    D.stages.forEach(function(st, c) {
-      var h = S.el('div', 'tl-stage ts-c-' + st.tone + ' ts-hide ts-up', null, { left: colX(c), top: HEAD.y, width: COL.w, height: HEAD.h });
-      var top = S.el('div', 'tl-stage-top ts-ink');
-      top.appendChild(S.icon(st.icon));
-      top.appendChild(S.el('span', null, st.label));
-      h.appendChild(top);
-      h.appendChild(S.el('div', 'tl-stage-sub', st.sub));
-      root.appendChild(h);
-      n.heads.push(h);
-      if (c < D.stages.length - 1) {
-        var a = S.el('div', 'tl-arrow tl-arrow-head ts-hide', null, { left: colX(c) + COL.w, top: HEAD.y + HEAD.h / 2 - 11, width: COL.gap, height: 22 });
-        a.appendChild(S.icon('ti-arrow-right'));
+    // Today: how most banks start with AI
+    n.todayLabel = S.el('div', 'ts-label ts-hide', G.todayLabel, { left: LEFT.x, top: 0, width: LEFT.w + 20 });
+    root.appendChild(n.todayLabel);
+    n.today = S.el('div', 'ts-obj ts-c-gap ts-dash tl2-today ts-hide ts-up', null, { left: LEFT.x, top: LEFT.y, width: LEFT.w, height: LEFT.h });
+    D.layers.forEach(function(l) {
+      var r = S.el('div', 'tl2-layer');
+      var k = S.el('div', 'tl2-layer-k');
+      k.appendChild(S.icon(l.icon));
+      k.appendChild(S.el('span', null, l.label));
+      r.appendChild(k);
+      r.appendChild(S.el('div', 'tl2-layer-t', l.today));
+      n.today.appendChild(r);
+    });
+    var res = S.el('div', 'tl2-result ts-ink');
+    res.appendChild(S.icon('ti-circle-dashed'));
+    res.appendChild(S.el('span', null, G.todayResult));
+    n.today.appendChild(res);
+    root.appendChild(n.today);
+    n.shift = S.el('div', 'tl2-shift ts-hide', null, { left: LEFT.x + LEFT.w + 4, top: LEFT.y + LEFT.h / 2 - 16, width: RIGHT.x - LEFT.x - LEFT.w - 8, height: 32 });
+    n.shift.appendChild(S.icon('ti-arrow-right'));
+    root.appendChild(n.shift);
+
+    // With NFR Workspace: modules on one foundation
+    n.label = S.el('div', 'ts-label ts-ink ts-c-ai ts-hide', G.label, { left: RIGHT.x, top: 0, width: RIGHT.w });
+    root.appendChild(n.label);
+    G.modules.forEach(function(m, i) {
+      var p = modX(i);
+      var b = S.el('div', 'ts-obj ts-c-' + m.tone + ' tl2-mod ts-hide ts-up', null, { left: p.x, top: MOD.y, width: p.w, height: MOD.h });
+      b.appendChild(S.el('div', 'tl2-when ts-ink', m.when));
+      var h = S.el('div', 'tl2-mod-head');
+      h.appendChild(S.icon(m.icon, 'ts-ink'));
+      h.appendChild(S.el('span', null, m.label));
+      b.appendChild(h);
+      var ul = S.el('ul', 'tl2-steps');
+      m.steps.forEach(function(t) { ul.appendChild(S.el('li', null, t)); });
+      b.appendChild(ul);
+      var get = S.el('div', 'tl2-get');
+      get.appendChild(S.icon('ti-check', 'ts-ink'));
+      get.appendChild(S.el('span', null, m.get));
+      b.appendChild(get);
+      root.appendChild(b);
+      n.mods.push(b);
+      var cx = p.x + p.w / 2;
+      n.drops.push(S.path(g, 'M' + cx + ' ' + (MOD.y + MOD.h + 2) + ' L' + cx + ' ' + (FOUND.y - 3), 'ts-s-data tl2-drop'));
+      if (i < G.modules.length - 1) {
+        var a = S.el('div', 'tl2-arrow ts-hide', null, { left: p.x + p.w, top: MOD.y + MOD.h / 2 - 10, width: MOD.gap, height: 20 });
+        a.appendChild(S.icon('ti-chevron-right'));
         root.appendChild(a);
-        n.arrows[c].push(a);
+        n.arrows.push(a);
       }
     });
+    n.found = S.el('div', 'ts-obj ts-c-data ts-soft tl2-found ts-hide ts-up', null, { left: RIGHT.x, top: FOUND.y, width: RIGHT.w, height: FOUND.h });
+    var fk = S.el('div', 'tl2-found-k ts-ink');
+    fk.appendChild(S.el('span', 'ws-mark fw-mark'));
+    fk.appendChild(S.el('span', null, G.foundation.label));
+    n.found.appendChild(fk);
+    var fr = S.el('div', 'tl2-found-row');
+    G.foundation.items.forEach(function(t) { fr.appendChild(S.el('span', 'tl2-found-i', t)); });
+    n.found.appendChild(fr);
+    root.appendChild(n.found);
 
-    D.layers.forEach(function(l, r) {
-      var lab = S.el('div', 'tl-layer ts-hide ts-left', null, { left: LABEL.x, top: rowY(r), width: LABEL.w, height: ROW.h });
-      lab.appendChild(S.icon(l.icon));
-      lab.appendChild(S.el('span', null, l.label));
-      root.appendChild(lab);
-      n.labels.push(lab);
-      D.stages.forEach(function(st, c) {
-        var text = l[st.id];
-        var cell = S.el('div', 'ts-obj ts-c-' + st.tone + ' tl-cell' + (c === 0 ? ' ts-dash is-today' : ' ts-soft') + ' ts-hide ts-up', null, { left: colX(c), top: rowY(r), width: COL.w, height: ROW.h });
-        cell.appendChild(S.icon(c === 0 ? 'ti-x' : 'ti-check', 'tl-mark ts-ink'));
-        cell.appendChild(S.el('span', 'tl-cell-t', text));
-        root.appendChild(cell);
-        n.cols[c].push(cell);
-        if (c < D.stages.length - 1) {
-          var a = S.el('div', 'tl-arrow ts-hide', null, { left: colX(c) + COL.w, top: rowY(r) + ROW.h / 2 - 11, width: COL.gap, height: 22 });
-          a.appendChild(S.icon('ti-arrow-right'));
-          root.appendChild(a);
-          n.arrows[c].push(a);
-        }
-      });
-    });
+    // Run it your way
+    n.run = S.el('div', 'ts-obj ts-c-human ts-soft qp-need tl2-run ts-hide ts-up', null, { left: 16, top: RUN.y, width: 1008, height: RUN.h });
+    n.run.appendChild(S.icon('ti-settings', 'ts-ink'));
+    n.run.appendChild(S.el('span', 'qp-need-k ts-ink', G.runLabel));
+    G.run.forEach(function(t) { n.run.appendChild(S.el('span', 'qp-chip', t)); });
+    root.appendChild(n.run);
 
-    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: rowY(3) + 18, width: 1008 });
-    n.note.appendChild(S.el('span', 'ah-note-strong', D.layersLine));
-    n.note.appendChild(S.el('span', 'ts-text', D.layersLine2));
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: NOTE, width: 1008 });
+    n.note.appendChild(S.el('span', 'ah-note-strong', G.line[0]));
+    n.note.appendChild(S.el('span', 'ts-text', G.line[1]));
     root.appendChild(n.note);
   }
 
@@ -79,12 +113,15 @@ SceneDirector.register('three-layers', function(container, manifest, reduced) {
   }
 
   var steps = [
-    { delay: 200,  run: function() { S.on(n.heads); } },
-    { delay: 700,  run: function() { S.on(n.labels); S.on(n.cols[0]); } },
-    { delay: 1500, run: function() { S.on(n.arrows[0]); S.on(n.cols[1]); } },
-    { delay: 2300, run: function() { S.on(n.arrows[1]); S.on(n.cols[2]); } },
-    { delay: 3000, run: function() { S.on(n.note); } },
-    { delay: 3600, run: complete }
+    { delay: 200,  run: function() { S.on(n.todayLabel); S.on(n.today); } },
+    { delay: 1100, run: function() { S.on(n.shift); S.on(n.label); } },
+    { delay: 1400, run: function() { S.on(n.found); } },
+    { delay: 1900, run: function() { S.on(n.mods[0]); S.on(n.drops[0]); } },
+    { delay: 2600, run: function() { S.on(n.arrows[0]); S.on(n.mods[1]); S.on(n.drops[1]); } },
+    { delay: 3200, run: function() { S.on(n.arrows[1]); S.on(n.mods[2]); S.on(n.drops[2]); } },
+    { delay: 3900, run: function() { S.on(n.run); } },
+    { delay: 4500, run: function() { S.on(n.note); } },
+    { delay: 5000, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -99,9 +136,10 @@ SceneDirector.register('three-layers', function(container, manifest, reduced) {
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return D.layers.map(function(l) {
-        return l.label + ': ' + D.stages.map(function(st) { return st.label.toLowerCase() + ', ' + l[st.id].toLowerCase(); }).join('; ');
-      }).join('. ') + '. ' + D.layersLine + ' ' + D.layersLine2;
+      return G.todayLabel + ': ' + D.layers.map(function(l) { return l.label + ', ' + l.today.toLowerCase(); }).join('; ') + '. ' + G.todayResult + '. '
+        + G.label + ': ' + G.foundation.label + ', ' + G.foundation.items.join(', ').toLowerCase() + '. '
+        + G.modules.map(function(m) { return m.when + ': ' + m.label + ', ' + m.steps.join(', ').toLowerCase() + '; ' + m.get.toLowerCase(); }).join('. ') + '. '
+        + G.runLabel + ': ' + G.run.join(', ').toLowerCase() + '. ' + G.line.join(' ');
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

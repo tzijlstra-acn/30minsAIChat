@@ -1,79 +1,108 @@
 // Scene: authority-boundary (screen 11)
-// Causal story: AI prepares, professionals decide, systems record. Three columns follow
-// the headline, left to right, each opening with what happened in the demonstration
-// (AI drafted the evidence request, the professional approved it as their own judgement,
-// the system checked permissions, wrote the change and issued a receipt), then what that
-// part may do. Then how far AI goes, step by step: it finds the evidence and applies the
-// method; it proposes a judgement against policy, which a person confirms; the decision
-// belongs to a named person. Running a step grants no authority.
+// Causal story: thresholds decide when a person steps in, and automation is earned. Every
+// case is checked against the bank's thresholds (materiality, confidence in the evidence,
+// policy rules), set by its risk owners. Three lanes follow: runs on its own (low
+// materiality, high confidence; logged and sampled), a person reviews (higher materiality
+// or low confidence), a person decides (material, or a policy says so; AI prepares the
+// options). Then how routine work moves to automation: at go-live every output is
+// reviewed; once proven, routine cases are sampled; at scale routine runs on its own,
+// monitored. The share that a person decides stays the same: material judgement stays
+// with a named person. AI prepares. Professionals decide. Systems record.
 SceneDirector.register('authority-boundary', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var B = D.boundary;
-  var W = 1040, H = 440;
-  var COL = { y: 0, w: 316, h: 232, gap: 30 };
-  var LAD = { label: 254, y: 278, h: 96, arrow: 20 };
+  var Rt = B.routing;
+  var W = 1040, H = 470;
+  var IN = { y: 0, h: 44 };
+  var LANE = { y: 78, h: 168, w: 320, gap: 24 };
+  var PROG = { label: 264, y: 286, h: 74, w: 320, gap: 24 };
+  var KEEP = 376;
+  var NOTE = 418;
+  var TONES = ['proof', 'ai', 'human'];
 
   var cv = null;
   var n = {};
   var done = false;
 
-  function colX(i) { return 16 + i * (COL.w + COL.gap); }
+  function laneX(i) { return 16 + i * (LANE.w + LANE.gap); }
 
   function build() {
     if (cv) cv.destroy();
     cv = S.canvas(container, W, H, { id: 'authority-boundary', refHeight: 520 });
-    n = { cols: [], arrows: [], steps: [], stepArrows: [] };
+    n = { lanes: [], drops: [], stages: [], arrows: [] };
     done = false;
     var root = cv.el;
-    B.columns.forEach(function(c, i) {
-      var b = S.el('div', 'ts-obj ts-c-' + c.tone + ' ab-col ts-hide ts-up', null, { left: colX(i), top: COL.y, width: COL.w, height: COL.h });
-      var head = S.el('div', 'ab-head ts-ink');
-      head.appendChild(S.icon(c.icon));
-      head.appendChild(S.el('span', 'ab-head-t', c.label));
-      b.appendChild(head);
-      var demo = S.el('div', 'ab-demo');
-      demo.appendChild(S.el('div', 'ab-k', B.demoLabel));
-      demo.appendChild(S.el('div', 'ab-demo-t', c.demo));
-      b.appendChild(demo);
-      var ul = S.el('ul', 'ab-list');
-      c.items.forEach(function(t) { ul.appendChild(S.el('li', null, t)); });
-      b.appendChild(ul);
+    var g = cv.svg;
+
+    // Every case is checked against the bank's thresholds
+    n.input = S.el('div', 'ts-obj ts-c-neutral ts-soft qp-need ab2-in ts-hide', null, { left: 16, top: IN.y, width: 1008, height: IN.h });
+    n.input.appendChild(S.icon('ti-adjustments', 'ab2-in-i'));
+    n.input.appendChild(S.el('span', 'qp-need-k', Rt.inLabel));
+    Rt.inputs.forEach(function(t) { n.input.appendChild(S.el('span', 'qp-chip', t)); });
+    n.input.appendChild(S.el('span', 'ab2-setby', Rt.setBy));
+    root.appendChild(n.input);
+
+    Rt.lanes.forEach(function(l, i) {
+      var x = laneX(i), cx = x + LANE.w / 2;
+      n.drops.push(S.path(g, 'M' + cx + ' ' + (IN.y + IN.h + 3) + ' L' + cx + ' ' + (LANE.y - 5), 'ts-s-' + l.tone + ' ab2-drop', cv.marker(l.tone)));
+      var b = S.el('div', 'ts-obj ts-c-' + l.tone + ' ab2-lane ts-hide ts-up', null, { left: x, top: LANE.y, width: LANE.w, height: LANE.h });
+      var h = S.el('div', 'ab-head ts-ink');
+      h.appendChild(S.icon(l.icon));
+      h.appendChild(S.el('span', 'ab2-lane-t', l.label));
+      b.appendChild(h);
+      b.appendChild(S.el('div', 'ab2-rule', l.rule));
+      b.appendChild(S.el('div', 'ab2-how', l.how));
+      var ex = S.el('div', 'ab2-ex');
+      ex.appendChild(S.el('div', 'ab-k', 'For example'));
+      ex.appendChild(S.el('div', 'ab2-ex-t', l.example));
+      b.appendChild(ex);
       root.appendChild(b);
-      n.cols.push(b);
-      if (i < B.columns.length - 1) {
-        var a = S.el('div', 'ab-arrow ts-hide', null, { left: colX(i) + COL.w, top: COL.y + COL.h / 2 - 11, width: COL.gap, height: 22 });
-        a.appendChild(S.icon('ti-arrow-right'));
+      n.lanes.push(b);
+    });
+
+    // How routine work moves to automation; the share a person decides stays the same
+    n.progLabel = S.el('div', 'ts-label ts-hide', Rt.progressLabel, { left: 16, top: PROG.label, width: 520 });
+    root.appendChild(n.progLabel);
+    n.key = S.el('div', 'ab2-key ts-hide', null, { left: 524, top: PROG.label - 1, width: 500 });
+    Rt.lanes.forEach(function(l, j) {
+      var k = S.el('span', 'ab2-key-i ts-c-' + TONES[j]);
+      k.appendChild(S.el('span', 'ab2-key-sw'));
+      k.appendChild(S.el('span', null, l.label));
+      n.key.appendChild(k);
+    });
+    root.appendChild(n.key);
+    Rt.stages.forEach(function(st, i) {
+      var x = laneX(i);
+      var b = S.el('div', 'ts-obj ts-c-neutral ab2-stage ts-hide ts-up', null, { left: x, top: PROG.y, width: PROG.w, height: PROG.h });
+      var hd = S.el('div', 'ab2-stage-head');
+      hd.appendChild(S.el('span', 'ab2-when', st.when));
+      hd.appendChild(S.el('span', 'ab2-stage-t', st.text));
+      b.appendChild(hd);
+      var mix = S.el('div', 'ab2-mix');
+      st.mix.forEach(function(v, j) {
+        if (!v) return;
+        var seg = S.el('span', 'ab2-seg ts-c-' + TONES[j]);
+        seg.style.flexGrow = String(v);
+        mix.appendChild(seg);
+      });
+      b.appendChild(mix);
+      root.appendChild(b);
+      n.stages.push(b);
+      if (i < Rt.stages.length - 1) {
+        var a = S.el('div', 'ab-arrow ts-hide', null, { left: x + PROG.w, top: PROG.y + PROG.h / 2 - 10, width: PROG.gap, height: 20 });
+        a.appendChild(S.icon('ti-chevron-right'));
         root.appendChild(a);
         n.arrows.push(a);
       }
     });
-    // How far AI goes, step by step
-    var L = B.ladder;
-    n.ladLabel = S.el('div', 'ts-label ts-hide', L.label, { left: 16, top: LAD.label, width: 520 });
-    root.appendChild(n.ladLabel);
-    n.ladAside = S.el('div', 'ab-aside ts-hide', L.aside, { left: 524, top: LAD.label - 1, width: 500 });
-    root.appendChild(n.ladAside);
-    var sw = (1008 - (L.steps.length - 1) * LAD.arrow) / L.steps.length;
-    L.steps.forEach(function(st, i) {
-      var x = 16 + i * (sw + LAD.arrow);
-      var b = S.el('div', 'ts-obj ts-c-' + st.tone + ' ts-soft ab-step ts-hide ts-up', null, { left: x, top: LAD.y, width: sw, height: LAD.h });
-      var h = S.el('div', 'ab-step-head');
-      h.appendChild(S.el('span', 'ab-step-n ts-ink', String(i + 1)));
-      h.appendChild(S.el('span', 'ab-step-t', st.label));
-      b.appendChild(h);
-      b.appendChild(S.el('span', 'ab-step-who ts-ink', st.who));
-      b.appendChild(S.el('div', 'ab-step-x', st.example));
-      root.appendChild(b);
-      n.steps.push(b);
-      if (i < L.steps.length - 1) {
-        var a = S.el('div', 'ab-arrow ts-hide', null, { left: x + sw, top: LAD.y + LAD.h / 2 - 10, width: LAD.arrow, height: 20 });
-        a.appendChild(S.icon('ti-chevron-right'));
-        root.appendChild(a);
-        n.stepArrows.push(a);
-      }
-    });
-    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: LAD.y + LAD.h + 20, width: 1008 });
+    n.keep = S.el('div', 'ab2-keep ts-hide', null, { left: 16, top: KEEP, width: 1008, height: 24 });
+    n.keep.appendChild(S.icon('ti-user-check', 'ab2-keep-i'));
+    n.keep.appendChild(S.el('span', 'ab2-keep-t', Rt.keep));
+    n.keep.appendChild(S.el('span', 'ab2-move', Rt.move));
+    root.appendChild(n.keep);
+
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: NOTE, width: 1008 });
     n.note.appendChild(S.el('span', 'ah-note-strong', B.line[0]));
     n.note.appendChild(S.el('span', 'ts-text', B.line[1]));
     root.appendChild(n.note);
@@ -86,16 +115,17 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
   }
 
   var steps = [
-    { delay: 200,  run: function() { S.on(n.cols[0]); } },
-    { delay: 900,  run: function() { S.on(n.arrows[0]); S.on(n.cols[1]); } },
-    { delay: 1600, run: function() { S.on(n.arrows[1]); S.on(n.cols[2]); } },
-    { delay: 2300, run: function() { S.on(n.ladLabel); S.on(n.steps[0]); } },
-    { delay: 2550, run: function() { S.on(n.stepArrows[0]); S.on(n.steps[1]); } },
-    { delay: 2800, run: function() { S.on(n.stepArrows[1]); S.on(n.steps[2]); } },
-    { delay: 3050, run: function() { S.on(n.stepArrows[2]); S.on(n.steps[3]); } },
-    { delay: 3400, run: function() { S.on(n.ladAside); } },
-    { delay: 3800, run: function() { S.on(n.note); } },
-    { delay: 4300, run: complete }
+    { delay: 200,  run: function() { S.on(n.input); } },
+    { delay: 700,  run: function() { S.on(n.drops); } },
+    { delay: 1000, run: function() { S.on(n.lanes[0]); } },
+    { delay: 1400, run: function() { S.on(n.lanes[1]); } },
+    { delay: 1800, run: function() { S.on(n.lanes[2]); } },
+    { delay: 2500, run: function() { S.on(n.progLabel); S.on(n.key); S.on(n.stages[0]); } },
+    { delay: 3000, run: function() { S.on(n.arrows[0]); S.on(n.stages[1]); } },
+    { delay: 3500, run: function() { S.on(n.arrows[1]); S.on(n.stages[2]); } },
+    { delay: 4100, run: function() { S.on(n.keep); } },
+    { delay: 4600, run: function() { S.on(n.note); } },
+    { delay: 5100, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -110,9 +140,10 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return B.columns.map(function(c) { return c.label + '. ' + B.demoLabel + ': ' + c.demo + ' ' + c.items.join(', ') + '.'; }).join(' ') + ' '
-        + B.ladder.label + ': ' + B.ladder.steps.map(function(st, i) { return (i + 1) + ' ' + st.label.toLowerCase() + ', ' + st.who + ', for example ' + st.example.toLowerCase(); }).join('; ') + '. '
-        + B.ladder.aside + ' ' + B.line.join(' ');
+      return Rt.inLabel + ' ' + Rt.inputs.join(', ').toLowerCase() + '. ' + Rt.setBy + '. '
+        + Rt.lanes.map(function(l) { return l.label + ': ' + l.rule.toLowerCase() + '; ' + l.how.toLowerCase() + '; for example, ' + l.example.toLowerCase(); }).join('. ') + '. '
+        + Rt.progressLabel + ': ' + Rt.stages.map(function(st) { return st.when + ', ' + st.text.toLowerCase(); }).join('; then ') + '. '
+        + Rt.keep + ' ' + Rt.move + ' ' + B.line.join(' ');
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

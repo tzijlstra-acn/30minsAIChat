@@ -217,3 +217,19 @@ Ideas taken from a vertical-AI conversation the owner shared, translated to NFR.
 | 12 | Risk outcomes: exceptions caught before sign-off, not at audit; capacity: time moved from routine work to the exceptions |
 | 13 | Autonomy is earned (`path.trust`): every output reviewed, sampled once proven reliable, gates stay where judgement is material |
 | Guide | Where the value sits (sixty-second brief), the specialists framing on screen 09, and the buyer question "why not build it ourselves on our GRC platform and a model?" |
+
+## 16. v14 changes (one storyline, fourteen screens, release v41)
+
+From the owner's review: a punchier cover, no repeated scaling story, the four kinds of agent, the Workspace acting rather than another problem statement, thresholds for human review, value gated by evidence, and how to bring it in with its commercial models.
+
+| Screen | Change |
+|---|---|
+| 01 | "The future of NFR, coordinated." Pillars name the assets coordinated: your people, your systems, your AI |
+| 06 | A grid (`ways`): how standard the work is against how often it comes. Four gaps, each filled by one way, with what it is strong at (`pro`) and where it stops (`con`) |
+| 07 | Today's pilots against a Workspace that grows by module (`grow`): set up once, the third-party risk team in months 0 to 6, then the next team and further teams on the same core; run it in-house or managed |
+| 09 | Four kinds of agent (`agents`): retrieval, process, policy, principal, each with what it did for the act 3 answer, its control and who is in charge; a judgement axis under them |
+| 10 | Each affected record shows its owner's next step (`owner`, `action`); the today/with comparison became one result line |
+| 11 | Thresholds route each case (`boundary.routing`): runs on its own, a person reviews, a person decides; three stages show routine work moving to automation while the share a person decides stays the same. The v13 ladder and the screen 13 trust strip are folded into it |
+| 12 | Two lenses, insight and speed, each with one measure; value grows gate by gate (baseline, qualified, live, next team), each gate opening on evidence (`value.lenses`, `steps`, `gates`) |
+| 13 | New `bring-in`: managed service, sovereign cloud, full deployment. Public wording follows S5 and says the commercial model is shared separately; the internal edition replaces `bringIn` with the offer names and the commercial models (internal/story-internal.js) |
+| Removed | `qualify-and-prove` (its phases and gates live on 12, the six months on 07) and `experience` (credentials stay in the appendix: S5 public, S7 internal). The decision is screen 14 |

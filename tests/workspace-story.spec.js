@@ -1,7 +1,7 @@
 // @ts-check
 /**
  * NFR Workspace v7 -- core route acceptance tests.
- * Fifteen screens in four chapters: how the work arrives and drifts, the assistant and
+ * Fourteen screens in four chapters: how the work arrives and drifts, the assistant and
  * the Workspace; one connected picture with a view per role, four ways and three layers; the doorway into the live product, the plan
  * beneath it, connected context and the authority boundary; value, qualify and prove,
  * experience and the workshop decision. The product is shown live; the deck carries no
@@ -18,7 +18,7 @@ const EN = String.fromCharCode(0x2013);
 
 const CORE = [
   'cover', 'work-arrives', 'chain-drift', 'assistance-here', 'role-views', 'four-ways', 'three-layers', 'enter-workspace',
-  'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'qualify-and-prove', 'experience', 'workshop-decision'
+  'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'bring-in', 'workshop-decision'
 ];
 const INTERACTIVE = ['role-views', 'enter-workspace', 'live-fallback'];
 const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic layer', 'control plane', 'orchestrator', 'orchestration',
@@ -54,7 +54,7 @@ function sceneFiles() {
 
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
-  test('fifteen core screens; one scene file per declared scene, core and appendix', () => {
+  test('fourteen core screens; one scene file per declared scene, core and appendix', () => {
     const html = read('pitch.html');
     const core = [...html.matchAll(/<section id="([a-z0-9-]+)" data-slide data-route="core"/g)].map((m) => m[1]);
     expect(core).toEqual(CORE);
@@ -99,7 +99,7 @@ test.describe('Scene contract', () => {
 
   test('manifest titles match the screen titles, within word limits', async ({ page }) => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('40');
+    expect(m.version).toBe('41');
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE);
     await open(page);
     for (const s of m.screens) {
@@ -550,7 +550,7 @@ test.describe('Route', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.chapters.map((c) => c.label)).toEqual(['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'THE PATH']);
     const core = m.screens.filter((s) => s.route === 'core');
-    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'shift', 'model', 'model', 'model', 'workspace', 'workspace', 'workspace', 'workspace', 'path', 'path', 'path', 'path']);
+    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'shift', 'model', 'model', 'model', 'workspace', 'workspace', 'workspace', 'workspace', 'path', 'path', 'path']);
   });
 
   test('the landing is a landing, with one button per chapter that jumps to its first screen', async ({ page }) => {
@@ -567,9 +567,9 @@ test.describe('Route', () => {
     await page.waitForFunction(() => sections[current].id === 'enter-workspace', null, { timeout: 6000 });
   });
 
-  test('the counter counts fifteen core screens and says Appendix in the appendix', async ({ page }) => {
+  test('the counter counts fourteen core screens and says Appendix in the appendix', async ({ page }) => {
     await open(page);
-    await expect(page.locator('#counter')).toHaveText('1 / 15');
+    await expect(page.locator('#counter')).toHaveText('1 / 14');
     await expect(page.locator('.nav-ch-btn[data-chid="reference"] .nav-ch-name')).toHaveText('Appendix');
     await page.evaluate(() => document.getElementById('appendix').scrollIntoView({ behavior: 'instant' }));
     await expect(page.locator('#counter')).toHaveText('Appendix', { timeout: 4000 });

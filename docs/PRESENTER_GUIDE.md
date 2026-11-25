@@ -1,12 +1,14 @@
 # NFR Workspace: presenter guide (v7, merged proposition)
 
-A 30-minute conversation for two buyers: the NFR business owner first, the IT strategist second. v7 merges the earlier control-platform proposition into one story: **NFR Workspace**. The deck tells it in fifteen screens in four chapters; **the real NFR Workspace product is the demonstration**, shown live after screen 08. The deck carries no mock of the product. Everything on screen is synthetic and bank-neutral.
+A 30-minute conversation for two buyers: the NFR business owner first, the IT strategist second. v7 merges the earlier control-platform proposition into one story: **NFR Workspace**. The deck tells it in fourteen screens in four chapters; **the real NFR Workspace product is the demonstration**, shown live after screen 08. The deck carries no mock of the product. Everything on screen is synthetic and bank-neutral.
 
 ## The idea in sixty seconds (read this first)
 
 **The idea.** Banks already have AI assistants, but each one sees a single system: the mailbox, the open file, the GRC records. An NFR question, such as which critical suppliers are deteriorating and why, needs contracts, incidents, indicators, assurance reports, controls and dependencies together, so today a professional joins them by hand. NFR Workspace connects the content of every system for each NFR role, prepares the answer in small steps that can be tested, and leaves the decision with a named person.
 
-**The positioning.** NFR Workspace is the one place for AI in non-financial risk: every NFR role, every system, every kind of AI work, under one set of controls.
+**The positioning.** The future of NFR, coordinated: one Workspace that coordinates your people, your systems and your AI where it matters, under one set of controls.
+
+**The storyline.** The shift (01 to 04): why NFR work outgrows standalone AI. The model (05 to 07): how the information flows, how four ways of working leave no gap, and how it grows team by team. The Workspace (the product, then 09 to 11): who did what in the answer, how one change reaches every owner, and when a person must step in. The path (12 to 14): value measured gate by gate, how to bring it in, and what we agree today.
 
 **Where the value sits.** The systems record the outcome; the work, and the exceptions that matter, happen in emails, spreadsheets and meetings around them. NFR Workspace runs the routine and brings each exception to a person with its context.
 
@@ -28,22 +30,21 @@ Print this. One point per screen, one sentence to say, the key to press. The det
 
 | # | The point | Say | Key |
 |---|---|---|---|
-| 01 | The one place for AI in NFR | "One Workspace for every NFR role, every system and every kind of AI work. AI prepares, your people decide, every step on record." | Space |
+| 01 | The future of NFR, coordinated | "One Workspace coordinates your people, systems and AI where it matters. AI prepares, your people decide, every step on record." | Space |
 | 02 | Every question cuts across five levels | "Who asks, what, where the data lives, who helps, and how. Four questions: six askers, eight systems, five teams, four methods." | Space |
 | 03 | External and internal change, one chain | "Rules change outside the bank, practice inside it. Both break the same chain, and today someone re-maps it by hand." | Space |
 | 04 | Standalone AI sees three of eight | "Red is what no assistant sees. The answer needs all eight: the 360 view." | Space |
 | 05 | How the information flows, per role | "Access checked in each system, read live or from an index, linked in the knowledge graph, calculated by rules, explained by AI." | Space (next role) or click a role |
-| 06 | Four ways of working | "One supplier: a question, one review, a monthly chase, a new watch. Same access and controls." | Space |
-| 07 | Three layers improve together | "Pilots do not scale. One role first, then every role, on one connected core." | Space |
+| 06 | Four ways, no gap | "Each way is strong where another stops. Together, no question falls through." | Space |
+| 07 | Set up once, grow by module | "Pilots do not scale. Set up once with the third-party risk team in six months, then add a team at a time, in-house or managed." | Space |
 | 08 | The product itself | Live product: press L. No product on your laptop: press F for the walkthrough | L or F |
 | Demo | Five acts, at least act 3 | "No single assistant could answer this: 15 evidence items from six registers." | Space |
-| 09 | Calculated, not guessed | "Rules did the maths, AI explained it, checked, and a person decided." | Space |
-| 10 | One failed test, everything it touches | "Found at audit today. Flagged the same day here." | Space |
-| 11 | Who does what, and how far AI goes | "AI finds and applies the method. It proposes the judgement; a person confirms it and decides." | Space |
-| 12 | Three kinds of value, measured | "Exceptions caught before sign-off, time moved to the exceptions. Each measured from your baseline." | Space |
-| 13 | Start small, earn each step | "Five weeks on one question, six months live, then reuse. Autonomy is earned: every output reviewed first." | Space |
-| 14 | Done before | "Client examples are shared separately, with permission." | Space |
-| 15 | What we agree today | "Role, process, data, proof criteria. Here is an example answer for each." | |
+| 09 | Four kinds of agent | "Retrieval found it, process calculated it, policy judged it, and the manager decided. The more judgement, the closer the person." | Space |
+| 10 | Every owner told | "One failed test: four records found, four owners told, the same day, before anyone signs." | Space |
+| 11 | Thresholds decide who looks | "Your risk owners set the thresholds. Routine work earns automation; material judgement stays with a person." | Space |
+| 12 | Value, gate by gate | "Insight and speed, baselined on your data. Each gate opens on evidence and lets the next team in." | Space |
+| 13 | Three ways to bring it in | "Start managed, move in-house when ready. The commercial model is agreed with you." | Space |
+| 14 | What we agree today | "Role, process, data, proof criteria. Here is an example answer for each." | |
 
 Also useful: A (appendix index), 1 to 4 (appendix domains), M (back to the story), 0 (back to the cover), S (safe mode on a slow laptop).
 
@@ -53,7 +54,7 @@ Also useful: A (appendix index), 1 to 4 (appendix domains), M (back to the story
 
 | Edition | Built with | Where it runs | Contents |
 |---|---|---|---|
-| Public | `npm run build:public` (also what GitHub Pages publishes) | The Pages site, or `npm run serve:public` on port 8190 | Fifteen screens, 28 appendix pages, the product walkthrough. No client details, no credentials, no commercial terms, no internal asset names |
+| Public | `npm run build:public` (also what GitHub Pages publishes) | The Pages site, or `npm run serve:public` on port 8190 | Fourteen screens, 28 appendix pages, the product walkthrough. No client details, no credentials, no commercial terms, no internal asset names |
 | Internal | `npm run build:internal` (needs the git-ignored `internal/` folder) | Locally only: `npm run serve:internal` on port 8191 | The public edition plus internal pages and an edition badge. Never shared by link; see `internal/README.local.md` |
 
 Use the public edition with clients unless every internal page you plan to show has passed its claim review.
@@ -63,13 +64,13 @@ Use the public edition with clients unless every internal page you plan to show 
 | Minutes | Chapter | Screens |
 |---|---|---|
 | 0 to 6 | The shift: how the work arrives, how the chain drifts, assistant and Workspace | 01 to 04 |
-| 6 to 10 | The model: each role's view of the connected records, four ways to work, three layers | 05 to 07 |
+| 6 to 10 | The model: how the information flows, four ways that leave no gap, set up once and grow by module | 05 to 07 |
 | 10 to 17 | The live product, five acts | 08, then the product |
 | 17 to 21 | What happened beneath it: the plan, the connected context, the authority boundary | 09 to 11 |
-| 21 to 25 | Value; qualify in five weeks, prove in six months | 12, 13 |
-| 25 to 30 | Experience, the workshop decision, appendix pages by question | 14, 15 |
+| 21 to 26 | Value measured gate by gate; three ways to bring it in | 12, 13 |
+| 26 to 30 | The workshop decision, appendix pages by question | 14 |
 
-**Twenty-minute route:** 01, 02, 04, 05 (two roles), 06, 08 and the product, 09, 11, 13, 15. Screens 03, 07, 10, 12 and 14 each have an appendix page to open if a buyer asks.
+**Twenty-minute route:** 01, 02, 04, 05 (two roles), 06, 08 and the product, 09, 11, 12, 14. Screens 03, 07, 10 and 13 each have an appendix page to open if a buyer asks.
 
 Do not try to show every appendix domain. Open one page when a buyer asks.
 
@@ -125,10 +126,10 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 
 ## Chapter 1: the shift
 
-### 01 The one place for AI in non-financial risk
+### 01 The future of NFR, coordinated
 
-- **Remember:** this is the positioning. One Workspace for every NFR role, every system and every kind of AI work, with the decision left to a person.
-- **Talk track (40 s):** "NFR Workspace is the one place for AI in non-financial risk. One Workspace for every NFR role, from the Head of NFR to each control owner. Connected to your systems, within each user's own access. And one place for every kind of AI work: asking, using, running and creating, under one set of controls. On the right is the real product's Today screen for a third-party risk manager. You will use it in about ten minutes."
+- **Remember:** this is the future way of working in NFR: one Workspace that coordinates the bank's people, systems and AI where it matters, with the decision left to a person.
+- **Talk track (40 s):** "This is how NFR will work: coordinated. One Workspace for your people, from the Head of NFR to each control owner. Connected to your systems, within each user's own access. And one place for all your AI work: asking, using, running and creating, under one set of controls. On the right is the real product's Today screen for a third-party risk manager. You will use it in about ten minutes."
 - **If asked "is this real?":** "Yes, it runs on this laptop on synthetic records."
 
 ### 02 Every NFR question cuts across roles, systems and teams
@@ -167,16 +168,18 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 - **Be precise:** the third-party risk manager and the operational risk partner are roles in the product today, and their cards say so. The Head of NFR and control owner views are target design, also marked on their cards. The flow is the target design, shown on synthetic records; appendix D8 has the full pipeline.
 - **Deep dives:** D3 (what travels with a question), D9 (access and audit).
 
-### 06 One Workspace. Four ways to get work done.
+### 06 Four ways of working. Together, no question falls through.
 
-- **Remember:** one supplier, four ways of working. The difference is how often and how standard the work is. The labels under each verb are the names in the product's own menu: Ask the records, Work Hub, Processes, Agents.
-- **Talk track (60 s):** "Ask: a one-off question, answered now: what changed in this supplier's SOC 2 report? Use: a standard task, one case at a time: the annual review of one critical supplier, in an app with the approved method and sign-off. Run: the same steps across many cases: every month, chase missing evidence from all critical suppliers. The routine runs on its own; people get only the exceptions, the supplier that does not answer or the report that comes back qualified, with their context. Create: a new question no app covers yet: track our dependence on one cloud provider this quarter. All four share the same identity, permissions, evidence and control record."
+- **Remember:** the four ways fill a grid: how standard the work is (a new question or a standard task) against how often it comes (once, or again and again). Each is strong where another stops, so together nothing falls through. The labels are the product's own menu names.
+- **Visual:** four gaps first, each naming a kind of work; then each way fills its gap, with what it is strong at and where it stops.
+- **Talk track (60 s):** "A one-off question: Ask. Answered now, with its sources, but it is not repeatable. A standard task, one case at a time: Use, an app with the approved method and sign-off. The same steps across many cases: Run. The routine runs on its own and the exceptions come to people; it needs a stable process. A new question that keeps coming back: Create, your own agent, starting constrained and reviewed before it is shared. Where one stops, the next takes over: a repeated question becomes an app, a repeated task a process, a new question an agent. All on the same identity, permissions, evidence and control record."
 - **Deep dive:** M1 (which capability handles which work).
 
-### 07 AI scales when work, process and data move together
+### 07 From AI pilots to a Workspace that grows by module
 
-- **Remember:** read left to right as an improvement: today's pilots, the first live process for one role, then every role.
-- **Talk track (45 s):** "Today, each person uses AI their own way, handoffs stay manual, and every pilot copies its own data. That is why pilots do not scale. In the first live process, one role works from a prepared queue, one process has evidence, gates and approval, and the data comes through approved connections. At scale, every NFR role works that way, proven methods are reused, and one connected core serves every role. Improving only the AI component creates another pilot."
+- **Remember:** left, how most banks start with AI today; right, how the Workspace starts and grows. Set up once, with one team live in six months, then one team at a time on the same core. Run it in-house or managed.
+- **Talk track (75 s):** "Most banks start like this: each person uses AI their own way, AI helps one step while the handoffs stay manual, and every pilot copies its own data. Pilots that do not scale, share or prove control. With the Workspace you set up once: identity and access, approved connectors, the connected core, controls and audit. In the first six months one team goes live, for example third-party risk: define the role, cases and gates; build and test on your records; operate live and measure. Then the next group, the operational risk partners, on the same core, and it goes live faster because the foundation is reused. Then further teams, one at a time. And you choose who runs it: in-house after enablement, managed by Accenture, or start managed and move in-house."
+- **Deep dives:** S3 (what is reused), S6 (scale across the portfolio).
 
 ### Transition into the product
 
@@ -214,47 +217,44 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 | The day shows earlier work | Account menu, **Reset demonstration**, then **Confirm reset** |
 | The network is blocked | The product and the deck both run locally; nothing needs the internet after the first load |
 
-### 09 Every number in that answer was calculated, not guessed
+### 09 Four kinds of agent built that answer, one job each
 
-- **Remember:** this screen answers the question every NFR audience asks after a demo: can I trust it? It replays the answer they just saw, step by step.
-- **Talk track (50 s):** "Here is how the answer you just saw was built. A rule found the critical services in the register. The Workspace gathered 15 evidence items from six registers: the third-party register, performance history, incidents, issues, risk acceptances and fourth-party dependencies. A rule calculated each change: three deteriorating, Novalink up 23 points. Only then did AI explain why, two share one cloud provider, with every claim pointing at its source. And a person decided the next step. Rules do the maths, AI does one narrow language task and is checked, a person decides. Think of it as a team of specialists, each with one job, passing the case along. So model risk is judged step by step, not for one big model."
+- **Remember:** the answer the audience just saw was built by four kinds of agent, in rising order of judgement. Each has one job, its own control and its own test; the more judgement, the closer the person.
+- **Talk track (60 s):** "Here is who did what in the answer you just saw. A retrieval agent found the evidence: 15 items in six registers, each with its source and date. A process agent ran the approved method: rules calculated three of eleven deteriorating, Novalink up 23; no number was guessed. A policy agent judged the change material within the policy and drafted the evidence request; a person confirmed it. And the principal level, weighing the relationship and the trade-off, laid out the next step; the manager decided. Think of it as a team of specialists, each with one job, passing the case along. A chat assistant stops at the first one."
+- **If asked "will it ever decide on its own?":** "Only where your thresholds say the work is routine, as the screen after next shows. Material judgement stays with a named person."
 - **Deep dives:** M2 (why small methods), D8 (how a question becomes a visual answer).
 
-### 10 One failed test shows everything it affects
+### 10 One failed test. Every record found, every owner told.
 
-- **Remember:** connected records turn a surprise at audit into a flag on the same day.
-- **Talk track (45 s):** "A control test fails: the supplier access review. On its own, that is one line in a testing tool. Connected, you see at once what it touches: the risk it mitigates needs a new rating; the third-party obligation now relies on an untested control; the self-assessment still rates it effective; and the quarterly attestation is due. Four records, four systems. Today this is found by hand, often at audit, after someone has signed. Here it is flagged the same day, before anyone signs. It works the other way too: a new obligation shows which controls it relies on."
-- **Deep dives:** D4 (the connected core), D5 (when a knowledge graph adds value).
+- **Remember:** this is the Workspace acting, not a problem statement. One change; the connected records show everything it touches; each owner gets their next step the same day, within their own access.
+- **Talk track (45 s):** "A control test fails: the supplier access review. The connected records show the four things it touches, each in its own system. The risk owner reviews the rating, with the failed test attached. Compliance checks the obligation still holds. The operational risk partner reassesses the self-assessment that still says effective. And the quarterly sign-off is paused until it is fixed. Flagged the same day, before anyone signs, and each owner sees only their part."
+- **Deep dives:** D4 (the connected NFR core), D5 (when a graph helps).
 
-### 11 AI prepares. Professionals decide. Systems record.
+### 11 Thresholds decide who looks. Automation is earned.
 
-- **Remember:** read the three columns with the demonstration: AI drafted the evidence request, the professional approved it, the system wrote it and issued a receipt.
-- **Talk track (45 s):** "In the demo, AI drafted the evidence request and its reason. The professional reviewed every field and approved it as their own judgement. The system checked the permissions, wrote the change and issued a receipt. Running a step does not make the software the decision maker: every material change needs a named person, and the record shows who and when. Underneath, read how far AI goes. It finds the evidence and applies your method. It proposes a judgement against your policy, is this gap material, and a person confirms it. The decision, accept, remediate or exit, stays with a named person. An assistant on one system stops at the first step."
-- **If asked "will it ever decide on its own?":** "Not where judgement is material. Lower down the ladder, steps can run unattended once the evidence shows they are reliable, as screen 13 shows."
+- **Remember:** every case is routed by the bank's own thresholds, set by its risk owners: materiality, confidence in the evidence and policy rules. Low materiality and high confidence runs on its own, logged and sampled; higher materiality or low confidence is reviewed; material work is decided by a person. As accuracy is proven, routine work moves from review to automation; the share a person decides stays the same.
+- **Talk track (75 s):** "Who decides when a person looks? Your thresholds, set by your risk owners. Chasing a missing certificate from a non-critical supplier runs on its own: logged, and a sample is checked. An evidence request to a critical supplier is reviewed before it goes. Accepting a risk, changing a rating or exiting a supplier is decided by a person; AI prepares the options and the evidence. Now over time: at go-live every output is reviewed. Once a step is proven, routine cases are sampled instead. At scale, routine runs on its own and is monitored. The amber part does not shrink: material judgement stays with a named person. The AI applies the thresholds and shows the evidence for moving them; your owners approve every change. AI prepares, professionals decide, systems record."
+- **If asked "who can change a threshold?":** "Only the named owner, through the same approval and audit as any other change (M6)."
 - **Deep dives:** M6 (AI, rules and people), M7 (governed write-back).
 
 ## Chapter 4: the path
 
-### 12 Prove better risk outcomes, and the capacity returned
+### 12 Value measured from week one. Each gate opens on evidence.
 
-- **Remember:** three kinds of value, each with one measure the five weeks baselines. None of them is headcount.
-- **Talk track (40 s):** "Risk outcomes: we measure the share of critical suppliers with current, complete evidence. Operating performance: days from trigger to decision. Capacity: hours of preparation per case, before and after. Each is measured on its own, from your baseline. Two of the improvements are about exceptions: caught before sign-off rather than at audit, and time moved from routine work to the exceptions, where the risk is."
-- **Deep dives:** V2 (value tree), V3 (the unit-economics calculator: change adoption or efficiency live if the economic buyer engages).
+- **Remember:** two lenses, each with one measure agreed in week one and baselined on the client's own cases: insight (critical suppliers with current, complete evidence) and speed (days from trigger to decision). Value then grows gate by gate, and each gate opens on evidence, not on a date; the last gate lets the next team onboard.
+- **Talk track (60 s):** "Two kinds of value. Insight: exceptions caught before sign-off, the full picture on every critical supplier, every decision traceable. Speed: fewer days from trigger to decision, fewer hours of preparation, time moved from routine work to the exceptions. Each has one measure, baselined on your own cases in week one. Then the steps: by week five, first findings on your data; the go gate opens when they are confirmed and the value case is agreed. By month six one team works live, measured against the baseline; the scale gate opens when the measures are met and the controls are proven in operation. Then the next team onboards on the same core, against the same measures."
+- **Ask for:** a role owner, a process expert and read access to representative records (on screen 13). Effort per week and pricing follow the five-week scope; give them separately.
+- **Deep dives:** V2 (value tree), V3 (the unit-economics calculator), S1 (the five weeks), S2 (the six months live).
 
-### 13 Qualify in five weeks. Prove it live in six months.
+### 13 Three ways to bring it in. Start managed, move in-house.
 
-- **Remember:** start small and earn each step. Each phase ends in a decision you make.
-- **Talk track (45 s):** "Five weeks: we answer one real question on your own data, and you get findings, a value case and a clear go or stop. Six months: one role's process runs live, end to end, measured against the baseline. Then scale: new roles and processes reuse what the first one built. And autonomy is earned: at first every output is reviewed; once the evidence shows a step is reliable, it is sampled instead; the gate stays wherever judgement is material."
-- **Ask for:** a role owner, a process expert and read access to representative records (the strip under the phases). Effort per week and pricing follow the five-week scope; give them separately.
-- **Deep dives:** S1 (the five-week qualification), S2 (the six months live).
+- **Remember:** three ways over the same methods: a managed service (the recommended start), a sovereign cloud instance, or a full deployment on the client's infrastructure. They are designed to move: start managed, move in-house when ready.
+- **Commercial models:** the public edition says they are agreed with the client and shared separately. The internal edition shows them (see the local internal notes); they are indicative, and the deal team and legal approve terms before any client sees them.
+- **Talk track (45 s):** "Three ways to bring it in. Most clients start with the managed service: a bounded scope in an agreed secure environment, little technology dependency, data handling agreed up front. If data has to stay in the country, a dedicated sovereign cloud instance. If you want to run it yourselves, a full deployment on your infrastructure. Each move is planned and tested, so you can start managed and move in-house. What we need from you: a role owner, a process expert and read access to representative records."
+- **Credentials:** no longer a core screen. If a buyer asks, open S5 and describe the areas of experience; client examples are shared separately, with permission (internal edition: S7, after claim review).
+- **Deep dives:** S5 (ways to start), S4 (who owns and operates it).
 
-### 14 The approach has been applied before
-
-- **Remember:** experience of the delivery team, not of the product.
-- **Public edition:** three areas of experience, without client details. If asked for names or figures: "We share client examples separately, with their permission."
-- **Deep dive:** S5 (how to bring this in).
-
-### 15 Which role, decision and process do we start with?
+### 14 Which role, decision and process do we start with?
 
 - **Remember:** agree four things today: the target role, the decision or process, representative data and cases, and the proof criteria at five weeks and six months. Each card says what a good answer looks like and shows an example answer (third-party risk manager, annual review of critical suppliers, last year's files for 20 suppliers, review time and evidence completeness). Ask the room for their own answers.
 - **Secondary question:** which existing AI, workflow, GRC and data capabilities the Workspace should reuse rather than rebuild.

@@ -22,15 +22,15 @@
   var STATE_BY_SCREEN = {
     'cover': 'cover', 'work-arrives': 'work-arrives', 'chain-drift': 'chain-drift', 'assistance-here': 'assistance',
     'role-views': 'roles', 'four-ways': 'four-ways', 'three-layers': 'three-layers', 'method-plan': 'beneath', 'connected-context': 'connected',
-    'authority-boundary': 'control-boundary', 'value-decision': 'value', 'qualify-and-prove': 'qualify',
-    'experience': 'experience', 'workshop-decision': 'decision'
+    'authority-boundary': 'control-boundary', 'value-decision': 'value', 'bring-in': 'bring-in',
+    'workshop-decision': 'decision'
   };
 
   // ── The experience state model: every state the deck can be in, in route order ──
   var STATES = [
     'cover', 'work-arrives', 'chain-drift', 'assistance', 'roles', 'four-ways', 'three-layers',
     'entering-workspace', 'live-handoff', 'live-fallback',
-    'beneath', 'connected', 'control-boundary', 'value', 'qualify', 'experience', 'decision', 'appendix'
+    'beneath', 'connected', 'control-boundary', 'value', 'bring-in', 'decision', 'appendix'
   ];
 
   var _state = 'cover';
