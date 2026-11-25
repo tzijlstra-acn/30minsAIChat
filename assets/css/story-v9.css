@@ -121,7 +121,7 @@
 /* 14 an example answer on each card */
 .wd-agree-ex { margin-top: auto; display: flex; flex-direction: column; gap: 3px; border-top: 1px dashed var(--border-2); padding-top: 8px; }
 .wd-agree-ex-k { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
-.wd-agree-ex-t { font-size: 14px; font-style: italic; color: var(--amber); line-height: 1.35; }
+.wd-agree-ex-t { font-size: 14px; font-style: italic; color: var(--amber); line-height: 1.35; min-height: 2.7em; }
 
 /* 01 the cover: four moments of the live product, crossfading */
 .tc-slide { position: absolute; inset: 0; background-repeat: no-repeat; background-color: #F7F7FA; opacity: 0; transition: opacity .9s ease; }

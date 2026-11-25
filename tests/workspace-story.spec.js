@@ -99,7 +99,7 @@ test.describe('Scene contract', () => {
 
   test('manifest titles match the screen titles, within word limits', async ({ page }) => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('36');
+    expect(m.version).toBe('37');
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE);
     await open(page);
     for (const s of m.screens) {
@@ -231,11 +231,14 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280,
               const px = parseFloat(getComputedStyle(el).fontSize) * scale;
               if (px < min) small.push((el.textContent || '').trim().slice(0, 30) + ' ' + px.toFixed(1));
               if (getComputedStyle(el).textOverflow === 'ellipsis' && el.scrollWidth > el.clientWidth + 1) cut.push((el.textContent || '').slice(0, 40));
-              // Text stays inside the box that holds it
-              const box = el.closest('.ts-obj');
-              if (box && box !== el) {
+              // Text stays inside every box that holds it: a .ts-obj or any element with a
+              // border on all four sides (v36: screen 14's two-line examples ran out of their cards)
+              for (let box = el.parentElement; box && box !== cv; box = box.parentElement) {
+                const bs = getComputedStyle(box);
+                const framed = ['Top', 'Right', 'Bottom', 'Left'].every((s) => parseFloat(bs['border' + s + 'Width']) > 0 && bs['border' + s + 'Style'] !== 'none');
+                if (!framed && !box.classList.contains('ts-obj')) continue;
                 const b = box.getBoundingClientRect();
-                if (r.left < b.left - 2 || r.right > b.right + 2 || r.top < b.top - 2 || r.bottom > b.bottom + 2) spill.push((el.textContent || '').trim().slice(0, 30));
+                if (r.left < b.left - 2 || r.right > b.right + 2 || r.top < b.top - 2 || r.bottom > b.bottom + 2) { spill.push((el.textContent || '').trim().slice(0, 30)); break; }
               }
             }
           });

@@ -8,9 +8,9 @@ SceneDirector.register('workshop-decision', function(container, manifest, reduce
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var X = D.decision;
-  var W = 1040, H = 356;
-  var CARD = { y: 30, w: 243, gap: 12, h: 216 };
-  var SEC = { y: 272, h: 76 };
+  var W = 1040, H = 392;
+  var CARD = { y: 30, w: 243, gap: 12, h: 252 };
+  var SEC = { y: 308, h: 76 };
 
   var cv = null;
   var n = {};
