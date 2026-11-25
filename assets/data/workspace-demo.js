@@ -78,8 +78,8 @@
         { channel: 'Chat', icon: 'ti-message-circle', text: 'Which critical third-party services are deteriorating, and why?', who: ['procurement'], data: ['vendor', 'incidents', 'itsi', 'docs'], help: ['suppliers', 'it'], method: 'trend' }
       ],
       totals: [['askers', 'askers'], ['asks', 'questions'], ['systems', 'systems'], ['teams', 'teams'], ['methods', 'methods']],
-      strong: 'No question arrives labelled with a method.',
-      line: 'The answer sits across several systems, and each needs a different way to work it out.'
+      strong: 'The record shows the outcome.',
+      line: 'The work, and the exceptions that matter, happen in emails, spreadsheets and meetings around it.'
     },
 
     // ── 03 The point: external change and internal change break the same chain ──
@@ -229,7 +229,7 @@
         authority: 'Prepare and validate a defined task',
         value: 'Better evidence quality, consistency and task execution' },
       { id: 'automation', verb: 'Run', product: 'Processes', icon: 'ti-route',
-        line: 'Let a process run across systems and cases, pausing for people at the gates.',
+        line: 'The routine runs across systems and cases. People get the exceptions, with their context.',
         when: 'The same steps, across many cases',
         example: 'Every month, chase missing evidence from all critical suppliers.',
         authority: 'Execute approved steps and pause at human gates',
@@ -329,6 +329,18 @@
         { key: 'system', tone: 'data', icon: 'ti-database', label: 'Systems record', demo: 'Checked permissions, wrote the change and issued a receipt.',
           items: ['Enforces permissions and required evidence', 'Writes only approved changes', 'Keeps who, what and when'] }
       ],
+      // How far AI goes: finding and applying the method are AI's; judging against policy is
+      // proposed by AI and confirmed by a person; the decision belongs to a named person.
+      ladder: {
+        label: 'How far AI goes, step by step',
+        aside: 'An assistant on one system stops at step 1.',
+        steps: [
+          { label: 'Find the evidence', who: 'AI', tone: 'ai', example: 'The SOC 2 report, the incidents, the contract' },
+          { label: 'Apply the method', who: 'AI, with rules', tone: 'data', example: 'Score the change the way your method says' },
+          { label: 'Judge against policy', who: 'AI proposes, a person confirms', tone: 'human', example: 'Is this gap material under our policy?' },
+          { label: 'Decide', who: 'A named person', tone: 'human', example: 'Accept, remediate or exit the supplier' }
+        ]
+      },
       line: ['Running a step grants no authority.', "Every material change needs a named person's approval, and the record shows who decided and when."]
     },
 
@@ -338,13 +350,13 @@
       measureLabel: 'How we measure it',
       outcomes: [
         { id: 'risk', tone: 'proof', icon: 'ti-shield-check', label: 'Risk outcomes',
-          items: ['Evidence complete and current', 'Material change spotted earlier', 'Every decision traceable'],
+          items: ['Evidence complete and current', 'Exceptions caught before sign-off, not at audit', 'Every decision traceable'],
           measure: 'Share of critical suppliers with current, complete evidence' },
         { id: 'operating', tone: 'data', icon: 'ti-clock', label: 'Operating performance',
           items: ['Shorter review cycles', 'Fewer handoffs and chasers', 'Fewer overdue reviews'],
           measure: 'Days from trigger to decision, per case' },
         { id: 'capacity', tone: 'human', icon: 'ti-users', label: 'Capacity and economics',
-          items: ['Less time preparing each case', 'Time moved to challenge and judgement', 'Later journeys reuse the first'],
+          items: ['Less time preparing each case', 'Time moved from routine work to the exceptions', 'Later journeys reuse the first'],
           measure: 'Hours of preparation per case, before and after' }
       ],
       line: ['Waiting time saved is not counted as headcount.', 'The business case is built from your own baseline during the five weeks.']
@@ -370,6 +382,7 @@
       ],
       gates: ['Go decision', 'Scale decision'],
       fromYou: { label: 'What we need from you', items: ['A role owner', 'A process expert', 'Read access to representative records'] },
+      trust: { label: 'Autonomy is earned', steps: ['Every output reviewed', 'Sampled once proven reliable', 'Gates stay where judgement is material'] },
       line: 'Five weeks proves fit and value. Six months proves the operating model.'
     },
 

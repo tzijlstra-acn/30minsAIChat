@@ -7,8 +7,9 @@ SceneDirector.register('qualify-and-prove', function(container, manifest, reduce
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var P = D.path;
-  var W = 1040, H = 410;
+  var W = 1040, H = 466;
   var NEED = { y: 288, h: 46 };
+  var TRUST = { y: 346, h: 46 };
   var PH = { y: 0, w: 288, h: 270, gap: 72 };
 
   var cv = null;
@@ -58,7 +59,17 @@ SceneDirector.register('qualify-and-prove', function(container, manifest, reduce
       P.fromYou.items.forEach(function(t) { n.need.appendChild(S.el('span', 'qp-chip', t)); });
       root.appendChild(n.need);
     }
-    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: NEED.y + NEED.h + 18, width: 1008 });
+    if (P.trust) {
+      n.trust = S.el('div', 'ts-obj ts-c-proof ts-soft qp-need qp-trust ts-hide ts-up', null, { left: 16, top: TRUST.y, width: 1008, height: TRUST.h });
+      n.trust.appendChild(S.icon('ti-stairs-up', 'ts-ink'));
+      n.trust.appendChild(S.el('span', 'qp-need-k ts-ink', P.trust.label));
+      P.trust.steps.forEach(function(t, i) {
+        if (i) n.trust.appendChild(S.icon('ti-chevron-right', 'qp-trust-arrow'));
+        n.trust.appendChild(S.el('span', 'qp-chip', t));
+      });
+      root.appendChild(n.trust);
+    }
+    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: TRUST.y + TRUST.h + 18, width: 1008 });
     n.note.appendChild(S.el('span', 'ah-note-strong', P.line));
     root.appendChild(n.note);
   }
@@ -74,8 +85,9 @@ SceneDirector.register('qualify-and-prove', function(container, manifest, reduce
     { delay: 900,  run: function() { S.on(n.gates[0]); S.on(n.phases[1]); } },
     { delay: 1600, run: function() { S.on(n.gates[1]); S.on(n.phases[2]); } },
     { delay: 2300, run: function() { S.on(n.need); } },
-    { delay: 2800, run: function() { S.on(n.note); } },
-    { delay: 3400, run: complete }
+    { delay: 2800, run: function() { S.on(n.trust); } },
+    { delay: 3300, run: function() { S.on(n.note); } },
+    { delay: 3900, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -92,7 +104,7 @@ SceneDirector.register('qualify-and-prove', function(container, manifest, reduce
     getAccessibleSummary: function() {
       return P.phases.map(function(p, i) {
         return p.label + ', ' + p.when.toLowerCase() + '. ' + P.goalLabel + ': ' + p.goal.toLowerCase() + '. ' + P.getLabel + ': ' + p.get.toLowerCase() + '.' + (i < P.gates.length ? ' Then: ' + P.gates[i].toLowerCase() + '.' : '');
-      }).join(' ') + (P.fromYou ? ' ' + P.fromYou.label + ': ' + P.fromYou.items.join(', ').toLowerCase() + '.' : '') + ' ' + P.line;
+      }).join(' ') + (P.fromYou ? ' ' + P.fromYou.label + ': ' + P.fromYou.items.join(', ').toLowerCase() + '.' : '') + (P.trust ? ' ' + P.trust.label + ': ' + P.trust.steps.join(', then ').toLowerCase() + '.' : '') + ' ' + P.line;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

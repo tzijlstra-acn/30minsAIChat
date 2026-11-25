@@ -8,6 +8,8 @@ A 30-minute conversation for two buyers: the NFR business owner first, the IT st
 
 **The positioning.** NFR Workspace is the one place for AI in non-financial risk: every NFR role, every system, every kind of AI work, under one set of controls.
 
+**Where the value sits.** The systems record the outcome; the work, and the exceptions that matter, happen in emails, spreadsheets and meetings around them. NFR Workspace runs the routine and brings each exception to a person with its context.
+
 **Three messages to repeat.**
 
 1. Standalone AI sees one system. NFR answers need all of them.
@@ -37,9 +39,9 @@ Print this. One point per screen, one sentence to say, the key to press. The det
 | Demo | Five acts, at least act 3 | "No single assistant could answer this: 15 evidence items from six registers." | Space |
 | 09 | Calculated, not guessed | "Rules did the maths, AI explained it, checked, and a person decided." | Space |
 | 10 | One failed test, everything it touches | "Found at audit today. Flagged the same day here." | Space |
-| 11 | Who does what | "AI drafted, you approved, the system recorded who and when." | Space |
-| 12 | Three kinds of value, measured | "Each measured on its own from your baseline. None of it is headcount." | Space |
-| 13 | Start small, earn each step | "Five weeks on one question, six months live, then reuse. We need a role owner, a process expert and access." | Space |
+| 11 | Who does what, and how far AI goes | "AI finds and applies the method. It proposes the judgement; a person confirms it and decides." | Space |
+| 12 | Three kinds of value, measured | "Exceptions caught before sign-off, time moved to the exceptions. Each measured from your baseline." | Space |
+| 13 | Start small, earn each step | "Five weeks on one question, six months live, then reuse. Autonomy is earned: every output reviewed first." | Space |
 | 14 | Done before | "Client examples are shared separately, with permission." | Space |
 | 15 | What we agree today | "Role, process, data, proof criteria. Here is an example answer for each." | |
 
@@ -133,7 +135,7 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 
 - **Remember:** the complexity is in the levels, not in any single question. Who asks, what they ask, where the answer lives, who has to help, and how it is worked out.
 - **Visual:** five rows. The screen steps through the four questions and lights what each one needs; let it run once. Click a question card to show its links again.
-- **Talk track (60 s):** "Read it top down. Six people or bodies ask: the board risk committee, the COO, the regulatory change forum, internal audit, the supervisor, procurement. Four everyday questions. Each one pulls in different systems: the COO's question needs the GRC platform and the policy library; procurement's needs vendor management, incidents, the service inventory and documents. Each needs different people to help, and each is worked out a different way: mapping, a gap analysis, testing, a trend. Four questions, six askers, eight systems, five teams, four methods. None arrives labelled with a method."
+- **Talk track (60 s):** "Read it top down. Six people or bodies ask: the board risk committee, the COO, the regulatory change forum, internal audit, the supervisor, procurement. Four everyday questions. Each one pulls in different systems: the COO's question needs the GRC platform and the policy library; procurement's needs vendor management, incidents, the service inventory and documents. Each needs different people to help, and each is worked out a different way: mapping, a gap analysis, testing, a trend. Four questions, six askers, eight systems, five teams, four methods. And look where the work happens: the record shows the outcome, but the work, and the exceptions that matter, sit in emails, spreadsheets and meetings around it."
 - **Ask the room:** "Which of these did you get this month?"
 - **Deep dive:** V1 (where to start; its detail lists the nine kinds of request risk functions bring).
 
@@ -168,7 +170,7 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 ### 06 One Workspace. Four ways to get work done.
 
 - **Remember:** one supplier, four ways of working. The difference is how often and how standard the work is. The labels under each verb are the names in the product's own menu: Ask the records, Work Hub, Processes, Agents.
-- **Talk track (60 s):** "Ask: a one-off question, answered now: what changed in this supplier's SOC 2 report? Use: a standard task, one case at a time: the annual review of one critical supplier, in an app with the approved method and sign-off. Run: the same steps across many cases: every month, chase missing evidence from all critical suppliers, pausing for people at the gates. Create: a new question no app covers yet: track our dependence on one cloud provider this quarter. All four share the same identity, permissions, evidence and control record."
+- **Talk track (60 s):** "Ask: a one-off question, answered now: what changed in this supplier's SOC 2 report? Use: a standard task, one case at a time: the annual review of one critical supplier, in an app with the approved method and sign-off. Run: the same steps across many cases: every month, chase missing evidence from all critical suppliers. The routine runs on its own; people get only the exceptions, the supplier that does not answer or the report that comes back qualified, with their context. Create: a new question no app covers yet: track our dependence on one cloud provider this quarter. All four share the same identity, permissions, evidence and control record."
 - **Deep dive:** M1 (which capability handles which work).
 
 ### 07 AI scales when work, process and data move together
@@ -215,7 +217,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 ### 09 Every number in that answer was calculated, not guessed
 
 - **Remember:** this screen answers the question every NFR audience asks after a demo: can I trust it? It replays the answer they just saw, step by step.
-- **Talk track (50 s):** "Here is how the answer you just saw was built. A rule found the critical services in the register. The Workspace gathered 15 evidence items from six registers: the third-party register, performance history, incidents, issues, risk acceptances and fourth-party dependencies. A rule calculated each change: three deteriorating, Novalink up 23 points. Only then did AI explain why, two share one cloud provider, with every claim pointing at its source. And a person decided the next step. Rules do the maths, AI does one narrow language task and is checked, a person decides. So model risk is judged step by step, not for one big model."
+- **Talk track (50 s):** "Here is how the answer you just saw was built. A rule found the critical services in the register. The Workspace gathered 15 evidence items from six registers: the third-party register, performance history, incidents, issues, risk acceptances and fourth-party dependencies. A rule calculated each change: three deteriorating, Novalink up 23 points. Only then did AI explain why, two share one cloud provider, with every claim pointing at its source. And a person decided the next step. Rules do the maths, AI does one narrow language task and is checked, a person decides. Think of it as a team of specialists, each with one job, passing the case along. So model risk is judged step by step, not for one big model."
 - **Deep dives:** M2 (why small methods), D8 (how a question becomes a visual answer).
 
 ### 10 One failed test shows everything it affects
@@ -227,7 +229,8 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 ### 11 AI prepares. Professionals decide. Systems record.
 
 - **Remember:** read the three columns with the demonstration: AI drafted the evidence request, the professional approved it, the system wrote it and issued a receipt.
-- **Talk track (45 s):** "In the demo, AI drafted the evidence request and its reason. The professional reviewed every field and approved it as their own judgement. The system checked the permissions, wrote the change and issued a receipt. Running a step does not make the software the decision maker: every material change needs a named person, and the record shows who and when."
+- **Talk track (45 s):** "In the demo, AI drafted the evidence request and its reason. The professional reviewed every field and approved it as their own judgement. The system checked the permissions, wrote the change and issued a receipt. Running a step does not make the software the decision maker: every material change needs a named person, and the record shows who and when. Underneath, read how far AI goes. It finds the evidence and applies your method. It proposes a judgement against your policy, is this gap material, and a person confirms it. The decision, accept, remediate or exit, stays with a named person. An assistant on one system stops at the first step."
+- **If asked "will it ever decide on its own?":** "Not where judgement is material. Lower down the ladder, steps can run unattended once the evidence shows they are reliable, as screen 13 shows."
 - **Deep dives:** M6 (AI, rules and people), M7 (governed write-back).
 
 ## Chapter 4: the path
@@ -235,13 +238,13 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 ### 12 Prove better risk outcomes, and the capacity returned
 
 - **Remember:** three kinds of value, each with one measure the five weeks baselines. None of them is headcount.
-- **Talk track (40 s):** "Risk outcomes: we measure the share of critical suppliers with current, complete evidence. Operating performance: days from trigger to decision. Capacity: hours of preparation per case, before and after. Each is measured on its own, from your baseline."
+- **Talk track (40 s):** "Risk outcomes: we measure the share of critical suppliers with current, complete evidence. Operating performance: days from trigger to decision. Capacity: hours of preparation per case, before and after. Each is measured on its own, from your baseline. Two of the improvements are about exceptions: caught before sign-off rather than at audit, and time moved from routine work to the exceptions, where the risk is."
 - **Deep dives:** V2 (value tree), V3 (the unit-economics calculator: change adoption or efficiency live if the economic buyer engages).
 
 ### 13 Qualify in five weeks. Prove it live in six months.
 
 - **Remember:** start small and earn each step. Each phase ends in a decision you make.
-- **Talk track (45 s):** "Five weeks: we answer one real question on your own data, and you get findings, a value case and a clear go or stop. Six months: one role's process runs live, end to end, measured against the baseline. Then scale: new roles and processes reuse what the first one built."
+- **Talk track (45 s):** "Five weeks: we answer one real question on your own data, and you get findings, a value case and a clear go or stop. Six months: one role's process runs live, end to end, measured against the baseline. Then scale: new roles and processes reuse what the first one built. And autonomy is earned: at first every output is reviewed; once the evidence shows a step is reliable, it is sampled instead; the gate stays wherever judgement is material."
 - **Ask for:** a role owner, a process expert and read access to representative records (the strip under the phases). Effort per week and pricing follow the five-week scope; give them separately.
 - **Deep dives:** S1 (the five-week qualification), S2 (the six months live).
 
@@ -311,6 +314,7 @@ Also from the index: the captured live demonstration, the team page, and the Evi
 - **Why five weeks, then six months?** Five weeks qualifies one question against your data and fixes the scope at a gate; six months proves one complete process, live (S1, S2).
 
 - **What does it cost, and how much of my team's time?** "The five weeks are a fixed, bounded scope; we price them with you once we have agreed the question. From your side: a role owner, a process expert and read access to representative records." Do not quote figures that have not been agreed with the delivery lead.
+- **Why not build it ourselves, on our GRC platform and a model?** "You can get a first version quickly. But getting most outputs right is not automating most of the work: if people still check every output, nothing is saved. The effort is in the last stretch: the connections across systems, the method, the exceptions and the testing that lets you stop checking everything. That is what the five weeks proves on your data."
 
 ### IT strategist
 

@@ -276,3 +276,14 @@
 .landing-pillars b { flex: none; width: 172px; font-family: 'Space Grotesk', sans-serif; font-size: 15.5px; font-weight: 700; color: var(--text-1); }
 .landing-pillars span { font-size: 14px; color: var(--text-2); line-height: 1.35; }
 .landing-pillars + .landing-meta { margin-top: 16px; }
+
+/* v13 screen 11: how far AI goes, step by step */
+.ab-aside { text-align: right; font-size: 12.5px; color: var(--text-2); }
+.ab-step { display: flex; flex-direction: column; gap: 5px; padding: 9px 12px; }
+.ab-step-head { display: flex; align-items: center; gap: 8px; }
+.ab-step-n { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid currentColor; border-radius: 50%; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.ab-step-t { font-family: 'Space Grotesk', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--text-1); white-space: nowrap; }
+.ab-step-who { font-size: 12.5px; font-weight: 600; }
+.ab-step-x { font-size: 12.5px; color: var(--text-2); line-height: 1.35; }
+/* v13 screen 13: autonomy is earned */
+.qp-trust-arrow { flex: none; font-size: 14px; color: var(--text-3); }

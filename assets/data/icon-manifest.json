@@ -11,6 +11,8 @@
     { "name": "plug-connected",     "class": "ti-plug-connected",      "semantic": "data" },
     { "name": "world",              "class": "ti-world",               "semantic": "risk" },
     { "name": "archive",            "class": "ti-archive",             "semantic": "data" },
+    { "name": "stairs-up",          "class": "ti-stairs-up",           "semantic": "status" },
+    { "name": "chevron-right",      "class": "ti-chevron-right",       "semantic": "navigation" },
     { "name": "alert-triangle",       "class": "ti-alert-triangle",       "semantic": "risk" },
     { "name": "unlink",             "class": "ti-unlink",             "semantic": "risk" },
     { "name": "puzzle",             "class": "ti-puzzle",            "semantic": "risk" },

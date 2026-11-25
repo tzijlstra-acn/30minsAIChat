@@ -1,5 +1,5 @@
 {
-  "version": "39",
+  "version": "40",
   "story": "NFR Workspace: the one place for AI in non-financial risk",
   "model": {
     "waysToWork": [
@@ -199,7 +199,7 @@
       "closingLine": "Automation does not grant authority.",
       "question": "What does AI do, and what stays human?",
       "scene": "authority-boundary",
-      "durationMs": 3000,
+      "durationMs": 4400,
       "autoplay": true,
       "handoffToken": "controlled-receipt"
     },
@@ -229,7 +229,7 @@
       "closingLine": "Not an enterprise-wide replacement: one journey, one live process, then reuse.",
       "question": "What do we commit to first?",
       "scene": "qualify-and-prove",
-      "durationMs": 3400,
+      "durationMs": 4000,
       "autoplay": true,
       "handoffToken": "qualify"
     },

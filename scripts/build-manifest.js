@@ -29,9 +29,9 @@ const META = {
   'enter-workspace':    { q: 'What does the working day look like?', ms: 2600, token: 'live-handoff', interactive: true, state: 'live-handoff' },
   'method-plan':        { q: 'What happened beneath the experience?', ms: 4300, token: 'method-plan' },
   'connected-context':  { q: 'How does the answer stay true?', ms: 4500, token: 'connected-core' },
-  'authority-boundary': { q: 'What does AI do, and what stays human?', ms: 3000, token: 'controlled-receipt' },
+  'authority-boundary': { q: 'What does AI do, and what stays human?', ms: 4400, token: 'controlled-receipt' },
   'value-decision':     { q: 'What is the value?', ms: 3000, token: 'value' },
-  'qualify-and-prove':  { q: 'What do we commit to first?', ms: 3400, token: 'qualify' },
+  'qualify-and-prove':  { q: 'What do we commit to first?', ms: 4000, token: 'qualify' },
   'experience':         { q: 'Has this been done before?', ms: 2300, token: 'experience' },
   'workshop-decision':  { q: 'Where do we start?', ms: 2700, token: 'first-loop' },
   'live-fallback':      { q: 'What if the live product is unavailable?', ms: 100, token: 'captured-acts', interactive: true, state: 'live-fallback' }

@@ -204,3 +204,16 @@ From the owner's review of the opening chapter: more salesy, more levels, a clea
 | 03 | External change (outside the bank) above the chain, internal change (inside the bank) below it, and one worked example of why it matters (`chain.example`) |
 | 04 | Sources start grey; the three an assistant sees turn purple; the five no assistant sees turn red one by one, marked Missing; a legend says so. Two bars count it: standalone AI three of eight, NFR Workspace eight of eight, the 360 view (`sees.legend`, `sees.context`) |
 | 05 | The information flow in five steps for the chosen role: access checked per system; read by a live query or from a cached index (`roles.modeOf`, `roles.modes`); linked in the knowledge graph; rules calculate, then AI explains (`rule`, `ai` per role); the answer. The screen names the knowledge graph at the owner's request; the jargon test exempts that term on this screen only |
+
+## 15. v13 changes (exceptions, the judgement ladder, earned autonomy, release v40)
+
+Ideas taken from a vertical-AI conversation the owner shared, translated to NFR. No figures from it are used.
+
+| Screen | Change |
+|---|---|
+| 02 | Closing line: the record shows the outcome; the work, and the exceptions that matter, happen in emails, spreadsheets and meetings around it (`arrives.strong`, `arrives.line`) |
+| 06 | Run: the routine runs across systems and cases; people get the exceptions, with their context |
+| 11 | How far AI goes, step by step (`boundary.ladder`): find the evidence (AI), apply the method (AI with rules), judge against policy (AI proposes, a person confirms), decide (a named person); an assistant on one system stops at step 1 |
+| 12 | Risk outcomes: exceptions caught before sign-off, not at audit; capacity: time moved from routine work to the exceptions |
+| 13 | Autonomy is earned (`path.trust`): every output reviewed, sampled once proven reliable, gates stay where judgement is material |
+| Guide | Where the value sits (sixty-second brief), the specialists framing on screen 09, and the buyer question "why not build it ourselves on our GRC platform and a model?" |
