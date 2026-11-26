@@ -1,4 +1,4 @@
-# NFR Workspace pitch: QA checklist (release v46, presentable by any consultant v10)
+# NFR Workspace pitch: QA checklist (release v47, presentable by any consultant v10)
 
 Status as of 2026-11-25 on branch `feat/pitch-v8` (v9 work continues on it). The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
@@ -7,11 +7,11 @@ npm run build:public && node scripts/build.js scan-repo
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
 node scripts/serve.js 8190 dist     # then, against the public build:
-node scripts/visual-qa.js 8190 artifacts/visual-qa/v46
+node scripts/visual-qa.js 8190 artifacts/visual-qa/v47
 node scripts/export-fallback.js 8190
 ```
 
-Last full run: 355 passed, 0 failed on the five desktop projects (v46; see the release note at the end).
+Last full run: 348 passed, 0 failed on the five desktop projects (v47; see the release note at the end).
 
 ## 1. Meeting-survival tests (v7 plan)
 
@@ -76,6 +76,8 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 - Claim review of the internal credentials (engagement lead) and of the indicative commercials (deal team, legal).
 
 ## Release note
+
+v47 (`v47-1aa1bb5`), 2026-11-26: screen 05 runs one question through the engine (every source integrated; Maya types, the engine flips out and runs seven steps to a cited answer), replacing the role and depth tool; screen 06 shows the four agents hand in hand. Desktop matrix 348 passed, 0 failed (the per-role, per-depth layout checks went with the old screen 05). Audits, dash check, copy lint and term scan pass; both editions build. Against the public build: visual QA 48 screenshots at each of four sizes, 0 console errors; PDF fallback 51 pages, 0 console errors. Internal PDF 55 pages, 0 console errors, in internal/fallback/.
 
 v46 (`v46-1dcd1e0`), 2026-11-26: four chapters, twelve screens. 04 retitled (periodic reviews miss change); 06 the same four agents beneath every way of working; 07 smart profiling; 08 record tracking; chapter 4, next steps, after the product: grow by module, a nimble team and the first six months, the decision at month six. Desktop matrix 355 passed, 0 failed. Audits, dash check, copy lint and term scan pass; both editions build. Against the public build: visual QA 48 screenshots at each of four sizes, 0 console errors; PDF fallback 56 pages, 0 console errors. Internal PDF 60 pages, 0 console errors, in internal/fallback/.
 

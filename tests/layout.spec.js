@@ -192,10 +192,10 @@ test('KnowledgeGraph and the icon registry are defined', async ({ page }) => {
 test.describe('Static checks', () => {
   chromiumOnly();
 
-  test('build fingerprint is v46', () => {
+  test('build fingerprint is v47', () => {
     const html = read('pitch.html');
-    expect(html).toMatch(/<meta name="nfr-build" content="v46-[0-9a-f]{7}">/);
-    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v46'/);
+    expect(html).toMatch(/<meta name="nfr-build" content="v47-[0-9a-f]{7}">/);
+    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v47'/);
   });
 
   test('all local asset ?v= strings share one fingerprint', () => {
@@ -205,7 +205,7 @@ test.describe('Static checks', () => {
 
   test('story manifest has four chapters and the twelve core screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('46');
+    expect(m.version).toBe('47');
     expect(m.chapters.map((c) => c.id)).toEqual(['problem', 'answer', 'workspace', 'next']);
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE_SLIDES);
   });
