@@ -51,15 +51,15 @@ test.describe('Enter NFR Workspace', () => {
     expect(await ws(page)).toBe('live-handoff');
   });
 
-  test('Space skips the doorway, then returns to the plan beneath the answer', async ({ page }) => {
+  test('Space skips the doorway, then goes to the appendix index: the core route ends here', async ({ page }) => {
     await open(page);
     await page.evaluate(() => document.getElementById('enter-workspace').scrollIntoView({ behavior: 'instant' }));
     await page.waitForFunction(() => sections[current].id === 'enter-workspace' && SceneDirector.getState() === 'playing', null, { timeout: 6000 });
     await press(page, 'Space');
     await page.waitForFunction(() => SceneDirector.getState() === 'complete', null, { timeout: 2000 });
     await press(page, 'Space');
-    await page.waitForFunction(() => sections[current].id === 'method-plan', null, { timeout: 4000 });
-    expect(await ws(page)).toBe('beneath');
+    await page.waitForFunction(() => sections[current].id === 'appendix', null, { timeout: 4000 });
+    expect(await ws(page)).toBe('appendix');
   });
 
   test('L opens the live product; ?live= points it elsewhere', async ({ page }) => {
@@ -108,7 +108,7 @@ test.describe('Captured fallback', () => {
     expect(await F.getAttribute('data-capture')).toBe(String(shots - 2));
     await press(page, 'Space');
     await press(page, 'Space');
-    await page.waitForFunction(() => sections[current].id === 'method-plan', null, { timeout: 5000 });
+    await page.waitForFunction(() => sections[current].id === 'appendix', null, { timeout: 5000 });
   });
 
   test('every capture exists and loads', async ({ page }) => {
@@ -211,25 +211,24 @@ test.describe('Appendix modules', () => {
     await reduced(page);
     await open(page);
     const links = await page.$$eval('section[data-route="core"] [data-apx-link]', (b) => b.map((x) => x.closest('section').id + '>' + x.dataset.apxLink));
-    expect(links).toEqual(['role-views>appendix-d3', 'role-views>appendix-d9', 'four-ways>appendix-m1', 'three-layers>appendix-s3', 'three-layers>appendix-s6', 'method-plan>appendix-m2', 'method-plan>appendix-d8', 'connected-context>appendix-d4', 'connected-context>appendix-d5',
-      'authority-boundary>appendix-m6', 'authority-boundary>appendix-m7', 'value-decision>appendix-v2', 'value-decision>appendix-v3',
-      'value-decision>appendix-s1', 'bring-in>appendix-s5', 'bring-in>appendix-s4', 'workshop-decision>appendix-v1']);
-    await land(page, 'value-decision');
-    await page.locator('#value-decision [data-apx-link="appendix-s1"]').click();
-    await page.waitForFunction(() => sections[current].id === 'appendix-s1', null, { timeout: 4000 });
+    expect(links).toEqual(['role-views>appendix-d3', 'role-views>appendix-d9', 'four-ways>appendix-m1', 'three-layers>appendix-s3', 'three-layers>appendix-s6',
+      'profiles-access>appendix-d9', 'profiles-access>appendix-d2']);
+    await land(page, 'profiles-access');
+    await page.locator('#profiles-access [data-apx-link="appendix-d2"]').click();
+    await page.waitForFunction(() => sections[current].id === 'appendix-d2', null, { timeout: 4000 });
   });
 
   test('browser Back from a page returns to the screen that opened it', async ({ page }) => {
     await reduced(page);
     await open(page);
-    await land(page, 'authority-boundary');
+    await land(page, 'profiles-access');
     await page.waitForTimeout(600);
-    await page.locator('#authority-boundary [data-apx-link="appendix-m7"]').click();
-    await page.waitForFunction(() => sections[current].id === 'appendix-m7', null, { timeout: 4000 });
+    await page.locator('#profiles-access [data-apx-link="appendix-d9"]').click();
+    await page.waitForFunction(() => sections[current].id === 'appendix-d9', null, { timeout: 4000 });
     await page.goBack();
-    await page.waitForFunction(() => sections[current].id === 'authority-boundary', null, { timeout: 4000 });
+    await page.waitForFunction(() => sections[current].id === 'profiles-access', null, { timeout: 4000 });
     await page.goForward();
-    await page.waitForFunction(() => sections[current].id === 'appendix-m7', null, { timeout: 4000 });
+    await page.waitForFunction(() => sections[current].id === 'appendix-d9', null, { timeout: 4000 });
   });
 
   test('the public pages name no internal asset or developer tooling', async ({ page }) => {
@@ -331,14 +330,14 @@ test.describe('Presenter controls and resilience', () => {
     await land(page, 'cover');
     const known = await page.evaluate(() => NFRExperience.states());
     const seen = new Set([await ws(page)]);
-    for (let i = 0; i < 40 && (await here(page)) !== 'workshop-decision'; i++) {
+    for (let i = 0; i < 40 && (await here(page)) !== 'appendix'; i++) {
       await press(page, 'Space');
       await page.waitForTimeout(250);
       seen.add(await ws(page));
     }
-    expect(await here(page)).toBe('workshop-decision');
+    expect(await here(page)).toBe('appendix');
     for (const s of seen) expect(known, s).toContain(s);
-    ['cover', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'live-handoff', 'beneath', 'connected', 'control-boundary', 'value', 'bring-in', 'decision']
+    ['cover', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles', 'live-handoff', 'appendix']
       .forEach((s) => expect([...seen]).toContain(s));
     expect(warnings).toEqual([]);
   });

@@ -26,13 +26,8 @@ const META = {
   'role-views':         { q: 'How does the information flow to the answer, and how deep do we go?', ms: 3200, token: 'role-views' },
   'four-ways':          { q: 'What is NFR Workspace?', ms: 5000, token: 'four-ways' },
   'three-layers':       { q: 'How does it start, and how does it grow?', ms: 5100, token: 'three-layers' },
+  'profiles-access':    { q: 'How is each profile set up, and what does each person see?', ms: 2400, token: 'profiles' },
   'enter-workspace':    { q: 'What does the working day look like?', ms: 2600, token: 'live-handoff', interactive: true, state: 'live-handoff' },
-  'method-plan':        { q: 'What happened beneath the experience?', ms: 4700, token: 'method-plan' },
-  'connected-context':  { q: 'How does the answer stay true?', ms: 4500, token: 'connected-core' },
-  'authority-boundary': { q: 'When does a person step in?', ms: 5200, token: 'controlled-receipt' },
-  'value-decision':     { q: 'What is the value, and how is it measured?', ms: 5300, token: 'value' },
-  'bring-in':           { q: 'How do we bring it in, and how is it paid for?', ms: 3500, token: 'bring-in' },
-  'workshop-decision':  { q: 'Where do we start?', ms: 2700, token: 'first-loop' },
   'live-fallback':      { q: 'What if the live product is unavailable?', ms: 100, token: 'captured-acts', interactive: true, state: 'live-fallback' }
 };
 
@@ -79,8 +74,7 @@ const manifest = {
   chapters: [
     { id: 'shift', label: 'THE SHIFT' },
     { id: 'model', label: 'THE MODEL' },
-    { id: 'workspace', label: 'THE WORKSPACE' },
-    { id: 'path', label: 'THE PATH' }
+    { id: 'workspace', label: 'THE WORKSPACE' }
   ],
   screens: screens
 };

@@ -136,6 +136,9 @@
     { "name": "list-details",     "class": "ti-list-details",     "semantic": "list" },
     { "name": "flag",             "class": "ti-flag",             "semantic": "flag" },
     { "name": "upload",           "class": "ti-upload",           "semantic": "upload" },
-    { "name": "chevron-down",     "class": "ti-chevron-down",     "semantic": "fold" }
+    { "name": "chevron-down",     "class": "ti-chevron-down",     "semantic": "fold" },
+    { "name": "fingerprint",    "class": "ti-fingerprint",    "semantic": "identity" },
+    { "name": "tag",            "class": "ti-tag",            "semantic": "tag" },
+    { "name": "copy",           "class": "ti-copy",           "semantic": "inherit" }
   ]
 }

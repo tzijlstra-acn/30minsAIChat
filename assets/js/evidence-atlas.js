@@ -1241,7 +1241,7 @@
 
   function buildControlledWrite(canvas) {
     var wrap = mk('div', { className: 'ea-story-wrap' });
-    storyHeader(wrap, 'Controlled write and authority', 'How does an approved action reach a system of record, and what stops a write that was not approved?', 'authority-boundary');
+    storyHeader(wrap, 'Controlled write and authority', 'How does an approved action reach a system of record, and what stops a write that was not approved?', 'enter-workspace');
 
     var seq = section(wrap, 'Write sequence: one contract for every write');
     WRITE_SEQUENCE.forEach(function (s, i) {
@@ -1401,7 +1401,7 @@
     if (!target) {
       try { target = sessionStorage.getItem('nfr_atlas_return'); } catch (e) { target = null; }
     }
-    target = target || 'value-decision';
+    target = target || 'enter-workspace';
     var sec = document.getElementById(target);
     if (sec) sec.scrollIntoView({ behavior: 'smooth' });
     else window.location.hash = '#' + target;

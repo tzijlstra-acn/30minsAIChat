@@ -17,10 +17,9 @@ const EM = String.fromCharCode(0x2014);
 const EN = String.fromCharCode(0x2013);
 
 const CORE = [
-  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'enter-workspace',
-  'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'bring-in', 'workshop-decision'
+  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'profiles-access', 'enter-workspace'
 ];
-const INTERACTIVE = ['role-views', 'enter-workspace', 'live-fallback'];
+const INTERACTIVE = ['role-views', 'profiles-access', 'enter-workspace', 'live-fallback'];
 const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic layer', 'control plane', 'orchestrator', 'orchestration',
   'model gateway', 'autonomous', 'llm', 'rag', 'copilot'];
 const CLAIMS = ['fully autonomous', 'replaces all systems', 'all nfr processes', 'zero human effort', 'instant deployment',
@@ -54,7 +53,7 @@ function sceneFiles() {
 
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
-  test('fourteen core screens; one scene file per declared scene, core and appendix', () => {
+  test('nine core screens; one scene file per declared scene, core and appendix', () => {
     const html = read('pitch.html');
     const core = [...html.matchAll(/<section id="([a-z0-9-]+)" data-slide data-route="core"/g)].map((m) => m[1]);
     expect(core).toEqual(CORE);
@@ -321,6 +320,67 @@ test.describe('Role views', () => {
   });
 });
 
+// ── SCREEN 08: ONE PROFILE PER PERSON, FROM THE IDENTITY SYSTEM TO THEIR SCREEN ──
+test.describe('Profiles and access', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('four people, six levels each; two share a role but not a scope; the menu follows the profile', () => {
+    const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
+    const P = d.profiles;
+    expect(P.people.map((x) => x.id)).toEqual(['maya', 'ben', 'sara', 'tom']);
+    expect([...P.order].sort()).toEqual(P.people.map((x) => x.id).sort());
+    expect(P.levels.map((l) => l.id)).toEqual(['role', 'scope', 'records', 'fields', 'actions', 'delegation']);
+    expect(P.menu.map((m) => m.label)).toEqual(d.capabilities.map((c) => c.product));
+    P.people.forEach((x) => {
+      P.levels.forEach((l) => expect(typeof x.levels[l.id] === 'string' && x.levels[l.id].length > 0, x.id + ' ' + l.id).toBe(true));
+      P.idm.forEach((it) => expect(typeof x.idm[it.id] === 'string' && x.idm[it.id].length > 0, x.id + ' ' + it.id).toBe(true));
+      expect(x.menu, x.id).toHaveLength(P.menu.length);
+      expect(x.today, x.id).toHaveLength(3);
+      expect(x.levels.role, x.id).toBe(x.role);
+    });
+    // The granularity point: same role, different scope, so different records and screen
+    const maya = P.people[0], ben = P.people[1];
+    expect(maya.role).toBe(ben.role);
+    expect(maya.scope).not.toBe(ben.scope);
+    expect(maya.inView).not.toBe(ben.inView);
+    // The control owner's profile has no processes or agents
+    expect(P.people[3].menu).toEqual([true, true, false, false]);
+  });
+
+  test('a click shows a person at once and marks what changed; Space steps through the people, then moves on', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await enter(page, 'profiles-access');
+    const state = () => page.evaluate(() => {
+      const s = document.getElementById('profiles-access');
+      return { active: [...s.querySelectorAll('.pa-person')].findIndex((b) => b.classList.contains('is-active')),
+        changed: [...s.querySelectorAll('.pa-lvl.is-changed')].map((r) => r.dataset.level).join(','),
+        scope: s.querySelector('.pa-lvl[data-level="scope"] .pa-lvl-v').textContent,
+        locked: s.querySelectorAll('.pa-menu-i.is-locked').length, me: s.querySelector('.pa-bar-me').textContent,
+        here: sections[current].id };
+    });
+    let r = await state();
+    expect([r.active, r.changed, r.locked, r.me]).toEqual([0, '', 0, 'MRMaya']);
+    // Same role, different scope: only the scope, the records and the delegation change
+    await page.keyboard.press('Space');
+    r = await state();
+    expect([r.here, r.active, r.changed]).toEqual(['profiles-access', 1, 'scope,records,delegation']);
+    expect(r.scope).toBe('Wealth management, wealth entity');
+    await page.locator('#profiles-access .pa-person').nth(3).click();
+    r = await state();
+    expect([r.active, r.locked]).toEqual([3, 2]);
+    expect(r.changed.split(',')).toContain('role');
+    // Back to the start, then Space walks the order: Maya, Ben, Sara, Tom, next screen
+    await page.locator('#profiles-access .pa-person').nth(0).click();
+    for (const i of [1, 2, 3]) {
+      await page.keyboard.press('Space');
+      expect((await state()).active).toBe(i);
+    }
+    await page.keyboard.press('Space');
+    await page.waitForFunction(() => sections[current].id === 'enter-workspace', null, { timeout: 4000 });
+  });
+});
+
 // ── LAYOUT AT SUPPORTED VIEWPORTS ──
 for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280, 720], [1920, 1080], [1024, 768]]) {
   const vp = w + 'x' + h;
@@ -413,6 +473,43 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280,
           return { out: out.slice(0, 5), small: small.slice(0, 5), spill: spill.slice(0, 5) };
         }, MIN_TEXT_PX[vp]);
         const at = 'role ' + i + ' at ' + dep + ', button ' + o + ', ' + vp;
+        expect(r.out, at + ': outside the canvas').toEqual([]);
+        expect(r.small, at + ': text below the floor').toEqual([]);
+        expect(r.spill, at + ': text outside its box').toEqual([]);
+      }
+    });
+
+    test('screen 08: every person fits the stage and keeps the text inside its boxes', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await open(page);
+      await enter(page, 'profiles-access');
+      const people = await page.locator('#profiles-access .pa-person').count();
+      for (let i = 0; i < people; i++) {
+        await page.locator('#profiles-access .pa-person').nth(i).click();
+        const r = await page.evaluate((min) => {
+          const cv = document.querySelector('#profiles-access [data-scene-container] .ts-canvas');
+          const scale = parseFloat(cv.dataset.scale || '1');
+          const cr = cv.getBoundingClientRect();
+          const out = [], small = [], spill = [];
+          cv.querySelectorAll('*').forEach((el) => {
+            if (el.closest('.ts-svg') || el.closest('.scene-accessible-summary')) return;
+            if (el.checkVisibility && !el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) return;
+            const q = el.getBoundingClientRect();
+            if (!q.width || !q.height) return;
+            if (q.left < cr.left - 2 || q.right > cr.right + 2 || q.top < cr.top - 2 || q.bottom > cr.bottom + 2) out.push(String(el.className).slice(0, 30));
+            if (![...el.childNodes].some((x) => x.nodeType === 3 && x.textContent.trim())) return;
+            if (parseFloat(getComputedStyle(el).fontSize) * scale < min) small.push(el.textContent.trim().slice(0, 30));
+            for (let box = el.parentElement; box && box !== cv; box = box.parentElement) {
+              const bs = getComputedStyle(box);
+              const framed = ['Top', 'Right', 'Bottom', 'Left'].every((x) => parseFloat(bs['border' + x + 'Width']) > 0 && bs['border' + x + 'Style'] !== 'none');
+              if (!framed && !box.classList.contains('ts-obj')) continue;
+              const b = box.getBoundingClientRect();
+              if (q.left < b.left - 2 || q.right > b.right + 2 || q.top < b.top - 2 || q.bottom > b.bottom + 2) { spill.push(el.textContent.trim().slice(0, 30)); break; }
+            }
+          });
+          return { out: out.slice(0, 5), small: small.slice(0, 5), spill: spill.slice(0, 5) };
+        }, MIN_TEXT_PX[vp]);
+        const at = 'person ' + i + ', ' + vp;
         expect(r.out, at + ': outside the canvas').toEqual([]);
         expect(r.small, at + ': text below the floor').toEqual([]);
         expect(r.spill, at + ': text outside its box').toEqual([]);
@@ -591,11 +688,11 @@ test.describe('Copy and claims', () => {
 test.describe('Route', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('four chapters: the shift, the model, the Workspace, the path', () => {
+  test('three chapters: the shift, the model, the Workspace', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.chapters.map((c) => c.label)).toEqual(['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'THE PATH']);
+    expect(m.chapters.map((c) => c.label)).toEqual(['THE SHIFT', 'THE MODEL', 'THE WORKSPACE']);
     const core = m.screens.filter((s) => s.route === 'core');
-    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'shift', 'model', 'model', 'model', 'workspace', 'workspace', 'workspace', 'workspace', 'path', 'path', 'path']);
+    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'shift', 'model', 'model', 'model', 'workspace', 'workspace']);
   });
 
   test('the landing is a landing, with one button per chapter that jumps to its first screen', async ({ page }) => {
@@ -607,14 +704,14 @@ test.describe('Route', () => {
     });
     expect(r.kind).toBe('landing');
     expect(r.header).toBe(false);
-    expect(r.route).toEqual(['cover', 'role-views', 'enter-workspace', 'value-decision']);
+    expect(r.route).toEqual(['cover', 'role-views', 'profiles-access']);
     await page.locator('#cover .landing-chapter').nth(2).click();
-    await page.waitForFunction(() => sections[current].id === 'enter-workspace', null, { timeout: 6000 });
+    await page.waitForFunction(() => sections[current].id === 'profiles-access', null, { timeout: 6000 });
   });
 
-  test('the counter counts fourteen core screens and says Appendix in the appendix', async ({ page }) => {
+  test('the counter counts nine core screens and says Appendix in the appendix', async ({ page }) => {
     await open(page);
-    await expect(page.locator('#counter')).toHaveText('1 / 14');
+    await expect(page.locator('#counter')).toHaveText('1 / 9');
     await expect(page.locator('.nav-ch-btn[data-chid="reference"] .nav-ch-name')).toHaveText('Appendix');
     await page.evaluate(() => document.getElementById('appendix').scrollIntoView({ behavior: 'instant' }));
     await expect(page.locator('#counter')).toHaveText('Appendix', { timeout: 4000 });

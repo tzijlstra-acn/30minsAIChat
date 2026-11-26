@@ -73,6 +73,11 @@ async function run() {
         await shot('role-views-' + order[r]);
       }
     }
+    // Screen 08: one page per person, in the order Space steps through them
+    if (core[i] === 'profiles-access') {
+      var people = await page.evaluate(function() { return NFR_WORKSPACE_DEMO.profiles.order; });
+      for (var q = 1; q < people.length; q++) { await key('Space'); await shot('profiles-access-' + people[q]); }
+    }
     if (core[i] === 'enter-workspace') {
       await go('live-fallback');
       var n = await page.evaluate(function() { return NFR_LIVE_CAPTURES.acts.reduce(function(t, a) { return t + a.shots.length; }, 0); });

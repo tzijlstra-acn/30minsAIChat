@@ -244,3 +244,14 @@ From the owner's review: what no assistant sees belongs at 03; the change screen
 | 04 | `chain-drift` follows one internal change link by link (`chain.links`: what the record says, what is really happening), then a timeline (`chain.timeline`: the record says effective for 97 days while supplier accounts go unreviewed; with NFR Workspace, flagged the same day) and why it matters (exposure, accountability, cost). The records match screen 10 (OBL-12, R-21, CTL-0417, RCSA Q3, the Q3 sign-off). External change is the closing line |
 | 05 | `role-views` rebuilt as seven layers (`roles.layers`) that fold out by depth (`roles.depths`): Light the screen; Medium read, connect, compute; Deep route, store, write back. Each role has three buttons (`outputs`: view, explain, action), each a versioned definition with the systems it reads, its calculation, its AI step, what it stores and where it writes; a test checks that no button reads a system its role may not. Space unfolds the next depth, then moves on; clicks switch the role, the depth or the button |
 | Tests and PDF | The Role views block is rewritten; the screen 05 layout test checks every role at every depth and, at Deep, every button, at all seven sizes. The PDF has six pages for screen 05: Light, Medium and Deep for the first role, then the other roles at Deep |
+
+## 18. v17 changes (nine core screens, release v43)
+
+From the owner's review: no core screen after Enter NFR Workspace; the screens after it are retired, not kept as backup; a new screen on identity and access before it; the strip under each screen becomes its takeaway.
+
+| Change | Detail |
+|---|---|
+| Retired | `method-plan`, `connected-context`, `authority-boundary`, `value-decision`, `bring-in`, `workshop-decision`, with their data (`agents`, `beneath`, `connected`, `boundary`, `value`, `path`, `bringIn`, `experience`, `decision`), fallbacks and CSS. Their content lives in the appendix: M2, D8, D4, M6, M7, V1 to V3, S1, S2, S5 (internal S9 holds the commercial models). The THE PATH chapter is gone |
+| 08 | New `profiles-access` (data `profiles`): four synthetic people; what comes from the identity system; the profile in six levels (role, scope, records, fields, actions, delegation), the levels that changed from the person before marked; their screen (menu, queue, in view, masked); how the data knows where it belongs. Space steps through the people, then moves on |
+| 09 | Enter NFR Workspace is the last core screen. Space after it, and the end of the captured walkthrough, go to the appendix index |
+| Takeaways | Each core screen's strip is labelled Takeaway and states the core message in one sentence; a test checks none is cut off |

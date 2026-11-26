@@ -26,8 +26,7 @@ const VIEWPORTS = [
 ];
 
 const CORE_SLIDES = [
-  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'enter-workspace',
-  'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'bring-in', 'workshop-decision'
+  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'profiles-access', 'enter-workspace'
 ];
 
 async function gotoPage(page, url) {
@@ -70,7 +69,7 @@ for (const vp of VIEWPORTS) {
       expect(overflowing).toEqual([]);
     });
 
-    test('all 14 core screens are attached to the DOM', async ({ page }) => {
+    test('all 9 core screens are attached to the DOM', async ({ page }) => {
       await gotoPage(page);
       for (const id of CORE_SLIDES) {
         await expect(page.locator(`#${id}`), `${id} missing at ${vp.name}`).toBeAttached();
@@ -140,7 +139,7 @@ test('store is initialised with defaults', async ({ page }) => {
   expect(state).not.toBeNull();
 });
 
-test('exactly 14 core screens, appendix excluded from the core route', async ({ page }) => {
+test('exactly 9 core screens, appendix excluded from the core route', async ({ page }) => {
   await gotoPage(page);
   const ids = await page.$$eval('section[data-route="core"]', (s) => s.map((x) => x.id));
   expect(ids).toEqual(CORE_SLIDES);
@@ -150,7 +149,7 @@ test('exactly 14 core screens, appendix excluded from the core route', async ({ 
 test('counter total comes from the DOM', async ({ page }) => {
   await gotoPage(page);
   await page.waitForTimeout(500);
-  await expect(page.locator('#counter')).toHaveText('1 / 14');
+  await expect(page.locator('#counter')).toHaveText('1 / 9');
 });
 
 test('nav bar has an Evidence Atlas button', async ({ page }) => {
@@ -158,10 +157,10 @@ test('nav bar has an Evidence Atlas button', async ({ page }) => {
   await expect(page.locator('.nav button[title*="Evidence Atlas"]')).toBeAttached();
 });
 
-test('agenda lists the four chapters, the appendix and the quick jumps', async ({ page }) => {
+test('agenda lists the three chapters, the appendix and the quick jumps', async ({ page }) => {
   await gotoPage(page);
   const chapters = await page.$$eval('#agendaStory .agenda-ch-name', (e) => e.map((x) => x.textContent));
-  for (const c of ['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'THE PATH', 'APPENDIX']) {
+  for (const c of ['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'APPENDIX']) {
     expect(chapters).toContain(c);
   }
   for (const id of ['agendaLiveJump', 'agendaFallbackJump', 'agendaAppendixJump', 'agendaRoiJump']) await expect(page.locator('#' + id)).toBeAttached();
@@ -241,10 +240,10 @@ test.describe('Static checks', () => {
     expect([...shas]).toHaveLength(1);
   });
 
-  test('story manifest is version 31 with four chapters and ten core screens', () => {
+  test('story manifest has three chapters and the nine core screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.version).toBe('42');
-    expect(m.chapters.map((c) => c.id)).toEqual(['shift', 'model', 'workspace', 'path']);
+    expect(m.chapters.map((c) => c.id)).toEqual(['shift', 'model', 'workspace']);
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE_SLIDES);
   });
 

@@ -6,7 +6,7 @@
 // timeline shows for how long: the record says effective for 97 days while supplier
 // accounts go unreviewed, until audit finds it; with NFR Workspace the same change is
 // flagged the same day and fixed before the sign-off. Then why it matters: exposure,
-// accountability and cost. The records match screen 10.
+// accountability and cost. The records match the roles of screen 05.
 SceneDirector.register('chain-drift', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
