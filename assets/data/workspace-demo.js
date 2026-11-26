@@ -319,14 +319,30 @@
         pro: 'A new question answered without waiting for IT', con: 'Starts constrained; reviewed before it is shared' }
     ],
     foundation: ['Same identity', 'Same permissions', 'Same evidence', 'Same control record'],
-    // 06 grid: across, how standard the work is; up, how often it comes. Each way fills one
-    // cell; where one way stops, the next takes over, so no kind of question is left over.
+    // 06: each way of working is run by one kind of agent, in rising order of judgement:
+    // Ask by a retrieval agent, Use by a process agent, Run by a policy agent, Create by a
+    // principal agent. Each column shows the agent's job, one supplier example and why the
+    // person can trust the answer. The more judgement, the closer the person.
     ways: {
-      across: { label: 'How standard the work is', left: 'A new question', right: 'A standard task' },
-      up: { label: 'How often it comes', top: 'Again and again', bottom: 'Once, now' },
-      cells: { assist: [0, 1], app: [1, 1], automation: [1, 0], builder: [0, 0] },
-      proLabel: 'Strong at', conLabel: 'Stops at',
-      line: ['Where one way stops, the next takes over.', 'A repeated question becomes an app; a repeated task becomes a process; a new question becomes an agent.']
+      agentLabel: 'Run by',
+      exampleLabel: 'For example',
+      trustLabel: 'Why you can trust it',
+      agents: {
+        assist: { label: 'Retrieval agent', icon: 'ti-search', tone: 'data', does: 'Finds and summarises information',
+          example: "What changed in this supplier's latest SOC 2 report?",
+          trust: 'Every claim cites its source and date. One click opens the record.', who: 'The agent answers' },
+        app: { label: 'Process agent', icon: 'ti-route', tone: 'data', does: 'Runs a defined workflow, with little or no judgement',
+          example: 'Complete the annual review of one critical supplier.',
+          trust: 'The approved method, the same steps every time. Rules calculate; no number is guessed.', who: 'Runs the approved method' },
+        automation: { label: 'Policy agent', icon: 'ti-scale', tone: 'ai', does: 'Applies rules to unclear cases and makes bounded judgements',
+          example: 'Each month, check every critical supplier; route the material gaps.',
+          trust: 'It shows the rule and the threshold it applied. Anything outside them goes to a person.', who: 'Proposes; a person confirms' },
+        builder: { label: 'Principal agent', icon: 'ti-compass', tone: 'human', does: 'Weighs broader objectives and trade-offs, such as keeping an important supplier',
+          example: 'Do we keep Novalink while two critical services depend on one provider?',
+          trust: 'It lays out the options and the evidence for each. A named person decides.', who: 'A person decides' }
+      },
+      axis: { label: 'Judgement', low: 'None', high: 'Broad' },
+      line: ['A chat assistant stops at retrieval.', 'Each agent has one job, its own test and its own proof; the more judgement, the closer the person.']
     },
 
     // ── 07 The point: scale comes from three layers improving together, one role at a time ──
@@ -450,7 +466,44 @@
       lockedLabel: 'Not in this profile'
     },
 
-    // ── 09 The doorway into the live product ──
+    // ── 09 The point: every step secured, every person sees only their part ──
+    // One request end to end, with the controls at each step: sign in, ask, retrieve,
+    // process, answer, keep and write back. Under it, the same supplier record as each of
+    // screen 08's people sees it: shown, a summary, masked, or not in scope at all. Ben's
+    // scope is wealth management, so Novalink's record does not reach him. Target design.
+    security: {
+      label: 'One request, end to end',
+      tag: 'Target design',
+      transit: 'Encrypted in transit',
+      stages: [
+        { id: 'signin', label: 'Sign in', icon: 'ti-fingerprint', items: ['Single sign-on, two factors', 'One session, one person'] },
+        { id: 'ask', label: 'Ask', icon: 'ti-id-badge-2', items: ["Carries the person's profile", 'No shared account reads data'] },
+        { id: 'retrieve', label: 'Retrieve', icon: 'ti-database', items: ['Each system checks access', 'Only permitted fields leave it'] },
+        { id: 'process', label: 'Process', icon: 'ti-cpu', items: ['In your approved environment', 'Personal data masked', 'Your data trains no model'] },
+        { id: 'answer', label: 'Answer', icon: 'ti-eye-check', items: ['Filtered for the person', 'Every claim cites its source'] },
+        { id: 'keep', label: 'Keep', icon: 'ti-archive', items: ['Encrypted and versioned', 'Writes only once approved', 'All in the audit log'] }
+      ],
+      seeLabel: 'The same supplier record, as each person sees it',
+      record: 'Novalink, critical supplier',
+      people: ['maya', 'ben', 'sara', 'tom'],
+      roles: { maya: 'Third-party risk, retail', ben: 'Third-party risk, wealth', sara: 'Head of NFR', tom: 'Control owner' },
+      states: {
+        shown: { label: 'Shown', icon: 'ti-eye', tone: 'proof' },
+        summary: { label: 'Summary', icon: 'ti-chart-bar', tone: 'human' },
+        masked: { label: 'Masked', icon: 'ti-eye-off', tone: 'gap' },
+        out: { label: 'Not in scope', icon: 'ti-lock', tone: 'neutral' }
+      },
+      // Each cell: a state, or [state, own label]
+      fields: [
+        { label: 'Service and criticality', see: { maya: 'shown', ben: 'out', sara: 'shown', tom: 'shown' } },
+        { label: 'Contract value', see: { maya: 'shown', ben: 'out', sara: ['summary', 'Total only'], tom: 'out' } },
+        { label: 'Incidents', see: { maya: 'shown', ben: 'out', sara: 'summary', tom: ['summary', 'Own unit only'] } },
+        { label: 'Supplier contact (personal data)', see: { maya: 'masked', ben: 'out', sara: 'masked', tom: 'out' } }
+      ],
+      outNote: 'Wealth management only: the record does not reach this profile.'
+    },
+
+    // ── 10 The doorway into the live product ──
     enter: {
       statuses: ['Resolving role and permissions', 'Loading current decisions', 'Connecting approved applications', 'Workspace ready'],
       cue: 'Open live Workspace',

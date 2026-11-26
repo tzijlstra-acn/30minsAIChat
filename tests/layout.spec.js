@@ -26,7 +26,7 @@ const VIEWPORTS = [
 ];
 
 const CORE_SLIDES = [
-  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'profiles-access', 'enter-workspace'
+  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'profiles-access', 'security', 'enter-workspace'
 ];
 
 async function gotoPage(page, url) {
@@ -69,7 +69,7 @@ for (const vp of VIEWPORTS) {
       expect(overflowing).toEqual([]);
     });
 
-    test('all 9 core screens are attached to the DOM', async ({ page }) => {
+    test('all 10 core screens are attached to the DOM', async ({ page }) => {
       await gotoPage(page);
       for (const id of CORE_SLIDES) {
         await expect(page.locator(`#${id}`), `${id} missing at ${vp.name}`).toBeAttached();
@@ -139,7 +139,7 @@ test('store is initialised with defaults', async ({ page }) => {
   expect(state).not.toBeNull();
 });
 
-test('exactly 9 core screens, appendix excluded from the core route', async ({ page }) => {
+test('exactly 10 core screens, appendix excluded from the core route', async ({ page }) => {
   await gotoPage(page);
   const ids = await page.$$eval('section[data-route="core"]', (s) => s.map((x) => x.id));
   expect(ids).toEqual(CORE_SLIDES);
@@ -149,7 +149,7 @@ test('exactly 9 core screens, appendix excluded from the core route', async ({ p
 test('counter total comes from the DOM', async ({ page }) => {
   await gotoPage(page);
   await page.waitForTimeout(500);
-  await expect(page.locator('#counter')).toHaveText('1 / 9');
+  await expect(page.locator('#counter')).toHaveText('1 / 10');
 });
 
 test('agenda lists the three chapters, the appendix and the quick jumps', async ({ page }) => {
@@ -202,7 +202,7 @@ test.describe('Static checks', () => {
     expect([...shas]).toHaveLength(1);
   });
 
-  test('story manifest has three chapters and the nine core screens', () => {
+  test('story manifest has three chapters and the ten core screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.version).toBe('44');
     expect(m.chapters.map((c) => c.id)).toEqual(['problem', 'answer', 'workspace']);

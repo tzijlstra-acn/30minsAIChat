@@ -35,10 +35,11 @@ Print this. One point per screen, one sentence to say, the key to press. The det
 | 03 | Standalone AI sees three of eight | "Red is what no assistant sees. The answer needs all eight: the 360 view." | Space |
 | 04 | A supplier changes, your records do not | "Novalink moves its hosting to Basalt Cloud. Four records still say green; the notice sat in a mailbox from day 12; an outage shows it on day 110. With the Workspace: flagged on day 12." | Space |
 | 05 | How it flows, per role, at three depths | "Light: what they see. Medium: where it comes from. Deep: how each button runs, defined once, stored with versions, written back once approved." | Space (Medium, then Deep); click a role or a button |
-| 06 | Four ways, no gap | "Each way is strong where another stops. Together, no question falls through." | Space |
+| 06 | Four ways, four agents | "Ask runs on a retrieval agent, Use on a process agent, Run on a policy agent, Create on a principal agent. Each shows why you can trust it; the more judgement, the closer the person." | Space |
 | 07 | Set up once, grow by module | "Pilots do not scale. Set up once with the third-party risk team in six months, then add a team at a time, in-house or managed." | Space |
 | 08 | One profile per person | "Your identity system sets each profile, in six levels down to a single field. Maya and Ben share a role, not a scope: different suppliers, different screen." | Space (next person) or click a person |
-| 09 | The product itself | Live product: press L. No product on your laptop: press F for the walkthrough | L or F |
+| 09 | Every step secured | "Six steps, each checked. And the same supplier record: Maya sees it, Ben does not, Sara gets a summary, Tom only one unit's incidents." | Space |
+| 10 | The product itself | Live product: press L. No product on your laptop: press F for the walkthrough | L or F |
 | Demo | Five acts, at least act 3 | "No single assistant could answer this: 15 evidence items from six registers." | Space |
 | After | Questions, then the ask | Open the appendix page the buyer asks about (A, then the domain). Close with the ask: one role, one decision, one process to measure. | A, 1 to 4 |
 
@@ -63,11 +64,11 @@ Use the public edition with clients unless every internal page you plan to show 
 |---|---|---|
 | 0 to 6 | Today's problem: how the work arrives, what no assistant sees, a supplier change the records miss | 01 to 04 |
 | 6 to 11 | The answer: how the information flows, four ways that leave no gap, set up once and grow by module | 05 to 07 |
-| 11 to 13 | Profiles and access, then the doorway | 08, 09 |
-| 13 to 21 | The live product, five acts | the product |
-| 21 to 30 | Questions from the appendix, then the ask | appendix by question |
+| 11 to 14 | Profiles and access, security, then the doorway | 08 to 10 |
+| 14 to 22 | The live product, five acts | the product |
+| 22 to 30 | Questions from the appendix, then the ask | appendix by question |
 
-**Twenty-minute route:** 01, 02, 03, 04, 05 (Light and Medium; Deep only for architects), 06, 08 (Maya and Ben), 09 and the product, then the ask. Screen 07 has an appendix page (S3) to open if a buyer asks.
+**Twenty-minute route:** 01, 02, 03, 04, 05 (Light and Medium; Deep only for architects), 06, 08 (Maya and Ben), 09, 10 and the product, then the ask. Screen 07 has an appendix page (S3) to open if a buyer asks.
 
 Do not try to show every appendix domain. Open one page when a buyer asks.
 
@@ -105,7 +106,7 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 | Click Light, Medium or Deep, or a folded layer | On screen 05, fold the layers in or out |
 | Click a button on screen 05 | Light up what that button reads, calculates, stores and writes back |
 | Click a person on screen 08 | Show that person's profile and screen; the levels that changed are marked. Space steps to the next person |
-| W | Go to Enter NFR Workspace (screen 09) |
+| W | Go to Enter NFR Workspace (screen 10) |
 | L | Open the live product (`http://localhost:3200/`; add `?live=<url>` to the deck address to change it) |
 | F | The five acts, captured from the product |
 | A | Appendix index |
@@ -171,11 +172,13 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 - **Be precise:** the third-party risk manager and the operational risk partner are roles in the product today, and their cards say so. The Head of NFR and control owner views are target design, also marked on their cards. The layers and the button definitions (such as TP-DET v3) are the target design, shown on synthetic records; appendix D5 has the full pipeline.
 - **Deep dives:** D3 (what travels with a question), D6 (access and audit).
 
-### 06 Four ways of working. Together, no question falls through.
+### 06 Four ways of working, each run by its own agent.
 
-- **Remember:** the four ways fill a grid: how standard the work is (a new question or a standard task) against how often it comes (once, or again and again). Each is strong where another stops, so together nothing falls through. The labels are the product's own menu names.
-- **Visual:** four gaps first, each naming a kind of work; then each way fills its gap, with what it is strong at and where it stops.
-- **Talk track (60 s):** "A one-off question: Ask. Answered now, with its sources, but it is not repeatable. A standard task, one case at a time: Use, an app with the approved method and sign-off. The same steps across many cases: Run. The routine runs on its own and the exceptions come to people; it needs a stable process. A new question that keeps coming back: Create, your own agent, starting constrained and reviewed before it is shared. Where one stops, the next takes over: a repeated question becomes an app, a repeated task a process, a new question an agent. All on the same identity, permissions, evidence and control record."
+- **Remember:** the four ways of working are the four kinds of agent, in rising order of judgement. Ask runs on a retrieval agent, Use on a process agent, Run on a policy agent, Create on a principal agent. Each column ends with why the person can trust the answer, and the more judgement, the closer the person.
+- **Visual:** column by column, left to right: the way, the agent beneath it and its job, one supplier example, and a green card, "Why you can trust it". Under the columns, judgement rises from none to broad, with who decides at each step.
+- **Talk track (75 s):** "Four ways of working, and each is run by its own kind of agent. Ask a question: a retrieval agent finds and summarises it, and every claim cites its source and date, one click away. Use an app for a standard task, such as the annual review of a critical supplier: a process agent runs the approved method, the same steps every time, and rules calculate; no number is guessed. Run a process across many cases: a policy agent applies your rules to the unclear ones and shows the rule and threshold it used; anything outside them goes to a person. Create, for a new question such as whether to keep Novalink while two critical services depend on one provider: a principal agent weighs the trade-offs and lays out the options with the evidence for each, and a named person decides. A chat assistant stops at the first column."
+- **If asked "is Create always a principal agent?":** "Create is where new, judgement-heavy questions land. An agent built there starts constrained and inherits your access; the more judgement it carries, the more it prepares and the less it decides."
+- **Deep dives:** M1 (why small methods, not one large model), M3 (what belongs to AI, rules and people).
 
 ### 07 From AI pilots to a Workspace that grows by module
 
@@ -197,11 +200,21 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 - **Be precise:** the profile levels, the data tags and the delegation are the target design, shown with synthetic people; the product today has the third-party risk manager and operational risk partner roles.
 - **Deep dives:** D6 (entitlements, provenance and audit), D2 (how the systems connect).
 
+### 09 Every step secured. Every person sees only their part.
+
+- **Remember:** security follows the person through every step of one request, and each role sees only the fields it may. Two halves: the six steps with their controls, then the same supplier record as each of screen 08's people sees it.
+- **Visual:** the six steps light up left to right, with a lock between each (encrypted in transit). Then the record, Novalink, column by column: Maya sees the service, contract value and incidents, with personal data masked; Ben sees nothing, because Novalink is not in wealth management; Sara gets totals and summaries; Tom, the control owner, sees the service and one unit's incidents only.
+- **Talk track (75 s):** "Here is one request, end to end. Sign in: your single sign-on, two factors, one session for one person. Ask: the question carries that person's profile, and no shared account reads your data. Retrieve: each system checks access first, and only the fields the person may see leave it. Process: in your approved environment, with personal data masked before any model sees it, and your data trains no model. Answer: filtered for the person, every claim cited. Keep: encrypted and versioned, written back only once a person approves, and every step in the audit log. And this is what it means for one record. [Point at the columns.] Same supplier, four people: Maya sees it, with personal data masked. Ben has the same role in wealth management, so the record does not reach him at all. Sara sees totals. Tom sees only what the controls need."
+- **IT strategist asks:** "Where does the model run, and is our data used to train it?" **Answer:** "In the environment you approve: managed, a sovereign instance or your own infrastructure (S5). Your data is not used to train any model; prompts and outputs are logged with the rest of the audit trail (D6)."
+- **IT strategist asks:** "What stops the AI from seeing more than the user?" **Answer:** "Each source system checks the person's own entitlements before anything is read, and the answer is filtered again before it is shown. There is no service account that reads on a person's behalf (D6)."
+- **Be precise:** the steps and the field rules are the target design, shown on synthetic records; how they are configured for a bank is agreed in the five weeks (S1).
+- **Deep dives:** D6 (entitlements, provenance and audit), M4 (governed write-back).
+
 ### Transition into the product
 
 > "The simplest way to see the difference is to open the working day of a third-party risk manager with a profile like Maya's. It does not start with a blank chat. It starts with the next decision."
 
-### 09 Enter NFR Workspace (the doorway)
+### 10 Enter NFR Workspace (the doorway)
 
 - **Remember:** the live product is the evidence; this screen is only the doorway, and the last screen of the core story.
 - **Action:** arrive on the screen (or press W). It resolves the role and permissions, the profile from screen 08, loads the current decisions, connects the approved applications and shows **Open live Workspace (L)**. Press L or click it, or switch to the product tab.
@@ -219,7 +232,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 | 4 From insight to action | The professional approves; the system records | M4, D6 |
 | 5 The long tail, governed | Agents cover the long tail without bypassing controls | M3 |
 
-**Return to the deck:** switch to the deck tab, still on screen 09, and press Space. The deck goes to the appendix index, where the questions begin. From the product walkthrough, Space at the last capture does the same.
+**Return to the deck:** switch to the deck tab, still on screen 10, and press Space. The deck goes to the appendix index, where the questions begin. From the product walkthrough, Space at the last capture does the same.
 
 ### Recovery during the live demonstration
 

@@ -17,7 +17,7 @@ const EM = String.fromCharCode(0x2014);
 const EN = String.fromCharCode(0x2013);
 
 const CORE = [
-  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'profiles-access', 'enter-workspace'
+  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'profiles-access', 'security', 'enter-workspace'
 ];
 const INTERACTIVE = ['role-views', 'profiles-access', 'enter-workspace', 'live-fallback'];
 const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic layer', 'control plane', 'orchestrator', 'orchestration',
@@ -53,7 +53,7 @@ function sceneFiles() {
 
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
-  test('nine core screens; one scene file per declared scene, core and appendix', () => {
+  test('ten core screens; one scene file per declared scene, core and appendix', () => {
     const html = read('pitch.html');
     const core = [...html.matchAll(/<section id="([a-z0-9-]+)" data-slide data-route="core"/g)].map((m) => m[1]);
     expect(core).toEqual(CORE);
@@ -377,7 +377,50 @@ test.describe('Profiles and access', () => {
       expect((await state()).active).toBe(i);
     }
     await page.keyboard.press('Space');
-    await page.waitForFunction(() => sections[current].id === 'enter-workspace', null, { timeout: 4000 });
+    await page.waitForFunction(() => sections[current].id === 'security', null, { timeout: 4000 });
+  });
+});
+
+// ── SCREENS 06 AND 09: THE WAYS AND THEIR AGENTS; SECURITY END TO END ──
+test.describe('Ways, agents and security', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('each way of working is run by one kind of agent, in rising judgement, each with its reason to trust it', () => {
+    const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
+    const G = d.ways;
+    expect(d.capabilities.map((c) => G.agents[c.id].label)).toEqual(['Retrieval agent', 'Process agent', 'Policy agent', 'Principal agent']);
+    d.capabilities.forEach((c) => ['does', 'example', 'trust', 'who'].forEach((k) => expect(typeof G.agents[c.id][k] === 'string' && G.agents[c.id][k].length > 0, c.id + ' ' + k).toBe(true)));
+    // Only the principal agent leaves the decision to a person
+    expect(G.agents.builder.who).toBe('A person decides');
+  });
+
+  test('screen 06 shows the four columns with an agent and a trust card each', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await enter(page, 'four-ways');
+    const r = await page.evaluate(() => ({ agents: [...document.querySelectorAll('#four-ways .fw3-agent-t')].map((e) => e.textContent),
+      trust: document.querySelectorAll('#four-ways .fw3-trust').length, who: [...document.querySelectorAll('#four-ways .fw3-who')].map((e) => e.textContent) }));
+    expect(r.agents).toEqual(['Retrieval agent', 'Process agent', 'Policy agent', 'Principal agent']);
+    expect(r.trust).toBe(4);
+    expect(r.who[3]).toBe('A person decides');
+  });
+
+  test('security: six steps, and the same record as each of screen 08\'s people sees it', async ({ page }) => {
+    const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
+    const X = d.security;
+    expect(X.stages.map((s) => s.id)).toEqual(['signin', 'ask', 'retrieve', 'process', 'answer', 'keep']);
+    expect(X.people).toEqual(d.profiles.order);
+    X.fields.forEach((f) => X.people.forEach((p) => {
+      const v = f.see[p];
+      expect(Object.keys(X.states), f.label + ' ' + p).toContain(typeof v === 'string' ? v : v[0]);
+    }));
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await enter(page, 'security');
+    const r = await page.evaluate(() => ({ stages: document.querySelectorAll('#security .sc-stage').length,
+      masked: document.querySelectorAll('#security .sc-cell.is-masked').length, all: document.querySelectorAll('#security .sc-cell.is-all').length }));
+    // Ben's scope does not include the supplier: one cell for the whole column
+    expect(r).toEqual({ stages: 6, masked: 2, all: 1 });
   });
 });
 
@@ -397,11 +440,11 @@ test.describe('Chapter dividers', () => {
     // Each lists its chapter's screens with their own numbers in the story
     expect(r[0].screens).toEqual(['02 #work-arrives', '03 #assistance-here', '04 #chain-drift']);
     expect(r[1].screens).toEqual(['05 #role-views', '06 #four-ways', '07 #three-layers']);
-    expect(r[2].screens).toEqual(['08 #profiles-access', '09 #enter-workspace']);
+    expect(r[2].screens).toEqual(['08 #profiles-access', '09 #security', '10 #enter-workspace']);
     // The answer pairs each of today's problems with how it is resolved
     await expect(page.locator('#ch-answer .divider-pair')).toHaveCount(3);
-    // Dividers are not screens: the counter still counts nine
-    await expect(page.locator('#counter')).toHaveText('1 / 9');
+    // Dividers are not screens: the counter counts the ten screens
+    await expect(page.locator('#counter')).toHaveText('1 / 10');
   });
 
   test('Space passes through each divider in story order', async ({ page }) => {
@@ -745,7 +788,7 @@ test.describe('Route', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.chapters.map((c) => c.label)).toEqual(["TODAY'S PROBLEM", 'THE ANSWER', 'THE WORKSPACE']);
     const core = m.screens.filter((s) => s.route === 'core');
-    expect(core.map((s) => s.chapterId)).toEqual(['problem', 'problem', 'problem', 'problem', 'answer', 'answer', 'answer', 'workspace', 'workspace']);
+    expect(core.map((s) => s.chapterId)).toEqual(['problem', 'problem', 'problem', 'problem', 'answer', 'answer', 'answer', 'workspace', 'workspace', 'workspace']);
   });
 
   test('the landing is a landing, with one button per chapter that jumps to its divider', async ({ page }) => {
@@ -762,9 +805,9 @@ test.describe('Route', () => {
     await page.waitForFunction(() => sections[current].id === 'ch-workspace', null, { timeout: 6000 });
   });
 
-  test('the counter counts nine core screens and says Appendix in the appendix', async ({ page }) => {
+  test('the counter counts ten core screens and says Appendix in the appendix', async ({ page }) => {
     await open(page);
-    await expect(page.locator('#counter')).toHaveText('1 / 9');
+    await expect(page.locator('#counter')).toHaveText('1 / 10');
     await expect(page.locator('.nav-ch-btn[data-chid="reference"] .nav-ch-name')).toHaveText('Appendix');
     await page.evaluate(() => document.getElementById('appendix').scrollIntoView({ behavior: 'instant' }));
     await expect(page.locator('#counter')).toHaveText('Appendix', { timeout: 4000 });

@@ -264,3 +264,11 @@ From the owner's review: no core screen after Enter NFR Workspace; the screens a
 | Dividers | `ch-problem`, `ch-answer`, `ch-workspace`: sections with `data-route="divider"`, not counted as screens. Navigation fills each divider's screen list with the screens' own numbers and the progress strip; the landing buttons jump to the dividers. The answer's divider pairs each of today's problems with its answer |
 | 04 | `chain-drift` keeps its id; new content (`chain`): Novalink moves its hosting to Basalt Cloud; four records (contract, due diligence, risk rating, exit plan), what each says against what is true now; when the bank finds out (notice on day 12, outage on day 110; with NFR Workspace, day 12) |
 | Appendix | Sorted data and systems, control, value, delivery (keys 1 to 4). Removed: the old V4, V5, M1, M3, M4, M8, D5, D6, D7, S6, and the Evidence Atlas (`ref-room`, `evidence-atlas.js`, its nav button and index link). Renumbered without gaps: M2 to M1, M5 to M2, M6 to M3, M7 to M4, D8 to D5, D9 to D6; internal V6 to V4, S7 to S6, S8 to S7, S9 to S8 |
+
+## 20. v19 changes (the ways and their agents; security; release v45)
+
+| Change | Detail |
+|---|---|
+| 06 | `four-ways` rebuilt: each way of working (capabilities) is run by one kind of agent (`ways.agents`, keyed by capability id): retrieval, process, policy, principal, in rising judgement. Each column: the way, the agent and its job, one supplier example, why the person can trust the answer, and who decides. The 2 by 2 grid and its data are gone |
+| 09 | New `security` (data `security`): one request in six steps (sign in, ask, retrieve, process, answer, keep), each with its controls, encrypted between steps; the same supplier record as each of screen 08's people sees it (shown, summary, masked, not in scope). Target design |
+| 10 | Enter NFR Workspace moves to 10; the chapter 3 divider lists 08 to 10 |

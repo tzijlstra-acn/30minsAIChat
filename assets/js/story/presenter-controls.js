@@ -21,13 +21,13 @@
   // Experience states for the story screens; the doorway and the fallback set their own
   var STATE_BY_SCREEN = {
     'cover': 'cover', 'work-arrives': 'work-arrives', 'chain-drift': 'chain-drift', 'assistance-here': 'assistance',
-    'role-views': 'roles', 'four-ways': 'four-ways', 'three-layers': 'three-layers', 'profiles-access': 'profiles',
+    'role-views': 'roles', 'four-ways': 'four-ways', 'three-layers': 'three-layers', 'profiles-access': 'profiles', 'security': 'security',
     'ch-problem': 'chapter', 'ch-answer': 'chapter', 'ch-workspace': 'chapter'
   };
 
   // ── The experience state model: every state the deck can be in, in route order ──
   var STATES = [
-    'cover', 'chapter', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles',
+    'cover', 'chapter', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles', 'security',
     'entering-workspace', 'live-handoff', 'live-fallback', 'appendix'
   ];
 

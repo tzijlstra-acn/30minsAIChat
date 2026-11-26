@@ -213,8 +213,8 @@ test.describe('Appendix modules', () => {
     await reduced(page);
     await open(page);
     const links = await page.$$eval('section[data-route="core"] [data-apx-link]', (b) => b.map((x) => x.closest('section').id + '>' + x.dataset.apxLink));
-    expect(links).toEqual(['role-views>appendix-d3', 'role-views>appendix-d6', 'three-layers>appendix-s3',
-      'profiles-access>appendix-d6', 'profiles-access>appendix-d2']);
+    expect(links).toEqual(['role-views>appendix-d3', 'role-views>appendix-d6', 'four-ways>appendix-m1', 'four-ways>appendix-m3', 'three-layers>appendix-s3',
+      'profiles-access>appendix-d6', 'profiles-access>appendix-d2', 'security>appendix-d6', 'security>appendix-m4']);
     await land(page, 'profiles-access');
     await page.locator('#profiles-access [data-apx-link="appendix-d2"]').click();
     await page.waitForFunction(() => sections[current].id === 'appendix-d2', null, { timeout: 4000 });
@@ -339,7 +339,7 @@ test.describe('Presenter controls and resilience', () => {
     }
     expect(await here(page)).toBe('appendix');
     for (const s of seen) expect(known, s).toContain(s);
-    ['cover', 'chapter', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles', 'live-handoff', 'appendix']
+    ['cover', 'chapter', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles', 'security', 'live-handoff', 'appendix']
       .forEach((s) => expect([...seen]).toContain(s));
     expect(warnings).toEqual([]);
   });

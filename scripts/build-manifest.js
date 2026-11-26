@@ -24,9 +24,10 @@ const META = {
   'assistance-here':    { q: 'Do we not have AI already?', ms: 8300, token: 'channels' },
   'chain-drift':        { q: 'Why does one change matter?', ms: 6000, token: 'chain' },
   'role-views':         { q: 'How does the information flow to the answer, and how deep do we go?', ms: 3200, token: 'role-views' },
-  'four-ways':          { q: 'What is NFR Workspace?', ms: 5000, token: 'four-ways' },
+  'four-ways':          { q: 'What is NFR Workspace, and why can we trust each answer?', ms: 3600, token: 'four-ways' },
   'three-layers':       { q: 'How does it start, and how does it grow?', ms: 5100, token: 'three-layers' },
   'profiles-access':    { q: 'How is each profile set up, and what does each person see?', ms: 2400, token: 'profiles' },
+  'security':           { q: 'How is the data kept safe, and who sees what?', ms: 4300, token: 'security' },
   'enter-workspace':    { q: 'What does the working day look like?', ms: 2600, token: 'live-handoff', interactive: true, state: 'live-handoff' },
   'live-fallback':      { q: 'What if the live product is unavailable?', ms: 100, token: 'captured-acts', interactive: true, state: 'live-fallback' }
 };

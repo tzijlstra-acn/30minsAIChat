@@ -28,20 +28,21 @@ Last full run: 352 passed, 0 failed on the five desktop projects (v44; see the r
 
 | # | Check | Status | How |
 |---|---|---|---|
-| 1 | Nine core screens, three chapters (4, 3, 2): Today's problem, The answer, The Workspace; each opened by a divider that is not counted (counter 1 / 9); landing buttons go to the dividers | Pass | Automated |
+| 1 | Ten core screens, three chapters (4, 3, 3): Today's problem, The answer, The Workspace; each opened by a divider that is not counted (counter 1 / 10); landing buttons go to the dividers | Pass | Automated |
 | 2 | No mock of the product in the deck | Pass | Automated |
 | 3 | Enter NFR Workspace: four statuses, ends on the live cue, Space skips | Pass | Automated |
 | 4 | L opens the live product; `?live=` changes the URL | Pass | Automated |
-| 5 | After the demonstration, Space on screen 09 and the end of the captured fallback both continue to the appendix index | Pass | Automated |
+| 5 | After the demonstration, Space on screen 10 and the end of the captured fallback both continue to the appendix index | Pass | Automated |
 | 6 | Appendix: four domains in the order buyers ask (data and systems 6, control 4, value 3, delivery 5 pages), codes without gaps, each page with question, answer, visual, implication, claim status, index, previous, next, main story; no v6 page ids left | Pass | Automated |
 | 7 | Keys: A, 1 to 4, M, Escape one level; browser Back returns from a page | Pass | Automated |
-| 8 | Five deep links from three core screens into the matching pages | Pass | Automated |
+| 8 | Nine deep links from five core screens into the matching pages | Pass | Automated |
 | 9 | V3 calculator recalculates deterministically and resets | Pass | Automated |
 | 10 | Safe mode, offline run, reset (0), state model covers every state the route reaches | Pass | Automated |
 | 11 | No console errors | Pass | Automated per viewport; visual QA and the PDF export report zero |
 | 12 | Icons render once (v31 showed some twice) | Pass | Visual QA |
 | 13 | Screen 05: four roles; Light, Medium and Deep fold the layers out (Space or the switch); each button lights its own systems, calculation, storage and write-back, and reads only systems its role may access; every role at every depth, and at Deep every button, fits with its text inside its boxes at every size; six PDF pages | Pass | Automated, and the PDF export |
 | 14 | Screen 08: four people; a click or Space switches the person; six levels per profile, the levels that changed marked (Maya to Ben: scope, records, delegation); the menu follows the profile; every person fits with its text inside its boxes at every size; four PDF pages | Pass | Automated, and the PDF export |
+| 15 | Screen 06: each way of working run by one kind of agent (retrieval, process, policy, principal), each with why the answer can be trusted; screen 09: six secured steps and the same record as each of screen 08's people sees it | Pass | Automated |
 
 ## 3. Visual
 

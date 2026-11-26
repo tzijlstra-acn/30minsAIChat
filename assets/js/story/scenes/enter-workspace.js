@@ -1,4 +1,4 @@
-// Scene: enter-workspace (screen 09, the last of the core route)
+// Scene: enter-workspace (screen 10, the last of the core route)
 // Causal story: a short doorway into the real product, not a simulation of it. The
 // wordmark appears, the role context and the current decisions load, the Workspace
 // reports ready, and a cue invites the presenter to open the live product. The five acts

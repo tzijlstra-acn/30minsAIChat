@@ -1,9 +1,9 @@
-// Scene: live-fallback (reference, opened from screen 09 with F)
+// Scene: live-fallback (reference, opened from screen 10 with F)
 // The captured fallback for the live demonstration: the five acts as screenshots taken
 // from the real product on its deterministic demo day (NFR_LIVE_CAPTURES). Act tabs and
 // a counter orient the room; Space steps through the captures and, after the last one,
 // continues to the appendix index, where the live demonstration also ends: the core
-// route stops at screen 09.
+// route stops at screen 10.
 // A missing capture shows a labelled placeholder, never a broken image.
 SceneDirector.register('live-fallback', function(container, manifest, reduced) {
   var S = window.StoryKit;
