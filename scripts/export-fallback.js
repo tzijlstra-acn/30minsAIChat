@@ -59,22 +59,7 @@ async function run() {
   for (var i = 0; i < core.length; i++) {
     await go(core[i]);
     await shot(core[i]);
-    // Screen 05: the first role at Light, Medium and Deep (Space unfolds each), then every
-    // other role at Deep
-    if (core[i] === 'role-views') {
-      await key('Space'); await shot('role-views-medium');
-      await key('Space'); await shot('role-views-deep');
-      var order = await page.evaluate(function() { return NFR_WORKSPACE_DEMO.roles.order; });
-      for (var r = 1; r < order.length; r++) {
-        await page.evaluate(function(id) {
-          var at = NFR_WORKSPACE_DEMO.roles.list.map(function(x) { return x.id; }).indexOf(id);
-          document.querySelectorAll('#role-views .rv-role')[at].click();
-        }, order[r]);
-        await page.waitForTimeout(250);
-        await shot('role-views-' + order[r]);
-      }
-    }
-    // Screen 08: one page per person, in the order Space steps through them
+    // Screen 07: one page per role template, in the order Space steps through them
     if (core[i] === 'profiles-access') {
       var people = await page.evaluate(function() { return NFR_WORKSPACE_DEMO.profiles.order; });
       for (var q = 1; q < people.length; q++) { await key('Space'); await shot('profiles-access-' + people[q]); }

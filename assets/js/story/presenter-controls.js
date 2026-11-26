@@ -21,14 +21,14 @@
   // Experience states for the story screens; the doorway and the fallback set their own
   var STATE_BY_SCREEN = {
     'cover': 'cover', 'work-arrives': 'work-arrives', 'chain-drift': 'chain-drift', 'assistance-here': 'assistance',
-    'role-views': 'roles', 'four-ways': 'four-ways', 'three-layers': 'three-layers', 'profiles-access': 'profiles', 'security': 'security',
+    'engine-run': 'engine', 'four-ways': 'four-ways', 'three-layers': 'three-layers', 'profiles-access': 'profiles', 'security': 'security',
     'six-months': 'six-months', 'next-decision': 'decision',
     'ch-problem': 'chapter', 'ch-answer': 'chapter', 'ch-workspace': 'chapter', 'ch-next': 'chapter'
   };
 
   // ── The experience state model: every state the deck can be in, in route order ──
   var STATES = [
-    'cover', 'chapter', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles', 'security',
+    'cover', 'chapter', 'work-arrives', 'assistance', 'chain-drift', 'engine', 'four-ways', 'three-layers', 'profiles', 'security',
     'entering-workspace', 'live-handoff', 'live-fallback', 'six-months', 'decision', 'appendix'
   ];
 
@@ -257,7 +257,7 @@
       var b = e.target.closest && e.target.closest('button');
       if (!b) return;
       if (b.closest('.nav') || b.classList.contains('apx-btn') || b.classList.contains('apx-tab') || b.classList.contains('apx-mod-chip') || b.classList.contains('apx-door-head')
-        || b.classList.contains('ew-open') || b.classList.contains('ew-fallback') || b.classList.contains('lf-tab') || b.classList.contains('rv-role') || b.classList.contains('rx-seg') || b.classList.contains('rx-out') || b.classList.contains('pa-person') || b.classList.contains('pa-tpl') || b.classList.contains('ts-apx-link') || b.classList.contains('landing-chapter')) b.blur();
+        || b.classList.contains('ew-open') || b.classList.contains('ew-fallback') || b.classList.contains('lf-tab') || b.classList.contains('en-run') || b.classList.contains('pa-person') || b.classList.contains('pa-tpl') || b.classList.contains('ts-apx-link') || b.classList.contains('landing-chapter')) b.blur();
     }, true);
     syncSafeButton();
   }

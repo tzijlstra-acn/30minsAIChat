@@ -151,7 +151,68 @@
       line: 'The notice sat in a mailbox no assistant joins to the contract, the rating or the exit plan.'
     },
 
-    // ── 05 The point: how the information flows, at the depth the audience wants ──
+    // ── 05 The point: every source integrated; the latest AI prepares the answer ──
+    // One worker, one question, end to end. Maya, the third-party risk manager of screens
+    // 07 and 08, types the question from screen 03 and presses Run. The engine flips out
+    // beneath the screen and runs in seven steps: understand (the approved method and the
+    // systems it needs), check access, read (live and cached; records counted), connect
+    // (the knowledge graph), calculate (rules, no model), explain (AI, each claim cited),
+    // record. Then the answer lands on Maya's screen. The facts match act 3 of the demo.
+    engine: {
+      worker: { name: 'Maya', initials: 'MR', role: 'Third-party risk manager' },
+      app: 'NFR Workspace',
+      ask: 'Ask the records',
+      run: 'Run', again: 'Run again', running: 'Running', done: 'Answered',
+      placeholder: 'The answer appears here',
+      engineLabel: 'The engine, running',
+      stepOf: 'Step {n} of {t}: {label}',
+      allDone: '7 steps, each recorded',
+      steps: [
+        { id: 'understand', label: 'Understand', icon: 'ti-route' },
+        { id: 'access', label: 'Check access', icon: 'ti-lock' },
+        { id: 'read', label: 'Read', icon: 'ti-database' },
+        { id: 'connect', label: 'Connect', icon: 'ti-affiliate' },
+        { id: 'calculate', label: 'Calculate', icon: 'ti-calculator' },
+        { id: 'explain', label: 'Explain', icon: 'ti-sparkles' },
+        { id: 'record', label: 'Record', icon: 'ti-archive' }
+      ],
+      dataLabel: 'Integrated data',
+      method: 'Method TP-DET v3: six systems needed',
+      notNeeded: 'Not needed',
+      recordsLabel: '{n} records read, each with its version',
+      // The eight systems of screen 03: how each is read, and the records this question reads
+      systems: [
+        { id: 'register', label: 'Vendors', mode: 'live', records: 3 },
+        { id: 'incidents', label: 'Incidents', mode: 'live', records: 4 },
+        { id: 'kri', label: 'Risk reporting', mode: 'live', records: 3 },
+        { id: 'dependencies', label: 'IT services', mode: 'live', records: 2 },
+        { id: 'controls', label: 'GRC', mode: 'live', records: 0 },
+        { id: 'contracts', label: 'Contracts', mode: 'cache', records: 2 },
+        { id: 'assurance', label: 'Documents', mode: 'cache', records: 1 },
+        { id: 'mail', label: 'Mailbox', mode: 'cache', records: 0 }
+      ],
+      graphLabel: 'Connected',
+      graph: {
+        nodes: [
+          { id: 'basalt', label: 'Basalt Cloud', x: 120, y: 16, tone: 'gap' },
+          { id: 'novalink', label: 'Novalink', x: 40, y: 82, tone: 'human' },
+          { id: 'ardent', label: 'Ardent Cards', x: 200, y: 82, tone: 'human' },
+          { id: 'inc', label: '4 incidents', x: 40, y: 148, tone: 'neutral' },
+          { id: 'sla', label: 'SLA 99.9', x: 200, y: 148, tone: 'neutral' }
+        ],
+        edges: [['basalt', 'novalink'], ['basalt', 'ardent'], ['novalink', 'inc'], ['novalink', 'sla']],
+        note: 'Two critical services, one provider'
+      },
+      workLabel: 'Worked out',
+      rules: { label: 'Rules calculate', text: 'Threshold 60; no model', rows: [['Novalink', 83], ['Ardent Cards', 71], ['Quillon', 64]], rest: '8 others below the threshold', threshold: 60 },
+      ai: { label: 'AI explains, checked', text: 'Novalink leads, up 23 since Q2; it shares Basalt Cloud with Ardent Cards.', cites: ['INC-2291', 'SLA', 'Service map'] },
+      recorded: 'Recorded at 09:42: the question, 15 records with their versions, and the answer',
+      answer: { text: 'Three critical services are deteriorating. Novalink leads, up 23 points; two rely on Basalt Cloud.', sources: '15 sources cited' }
+    },
+
+    // The four roles and their access, per system (screen 07's templates are these roles).
+    // Kept from the earlier screen 05; the engine of screen 05 runs the third-party risk
+    // manager's question.
     // Pick a role, then a depth. Light is what the person sees: the answer and its buttons.
     // Medium folds out where it comes from: each system checks access, the records are read
     // live or from a dated cache, linked, calculated and explained. Deep folds out how it
@@ -325,22 +386,23 @@
     // it, and who decides. The more judgement, the closer the person.
     ways: {
       inLabel: 'Four ways in',
-      layerLabel: 'The same four agents work beneath every way',
+      layerLabel: 'Four agents, hand in hand, beneath every way',
+      handsLabel: 'Hands on',
       question: 'One answer: which critical third-party services are deteriorating, and why?',
       demoLabel: 'For that answer',
-      trustLabel: 'Why you can trust it',
+      trustLabel: 'Why to trust it',
       agents: [
         { id: 'retrieval', label: 'Retrieval agent', icon: 'ti-search', tone: 'data', does: 'Finds and summarises information',
-          demo: 'Found 15 evidence items in six registers', trust: 'Every claim cites its source and date', who: 'The agent answers' },
+          demo: 'Found 15 evidence items in six registers', trust: 'Every claim cites its source and date', hands: '15 items, each with its source' },
         { id: 'process', label: 'Process agent', icon: 'ti-route', tone: 'data', does: 'Runs a defined workflow, with little or no judgement',
-          demo: 'Ran the approved method: 3 of 11 deteriorating', trust: 'The same approved steps; no number is guessed', who: 'Runs the approved method' },
+          demo: 'Ran the approved method: 3 of 11 deteriorating', trust: 'The same approved steps; no number is guessed', hands: '3 services over the threshold' },
         { id: 'policy', label: 'Policy agent', icon: 'ti-scale', tone: 'ai', does: 'Applies rules to unclear cases and makes bounded judgements',
-          demo: 'Judged the change material; drafted a request', trust: 'Shows the rule and the threshold it applied', who: 'Proposes; a person confirms' },
+          demo: 'Judged the change material; drafted a request', trust: 'Shows the rule and the threshold it applied', hands: 'A material change, with the rule' },
         { id: 'principal', label: 'Principal agent', icon: 'ti-compass', tone: 'human', does: 'Weighs broader objectives and trade-offs, such as keeping an important supplier',
-          demo: 'Laid out the options for Novalink', trust: 'Shows each option with its evidence', who: 'A person decides' }
+          demo: 'Laid out the options for Novalink', trust: 'Shows each option with its evidence', hands: 'The options, to the person who decides' }
       ],
       axis: { label: 'Judgement', low: 'None', high: 'Broad' },
-      line: ['A chat assistant stops at retrieval.', 'Whichever way someone works, the same four agents do the work, each with its own test and its own proof.']
+      line: ['No agent works alone.', 'Each does one job, checks what it received and hands its result on; a person makes the final call.']
     },
 
     // ── 07 The point: scale comes from three layers improving together, one role at a time ──

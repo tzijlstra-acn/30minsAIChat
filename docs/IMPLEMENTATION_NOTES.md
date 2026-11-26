@@ -282,3 +282,10 @@ From the owner's review: no core screen after Enter NFR Workspace; the screens a
 | 07 | `profiles-access` rebuilt as smart profiling: one template per role (`profiles.templates`, the roles of screen 05) with how many people use it; connected, smart profile, day-one screen; joins, moves, leaves. `profiles.people` and `peopleOrder` stay for screen 08 |
 | 08 | `security` adds record tracking (`security.tracking.events`); two controls per step |
 | Chapter 4 | Next steps after the product, divider `ch-next`: 10 `three-layers` (moved; its run strip moved to 12), 11 new `six-months` (data `team`), 12 new `next-decision` (data `decide`). Space after screen 09 and the end of the walkthrough go to `ch-next` |
+
+## 22. v21 changes (05 the engine run; 06 agents hand in hand; release v47)
+
+| Change | Detail |
+|---|---|
+| 05 | `role-views` retired; new `engine-run` (data `engine`): Maya types the question, presses Run, the engine flips out and runs seven steps (understand, check access, read with records counted, connect, calculate, explain with citations, record), then the answer lands on the screen. Run again replays it; Space finishes, then moves on. `roles` data stays (screen 07 templates check against it) |
+| 06 | The four agents work hand in hand: arrows between the cards, and each card says what it hands on (`ways.agents[].hands`), the last to the person who decides |

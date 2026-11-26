@@ -1,5 +1,5 @@
 // Scene: four-ways (screen 06)
-// Causal story: four ways in, the same four agents beneath every one. On top, the four
+// Causal story: four ways in, four agents hand in hand beneath every one. On top, the four
 // ways of working (Ask, Use, Run, Create), each with what it is for. All four lead into
 // one layer: the same four kinds of agent work beneath every way, in rising order of
 // judgement (retrieval, process, policy, principal). Each agent card: its job, what it did
@@ -10,12 +10,12 @@ SceneDirector.register('four-ways', function(container, manifest, reduced) {
   var D = window.NFR_WORKSPACE_DEMO;
   var G = D.ways;
   var CAPS = D.capabilities;
-  var W = 1040, H = 468;
+  var W = 1040, H = 500;
   var COL = { step: 254, w: 246 };
   var WAY = { y: 18, h: 60 };
-  var BAND = { y: 108, h: 318 };
-  var AG = { x: 28, y: 150, w: 236, step: 248, h: 264 };
-  var AXIS = { label: 436, y: 454, h: 8 };
+  var BAND = { y: 108, h: 352 };
+  var AG = { x: 28, y: 146, w: 214, step: 256, h: 304 };
+  var AXIS = { label: 470, y: 488, h: 8 };
 
   var cv = null;
   var n = {};
@@ -24,7 +24,7 @@ SceneDirector.register('four-ways', function(container, manifest, reduced) {
   function build() {
     if (cv) cv.destroy();
     cv = S.canvas(container, W, H, { id: 'four-ways', refHeight: 520 });
-    n = { ways: [], fans: [], agents: [] };
+    n = { ways: [], fans: [], agents: [], hands: [] };
     done = false;
     var root = cv.el;
     var g = cv.svg;
@@ -70,12 +70,20 @@ SceneDirector.register('four-ways', function(container, manifest, reduced) {
       tr.appendChild(th);
       tr.appendChild(S.el('div', 'fw4-trust-t', a.trust));
       b.appendChild(tr);
-      var who = S.el('div', 'fw4-who is-' + a.tone);
-      who.appendChild(S.icon(a.tone === 'human' ? 'ti-user-check' : a.tone === 'ai' ? 'ti-user-question' : 'ti-robot'));
-      who.appendChild(S.el('span', null, a.who));
-      b.appendChild(who);
+      // What it hands on: the next agent works from it, and checks it
+      var hd = S.el('div', 'fw5-hands');
+      var hk = S.el('div', 'fw5-hands-k');
+      hk.appendChild(S.icon(i < G.agents.length - 1 ? 'ti-arrow-right' : 'ti-user-check'));
+      hk.appendChild(S.el('span', null, G.handsLabel));
+      hd.appendChild(hk);
+      hd.appendChild(S.el('div', 'fw5-hands-t', a.hands));
+      b.appendChild(hd);
       root.appendChild(b);
       n.agents.push(b);
+      if (i < G.agents.length - 1) {
+        var x0 = AG.x + i * AG.step + AG.w, x1 = AG.x + (i + 1) * AG.step, y = AG.y + AG.h / 2;
+        n.hands.push(S.path(g, 'M' + (x0 + 4) + ' ' + y + ' L' + (x1 - 6) + ' ' + y, 'ts-s-ai fw5-hand', cv.marker('ai')));
+      }
     });
 
     // Judgement rises from left to right, and the person comes closer
@@ -95,7 +103,7 @@ SceneDirector.register('four-ways', function(container, manifest, reduced) {
   CAPS.forEach(function(c, i) { steps.push({ delay: 250 + i * 150, run: function() { S.on(n.ways[i]); } }); });
   steps.push({ delay: 1000, run: function() { S.on(n.fans); } });
   steps.push({ delay: 1350, run: function() { S.on(n.band); } });
-  G.agents.forEach(function(a, i) { steps.push({ delay: 1650 + i * 450, run: function() { S.on(n.agents[i]); } }); });
+  G.agents.forEach(function(a, i) { steps.push({ delay: 1650 + i * 450, run: function() { S.on(n.agents[i]); if (i) S.on(n.hands[i - 1]); } }); });
   var t1 = 1650 + G.agents.length * 450 + 150;
   steps.push({ delay: t1, run: function() { S.on([n.axis, n.axisLow, n.axisHigh]); } });
   steps.push({ delay: t1 + 400, run: complete });
@@ -114,7 +122,7 @@ SceneDirector.register('four-ways', function(container, manifest, reduced) {
     getAccessibleSummary: function() {
       return G.inLabel + ': ' + CAPS.map(function(c) { return c.verb + ' (' + c.product + '), ' + c.when.toLowerCase(); }).join('; ') + '. '
         + G.layerLabel + '. ' + G.question + ' ' + G.agents.map(function(a) {
-          return a.label + ': ' + a.does.toLowerCase() + '. ' + G.demoLabel + ': ' + a.demo.toLowerCase() + '. ' + G.trustLabel + ': ' + a.trust.toLowerCase() + '. ' + a.who + '.';
+          return a.label + ': ' + a.does.toLowerCase() + '. ' + G.demoLabel + ': ' + a.demo.toLowerCase() + '. ' + G.trustLabel + ': ' + a.trust.toLowerCase() + '. ' + G.handsLabel + ': ' + a.hands.toLowerCase() + '.';
         }).join(' ') + ' ' + G.axis.label + ' rises from ' + G.axis.low.toLowerCase() + ' to ' + G.axis.high.toLowerCase() + '. ' + G.line.join(' ');
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }

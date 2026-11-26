@@ -26,7 +26,7 @@ const VIEWPORTS = [
 ];
 
 const CORE_SLIDES = [
-  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'profiles-access', 'security', 'enter-workspace',
+  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'engine-run', 'four-ways', 'profiles-access', 'security', 'enter-workspace',
   'three-layers', 'six-months', 'next-decision'
 ];
 

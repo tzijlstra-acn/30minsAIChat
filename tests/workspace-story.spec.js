@@ -17,10 +17,10 @@ const EM = String.fromCharCode(0x2014);
 const EN = String.fromCharCode(0x2013);
 
 const CORE = [
-  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'profiles-access', 'security', 'enter-workspace',
+  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'engine-run', 'four-ways', 'profiles-access', 'security', 'enter-workspace',
   'three-layers', 'six-months', 'next-decision'
 ];
-const INTERACTIVE = ['role-views', 'profiles-access', 'enter-workspace', 'live-fallback'];
+const INTERACTIVE = ['engine-run', 'profiles-access', 'enter-workspace', 'live-fallback'];
 const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic layer', 'control plane', 'orchestrator', 'orchestration',
   'model gateway', 'autonomous', 'llm', 'rag', 'copilot'];
 const CLAIMS = ['fully autonomous', 'replaces all systems', 'all nfr processes', 'zero human effort', 'instant deployment',
@@ -197,127 +197,55 @@ test.describe('Story data', () => {
   });
 });
 
-// ── SCREEN 05: HOW THE INFORMATION FLOWS, PER ROLE, AT THREE DEPTHS ──
-test.describe('Role views', () => {
+// ── SCREEN 05: ONE QUESTION, RUN THROUGH THE ENGINE ──
+test.describe('Engine run', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('four roles read the eight systems of screen 03 within their access; each button reads only what its role may see', () => {
+  test('seven steps; the records read add up to the sources cited; every system read is within the worker\'s access', () => {
     const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
-    const R = d.roles;
-    expect(R.list.map((r) => r.id)).toEqual(['head', 'tprm', 'orm', 'owner']);
-    expect(R.list.map((r) => r.group)).toEqual(['lead', 'work', 'work', 'work']);
-    // The screen starts with the role the demonstration uses, asking the question screen 03 types
-    expect(R.order[0]).toBe('tprm');
-    expect([...R.order].sort()).toEqual(R.list.map((r) => r.id).sort());
-    expect(R.list.find((r) => r.id === 'tprm').question).toBe(d.sees.question.text);
-    // Only the roles available in the live product say so
-    expect(R.list.filter((r) => r.status === 'live').map((r) => r.id)).toEqual(['tprm', 'orm']);
-    // Three depths; the screen shows at the first, every other layer opens at Medium or Deep
-    expect(R.depths.map((x) => x.id)).toEqual(['light', 'medium', 'deep']);
-    expect(R.layers.map((l) => l.id)).toEqual(['screen', 'route', 'read', 'connect', 'compute', 'store', 'write']);
-    expect(R.layers.map((l) => l.depth)).toEqual(['light', 'deep', 'medium', 'medium', 'medium', 'deep', 'deep']);
-    const systems = d.sees.needs.map((n) => n.id);
-    expect(Object.keys(R.short).sort()).toEqual([...systems].sort());
-    // Every system is read one way: a live query or a cached index
-    expect(Object.keys(R.modeOf).sort()).toEqual([...systems].sort());
-    Object.values(R.modeOf).forEach((m) => expect(['live', 'cache']).toContain(m));
-    R.list.forEach((r) => {
-      expect(Object.keys(r.access).sort(), r.id).toEqual([...systems].sort());
-      Object.values(r.access).forEach((a) => expect(typeof a === 'string' && a.length > 0 && a.length <= 13, r.id + ' ' + a).toBe(true));
-      expect(typeof r.rule === 'string' && r.rule.length > 0, r.id + ' rule').toBe(true);
-      expect(typeof r.ai === 'string' && r.ai.length > 0, r.id + ' ai').toBe(true);
-      expect(r.links, r.id).toHaveLength(4);
-      expect(['dots', 'tiles', 'compare'], r.id).toContain(r.answer.visual.kind);
-      // Three buttons: a view that calculates, an explanation, an action. Only the action
-      // writes back, and only once a person approves. No button reads a system its role may not
-      expect(r.outputs.map((o) => o.kind), r.id).toEqual(['view', 'explain', 'action']);
-      r.outputs.forEach((o) => {
-        expect(o.reads.length, r.id + ' ' + o.id).toBeGreaterThan(0);
-        o.reads.forEach((s) => expect(!!r.access[s] && r.access[s] !== 'none', r.id + ' ' + o.id + ' reads ' + s).toBe(true));
-        expect(!!o.write, r.id + ' ' + o.id + ' writes').toBe(o.kind === 'action');
-        expect(!!o.rule, r.id + ' ' + o.id + ' calculates').toBe(o.kind === 'view');
-        expect(o.def, r.id + ' ' + o.id).toMatch(/^[A-Z]{2,3}-[A-Z]{3} v\d$/);
-        expect(typeof o.store === 'string' && o.store.length > 0, r.id + ' ' + o.id + ' store').toBe(true);
-        if (o.write) expect(o.write.gate.length, r.id + ' gate').toBeGreaterThan(0);
-      });
-    });
-    // The scopes differ: the leader reads summaries, the control owner only its own records
-    const reads = (id) => Object.values(R.list.find((r) => r.id === id).access).filter((a) => a !== 'none').length;
-    expect([reads('head'), reads('tprm'), reads('orm'), reads('owner')]).toEqual([7, 8, 6, 5]);
+    const E = d.engine;
+    expect(E.steps.map((s) => s.id)).toEqual(['understand', 'access', 'read', 'connect', 'calculate', 'explain', 'record']);
+    expect(E.systems.map((s) => s.id).sort()).toEqual(d.sees.needs.map((n) => n.id).sort());
+    const total = E.systems.reduce((a, s) => a + s.records, 0);
+    expect(E.answer.sources).toBe(total + ' sources cited');
+    // The worker is the third-party risk manager: every system read is one that role may access
+    const tprm = d.roles.list.find((r) => r.id === 'tprm');
+    E.systems.filter((s) => s.records).forEach((s) => expect(tprm.access[s.id], s.id).not.toBe('none'));
+    expect(E.systems.filter((s) => s.records).length).toBe(6);
   });
 
-  test('roles and buttons switch at once; Space unfolds Medium, then Deep, then moves on', async ({ page }) => {
+  test('the final state shows every step done, the records counted and the answer on Maya\'s screen; Space moves on', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
-    await enter(page, 'role-views');
-    const state = () => page.evaluate(() => {
-      const s = document.getElementById('role-views');
-      return { active: [...s.querySelectorAll('.rv-role')].findIndex((b) => b.classList.contains('is-active')),
-        depth: s.querySelector('.ts-canvas').getAttribute('data-depth'),
-        open: [...s.querySelectorAll('.rx-band')].filter((b) => !b.classList.contains('is-folded')).map((b) => b.dataset.layer).join(','),
-        question: s.querySelector('.rx-q-t').textContent, answer: s.querySelector('.rx-ans-t').textContent,
-        rows: Object.fromEntries([...s.querySelectorAll('.rx-sys')].map((r) => [r.dataset.sys, (r.className.match(/is-(full|part|none)/) || [])[1]])),
-        used: [...s.querySelectorAll('.rx-sys.is-used')].map((r) => r.dataset.sys).sort().join(','),
-        sel: [...s.querySelectorAll('.rx-out')].findIndex((b) => b.classList.contains('is-sel')),
-        def: s.querySelector('.rx-route-def').textContent, write: s.querySelector('.rx-body-write').textContent,
-        here: sections[current].id };
+    await enter(page, 'engine-run');
+    const r = await page.evaluate(() => {
+      const s = document.getElementById('engine-run');
+      return { q: s.querySelector('.en-q-t').textContent, open: s.querySelector('.en-engine').classList.contains('is-open'),
+        done: s.querySelectorAll('.en-pill.is-done').length, records: s.querySelector('.en-records').textContent,
+        answer: s.querySelector('.en-ans-t').classList.contains('ts-on'), run: s.querySelector('.en-run').textContent };
     });
-    let r = await state();
-    expect([r.active, r.depth, r.open]).toEqual([1, 'light', 'screen']);
-    expect(r.question).toBe('Which critical third-party services are deteriorating, and why?');
-    expect(r.rows).toEqual({ register: 'full', incidents: 'full', kri: 'full', controls: 'full', dependencies: 'full', contracts: 'full', mail: 'part', assurance: 'full' });
-    // Space: Medium opens where it comes from, then Deep how it runs
-    await page.keyboard.press('Space');
-    r = await state();
-    expect([r.here, r.depth, r.open]).toEqual(['role-views', 'medium', 'screen,read,connect,compute']);
-    await page.keyboard.press('Space');
-    r = await state();
-    expect([r.here, r.depth, r.open]).toEqual(['role-views', 'deep', 'screen,route,read,connect,compute,store,write']);
-    // The view button reads six systems and writes nothing; the action writes, once approved
-    expect([r.sel, r.def]).toEqual([0, 'TP-DET v3']);
-    expect(r.used).toBe('assurance,contracts,dependencies,incidents,kri,register');
-    expect(r.write).toContain('Nothing is written back');
-    await page.locator('#role-views .rx-out').nth(2).click();
-    r = await state();
-    expect([r.sel, r.def, r.used]).toEqual([2, 'TP-REQ v1', 'contracts,mail,register']);
-    expect(r.write).toContain('Vendor management');
-    expect(r.write).toContain('After you approve every field');
-    // Another role keeps the depth and starts on its first button; locks where it has no access
-    await page.locator('#role-views .rv-role').nth(3).click();
-    r = await state();
-    expect([r.active, r.depth, r.sel]).toEqual([3, 'deep', 0]);
-    expect(r.question).toBe('Which of my controls need evidence before the Q3 sign-off?');
-    expect(r.rows).toEqual({ register: 'part', incidents: 'part', kri: 'none', controls: 'part', dependencies: 'none', contracts: 'none', mail: 'part', assurance: 'part' });
-    expect(r.answer).toContain('Two of your six controls');
-    expect(await page.locator('#role-views .rx-sys.is-none').count()).toBe(3);
-    // The depth switch folds back; a folded layer opens at its own depth
-    await page.locator('#role-views .rx-seg[data-depth="light"]').click();
-    r = await state();
-    expect([r.depth, r.open]).toEqual(['light', 'screen']);
-    await page.locator('#role-views .rx-band[data-layer="store"]').click();
-    expect((await state()).depth).toBe('deep');
-    // At Deep, Space moves on
+    expect(r.q).toBe('Which critical third-party services are deteriorating, and why?');
+    expect([r.open, r.done, r.answer, r.run]).toEqual([true, 7, true, 'Run again']);
+    expect(r.records).toContain('15 records');
+    // Run again replays it, and ends in the same place
+    await page.locator('#engine-run .en-run').click();
+    expect(await page.locator('#engine-run .en-pill.is-done').count()).toBe(7);
     await page.keyboard.press('Space');
     await page.waitForFunction(() => sections[current].id === 'four-ways', null, { timeout: 4000 });
   });
 
-  test('full motion: the question types, the answer follows, and a layer folds open', async ({ page }) => {
+  test('full motion: the question types, Run is pressed, the engine flips out and steps through to the answer', async ({ page }) => {
     await open(page);
-    await enter(page, 'role-views', 12000);
-    await page.locator('#role-views .rv-role').nth(0).click();
-    await page.waitForTimeout(250);
-    const early = await page.evaluate(() => ({ q: document.querySelector('#role-views .rx-q-t').textContent.length, ans: document.querySelector('#role-views .rx-ans-t').classList.contains('ts-on') }));
-    expect(early.ans).toBe(false);
-    expect(early.q).toBeLessThan('Where is NFR risk moving towards its appetite limits?'.length);
-    await page.waitForFunction(() => document.querySelector('#role-views .rx-ans-t').classList.contains('ts-on'), null, { timeout: 6000 });
-    expect(await page.locator('#role-views .rx-q-t').textContent()).toBe('Where is NFR risk moving towards its appetite limits?');
-    // Medium: the read layer grows from a folded line to its full height
-    const height = () => page.evaluate(() => document.querySelector('#role-views .rx-band[data-layer="read"]').getBoundingClientRect().height);
-    const h0 = await height();
-    await page.locator('#role-views .rx-seg[data-depth="medium"]').click();
-    await page.waitForTimeout(900);
-    expect(await height()).toBeGreaterThan(h0 * 2);
-    expect(await page.locator('#role-views .rx-sys.is-none').count()).toBe(1);
+    await page.evaluate(() => document.getElementById('engine-run').scrollIntoView({ behavior: 'instant' }));
+    await page.waitForFunction(() => sections[current].id === 'engine-run' && SceneDirector.getState() === 'playing', null, { timeout: 6000 });
+    await page.waitForTimeout(700);
+    const early = await page.evaluate(() => ({ q: document.querySelector('#engine-run .en-q-t').textContent.length, open: document.querySelector('#engine-run .en-engine').classList.contains('is-open') }));
+    expect(early.open).toBe(false);
+    expect(early.q).toBeLessThan('Which critical third-party services are deteriorating, and why?'.length);
+    await page.waitForFunction(() => document.querySelector('#engine-run .en-pill.is-run'), null, { timeout: 6000 });
+    expect(await page.locator('#engine-run .en-engine').getAttribute('class')).toContain('is-open');
+    await page.waitForFunction(() => document.querySelector('#engine-run .en-ans-t').classList.contains('ts-on'), null, { timeout: 12000 });
+    expect(await page.locator('#engine-run .en-pill.is-done').count()).toBe(7);
   });
 });
 
@@ -373,17 +301,21 @@ test.describe('Smart profiling', () => {
 test.describe('Agents and security', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('the same four agents work beneath every way, in rising judgement, each with its reason to trust it', async ({ page }) => {
+  test('four agents work hand in hand beneath every way, each handing its result on', async ({ page }) => {
     const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
     const G = d.ways;
     expect(G.agents.map((a) => a.label)).toEqual(['Retrieval agent', 'Process agent', 'Policy agent', 'Principal agent']);
-    G.agents.forEach((a) => ['does', 'demo', 'trust', 'who'].forEach((k) => expect(typeof a[k] === 'string' && a[k].length > 0, a.id + ' ' + k).toBe(true)));
-    expect(G.agents[3].who).toBe('A person decides');
+    G.agents.forEach((a) => ['does', 'demo', 'trust', 'hands'].forEach((k) => expect(typeof a[k] === 'string' && a[k].length > 0, a.id + ' ' + k).toBe(true)));
+    // They work hand in hand: each hands its result on, the last to the person who decides
+    expect(G.agents[3].hands).toContain('the person who decides');
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     await enter(page, 'four-ways');
     const r = await page.evaluate(() => ({ ways: document.querySelectorAll('#four-ways .fw4-way').length, fans: document.querySelectorAll('#four-ways .fw4-fan').length,
-      agents: [...document.querySelectorAll('#four-ways .fw4-agent .fw3-agent-t')].map((e) => e.textContent), trust: document.querySelectorAll('#four-ways .fw4-trust').length }));
+      agents: [...document.querySelectorAll('#four-ways .fw4-agent .fw3-agent-t')].map((e) => e.textContent), trust: document.querySelectorAll('#four-ways .fw4-trust').length,
+      hands: document.querySelectorAll('#four-ways .fw5-hand').length }));
+    // Three handoffs between the four agents
+    expect(r.hands).toBe(3);
     // Four ways lead into one layer: every way draws on all four agents
     expect([r.ways, r.fans, r.trust]).toEqual([4, 4, 4]);
     expect(r.agents).toEqual(['Retrieval agent', 'Process agent', 'Policy agent', 'Principal agent']);
@@ -433,7 +365,7 @@ test.describe('Chapter dividers', () => {
     expect(r[1].question).toBe('How a connected AI workflow resolves these issues.');
     // Each lists its chapter's screens with their own numbers in the story
     expect(r[0].screens).toEqual(['02 #work-arrives', '03 #assistance-here', '04 #chain-drift']);
-    expect(r[1].screens).toEqual(['05 #role-views', '06 #four-ways']);
+    expect(r[1].screens).toEqual(['05 #engine-run', '06 #four-ways']);
     expect(r[2].screens).toEqual(['07 #profiles-access', '08 #security', '09 #enter-workspace']);
     expect(r[3].screens).toEqual(['10 #three-layers', '11 #six-months', '12 #next-decision']);
     // The answer pairs each of today's problems with how it is resolved
@@ -525,50 +457,6 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280,
         expect(r.small, id + ' text below ' + MIN_TEXT_PX[vp] + 'px at ' + vp).toEqual([]);
         expect(r.cut, id + ' truncated text at ' + vp).toEqual([]);
         expect(r.spill, id + ' text outside its box at ' + vp).toEqual([]);
-      }
-    });
-
-    test('screen 05: every role, at every depth and on every button, fits its stage and keeps its text inside its boxes', async ({ page }) => {
-      test.setTimeout(90000);
-      await page.emulateMedia({ reducedMotion: 'reduce' });
-      await open(page);
-      await enter(page, 'role-views');
-      const roles = await page.locator('#role-views .rv-role').count();
-      const views = [];
-      for (const dep of ['light', 'medium', 'deep']) for (let i = 0; i < roles; i++) for (const o of (dep === 'deep' ? [0, 1, 2] : [0])) views.push([dep, i, o]);
-      for (const [dep, i, o] of views) {
-        await page.locator('#role-views .rx-seg[data-depth="' + dep + '"]').click();
-        await page.locator('#role-views .rv-role').nth(i).click();
-        await page.locator('#role-views .rx-out').nth(o).click();
-        const r = await page.evaluate((min) => {
-          const st = document.querySelector('#role-views [data-scene-container]');
-          const cv = st.querySelector('.ts-canvas');
-          const scale = parseFloat(cv.dataset.scale || '1');
-          const sr = st.getBoundingClientRect(), cr = cv.getBoundingClientRect();
-          const out = [], small = [], spill = [];
-          if (cr.top < sr.top - 1 || cr.bottom > sr.bottom + 1 || cr.left < sr.left - 1 || cr.right > sr.right + 1) out.push('canvas');
-          cv.querySelectorAll('*').forEach((el) => {
-            if (el.closest('.ts-svg') || el.closest('.scene-accessible-summary')) return;
-            if (el.checkVisibility && !el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) return;
-            const q = el.getBoundingClientRect();
-            if (!q.width || !q.height) return;
-            if (q.left < cr.left - 2 || q.right > cr.right + 2 || q.top < cr.top - 2 || q.bottom > cr.bottom + 2) out.push(String(el.className).slice(0, 30));
-            if (![...el.childNodes].some((x) => x.nodeType === 3 && x.textContent.trim())) return;
-            if (parseFloat(getComputedStyle(el).fontSize) * scale < min) small.push(el.textContent.trim().slice(0, 30));
-            for (let box = el.parentElement; box && box !== cv; box = box.parentElement) {
-              const bs = getComputedStyle(box);
-              const framed = ['Top', 'Right', 'Bottom', 'Left'].every((s) => parseFloat(bs['border' + s + 'Width']) > 0 && bs['border' + s + 'Style'] !== 'none');
-              if (!framed && !box.classList.contains('ts-obj')) continue;
-              const b = box.getBoundingClientRect();
-              if (q.left < b.left - 2 || q.right > b.right + 2 || q.top < b.top - 2 || q.bottom > b.bottom + 2) { spill.push(el.textContent.trim().slice(0, 30)); break; }
-            }
-          });
-          return { out: out.slice(0, 5), small: small.slice(0, 5), spill: spill.slice(0, 5) };
-        }, MIN_TEXT_PX[vp]);
-        const at = 'role ' + i + ' at ' + dep + ', button ' + o + ', ' + vp;
-        expect(r.out, at + ': outside the canvas').toEqual([]);
-        expect(r.small, at + ': text below the floor').toEqual([]);
-        expect(r.spill, at + ': text outside its box').toEqual([]);
       }
     });
 
@@ -730,7 +618,7 @@ test.describe('Copy and claims', () => {
       expect(text.includes('%'), id + ' shows a percentage').toBe(false);
       const lower = text.toLowerCase();
       // Screen 05 names the knowledge graph at the owner's request, next to a plain step label
-      JARGON.filter((j) => !(id === 'role-views' && j === 'knowledge graph')).forEach((j) => expect(new RegExp('\\b' + j + '\\b').test(lower), id + ' uses "' + j + '"').toBe(false));
+      JARGON.filter((j) => !(id === 'engine-run' && j === 'knowledge graph')).forEach((j) => expect(new RegExp('\\b' + j + '\\b').test(lower), id + ' uses "' + j + '"').toBe(false));
       CLAIMS.forEach((c) => expect(lower.includes(c), id + ' claims "' + c + '"').toBe(false));
       expect(/\bad-hoc\b|\badhoc\b|paralel|parallell/.test(lower), id + ' misspells ad hoc or parallel').toBe(false);
     }

@@ -145,6 +145,8 @@
     { "name": "filter", "class": "ti-filter", "semantic": "scope" },
     { "name": "headset", "class": "ti-headset", "semantic": "managed" },
     { "name": "key", "class": "ti-key", "semantic": "access" },
-    { "name": "checks", "class": "ti-checks", "semantic": "evidence" }
+    { "name": "checks", "class": "ti-checks", "semantic": "evidence" },
+    { "name": "quote", "class": "ti-quote", "semantic": "sources" },
+    { "name": "minus", "class": "ti-minus", "semantic": "not needed" }
   ]
 }
