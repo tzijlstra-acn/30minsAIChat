@@ -1,4 +1,4 @@
-# NFR Workspace pitch: QA checklist (release v43, presentable by any consultant v10)
+# NFR Workspace pitch: QA checklist (release v44, presentable by any consultant v10)
 
 Status as of 2026-11-25 on branch `feat/pitch-v8` (v9 work continues on it). The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
@@ -7,11 +7,11 @@ npm run build:public && node scripts/build.js scan-repo
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
 node scripts/serve.js 8190 dist     # then, against the public build:
-node scripts/visual-qa.js 8190 artifacts/visual-qa/v43
+node scripts/visual-qa.js 8190 artifacts/visual-qa/v44
 node scripts/export-fallback.js 8190
 ```
 
-Last full run: 372 passed, 0 failed on the five desktop projects (v43; see the release note at the end).
+Last full run: 352 passed, 0 failed on the five desktop projects (v44; see the release note at the end).
 
 ## 1. Meeting-survival tests (v7 plan)
 
@@ -75,6 +75,8 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 - Claim review of the internal credentials (engagement lead) and of the indicative commercials (deal team, legal).
 
 ## Release note
+
+v44 (`v44-3fb7d47`), 2026-11-26: three chapters (Today's problem, The answer, The Workspace), each opened by a divider that is not counted as a screen; screen 04 a third-party case (a supplier changes, the records do not); the appendix sorted as buyers ask, ten pages and the Evidence Atlas removed, 18 pages renumbered without gaps. Desktop matrix 352 passed, 0 failed (the Evidence Atlas tests went with it). Audits, dash check, copy lint and term scan pass; both editions build. Against the public build: visual QA 44 screenshots at each of four sizes, 0 console errors; PDF fallback 52 pages, 0 console errors. Internal PDF 56 pages, 0 console errors, in internal/fallback/.
 
 v43 (`v43-79aa087`), 2026-11-26: the core story ends at Enter NFR Workspace. Screens 09 to 14 retired (their content stays in the appendix); new screen 08, one profile per person, from the identity system to their screen; takeaways under every core screen. Nine core screens in three chapters. Desktop matrix 372 passed, 0 failed. Audits, dash check, copy lint and term scan pass; both editions build. Against the public build: visual QA 51 screenshots at each of four sizes, 0 console errors; PDF fallback 59 pages, 0 console errors. Internal PDF 63 pages, 0 console errors, in internal/fallback/.
 
