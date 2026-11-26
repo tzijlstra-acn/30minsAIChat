@@ -28,7 +28,7 @@
 
   // ── The experience state model: every state the deck can be in, in route order ──
   var STATES = [
-    'cover', 'work-arrives', 'chain-drift', 'assistance', 'roles', 'four-ways', 'three-layers',
+    'cover', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers',
     'entering-workspace', 'live-handoff', 'live-fallback',
     'beneath', 'connected', 'control-boundary', 'value', 'bring-in', 'decision', 'appendix'
   ];
@@ -258,7 +258,7 @@
       var b = e.target.closest && e.target.closest('button');
       if (!b) return;
       if (b.closest('.nav') || b.classList.contains('apx-btn') || b.classList.contains('apx-tab') || b.classList.contains('apx-mod-chip') || b.classList.contains('apx-door-head')
-        || b.classList.contains('ew-open') || b.classList.contains('ew-fallback') || b.classList.contains('lf-tab') || b.classList.contains('rv-role') || b.classList.contains('ts-apx-link') || b.classList.contains('landing-chapter')) b.blur();
+        || b.classList.contains('ew-open') || b.classList.contains('ew-fallback') || b.classList.contains('lf-tab') || b.classList.contains('rv-role') || b.classList.contains('rx-seg') || b.classList.contains('rx-out') || b.classList.contains('ts-apx-link') || b.classList.contains('landing-chapter')) b.blur();
     }, true);
     syncSafeButton();
   }

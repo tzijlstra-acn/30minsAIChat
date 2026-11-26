@@ -8,7 +8,7 @@ A 30-minute conversation for two buyers: the NFR business owner first, the IT st
 
 **The positioning.** The future of NFR, coordinated: one Workspace that coordinates your people, your systems and your AI where it matters, under one set of controls.
 
-**The storyline.** The shift (01 to 04): why NFR work outgrows standalone AI. The model (05 to 07): how the information flows, how four ways of working leave no gap, and how it grows team by team. The Workspace (the product, then 09 to 11): who did what in the answer, how one change reaches every owner, and when a person must step in. The path (12 to 14): value measured gate by gate, how to bring it in, and what we agree today.
+**The storyline.** The shift (01 to 04): why NFR work outgrows standalone AI, and what one change costs today. The model (05 to 07): how the information flows, how four ways of working leave no gap, and how it grows team by team. The Workspace (the product, then 09 to 11): who did what in the answer, how one change reaches every owner, and when a person must step in. The path (12 to 14): value measured gate by gate, how to bring it in, and what we agree today.
 
 **Where the value sits.** The systems record the outcome; the work, and the exceptions that matter, happen in emails, spreadsheets and meetings around them. NFR Workspace runs the routine and brings each exception to a person with its context.
 
@@ -32,9 +32,9 @@ Print this. One point per screen, one sentence to say, the key to press. The det
 |---|---|---|---|
 | 01 | The future of NFR, coordinated | "One Workspace coordinates your people, systems and AI where it matters. AI prepares, your people decide, every step on record." | Space |
 | 02 | Every question cuts across five levels | "Who asks, what, where the data lives, who helps, and how. Four questions: six askers, eight systems, five teams, four methods." | Space |
-| 03 | External and internal change, one chain | "Rules change outside the bank, practice inside it. Both break the same chain, and today someone re-maps it by hand." | Space |
-| 04 | Standalone AI sees three of eight | "Red is what no assistant sees. The answer needs all eight: the 360 view." | Space |
-| 05 | How the information flows, per role | "Access checked in each system, read live or from an index, linked in the knowledge graph, calculated by rules, explained by AI." | Space (next role) or click a role |
+| 03 | Standalone AI sees three of eight | "Red is what no assistant sees. The answer needs all eight: the 360 view." | Space |
+| 04 | One change, and the record stays green | "One move to a new tool. Every link breaks, every record still says green, for 97 days. With the Workspace: flagged the same day." | Space |
+| 05 | How it flows, per role, at three depths | "Light: what they see. Medium: where it comes from. Deep: how each button runs, defined once, stored with versions, written back once approved." | Space (Medium, then Deep); click a role or a button |
 | 06 | Four ways, no gap | "Each way is strong where another stops. Together, no question falls through." | Space |
 | 07 | Set up once, grow by module | "Pilots do not scale. Set up once with the third-party risk team in six months, then add a team at a time, in-house or managed." | Space |
 | 08 | The product itself | Live product: press L. No product on your laptop: press F for the walkthrough | L or F |
@@ -63,14 +63,14 @@ Use the public edition with clients unless every internal page you plan to show 
 
 | Minutes | Chapter | Screens |
 |---|---|---|
-| 0 to 6 | The shift: how the work arrives, how the chain drifts, assistant and Workspace | 01 to 04 |
+| 0 to 6 | The shift: how the work arrives, assistant and Workspace, one change that breaks the chain | 01 to 04 |
 | 6 to 10 | The model: how the information flows, four ways that leave no gap, set up once and grow by module | 05 to 07 |
 | 10 to 17 | The live product, five acts | 08, then the product |
 | 17 to 21 | What happened beneath it: the plan, the connected context, the authority boundary | 09 to 11 |
 | 21 to 26 | Value measured gate by gate; three ways to bring it in | 12, 13 |
 | 26 to 30 | The workshop decision, appendix pages by question | 14 |
 
-**Twenty-minute route:** 01, 02, 04, 05 (two roles), 06, 08 and the product, 09, 11, 12, 14. Screens 03, 07, 10 and 13 each have an appendix page to open if a buyer asks.
+**Twenty-minute route:** 01, 02, 03, 04, 05 (Light and Medium; Deep only for architects), 06, 08 and the product, 09, 11, 12, 14. Screens 07, 10 and 13 each have an appendix page to open if a buyer asks.
 
 Do not try to show every appendix domain. Open one page when a buyer asks.
 
@@ -103,8 +103,10 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 | Key | What it does |
 |---|---|
 | Right / Left, Page Down / Page Up | Next or previous screen; in the product walkthrough, next or previous capture |
-| Space | Advance the scene; at its end, the next screen. On screen 05, the next role |
-| Click a role card | On screen 05, show that role at once |
+| Space | Advance the scene; at its end, the next screen. On screen 05, the next depth: Medium, then Deep |
+| Click a role card | On screen 05, show that role at once, at the same depth |
+| Click Light, Medium or Deep, or a folded layer | On screen 05, fold the layers in or out |
+| Click a button on screen 05 | Light up what that button reads, calculates, stores and writes back |
 | W | Go to Enter NFR Workspace (screen 08) |
 | L | Open the live product (`http://localhost:3200/`; add `?live=<url>` to the deck address to change it) |
 | F | The five acts, captured from the product |
@@ -140,32 +142,35 @@ Do not try to show every appendix domain. Open one page when a buyer asks.
 - **Ask the room:** "Which of these did you get this month?"
 - **Deep dive:** V1 (where to start; its detail lists the nine kinds of request risk functions bring).
 
-### 03 External change and internal drift break the same chain
-
-- **Remember:** two kinds of change, one chain. External change comes from outside the bank, internal change from inside it, and both have to be traced through the same links. That tracing is manual today, which is why it matters.
-- **Talk track (60 s):** point at the middle row first. "This is the chain every NFR function keeps: obligation, risk, control, evidence, assessment, decision. Above it, change from outside the bank: a new regulation such as DORA, a supervisory finding, a supplier changing its service, a new threat. It lands on the obligations and the risks. Below it, change inside the bank: a reorganisation, a new system, a control no longer performed, evidence going out of date. It lands on the controls, the evidence and the assessments. The links in between break. One example: DORA adds rules for ICT third parties, and in the same quarter procurement moves to a new sourcing tool. Today someone re-maps twelve controls by hand, the quarterly sign-off rests on old evidence, and audit finds it first. Fragmented, falsely assured, burdensome."
-- **If asked "is this internal or external change?":** "Both. External change arrives as rules and events; internal change arrives as drift. The damage is the same: the record falls behind what really happens."
-- **Deep dive:** D4 (the connected NFR core).
-
-### 04 Standalone AI sees one system. NFR needs the whole picture.
+### 03 Standalone AI sees one system. NFR needs the whole picture.
 
 - **Remember:** this is the key screen of the first chapter. Each assistant sees one system; the NFR answer needs all eight. Red marks the systems missing from every assistant.
 - **Visual:** the question types itself out first. The eight sources appear grey; the three that an assistant sees turn purple; then the five missing ones turn red, one by one, each marked Missing. The bars at the bottom count it: standalone AI sees three of eight, NFR Workspace fills to eight of eight, the 360 view. Let it finish before the last sentence.
-- **Talk track (60 s):** "Take one question: which critical third-party services are deteriorating, and why? The answer needs eight things, and each lives in its own system: the third-party register, contracts and SLAs, incidents, risk indicators, supplier mail, assurance reports, controls and issues, service dependencies. The email assistant sees the mailbox. The document assistant sees the open file. The GRC assistant sees the GRC records. The chat assistant sees what you paste in. The five in red: no assistant sees them, so the professional joins them by hand, for every question. Standalone AI gets three of eight. The answer needs eight of eight: the 360 view, which NFR Workspace brings together within the user's own access. Next, how that happens."
+- **Talk track (60 s):** "Take one question: which critical third-party services are deteriorating, and why? The answer needs eight things, and each lives in its own system: the third-party register, contracts and SLAs, incidents, risk indicators, supplier mail, assurance reports, controls and issues, service dependencies. The email assistant sees the mailbox. The document assistant sees the open file. The GRC assistant sees the GRC records. The chat assistant sees what you paste in. The five in red: no assistant sees them, so the professional joins them by hand, for every question. Standalone AI gets three of eight. The answer needs eight of eight: the 360 view, which NFR Workspace brings together within the user's own access. And these systems do not stand still. Next, what one change does."
 - **Business owner asks:** "So our assistant rollout was wasted?" **Answer:** "No. Each assistant helps with its own slice. The Workspace joins the slices."
 - **IT strategist asks:** "Does that mean one big data lake?" **Answer:** "No. The Workspace reads through approved connections under the user's own access (D2, D9)."
+
+### 04 One change breaks the chain. The record stays green.
+
+- **Remember:** why it matters, in one change. The record shows the outcome, not the change: every link still says green while the control no longer works, for 97 days, until audit finds it. Change from outside, such as a new rule like DORA, does the same from the top of the chain.
+- **Visual:** the chain first, every record green. The change lands on the control; the break travels both ways, link by link, and each link shows what is really happening while its record still says green. Then the timeline: what the record says, what is happening, the 97 days between them, and the same change with NFR Workspace, flagged the same day and fixed before the sign-off. Then why it matters: exposure, accountability, cost.
+- **Talk track (60 s):** "One ordinary change. Procurement moves supplier onboarding to a new sourcing tool, and the access review still runs on the old tool's list. Follow it. The control, CTL-0417, still says effective. The review log is on file, but misses nine new accounts. The self-assessment rates the control effective, on that log. The Q3 attestation is signed, on old evidence. Upstream, the risk says covered and the obligation says met. Every record is green, and none of it is true, for 97 days, until audit finds it. Why it matters: nine supplier accounts with access nobody reviewed, a Head of Procurement who signed on old evidence, and a finding, then the chain re-mapped by hand. With the Workspace the same change is flagged the same day, because the evidence is read at the source; screen 10 shows how. From outside it works the same way: a new rule such as DORA moves the chain from the top."
+- **If asked "is this internal or external change?":** "This one is internal, the most common kind. External change, such as a new rule, enters at the top of the chain: the same breaks, the same green records."
+- **If asked "are the 97 days real?":** "It is an illustrative example on synthetic records. The pattern is the point: a record changes when someone updates it, not when reality changes."
+- **Deep dive:** D4 (the connected NFR core).
 
 ## Chapter 2: the model
 
 ### 05 From question to answer: how the information flows
 
-- **Remember:** the question first, then the five steps the information takes, for the role that asks: access checked in each system, read, connected, worked out, answered. Same steps for every role; what changes is what each role may read.
-- **Action:** the screen opens on the third-party risk manager, asking the question from screen 04. Space shows the next role (Head of NFR, operational risk partner, control owner); after the last role, Space moves on. Click a role card to jump to it. Show at least the manager and the Head of NFR; Page Down skips to screen 06.
-- **Visual, left to right:** 1 each system checks the access of the person asking (green full, amber partial, pink no access, dashed line: nothing comes back); 2 what may be read is read by a live query of exact records, or from a cached index of documents and mail, each with its date; 3 the knowledge graph links the records across systems; 4 rules calculate (deterministic, no model), then AI explains, each claim cited; 5 the answer for the role, with what was not shown and what the role may do next.
-- **Talk track (90 s):** "The question first: which critical third-party services are deteriorating, and why? It travels with the manager's identity, and each of the eight systems checks their access before anything comes back. Five are read live, at the source: exact records. Three are read from a cached index: documents and mail, each with its date. The knowledge graph links them: eleven critical services, three deteriorating, Novalink leading, Basalt Cloud shared by two. Rules calculate the scores: no model involved. AI writes the why, and every claim cites its source. Now the Head of NFR: a different question, mostly summaries, no personal mailboxes, and the answer is a picture of the risk types. A control owner reads five of the eight systems, and only their own records. The AI sees only what the person asking may see."
+- **Remember:** one question, at the depth the room wants. Light is what the person sees. Medium is where it comes from. Deep is how it runs: each button is defined once, with what it reads, calculates, stores and writes back. That is how the system knows which systems a button needs, and why it is more than AI: compute, storage with versions and write-back are layers of their own.
+- **Action:** the screen opens at Light on the third-party risk manager, with the question from screen 03. Space unfolds Medium, then Deep, then moves on. Click a role card to switch roles at the same depth; click Light, Medium or Deep, or a folded layer, to fold in or out; click a button on the screen to light up its route. For a business audience stop at Medium; for architects go to Deep and click **Request evidence**.
+- **Visual, top to bottom:** on the screen, the answer, its picture and three buttons (a view, an explanation, an action); Route (Deep), the button's definition, such as TP-DET v3: how many systems it reads, its calculation, whether AI explains or drafts, where it writes; Read (Medium), each of the eight systems with the person's access (green full, amber partial, pink no access; lightning for a live query, a box for the dated cache), with the button's systems lit; Connect, the knowledge graph's links; Compute, rules with no model, then AI through the approved model, each claim cited and each call logged; Store (Deep), the answer kept with the version of every record it used, the dated index and the audit log; Write back (Deep), the system the action writes to, and the person who approves first.
+- **Talk track (90 s):** "Light: this is what the third-party risk manager sees. The question, the answer, three buttons. [Space] Medium: where it comes from. Each system checks their access before anything comes back; five are read live, three from a cached index with dates; the knowledge graph links eleven services to Basalt Cloud; rules calculate, and AI explains. [Space] Deep: how it runs. The system does not guess which systems to call. Each button is defined once: Deteriorating services reads six systems and runs the deterioration score, and writes nothing. [Click Request evidence.] This one reads three, AI drafts the request, and it writes to vendor management, only after you approve every field. Every answer is kept with the version of each record it used, and the audit log keeps who asked, what was read and what was shown. A new question has no definition yet: AI plans it, using only the connectors this person may use. [Click Control owner.] Same layers: five systems, own records only, and the attestation is signed by them."
 - **Business owner asks:** "Can my team see what the Head of NFR sees?" **Answer:** "Only if their role allows it. Access comes from your existing systems and roles; the Workspace grants none of its own."
-- **IT strategist asks:** "Where is access enforced, and what is cached?" **Answer:** "In each source system, with the user's own identity, before anything reaches the AI. Structured records are queried live; documents and mail are indexed on change and carry their date and source; the graph holds relationships with provenance. Read and write are separate permissions (D2, D3, D4, D9)."
-- **Be precise:** the third-party risk manager and the operational risk partner are roles in the product today, and their cards say so. The Head of NFR and control owner views are target design, also marked on their cards. The flow is the target design, shown on synthetic records; appendix D8 has the full pipeline.
+- **IT strategist asks:** "How does a button know which systems to call?" **Answer:** "Each button is a versioned definition: its sources, its calculation, its AI step and where it writes. It is reviewed like a method. Access is still checked per system, per user, when it runs. A new question is planned by AI from the approved connectors only, and becomes a definition once it is reviewed (D3, D8)."
+- **IT strategist asks:** "Where is access enforced, and what is cached?" **Answer:** "In each source system, with the user's own identity, before anything reaches the AI. Structured records are queried live; documents and mail are indexed on change and carry their date and source; the graph holds relationships with provenance. Read and write are separate permissions, and a write goes through the target system's own rules (D2, D3, D4, D9)."
+- **Be precise:** the third-party risk manager and the operational risk partner are roles in the product today, and their cards say so. The Head of NFR and control owner views are target design, also marked on their cards. The layers and the button definitions (such as TP-DET v3) are the target design, shown on synthetic records; appendix D8 has the full pipeline.
 - **Deep dives:** D3 (what travels with a question), D9 (access and audit).
 
 ### 06 Four ways of working. Together, no question falls through.
@@ -201,7 +206,7 @@ Follow the product's guide (`docs/NFR_WORKSPACE_PRESENTER_GUIDE.md` in `nfr-work
 |---|---|---|
 | 1 The Workspace feels real | The user does not start with a blank chatbot | M1, D1 |
 | 2 The next decision arrives prepared | The case, the evidence and the action arrive together | D3, M6 |
-| 3 A live question, a visual answer | The question from screen 04, answered. Say: "No single assistant could answer this: the answer drew on 15 evidence items from six registers." Not prose: a governed analysis from connected records; no number came from a model | D8, D4, D5 |
+| 3 A live question, a visual answer | The question from screen 03, answered. Say: "No single assistant could answer this: the answer drew on 15 evidence items from six registers." Not prose: a governed analysis from connected records; no number came from a model | D8, D4, D5 |
 | 4 From insight to action | The professional approves; the system records | M7, D9 |
 | 5 The long tail, governed | Agents cover the long tail without bypassing controls | M8, M1 |
 
@@ -328,4 +333,4 @@ Also from the index: the captured live demonstration, the team page, and the Evi
 
 ## Comprehension check
 
-After one pass, a first-time viewer should be able to explain: why work arrives as a question; why the chain drifts; why a standalone assistant sees only a slice of the answer; Ask, Use, Run and Create; the three layers; why small methods and not one large model; where professional authority remains; what the five weeks and the six months prove. Ask a business colleague and a technology colleague who did not build the deck, before explaining anything.
+After one pass, a first-time viewer should be able to explain: why work arrives as a question; why a standalone assistant sees only a slice of the answer; why one change breaks the chain while the record stays green; how one button finds its systems; Ask, Use, Run and Create; the three layers; why small methods and not one large model; where professional authority remains; what the five weeks and the six months prove. Ask a business colleague and a technology colleague who did not build the deck, before explaining anything.

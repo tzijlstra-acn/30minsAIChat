@@ -17,7 +17,7 @@ Last full run: 362 passed, 0 failed on the five desktop projects (v41; see the r
 
 | Test | Status | Evidence |
 |---|---|---|
-| Comprehension: a first-time viewer explains why work arrives as a question, why the chain drifts, why an assistant is not the Workspace, what each role sees, Ask / Use / Run / Create, the three layers, why small methods, where authority remains, what five weeks and six months prove | **Not done.** Needs people | Screens 02 to 04 carry the problem by minute six; screen 05 shows how the information flows per role; screen 09 explains the demonstration with four kinds of agent; the principle is on the cover and screen 11 |
+| Comprehension: a first-time viewer explains why work arrives as a question, why an assistant is not the Workspace, why one change breaks the chain while the record stays green, what each role sees and how a button finds its systems, Ask / Use / Run / Create, the three layers, why small methods, where authority remains, what five weeks and six months prove | **Not done.** Needs people | Screens 02 to 04 carry the problem by minute six; screen 05 shows how the information flows per role, at three depths; screen 09 explains the demonstration with four kinds of agent; the principle is on the cover and screen 11 |
 | Business owner: which of my requests, what changes for my team, what it costs, how we start | Pass on paper | Screens 02, 05, 07, 12, 13, 14; appendix V1 to V3, S1, S2 |
 | IT strategist: what sits behind it, what stays authoritative, identity and access, model risk, the graph, facts to visuals, write-back, runtime dependency | Pass on paper | Screen 05; appendix D1 to D9, M2, M5, M6, M7 |
 | Claims: every appendix page carries one claim status; no core screen claims production deployment, autonomy or guaranteed compliance | Pass | Automated: claim status on every page, banned-claims list on core and appendix text, copy lint |
@@ -40,7 +40,7 @@ Last full run: 362 passed, 0 failed on the five desktop projects (v41; see the r
 | 10 | Safe mode, offline run, reset (0), state model covers every state the route reaches | Pass | Automated |
 | 11 | No console errors | Pass | Automated per viewport; visual QA and the PDF export report zero |
 | 12 | Icons render once (v31 showed some twice) | Pass | Visual QA |
-| 13 | Screen 05: four roles in two groups; a click or Space switches the role; access per system, linked records and answer per role; every role fits with its text inside its boxes at every size; one PDF page per role | Pass | Automated, and the PDF export |
+| 13 | Screen 05: four roles; Light, Medium and Deep fold the layers out (Space or the switch); each button lights its own systems, calculation, storage and write-back, and reads only systems its role may access; every role at every depth, and at Deep every button, fits with its text inside its boxes at every size; six PDF pages | Pass | Automated, and the PDF export |
 
 ## 3. Visual
 

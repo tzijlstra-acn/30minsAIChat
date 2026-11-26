@@ -233,3 +233,14 @@ From the owner's review: a punchier cover, no repeated scaling story, the four k
 | 12 | Two lenses, insight and speed, each with one measure; value grows gate by gate (baseline, qualified, live, next team), each gate opening on evidence (`value.lenses`, `steps`, `gates`) |
 | 13 | New `bring-in`: managed service, sovereign cloud, full deployment. Public wording follows S5 and says the commercial model is shared separately; the internal edition replaces `bringIn` with the offer names and the commercial models (internal/story-internal.js) |
 | Removed | `qualify-and-prove` (its phases and gates live on 12, the six months on 07) and `experience` (credentials stay in the appendix: S5 public, S7 internal). The decision is screen 14 |
+
+## 17. v15 changes (screens 03 to 05, release v42)
+
+From the owner's review: what no assistant sees belongs at 03; the change screen needed substance and a clear reason why it matters; screen 05 had to show how the system knows which systems each button needs, and that it is more than AI (compute, storage with versions, write-back), with Light, Medium and Deep views per role that fold out.
+
+| Screen | Change |
+|---|---|
+| 03 | `assistance-here` moves from 04 to 03, otherwise unchanged |
+| 04 | `chain-drift` follows one internal change link by link (`chain.links`: what the record says, what is really happening), then a timeline (`chain.timeline`: the record says effective for 97 days while supplier accounts go unreviewed; with NFR Workspace, flagged the same day) and why it matters (exposure, accountability, cost). The records match screen 10 (OBL-12, R-21, CTL-0417, RCSA Q3, the Q3 sign-off). External change is the closing line |
+| 05 | `role-views` rebuilt as seven layers (`roles.layers`) that fold out by depth (`roles.depths`): Light the screen; Medium read, connect, compute; Deep route, store, write back. Each role has three buttons (`outputs`: view, explain, action), each a versioned definition with the systems it reads, its calculation, its AI step, what it stores and where it writes; a test checks that no button reads a system its role may not. Space unfolds the next depth, then moves on; clicks switch the role, the depth or the button |
+| Tests and PDF | The Role views block is rewritten; the screen 05 layout test checks every role at every depth and, at Deep, every button, at all seven sizes. The PDF has six pages for screen 05: Light, Medium and Deep for the first role, then the other roles at Deep |

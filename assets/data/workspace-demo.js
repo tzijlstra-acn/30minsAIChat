@@ -53,7 +53,7 @@
     // ── 02 The point: every question pulls in askers, systems, teams and a method of its own ──
     // Five levels, one row each. Each question links to the askers, systems, teams and
     // method it needs; the screen steps through the four questions and ends on the last,
-    // the one screen 04 types out. The totals are counted from this data.
+    // the one screen 03 types out. The totals are counted from this data.
     arrives: {
       levels: { who: 'Who asks', ask: 'What they ask', data: 'Where the answer lives', help: 'Who has to help', method: 'How it is worked out' },
       askers: [
@@ -82,32 +82,7 @@
       line: 'The work, and the exceptions that matter, happen in emails, spreadsheets and meetings around it.'
     },
 
-    // ── 03 The point: external change and internal change break the same chain ──
-    // Above the chain: change from outside the bank. Below it: change inside the bank. Both
-    // hit links of the same chain, some links break, and one worked example shows why it
-    // matters: one change of each kind, and what it costs today.
-    chain: {
-      above: { label: 'External change', sub: 'Outside the bank', icon: 'ti-world', items: ['New regulation, such as DORA', 'Supervisory finding', 'A supplier changes its service', 'A new cyber threat'], hits: [0, 1] },
-      below: { label: 'Internal change', sub: 'Inside the bank', icon: 'ti-building', items: ['Reorganisation or a new owner', 'A new system or process', 'A control no longer performed', 'Evidence out of date'], hits: [2, 3, 4] },
-      links: ['Obligation', 'Risk or process', 'Control', 'Evidence', 'Assessment', 'Decision'],
-      // Links that no longer tell the same story (between link i and i + 1)
-      broken: [1, 2, 3],
-      exampleLabel: 'Why it matters, in one example',
-      example: [
-        { tone: 'data', k: 'External', text: 'DORA adds rules for ICT third parties' },
-        { tone: 'gap', k: 'Internal', text: 'Procurement moves to a new sourcing tool' },
-        { tone: 'human', k: 'Today', text: '12 controls re-mapped by hand. The Q3 sign-off rests on old evidence. Audit finds it first.' }
-      ],
-      consequences: [
-        { label: 'Fragmented', icon: 'ti-puzzle', text: 'No traced line from rule to evidence.' },
-        { label: 'Falsely assured', icon: 'ti-shield-x', text: 'Sign-offs state what is no longer true.' },
-        { label: 'Burdensome', icon: 'ti-weight', text: 'Every change becomes a project.' }
-      ],
-      person: 'Both kinds of change land on the same chain.',
-      line: 'Today a professional re-maps it by hand, so the record falls behind what really happens.'
-    },
-
-    // ── 04 The point: standalone AI sees one system; the NFR answer needs all of them ──
+    // ── 03 The point: standalone AI sees one system; the NFR answer needs all of them ──
     // The question is the one the live product answers in act 3. Needs 1 to 4 are the
     // top row; needs 5 to 8 sit above tools 1 to 4. A tool "covers" the one need it sees.
     sees: {
@@ -143,28 +118,99 @@
       note: ['Each assistant helps with its own slice.', "NFR Workspace brings every system's content into one picture, within the user's permissions."]
     },
 
-    // ── 05 The point: one connected picture, and each role sees its own answer ──
-    // The eight systems are the ones screen 04 names. Each role asks its own question; the
-    // question travels with the user's identity, each system answers only within that
-    // user's access, the records that come back are linked, and the answer is shaped for
-    // the role. Synthetic records; the facts match the demonstration (act 3) and screen 10.
-    // Access per system: 'full', 'none', or a short note for partial access.
+    // ── 04 The point: one change breaks the chain while the record stays green ──
+    // One internal change, followed link by link. Each link shows what the record says and
+    // what is really happening. The timeline shows how long the two differ today, and the
+    // same change with NFR Workspace (screen 10 shows how). The records match screen 10:
+    // OBL-12, R-21, CTL-0417, RCSA Q3 and the Q3 sign-off by the Head of Procurement.
+    chain: {
+      label: 'One change, followed link by link',
+      tag: 'Illustrative, synthetic records',
+      trigger: { k: 'Internal change, day 0', icon: 'ti-building', text: "Procurement moves supplier onboarding to a new sourcing tool. The access review still runs on the old tool's list." },
+      // The link the change hits first; the break then travels both ways along the chain
+      hit: 2,
+      recordLabel: 'Record says',
+      trueLabel: 'Really',
+      links: [
+        { label: 'Obligation', id: 'OBL-12', record: 'Met', truth: 'Relies on CTL-0417' },
+        { label: 'Risk', id: 'R-21', record: 'Covered', truth: 'Exposed since day 0' },
+        { label: 'Control', id: 'CTL-0417', record: 'Effective', truth: 'Reviews the old list' },
+        { label: 'Evidence', id: 'Review log', record: 'On file', truth: 'Misses 9 new accounts' },
+        { label: 'Self-assessment', id: 'RCSA Q3', record: 'Effective', truth: 'Rated on that log' },
+        { label: 'Sign-off', id: 'Q3 attestation', record: 'Signed', truth: 'Signed on old evidence' }
+      ],
+      // Days 0 to 120. Each segment: [from, to, tone, text]
+      timeline: {
+        label: 'How long the record stays green',
+        days: 120, ticks: [0, 30, 60, 90, 120], tick: 'Day {d}',
+        lanes: [
+          { label: 'What the record says', segs: [[0, 97, 'proof', 'Effective'], [97, 120, 'gap', 'Finding']] },
+          { label: 'What is happening', segs: [[0, 97, 'gap', 'New supplier accounts go unreviewed'], [97, 120, 'human', 'Remediation']] },
+          { label: 'With NFR Workspace', segs: [[0, 80, 'ai', 'Flagged the same day, fixed before the sign-off'], [80, 120, 'proof', 'Signed on current evidence']] }
+        ],
+        events: [[0, 'Tool moves'], [80, 'Q3 signed'], [97, 'Audit finds it']],
+        window: [0, 97, '97 days of false assurance']
+      },
+      mattersLabel: 'Why it matters',
+      consequences: [
+        { label: 'Exposure', icon: 'ti-alert-triangle', text: '9 supplier accounts with access nobody reviewed.' },
+        { label: 'Accountability', icon: 'ti-signature', text: 'The Head of Procurement signed Q3 on old evidence.' },
+        { label: 'Cost', icon: 'ti-weight', text: 'An audit finding, then the chain re-mapped by hand.' }
+      ],
+      person: 'The record shows the outcome, not the change.',
+      line: 'From outside, the same: a new rule such as DORA moves the chain from the top.'
+    },
+
+    // ── 05 The point: how the information flows, at the depth the audience wants ──
+    // Pick a role, then a depth. Light is what the person sees: the answer and its buttons.
+    // Medium folds out where it comes from: each system checks access, the records are read
+    // live or from a dated cache, linked, calculated and explained. Deep folds out how it
+    // runs: each button is defined once (what it reads, calculates and writes), what is
+    // stored with versions, and what is written back, only once a person approves.
+    // The eight systems are screen 03's. Access per system: 'full', 'none', or a short note.
+    // Each button reads only systems its role may access (a test checks it).
     roles: {
       tag: 'Illustrative, synthetic records',
-      groups: { lead: 'Leads NFR', work: 'Runs the work' },
+      groups: { lead: 'Leads the function', work: 'Runs the work' },
       status: { live: 'In the product today', target: 'Target design' },
       asks: 'asks',
-      steps: ['1 · Access checked', '2 · Read', '3 · Connected', '4 · Worked out', '5 · Answer for this role'],
+      depthLabel: 'Depth',
+      depths: [
+        { id: 'light', label: 'Light', sub: 'What they see' },
+        { id: 'medium', label: 'Medium', sub: 'The sources' },
+        { id: 'deep', label: 'Deep', sub: 'How it runs' }
+      ],
+      opensAt: 'Opens at',
+      layers: [
+        { id: 'screen', depth: 'light', label: 'On the screen', sub: 'Answer and buttons', icon: 'ti-device-desktop' },
+        { id: 'route', depth: 'deep', label: 'Route', sub: 'Each button defined once', icon: 'ti-arrows-split-2' },
+        { id: 'read', depth: 'medium', label: 'Read', sub: 'Access checked first', icon: 'ti-database' },
+        { id: 'connect', depth: 'medium', label: 'Connect', sub: 'Knowledge graph', icon: 'ti-affiliate' },
+        { id: 'compute', depth: 'medium', label: 'Compute', sub: 'Rules, then AI', icon: 'ti-cpu' },
+        { id: 'store', depth: 'deep', label: 'Store', sub: 'Kept, with versions', icon: 'ti-archive' },
+        { id: 'write', depth: 'deep', label: 'Write back', sub: 'Only once approved', icon: 'ti-pencil' }
+      ],
+      kinds: { view: 'View', explain: 'Explain', action: 'Action' },
+      // Short names for the eight systems, so all eight fit one layer
+      short: { register: 'Vendors', contracts: 'Contracts', incidents: 'Incidents', kri: 'Risk reporting', mail: 'Mailbox', assurance: 'Documents', controls: 'GRC', dependencies: 'IT services' },
       // How each system is read: a live query of exact records, or a cached index of documents
       modeOf: { register: 'live', incidents: 'live', kri: 'live', controls: 'live', dependencies: 'live', contracts: 'cache', mail: 'cache', assurance: 'cache' },
       modes: {
-        live: { label: 'Live query', icon: 'ti-bolt', text: 'Exact records, read at the source now' },
-        cache: { label: 'Cached index', icon: 'ti-archive', text: 'Documents and mail, each with its date' }
+        live: { label: 'Live', icon: 'ti-bolt', text: 'Exact records, read at the source now' },
+        cache: { label: 'Cached', icon: 'ti-archive', text: 'Documents and mail, each with its date' }
       },
-      reads: '{n} of {t}',
-      graph: { label: 'Knowledge graph', icon: 'ti-affiliate', text: 'Links the records across systems' },
-      rules: { label: 'Rules calculate', icon: 'ti-calculator', text: 'Deterministic scores and thresholds. No model.' },
-      ai: { label: 'AI explains, checked', icon: 'ti-sparkles', text: 'Writes the why. Each claim cites its source.' },
+      route: { def: 'Defined once as', reads: 'Reads {n} systems', noRule: 'No calculation', ai: { view: 'No AI', explain: 'AI explains', action: 'AI drafts' },
+        write: 'Writes to {to}', noWrite: 'Writes nothing',
+        fresh: 'A new question has no definition yet: AI plans it, using only connectors this user may use.' },
+      graph: { label: 'Knowledge graph', text: 'Links the records across systems' },
+      rules: { label: 'Rules calculate', text: 'Deterministic. No model.' },
+      ai: { label: 'AI explains, checked', text: 'Approved model. Each claim cited, each call logged.' },
+      store: [
+        { k: 'This answer', text: null },
+        { k: 'Cached index', text: 'Each document kept with its date' },
+        { k: 'Audit log', text: 'Who asked, what was read and shown' }
+      ],
+      write: { none: 'This button only reads. Nothing is written back.', note: "Written through the system's own rules, with a receipt." },
       access: {
         full: { icon: 'ti-circle-check', tone: 'proof', label: 'Full' },
         part: { icon: 'ti-circle-half-2', tone: 'human' },
@@ -172,6 +218,7 @@
       },
       notShownLabel: 'Not shown:',
       mayLabel: 'May do next:',
+      // The role shown first, then the order the fallback pictures follow
       order: ['tprm', 'head', 'orm', 'owner'],
       list: [
         { id: 'head', group: 'lead', icon: 'ti-user-star', label: 'Head of NFR', scope: 'Every register, summarised', status: 'target',
@@ -179,6 +226,15 @@
           rule: 'Ratings against appetite: 2 amber, 4 green', ai: 'Explains the concentration, citing both services',
           access: { register: 'Summary', contracts: 'Totals', incidents: 'Summary', kri: 'full', mail: 'none', assurance: 'Summary', controls: 'Summary', dependencies: 'full' },
           links: [{ type: 'Risk types', text: '6 in the profile' }, { type: 'Third party', text: 'Amber, 3 services' }, { type: 'Concentration', text: '2 on one provider' }, { type: 'Board report', text: '1 item to flag' }],
+          outputs: [
+            { id: 'profile', kind: 'view', icon: 'ti-chart-bar', label: 'Risk against appetite', def: 'NFR-APP v4', rule: 'Appetite rating',
+              reads: ['register', 'incidents', 'kri', 'controls', 'assurance'], store: 'The profile and its 31 records, versioned' },
+            { id: 'why', kind: 'explain', icon: 'ti-sparkles', label: 'Why it is moving', def: 'NFR-WHY v2', rule: null,
+              reads: ['register', 'contracts', 'kri', 'dependencies'], store: 'The explanation, each claim with its source' },
+            { id: 'board', kind: 'action', icon: 'ti-flag', label: 'Flag for the board', def: 'NFR-BRD v1', rule: null,
+              reads: ['kri', 'dependencies'], store: 'The draft and its approval, one record',
+              write: { to: 'Document store', what: 'A draft item for the board report', gate: 'After the Head of NFR approves' } }
+          ],
           answer: { text: 'Third-party risk is nearing its limit. Two services rely on one cloud provider.',
             visual: { kind: 'tiles', items: [{ label: 'Third party', tone: 'human' }, { label: 'Resilience', tone: 'human' }, { label: 'Cyber', tone: 'proof' }, { label: 'Data', tone: 'proof' }, { label: 'Conduct', tone: 'proof' }, { label: 'Fraud', tone: 'proof' }] },
             notShown: 'Personal mailboxes, case-level detail',
@@ -188,6 +244,15 @@
           rule: 'Deterioration score: 3 of 11 over threshold', ai: 'Explains why: two share Basalt Cloud, each claim cited',
           access: { register: 'full', contracts: 'full', incidents: 'full', kri: 'full', mail: 'Own mailbox', assurance: 'full', controls: 'full', dependencies: 'full' },
           links: [{ type: 'Services', text: '11 critical' }, { type: 'Deteriorating', text: '3 services' }, { type: 'Leading', text: 'Novalink, up 23' }, { type: 'Shared provider', text: 'Basalt Cloud' }],
+          outputs: [
+            { id: 'list', kind: 'view', icon: 'ti-list-details', label: 'Deteriorating services', def: 'TP-DET v3', rule: 'Deterioration score',
+              reads: ['register', 'incidents', 'kri', 'dependencies', 'contracts', 'assurance'], store: 'The list and its 15 records, versioned' },
+            { id: 'why', kind: 'explain', icon: 'ti-sparkles', label: 'Why, with sources', def: 'TP-WHY v2', rule: null,
+              reads: ['register', 'incidents', 'dependencies', 'contracts', 'mail', 'assurance'], store: 'The explanation, each claim with its source' },
+            { id: 'request', kind: 'action', icon: 'ti-send', label: 'Request evidence', def: 'TP-REQ v1', rule: null,
+              reads: ['register', 'contracts', 'mail'], store: 'The request and its approval, one record',
+              write: { to: 'Vendor management', what: 'An evidence request to Novalink', gate: 'After you approve every field' } }
+          ],
           answer: { text: 'Three critical services are deteriorating. Novalink leads, up 23 points.',
             visual: { kind: 'dots', total: 11, hit: 3, label: '3 of 11 critical services. Two rely on Basalt Cloud.' },
             notShown: "Other people's mailboxes",
@@ -197,6 +262,15 @@
           rule: 'Rating against test result: 1 mismatch', ai: 'Drafts the challenge, citing the test and the RCSA',
           access: { register: 'full', contracts: 'none', incidents: 'full', kri: 'full', mail: 'none', assurance: 'full', controls: 'full', dependencies: 'full' },
           links: [{ type: 'Control', text: 'CTL-0417 failed' }, { type: 'Self-assessment', text: 'RCSA Q3: effective' }, { type: 'Risk', text: 'R-21 to review' }, { type: 'Obligation', text: 'OBL-12 relies on it' }],
+          outputs: [
+            { id: 'mismatch', kind: 'view', icon: 'ti-checklist', label: 'Rating mismatches', def: 'ORM-MIS v2', rule: 'Rating against test',
+              reads: ['controls', 'assurance', 'register'], store: 'The mismatch and its 6 records, versioned' },
+            { id: 'draft', kind: 'explain', icon: 'ti-sparkles', label: 'Draft the challenge', def: 'ORM-CHL v1', rule: null,
+              reads: ['controls', 'incidents', 'kri', 'assurance'], store: 'The draft, each claim with its source' },
+            { id: 'record', kind: 'action', icon: 'ti-pencil', label: 'Record the challenge', def: 'ORM-REC v1', rule: null,
+              reads: ['controls'], store: 'The challenge and its approval, one record',
+              write: { to: 'GRC platform', what: 'A second-line challenge on RCSA Q3', gate: 'After you approve' } }
+          ],
           answer: { text: 'One self-assessment still rates a failed control as effective.',
             visual: { kind: 'compare', rows: [{ label: 'RCSA Q3 rates CTL-0417', value: 'Effective', tone: 'proof' }, { label: 'Latest test of CTL-0417', value: 'Failed', tone: 'gap' }] },
             notShown: 'Contract terms and mailboxes',
@@ -206,6 +280,15 @@
           rule: 'Evidence due before sign-off: 2 of 6 controls', ai: 'Lists what is missing, citing each control',
           access: { register: 'Own only', contracts: 'none', incidents: 'Own unit', kri: 'none', mail: 'Own mailbox', assurance: 'Own only', controls: 'Own controls', dependencies: 'none' },
           links: [{ type: 'Your controls', text: '6 in Procurement' }, { type: 'Control', text: 'CTL-0417 failed' }, { type: 'Evidence', text: '2 items missing' }, { type: 'Attestation', text: 'Q3 sign-off flagged' }],
+          outputs: [
+            { id: 'due', kind: 'view', icon: 'ti-checklist', label: 'Evidence due', def: 'CO-EVD v2', rule: 'Evidence due',
+              reads: ['controls', 'assurance'], store: 'The list and its 9 records, versioned' },
+            { id: 'missing', kind: 'explain', icon: 'ti-sparkles', label: 'What is missing', def: 'CO-GAP v1', rule: null,
+              reads: ['controls', 'assurance', 'mail'], store: 'The gaps, each with its source' },
+            { id: 'attest', kind: 'action', icon: 'ti-upload', label: 'Upload and attest', def: 'CO-ATT v1', rule: null,
+              reads: ['controls', 'register'], store: 'The evidence and the attestation, one record',
+              write: { to: 'GRC platform', what: 'Evidence on CTL-0417 and the Q3 attestation', gate: 'Signed by you' } }
+          ],
           answer: { text: 'Two of your six controls need evidence before the Q3 sign-off.',
             visual: { kind: 'tiles', items: [{ label: 'CTL-0417', tone: 'gap' }, { label: 'CTL-0421', tone: 'human' }, { label: 'CTL-0402', tone: 'proof' }, { label: 'CTL-0409', tone: 'proof' }, { label: 'CTL-0411', tone: 'proof' }, { label: 'CTL-0433', tone: 'proof' }] },
             notShown: 'Other units and contracts',

@@ -58,10 +58,20 @@ async function run() {
   for (var i = 0; i < core.length; i++) {
     await go(core[i]);
     await shot(core[i]);
-    // Screen 05: one page per role, in the order Space steps through them
+    // Screen 05: the first role at Light, Medium and Deep (Space unfolds each), then every
+    // other role at Deep
     if (core[i] === 'role-views') {
+      await key('Space'); await shot('role-views-medium');
+      await key('Space'); await shot('role-views-deep');
       var order = await page.evaluate(function() { return NFR_WORKSPACE_DEMO.roles.order; });
-      for (var r = 1; r < order.length; r++) { await key('Space'); await shot('role-views-' + order[r]); }
+      for (var r = 1; r < order.length; r++) {
+        await page.evaluate(function(id) {
+          var at = NFR_WORKSPACE_DEMO.roles.list.map(function(x) { return x.id; }).indexOf(id);
+          document.querySelectorAll('#role-views .rv-role')[at].click();
+        }, order[r]);
+        await page.waitForTimeout(250);
+        await shot('role-views-' + order[r]);
+      }
     }
     if (core[i] === 'enter-workspace') {
       await go('live-fallback');

@@ -312,15 +312,15 @@ test.describe('Presenter controls and resilience', () => {
   test('Space and the arrows move through the story; Page Down and Page Up work for a clicker', async ({ page }) => {
     await reduced(page);
     await open(page);
-    await land(page, 'chain-drift');
+    await land(page, 'assistance-here');
     await press(page, 'Space');
-    await page.waitForFunction(() => sections[current].id === 'assistance-here', null, { timeout: 4000 });
+    await page.waitForFunction(() => sections[current].id === 'chain-drift', null, { timeout: 4000 });
     await press(page, 'PageDown');
     await page.waitForFunction(() => sections[current].id === 'role-views', null, { timeout: 4000 });
     await press(page, 'PageUp');
-    await page.waitForFunction(() => sections[current].id === 'assistance-here', null, { timeout: 4000 });
-    await press(page, 'ArrowLeft');
     await page.waitForFunction(() => sections[current].id === 'chain-drift', null, { timeout: 4000 });
+    await press(page, 'ArrowLeft');
+    await page.waitForFunction(() => sections[current].id === 'assistance-here', null, { timeout: 4000 });
   });
 
   test('every state the default route reaches is in the experience state model', async ({ page }) => {
@@ -338,7 +338,7 @@ test.describe('Presenter controls and resilience', () => {
     }
     expect(await here(page)).toBe('workshop-decision');
     for (const s of seen) expect(known, s).toContain(s);
-    ['cover', 'work-arrives', 'chain-drift', 'assistance', 'roles', 'four-ways', 'three-layers', 'live-handoff', 'beneath', 'connected', 'control-boundary', 'value', 'bring-in', 'decision']
+    ['cover', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'live-handoff', 'beneath', 'connected', 'control-boundary', 'value', 'bring-in', 'decision']
       .forEach((s) => expect([...seen]).toContain(s));
     expect(warnings).toEqual([]);
   });

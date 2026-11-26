@@ -130,6 +130,12 @@
     { "name": "trending-up",         "class": "ti-trending-up",          "semantic": "trend" },
     { "name": "hierarchy-2",         "class": "ti-hierarchy-2",          "semantic": "concentration" },
     { "name": "pin",                 "class": "ti-pin",                  "semantic": "save" },
-    { "name": "paperclip",           "class": "ti-paperclip",            "semantic": "save" }
+    { "name": "paperclip",           "class": "ti-paperclip",            "semantic": "save" },
+    { "name": "signature",        "class": "ti-signature",        "semantic": "attest" },
+    { "name": "arrows-split-2",   "class": "ti-arrows-split-2",   "semantic": "route" },
+    { "name": "list-details",     "class": "ti-list-details",     "semantic": "list" },
+    { "name": "flag",             "class": "ti-flag",             "semantic": "flag" },
+    { "name": "upload",           "class": "ti-upload",           "semantic": "upload" },
+    { "name": "chevron-down",     "class": "ti-chevron-down",     "semantic": "fold" }
   ]
 }

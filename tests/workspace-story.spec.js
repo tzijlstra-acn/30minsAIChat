@@ -17,7 +17,7 @@ const EM = String.fromCharCode(0x2014);
 const EN = String.fromCharCode(0x2013);
 
 const CORE = [
-  'cover', 'work-arrives', 'chain-drift', 'assistance-here', 'role-views', 'four-ways', 'three-layers', 'enter-workspace',
+  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'enter-workspace',
   'method-plan', 'connected-context', 'authority-boundary', 'value-decision', 'bring-in', 'workshop-decision'
 ];
 const INTERACTIVE = ['role-views', 'enter-workspace', 'live-fallback'];
@@ -197,22 +197,30 @@ test.describe('Story data', () => {
   });
 });
 
-// ── SCREEN 05: ONE CONNECTED PICTURE, A VIEW PER ROLE ──
+// ── SCREEN 05: HOW THE INFORMATION FLOWS, PER ROLE, AT THREE DEPTHS ──
 test.describe('Role views', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('four roles in two groups, each reading the eight systems of screen 04 within its own access', () => {
+  test('four roles read the eight systems of screen 03 within their access; each button reads only what its role may see', () => {
     const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
     const R = d.roles;
     expect(R.list.map((r) => r.id)).toEqual(['head', 'tprm', 'orm', 'owner']);
     expect(R.list.map((r) => r.group)).toEqual(['lead', 'work', 'work', 'work']);
-    // Space starts with the role the demonstration uses, asking the question screen 04 types
+    // The screen starts with the role the demonstration uses, asking the question screen 03 types
     expect(R.order[0]).toBe('tprm');
     expect([...R.order].sort()).toEqual(R.list.map((r) => r.id).sort());
     expect(R.list.find((r) => r.id === 'tprm').question).toBe(d.sees.question.text);
     // Only the roles available in the live product say so
     expect(R.list.filter((r) => r.status === 'live').map((r) => r.id)).toEqual(['tprm', 'orm']);
+    // Three depths; the screen shows at the first, every other layer opens at Medium or Deep
+    expect(R.depths.map((x) => x.id)).toEqual(['light', 'medium', 'deep']);
+    expect(R.layers.map((l) => l.id)).toEqual(['screen', 'route', 'read', 'connect', 'compute', 'store', 'write']);
+    expect(R.layers.map((l) => l.depth)).toEqual(['light', 'deep', 'medium', 'medium', 'medium', 'deep', 'deep']);
     const systems = d.sees.needs.map((n) => n.id);
+    expect(Object.keys(R.short).sort()).toEqual([...systems].sort());
+    // Every system is read one way: a live query or a cached index
+    expect(Object.keys(R.modeOf).sort()).toEqual([...systems].sort());
+    Object.values(R.modeOf).forEach((m) => expect(['live', 'cache']).toContain(m));
     R.list.forEach((r) => {
       expect(Object.keys(r.access).sort(), r.id).toEqual([...systems].sort());
       Object.values(r.access).forEach((a) => expect(typeof a === 'string' && a.length > 0 && a.length <= 13, r.id + ' ' + a).toBe(true));
@@ -220,68 +228,96 @@ test.describe('Role views', () => {
       expect(typeof r.ai === 'string' && r.ai.length > 0, r.id + ' ai').toBe(true);
       expect(r.links, r.id).toHaveLength(4);
       expect(['dots', 'tiles', 'compare'], r.id).toContain(r.answer.visual.kind);
+      // Three buttons: a view that calculates, an explanation, an action. Only the action
+      // writes back, and only once a person approves. No button reads a system its role may not
+      expect(r.outputs.map((o) => o.kind), r.id).toEqual(['view', 'explain', 'action']);
+      r.outputs.forEach((o) => {
+        expect(o.reads.length, r.id + ' ' + o.id).toBeGreaterThan(0);
+        o.reads.forEach((s) => expect(!!r.access[s] && r.access[s] !== 'none', r.id + ' ' + o.id + ' reads ' + s).toBe(true));
+        expect(!!o.write, r.id + ' ' + o.id + ' writes').toBe(o.kind === 'action');
+        expect(!!o.rule, r.id + ' ' + o.id + ' calculates').toBe(o.kind === 'view');
+        expect(o.def, r.id + ' ' + o.id).toMatch(/^[A-Z]{2,3}-[A-Z]{3} v\d$/);
+        expect(typeof o.store === 'string' && o.store.length > 0, r.id + ' ' + o.id + ' store').toBe(true);
+        if (o.write) expect(o.write.gate.length, r.id + ' gate').toBeGreaterThan(0);
+      });
     });
     // The scopes differ: the leader reads summaries, the control owner only its own records
-    // Every system is read one way: a live query or a cached index
-    expect(Object.keys(R.modeOf).sort()).toEqual([...systems].sort());
-    Object.values(R.modeOf).forEach((m) => expect(['live', 'cache']).toContain(m));
-    expect(R.steps).toHaveLength(5);
     const reads = (id) => Object.values(R.list.find((r) => r.id === id).access).filter((a) => a !== 'none').length;
     expect([reads('head'), reads('tprm'), reads('orm'), reads('owner')]).toEqual([7, 8, 6, 5]);
   });
 
-  test('a click shows a role at once; Space steps through the roles in order, then moves on', async ({ page }) => {
+  test('roles and buttons switch at once; Space unfolds Medium, then Deep, then moves on', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     await enter(page, 'role-views');
     const state = () => page.evaluate(() => {
       const s = document.getElementById('role-views');
       return { active: [...s.querySelectorAll('.rv-role')].findIndex((b) => b.classList.contains('is-active')),
-        pressed: [...s.querySelectorAll('.rv-role')].map((b) => b.getAttribute('aria-pressed')).join(','),
-        question: s.querySelector('.rv-q .ah-q-t').textContent, reads: [...s.querySelectorAll('.rv-read-n')].map((x) => x.textContent).join(' | '),
-        rows: Object.fromEntries([...s.querySelectorAll('.rv-sys')].map((r) => [r.dataset.sys, (r.className.match(/is-(full|part|none)/) || [])[1]])),
-        rule: s.querySelector('.rv-work .rv-fact').textContent,
-        answer: s.querySelector('.rv-ans-t').textContent, here: sections[current].id };
+        depth: s.querySelector('.ts-canvas').getAttribute('data-depth'),
+        open: [...s.querySelectorAll('.rx-band')].filter((b) => !b.classList.contains('is-folded')).map((b) => b.dataset.layer).join(','),
+        question: s.querySelector('.rx-q-t').textContent, answer: s.querySelector('.rx-ans-t').textContent,
+        rows: Object.fromEntries([...s.querySelectorAll('.rx-sys')].map((r) => [r.dataset.sys, (r.className.match(/is-(full|part|none)/) || [])[1]])),
+        used: [...s.querySelectorAll('.rx-sys.is-used')].map((r) => r.dataset.sys).sort().join(','),
+        sel: [...s.querySelectorAll('.rx-out')].findIndex((b) => b.classList.contains('is-sel')),
+        def: s.querySelector('.rx-route-def').textContent, write: s.querySelector('.rx-body-write').textContent,
+        here: sections[current].id };
     });
     let r = await state();
-    expect(r.active).toBe(1);
-    expect(r.pressed).toBe('false,true,false,false');
+    expect([r.active, r.depth, r.open]).toEqual([1, 'light', 'screen']);
     expect(r.question).toBe('Which critical third-party services are deteriorating, and why?');
-    expect(r.reads).toBe('5 of 5 | 3 of 3');
     expect(r.rows).toEqual({ register: 'full', incidents: 'full', kri: 'full', controls: 'full', dependencies: 'full', contracts: 'full', mail: 'part', assurance: 'full' });
-    expect(r.rule).toContain('3 of 11');
+    // Space: Medium opens where it comes from, then Deep how it runs
+    await page.keyboard.press('Space');
+    r = await state();
+    expect([r.here, r.depth, r.open]).toEqual(['role-views', 'medium', 'screen,read,connect,compute']);
+    await page.keyboard.press('Space');
+    r = await state();
+    expect([r.here, r.depth, r.open]).toEqual(['role-views', 'deep', 'screen,route,read,connect,compute,store,write']);
+    // The view button reads six systems and writes nothing; the action writes, once approved
+    expect([r.sel, r.def]).toEqual([0, 'TP-DET v3']);
+    expect(r.used).toBe('assurance,contracts,dependencies,incidents,kri,register');
+    expect(r.write).toContain('Nothing is written back');
+    await page.locator('#role-views .rx-out').nth(2).click();
+    r = await state();
+    expect([r.sel, r.def, r.used]).toEqual([2, 'TP-REQ v1', 'contracts,mail,register']);
+    expect(r.write).toContain('Vendor management');
+    expect(r.write).toContain('After you approve every field');
+    // Another role keeps the depth and starts on its first button; locks where it has no access
     await page.locator('#role-views .rv-role').nth(3).click();
     r = await state();
-    expect(r.active).toBe(3);
+    expect([r.active, r.depth, r.sel]).toEqual([3, 'deep', 0]);
     expect(r.question).toBe('Which of my controls need evidence before the Q3 sign-off?');
-    expect(r.reads).toBe('3 of 5 | 2 of 3');
     expect(r.rows).toEqual({ register: 'part', incidents: 'part', kri: 'none', controls: 'part', dependencies: 'none', contracts: 'none', mail: 'part', assurance: 'part' });
     expect(r.answer).toContain('Two of your six controls');
-    expect(await page.locator('#role-views .rv-sys.is-none').count()).toBe(3);
-    // Back to the start of the order, then Space walks it: manager, head, partner, owner, next screen
-    await page.locator('#role-views .rv-role').nth(1).click();
-    for (const [i, q] of [[0, 'Where is NFR risk'], [2, 'Which self-assessments'], [3, 'Which of my controls']]) {
-      await page.keyboard.press('Space');
-      r = await state();
-      expect(r.here).toBe('role-views');
-      expect(r.active).toBe(i);
-      expect(r.question.startsWith(q), r.question).toBe(true);
-    }
+    expect(await page.locator('#role-views .rx-sys.is-none').count()).toBe(3);
+    // The depth switch folds back; a folded layer opens at its own depth
+    await page.locator('#role-views .rx-seg[data-depth="light"]').click();
+    r = await state();
+    expect([r.depth, r.open]).toEqual(['light', 'screen']);
+    await page.locator('#role-views .rx-band[data-layer="store"]').click();
+    expect((await state()).depth).toBe('deep');
+    // At Deep, Space moves on
     await page.keyboard.press('Space');
     await page.waitForFunction(() => sections[current].id === 'four-ways', null, { timeout: 4000 });
   });
 
-  test('full motion: a role switch types the question, then opens the systems, the links and the answer', async ({ page }) => {
+  test('full motion: the question types, the answer follows, and a layer folds open', async ({ page }) => {
     await open(page);
     await enter(page, 'role-views', 12000);
     await page.locator('#role-views .rv-role').nth(0).click();
     await page.waitForTimeout(250);
-    const early = await page.evaluate(() => ({ q: document.querySelector('#role-views .rv-q .ah-q-t').textContent.length, ans: document.querySelector('#role-views .rv-ans-t').classList.contains('ts-on') }));
+    const early = await page.evaluate(() => ({ q: document.querySelector('#role-views .rx-q-t').textContent.length, ans: document.querySelector('#role-views .rx-ans-t').classList.contains('ts-on') }));
     expect(early.ans).toBe(false);
     expect(early.q).toBeLessThan('Where is NFR risk moving towards its appetite limits?'.length);
-    await page.waitForFunction(() => document.querySelector('#role-views .rv-ans-t').classList.contains('ts-on'), null, { timeout: 6000 });
-    expect(await page.locator('#role-views .rv-q .ah-q-t').textContent()).toBe('Where is NFR risk moving towards its appetite limits?');
-    expect(await page.locator('#role-views .rv-sys.is-none').count()).toBe(1);
+    await page.waitForFunction(() => document.querySelector('#role-views .rx-ans-t').classList.contains('ts-on'), null, { timeout: 6000 });
+    expect(await page.locator('#role-views .rx-q-t').textContent()).toBe('Where is NFR risk moving towards its appetite limits?');
+    // Medium: the read layer grows from a folded line to its full height
+    const height = () => page.evaluate(() => document.querySelector('#role-views .rx-band[data-layer="read"]').getBoundingClientRect().height);
+    const h0 = await height();
+    await page.locator('#role-views .rx-seg[data-depth="medium"]').click();
+    await page.waitForTimeout(900);
+    expect(await height()).toBeGreaterThan(h0 * 2);
+    expect(await page.locator('#role-views .rx-sys.is-none').count()).toBe(1);
   });
 });
 
@@ -339,13 +375,18 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280,
       }
     });
 
-    test('screen 05: every role fits its stage and keeps its text inside its boxes', async ({ page }) => {
+    test('screen 05: every role, at every depth and on every button, fits its stage and keeps its text inside its boxes', async ({ page }) => {
+      test.setTimeout(90000);
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await open(page);
       await enter(page, 'role-views');
       const roles = await page.locator('#role-views .rv-role').count();
-      for (let i = 0; i < roles; i++) {
+      const views = [];
+      for (const dep of ['light', 'medium', 'deep']) for (let i = 0; i < roles; i++) for (const o of (dep === 'deep' ? [0, 1, 2] : [0])) views.push([dep, i, o]);
+      for (const [dep, i, o] of views) {
+        await page.locator('#role-views .rx-seg[data-depth="' + dep + '"]').click();
         await page.locator('#role-views .rv-role').nth(i).click();
+        await page.locator('#role-views .rx-out').nth(o).click();
         const r = await page.evaluate((min) => {
           const st = document.querySelector('#role-views [data-scene-container]');
           const cv = st.querySelector('.ts-canvas');
@@ -371,9 +412,10 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280,
           });
           return { out: out.slice(0, 5), small: small.slice(0, 5), spill: spill.slice(0, 5) };
         }, MIN_TEXT_PX[vp]);
-        expect(r.out, 'role ' + i + ' outside the canvas at ' + vp).toEqual([]);
-        expect(r.small, 'role ' + i + ' text below the floor at ' + vp).toEqual([]);
-        expect(r.spill, 'role ' + i + ' text outside its box at ' + vp).toEqual([]);
+        const at = 'role ' + i + ' at ' + dep + ', button ' + o + ', ' + vp;
+        expect(r.out, at + ': outside the canvas').toEqual([]);
+        expect(r.small, at + ': text below the floor').toEqual([]);
+        expect(r.spill, at + ': text outside its box').toEqual([]);
       }
     });
 

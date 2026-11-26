@@ -21,9 +21,9 @@ function sectionOf(id) {
 const META = {
   'cover':              { q: 'What will this conversation show me?', ms: 2200, token: 'workspace-frame' },
   'work-arrives':       { q: 'What does the risk function keep being asked?', ms: 7900, token: 'requests' },
-  'chain-drift':        { q: 'Why is it hard to answer today?', ms: 5800, token: 'chain' },
   'assistance-here':    { q: 'Do we not have AI already?', ms: 8300, token: 'channels' },
-  'role-views':         { q: 'How does the information flow to the answer?', ms: 5100, token: 'role-views' },
+  'chain-drift':        { q: 'Why does one change matter?', ms: 6000, token: 'chain' },
+  'role-views':         { q: 'How does the information flow to the answer, and how deep do we go?', ms: 3200, token: 'role-views' },
   'four-ways':          { q: 'What is NFR Workspace?', ms: 5000, token: 'four-ways' },
   'three-layers':       { q: 'How does it start, and how does it grow?', ms: 5100, token: 'three-layers' },
   'enter-workspace':    { q: 'What does the working day look like?', ms: 2600, token: 'live-handoff', interactive: true, state: 'live-handoff' },
