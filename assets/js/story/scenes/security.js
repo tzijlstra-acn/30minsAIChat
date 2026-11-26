@@ -1,19 +1,21 @@
-// Scene: security (screen 09)
-// Causal story: every step is secured, and every person sees only their part. One request
-// end to end, step by step, each with its controls: sign in, ask (the question carries the
-// profile), retrieve (each system checks access; only permitted fields leave it), process
-// (in the approved environment; personal data masked first), answer (filtered for the
-// person; every claim cited), keep and write back (encrypted, versioned, written only once
-// approved, every step in the audit log); the links between steps are encrypted. Under it,
-// the same supplier record as each of screen 08's people sees it: shown, a summary, masked,
-// or not in scope. Ben's scope is wealth management, so the record does not reach him.
+// Scene: security (screen 08)
+// Causal story: every step is secured and tracked, and every person sees only their part.
+// One request end to end, step by step, each with its controls: sign in, ask (the question
+// carries the profile), retrieve (each system checks access; only permitted fields leave
+// it), process (in the approved environment; personal data masked first), answer (filtered
+// for the person; every claim cited), keep (encrypted, versioned, written only once
+// approved); the links between steps are encrypted. Then the same supplier record as each
+// of four people sees it: shown, a summary, masked, or not in scope (Ben's scope is wealth
+// management, so the record does not reach him). Last, record tracking: the request's own
+// trail, who asked, what was read with its version, what was shown, what was written.
 SceneDirector.register('security', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var X = D.security;
-  var W = 1040, H = 452;
-  var STAGE = { y: 22, h: 148, w: 156 };
-  var MX = { label: 194, head: 216, headH: 42, row: 264, rowH: 38, rowGap: 6, fx: 16, fw: 222, cx: 248, cw: 188, cstep: 194 };
+  var W = 1040, H = 486;
+  var STAGE = { y: 20, h: 116, w: 156 };
+  var MX = { label: 162, head: 182, headH: 40, row: 228, rowH: 36, rowGap: 6, fx: 16, fw: 222, cx: 248, cw: 188, cstep: 194 };
+  var TRK = { label: 408, y: 428, h: 56 };
 
   var cv = null;
   var n = {};
@@ -108,6 +110,17 @@ SceneDirector.register('security', function(container, manifest, reduced) {
         n.cells[k].push(b);
       });
     });
+
+    // Record tracking: the trail of this one request
+    n.trkLabel = root.appendChild(S.el('div', 'ts-label ts-ink ts-c-human ts-hide', X.tracking.label, { left: 16, top: TRK.label, width: 1008 }));
+    var ew = (1008 - (X.tracking.events.length - 1) * 8) / X.tracking.events.length;
+    n.events = X.tracking.events.map(function(e, i) {
+      var b = S.el('div', 'ts-obj ts-c-human ts-soft sc-evt ts-hide ts-left', null, { left: 16 + i * (ew + 8), top: TRK.y, width: ew, height: TRK.h });
+      b.appendChild(S.el('span', 'sc-evt-t', e[0]));
+      b.appendChild(S.el('span', 'sc-evt-x', e[1]));
+      root.appendChild(b);
+      return b;
+    });
   }
 
   function complete() {
@@ -125,7 +138,10 @@ SceneDirector.register('security', function(container, manifest, reduced) {
   X.people.forEach(function(pid, k) {
     steps.push({ delay: t1 + 300 + k * 400, run: function() { S.on(n.heads[k]); S.on(n.cells[k]); } });
   });
-  steps.push({ delay: t1 + 300 + X.people.length * 400 + 300, run: complete });
+  var t2 = t1 + 300 + X.people.length * 400 + 200;
+  steps.push({ delay: t2, run: function() { S.on(n.trkLabel); } });
+  X.tracking.events.forEach(function(e, i) { steps.push({ delay: t2 + 150 + i * 180, run: function() { S.on(n.events[i]); } }); });
+  steps.push({ delay: t2 + 150 + X.tracking.events.length * 180 + 250, run: complete });
   var tl = createTimeline(steps);
 
   return {
@@ -143,7 +159,7 @@ SceneDirector.register('security', function(container, manifest, reduced) {
         + X.seeLabel + ', ' + X.record + ': ' + X.people.map(function(pid) {
           var p = person(pid);
           return p.name + ' (' + p.role + ', ' + p.scope + '): ' + X.fields.map(function(f) { return f.label.toLowerCase() + ' ' + cell(f.see[pid]).label.toLowerCase(); }).join(', ');
-        }).join('; ') + '. ' + X.outNote;
+        }).join('; ') + '. ' + X.outNote + ' ' + X.tracking.label + ': ' + X.tracking.events.map(function(e) { return e[0] + ' ' + e[1].toLowerCase(); }).join('; ') + '.';
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

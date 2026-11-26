@@ -51,15 +51,15 @@ test.describe('Enter NFR Workspace', () => {
     expect(await ws(page)).toBe('live-handoff');
   });
 
-  test('Space skips the doorway, then goes to the appendix index: the core route ends here', async ({ page }) => {
+  test('Space skips the doorway, then goes on to next steps', async ({ page }) => {
     await open(page);
     await page.evaluate(() => document.getElementById('enter-workspace').scrollIntoView({ behavior: 'instant' }));
     await page.waitForFunction(() => sections[current].id === 'enter-workspace' && SceneDirector.getState() === 'playing', null, { timeout: 6000 });
     await press(page, 'Space');
     await page.waitForFunction(() => SceneDirector.getState() === 'complete', null, { timeout: 2000 });
     await press(page, 'Space');
-    await page.waitForFunction(() => sections[current].id === 'appendix', null, { timeout: 4000 });
-    expect(await ws(page)).toBe('appendix');
+    await page.waitForFunction(() => sections[current].id === 'ch-next', null, { timeout: 4000 });
+    expect(await ws(page)).toBe('chapter');
   });
 
   test('L opens the live product; ?live= points it elsewhere', async ({ page }) => {
@@ -108,7 +108,7 @@ test.describe('Captured fallback', () => {
     expect(await F.getAttribute('data-capture')).toBe(String(shots - 2));
     await press(page, 'Space');
     await press(page, 'Space');
-    await page.waitForFunction(() => sections[current].id === 'appendix', null, { timeout: 5000 });
+    await page.waitForFunction(() => sections[current].id === 'ch-next', null, { timeout: 5000 });
   });
 
   test('every capture exists and loads', async ({ page }) => {
@@ -213,8 +213,9 @@ test.describe('Appendix modules', () => {
     await reduced(page);
     await open(page);
     const links = await page.$$eval('section[data-route="core"] [data-apx-link]', (b) => b.map((x) => x.closest('section').id + '>' + x.dataset.apxLink));
-    expect(links).toEqual(['role-views>appendix-d3', 'role-views>appendix-d6', 'four-ways>appendix-m1', 'four-ways>appendix-m3', 'three-layers>appendix-s3',
-      'profiles-access>appendix-d6', 'profiles-access>appendix-d2', 'security>appendix-d6', 'security>appendix-m4']);
+    expect(links).toEqual(['role-views>appendix-d3', 'role-views>appendix-d6', 'four-ways>appendix-m1', 'four-ways>appendix-m3',
+      'profiles-access>appendix-d6', 'profiles-access>appendix-d2', 'security>appendix-d6', 'security>appendix-m4', 'three-layers>appendix-s3',
+      'six-months>appendix-s1', 'six-months>appendix-s2', 'next-decision>appendix-s4', 'next-decision>appendix-s5']);
     await land(page, 'profiles-access');
     await page.locator('#profiles-access [data-apx-link="appendix-d2"]').click();
     await page.waitForFunction(() => sections[current].id === 'appendix-d2', null, { timeout: 4000 });
@@ -339,7 +340,7 @@ test.describe('Presenter controls and resilience', () => {
     }
     expect(await here(page)).toBe('appendix');
     for (const s of seen) expect(known, s).toContain(s);
-    ['cover', 'chapter', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles', 'security', 'live-handoff', 'appendix']
+    ['cover', 'chapter', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles', 'security', 'live-handoff', 'six-months', 'decision', 'appendix']
       .forEach((s) => expect([...seen]).toContain(s));
     expect(warnings).toEqual([]);
   });

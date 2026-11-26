@@ -140,6 +140,11 @@
     { "name": "fingerprint",    "class": "ti-fingerprint",    "semantic": "identity" },
     { "name": "tag",            "class": "ti-tag",            "semantic": "tag" },
     { "name": "copy",           "class": "ti-copy",           "semantic": "inherit" },
-    { "name": "user-question",   "class": "ti-user-question",   "semantic": "confirm" }
+    { "name": "user-question",   "class": "ti-user-question",   "semantic": "confirm" },
+    { "name": "template", "class": "ti-template", "semantic": "template" },
+    { "name": "filter", "class": "ti-filter", "semantic": "scope" },
+    { "name": "headset", "class": "ti-headset", "semantic": "managed" },
+    { "name": "key", "class": "ti-key", "semantic": "access" },
+    { "name": "checks", "class": "ti-checks", "semantic": "evidence" }
   ]
 }

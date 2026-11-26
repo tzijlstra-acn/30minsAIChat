@@ -17,7 +17,8 @@ const EM = String.fromCharCode(0x2014);
 const EN = String.fromCharCode(0x2013);
 
 const CORE = [
-  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'three-layers', 'profiles-access', 'security', 'enter-workspace'
+  'cover', 'work-arrives', 'assistance-here', 'chain-drift', 'role-views', 'four-ways', 'profiles-access', 'security', 'enter-workspace',
+  'three-layers', 'six-months', 'next-decision'
 ];
 const INTERACTIVE = ['role-views', 'profiles-access', 'enter-workspace', 'live-fallback'];
 const JARGON = ['agentic', 'multi-agent', 'slm', 'knowledge graph', 'semantic layer', 'control plane', 'orchestrator', 'orchestration',
@@ -53,7 +54,7 @@ function sceneFiles() {
 
 // ── SCENE CONTRACT ──
 test.describe('Scene contract', () => {
-  test('ten core screens; one scene file per declared scene, core and appendix', () => {
+  test('twelve core screens; one scene file per declared scene, core and appendix', () => {
     const html = read('pitch.html');
     const core = [...html.matchAll(/<section id="([a-z0-9-]+)" data-slide data-route="core"/g)].map((m) => m[1]);
     expect(core).toEqual(CORE);
@@ -320,58 +321,45 @@ test.describe('Role views', () => {
   });
 });
 
-// ── SCREEN 08: ONE PROFILE PER PERSON, FROM THE IDENTITY SYSTEM TO THEIR SCREEN ──
-test.describe('Profiles and access', () => {
+// ── SCREEN 07: CONNECTED ON DAY ONE; THE ROLE SETS THE SCREEN ──
+test.describe('Smart profiling', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('four people, six levels each; two share a role but not a scope; the menu follows the profile', () => {
+  test('one template per role, each scoped by HR, each with a day-one screen; the menu follows the role', () => {
     const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
     const P = d.profiles;
-    expect(P.people.map((x) => x.id)).toEqual(['maya', 'ben', 'sara', 'tom']);
-    expect([...P.order].sort()).toEqual(P.people.map((x) => x.id).sort());
-    expect(P.levels.map((l) => l.id)).toEqual(['role', 'scope', 'records', 'fields', 'actions', 'delegation']);
+    expect(P.templates.map((t) => t.id)).toEqual(['tprm', 'head', 'orm', 'owner']);
+    expect([...P.order].sort()).toEqual(P.templates.map((t) => t.id).sort());
+    // The templates are the roles of screen 05
+    expect(P.templates.map((t) => t.role).sort()).toEqual(d.roles.list.map((r) => r.label).sort());
     expect(P.menu.map((m) => m.label)).toEqual(d.capabilities.map((c) => c.product));
-    P.people.forEach((x) => {
-      P.levels.forEach((l) => expect(typeof x.levels[l.id] === 'string' && x.levels[l.id].length > 0, x.id + ' ' + l.id).toBe(true));
-      P.idm.forEach((it) => expect(typeof x.idm[it.id] === 'string' && x.idm[it.id].length > 0, x.id + ' ' + it.id).toBe(true));
-      expect(x.menu, x.id).toHaveLength(P.menu.length);
-      expect(x.today, x.id).toHaveLength(3);
-      expect(x.levels.role, x.id).toBe(x.role);
+    P.templates.forEach((t) => {
+      P.idm.forEach((it) => expect(typeof t.idm[it.id] === 'string' && t.idm[it.id].length > 0, t.id + ' ' + it.id).toBe(true));
+      P.tpl.forEach((it) => expect(typeof t.tpl[it.id] === 'string' && t.tpl[it.id].length > 0, t.id + ' ' + it.id).toBe(true));
+      expect(t.menu, t.id).toHaveLength(P.menu.length);
+      expect(t.today, t.id).toHaveLength(3);
+      expect(t.count, t.id).toBeGreaterThan(0);
+      expect(t.tpl.template, t.id).toBe(t.role);
     });
-    // The granularity point: same role, different scope, so different records and screen
-    const maya = P.people[0], ben = P.people[1];
-    expect(maya.role).toBe(ben.role);
-    expect(maya.scope).not.toBe(ben.scope);
-    expect(maya.inView).not.toBe(ben.inView);
-    // The control owner's profile has no processes or agents
-    expect(P.people[3].menu).toEqual([true, true, false, false]);
+    // The control owner's role has no processes or agents
+    expect(P.templates.find((t) => t.id === 'owner').menu).toEqual([true, true, false, false]);
   });
 
-  test('a click shows a person at once and marks what changed; Space steps through the people, then moves on', async ({ page }) => {
+  test('a click shows a template at once; Space steps through the templates, then moves on', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     await enter(page, 'profiles-access');
     const state = () => page.evaluate(() => {
       const s = document.getElementById('profiles-access');
-      return { active: [...s.querySelectorAll('.pa-person')].findIndex((b) => b.classList.contains('is-active')),
-        changed: [...s.querySelectorAll('.pa-lvl.is-changed')].map((r) => r.dataset.level).join(','),
-        scope: s.querySelector('.pa-lvl[data-level="scope"] .pa-lvl-v').textContent,
-        locked: s.querySelectorAll('.pa-menu-i.is-locked').length, me: s.querySelector('.pa-bar-me').textContent,
-        here: sections[current].id };
+      return { active: [...s.querySelectorAll('.pa-tpl')].findIndex((b) => b.classList.contains('is-active')),
+        joins: s.querySelector('.pa-joins').textContent, locked: s.querySelectorAll('.pa-menu-i.is-locked').length, here: sections[current].id };
     });
     let r = await state();
-    expect([r.active, r.changed, r.locked, r.me]).toEqual([0, '', 0, 'MRMaya']);
-    // Same role, different scope: only the scope, the records and the delegation change
-    await page.keyboard.press('Space');
+    expect([r.active, r.joins, r.locked]).toEqual([0, 'MRMaya joins', 0]);
+    await page.locator('#profiles-access .pa-tpl').nth(3).click();
     r = await state();
-    expect([r.here, r.active, r.changed]).toEqual(['profiles-access', 1, 'scope,records,delegation']);
-    expect(r.scope).toBe('Wealth management, wealth entity');
-    await page.locator('#profiles-access .pa-person').nth(3).click();
-    r = await state();
-    expect([r.active, r.locked]).toEqual([3, 2]);
-    expect(r.changed.split(',')).toContain('role');
-    // Back to the start, then Space walks the order: Maya, Ben, Sara, Tom, next screen
-    await page.locator('#profiles-access .pa-person').nth(0).click();
+    expect([r.active, r.joins, r.locked]).toEqual([3, 'TDTom joins', 2]);
+    await page.locator('#profiles-access .pa-tpl').nth(0).click();
     for (const i of [1, 2, 3]) {
       await page.keyboard.press('Space');
       expect((await state()).active).toBe(i);
@@ -381,46 +369,52 @@ test.describe('Profiles and access', () => {
   });
 });
 
-// ── SCREENS 06 AND 09: THE WAYS AND THEIR AGENTS; SECURITY END TO END ──
-test.describe('Ways, agents and security', () => {
+// ── SCREENS 06 AND 08: THE SAME FOUR AGENTS BENEATH EVERY WAY; SECURITY AND TRACKING ──
+test.describe('Agents and security', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('each way of working is run by one kind of agent, in rising judgement, each with its reason to trust it', () => {
+  test('the same four agents work beneath every way, in rising judgement, each with its reason to trust it', async ({ page }) => {
     const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
     const G = d.ways;
-    expect(d.capabilities.map((c) => G.agents[c.id].label)).toEqual(['Retrieval agent', 'Process agent', 'Policy agent', 'Principal agent']);
-    d.capabilities.forEach((c) => ['does', 'example', 'trust', 'who'].forEach((k) => expect(typeof G.agents[c.id][k] === 'string' && G.agents[c.id][k].length > 0, c.id + ' ' + k).toBe(true)));
-    // Only the principal agent leaves the decision to a person
-    expect(G.agents.builder.who).toBe('A person decides');
-  });
-
-  test('screen 06 shows the four columns with an agent and a trust card each', async ({ page }) => {
+    expect(G.agents.map((a) => a.label)).toEqual(['Retrieval agent', 'Process agent', 'Policy agent', 'Principal agent']);
+    G.agents.forEach((a) => ['does', 'demo', 'trust', 'who'].forEach((k) => expect(typeof a[k] === 'string' && a[k].length > 0, a.id + ' ' + k).toBe(true)));
+    expect(G.agents[3].who).toBe('A person decides');
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     await enter(page, 'four-ways');
-    const r = await page.evaluate(() => ({ agents: [...document.querySelectorAll('#four-ways .fw3-agent-t')].map((e) => e.textContent),
-      trust: document.querySelectorAll('#four-ways .fw3-trust').length, who: [...document.querySelectorAll('#four-ways .fw3-who')].map((e) => e.textContent) }));
+    const r = await page.evaluate(() => ({ ways: document.querySelectorAll('#four-ways .fw4-way').length, fans: document.querySelectorAll('#four-ways .fw4-fan').length,
+      agents: [...document.querySelectorAll('#four-ways .fw4-agent .fw3-agent-t')].map((e) => e.textContent), trust: document.querySelectorAll('#four-ways .fw4-trust').length }));
+    // Four ways lead into one layer: every way draws on all four agents
+    expect([r.ways, r.fans, r.trust]).toEqual([4, 4, 4]);
     expect(r.agents).toEqual(['Retrieval agent', 'Process agent', 'Policy agent', 'Principal agent']);
-    expect(r.trust).toBe(4);
-    expect(r.who[3]).toBe('A person decides');
   });
 
-  test('security: six steps, and the same record as each of screen 08\'s people sees it', async ({ page }) => {
+  test('security: six steps, the same record per person, and every record tracked', async ({ page }) => {
     const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
     const X = d.security;
     expect(X.stages.map((s) => s.id)).toEqual(['signin', 'ask', 'retrieve', 'process', 'answer', 'keep']);
-    expect(X.people).toEqual(d.profiles.order);
+    expect(X.people).toEqual(d.profiles.peopleOrder);
     X.fields.forEach((f) => X.people.forEach((p) => {
       const v = f.see[p];
       expect(Object.keys(X.states), f.label + ' ' + p).toContain(typeof v === 'string' ? v : v[0]);
     }));
+    expect(X.tracking.events.length).toBeGreaterThanOrEqual(4);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     await enter(page, 'security');
     const r = await page.evaluate(() => ({ stages: document.querySelectorAll('#security .sc-stage').length,
-      masked: document.querySelectorAll('#security .sc-cell.is-masked').length, all: document.querySelectorAll('#security .sc-cell.is-all').length }));
+      masked: document.querySelectorAll('#security .sc-cell.is-masked').length, all: document.querySelectorAll('#security .sc-cell.is-all').length,
+      events: document.querySelectorAll('#security .sc-evt').length }));
     // Ben's scope does not include the supplier: one cell for the whole column
-    expect(r).toEqual({ stages: 6, masked: 2, all: 1 });
+    expect(r).toEqual({ stages: 6, masked: 2, all: 1, events: X.tracking.events.length });
+  });
+
+  test('next steps: the first six months in three phases, then two decisions at month six', () => {
+    const d = require(path.join(ROOT, 'assets/data/workspace-demo.js'));
+    expect(d.team.phases.map((p) => p.label)).toEqual(['Qualify', 'Build and test', 'Run live']);
+    expect(d.team.yours.map((y) => y.role)).toEqual(['Role owner', 'Process expert', 'IT and security contact']);
+    expect(d.decide.run.map((o) => o.id)).toEqual(['managed', 'inhouse']);
+    expect(d.decide.expand.items.length).toBeGreaterThanOrEqual(3);
   });
 });
 
@@ -428,23 +422,24 @@ test.describe('Ways, agents and security', () => {
 test.describe('Chapter dividers', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('three chapters, each opened by a divider that is not counted as a screen', async ({ page }) => {
+  test('four chapters, each opened by a divider that is not counted as a screen', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     const r = await page.evaluate(() => [...document.querySelectorAll('section[data-route="divider"]')].map((d) => ({ id: d.id, chapter: d.dataset.chapterId,
       title: d.querySelector('.divider-title').textContent, question: d.querySelector('.divider-question').textContent,
       screens: [...d.querySelectorAll('[data-divider-screens] a')].map((a) => a.dataset.n + ' ' + a.getAttribute('href')) })));
-    expect(r.map((d) => d.id)).toEqual(['ch-problem', 'ch-answer', 'ch-workspace']);
-    expect(r.map((d) => d.title)).toEqual(["Today's problem", 'The answer', 'The Workspace']);
+    expect(r.map((d) => d.id)).toEqual(['ch-problem', 'ch-answer', 'ch-workspace', 'ch-next']);
+    expect(r.map((d) => d.title)).toEqual(["Today's problem", 'The answer', 'The Workspace', 'Next steps']);
     expect(r[1].question).toBe('How a connected AI workflow resolves these issues.');
     // Each lists its chapter's screens with their own numbers in the story
     expect(r[0].screens).toEqual(['02 #work-arrives', '03 #assistance-here', '04 #chain-drift']);
-    expect(r[1].screens).toEqual(['05 #role-views', '06 #four-ways', '07 #three-layers']);
-    expect(r[2].screens).toEqual(['08 #profiles-access', '09 #security', '10 #enter-workspace']);
+    expect(r[1].screens).toEqual(['05 #role-views', '06 #four-ways']);
+    expect(r[2].screens).toEqual(['07 #profiles-access', '08 #security', '09 #enter-workspace']);
+    expect(r[3].screens).toEqual(['10 #three-layers', '11 #six-months', '12 #next-decision']);
     // The answer pairs each of today's problems with how it is resolved
     await expect(page.locator('#ch-answer .divider-pair')).toHaveCount(3);
-    // Dividers are not screens: the counter counts the ten screens
-    await expect(page.locator('#counter')).toHaveText('1 / 10');
+    // Dividers are not screens: the counter counts the twelve screens
+    await expect(page.locator('#counter')).toHaveText('1 / 12');
   });
 
   test('Space passes through each divider in story order', async ({ page }) => {
@@ -462,7 +457,7 @@ test.describe('Chapter dividers', () => {
       await page.setViewportSize({ width: w, height: h });
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await open(page);
-      for (const id of ['ch-problem', 'ch-answer', 'ch-workspace']) {
+      for (const id of ['ch-problem', 'ch-answer', 'ch-workspace', 'ch-next']) {
         await page.evaluate((sid) => document.getElementById(sid).scrollIntoView({ behavior: 'instant' }), id);
         await page.waitForFunction((sid) => sections[current].id === sid, id, { timeout: 4000 });
         const r = await page.evaluate((sid) => {
@@ -577,13 +572,13 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280,
       }
     });
 
-    test('screen 08: every person fits the stage and keeps the text inside its boxes', async ({ page }) => {
+    test('screen 07: every role template fits the stage and keeps the text inside its boxes', async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await open(page);
       await enter(page, 'profiles-access');
-      const people = await page.locator('#profiles-access .pa-person').count();
+      const people = await page.locator('#profiles-access .pa-tpl').count();
       for (let i = 0; i < people; i++) {
-        await page.locator('#profiles-access .pa-person').nth(i).click();
+        await page.locator('#profiles-access .pa-tpl').nth(i).click();
         const r = await page.evaluate((min) => {
           const cv = document.querySelector('#profiles-access [data-scene-container] .ts-canvas');
           const scale = parseFloat(cv.dataset.scale || '1');
@@ -784,11 +779,11 @@ test.describe('Copy and claims', () => {
 test.describe('Route', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test("three chapters: today's problem, the answer, the Workspace", () => {
+  test("four chapters: today's problem, the answer, the Workspace, next steps", () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.chapters.map((c) => c.label)).toEqual(["TODAY'S PROBLEM", 'THE ANSWER', 'THE WORKSPACE']);
+    expect(m.chapters.map((c) => c.label)).toEqual(["TODAY'S PROBLEM", 'THE ANSWER', 'THE WORKSPACE', 'NEXT STEPS']);
     const core = m.screens.filter((s) => s.route === 'core');
-    expect(core.map((s) => s.chapterId)).toEqual(['problem', 'problem', 'problem', 'problem', 'answer', 'answer', 'answer', 'workspace', 'workspace', 'workspace']);
+    expect(core.map((s) => s.chapterId)).toEqual(['problem', 'problem', 'problem', 'problem', 'answer', 'answer', 'workspace', 'workspace', 'workspace', 'next', 'next', 'next']);
   });
 
   test('the landing is a landing, with one button per chapter that jumps to its divider', async ({ page }) => {
@@ -800,14 +795,14 @@ test.describe('Route', () => {
     });
     expect(r.kind).toBe('landing');
     expect(r.header).toBe(false);
-    expect(r.route).toEqual(['ch-problem', 'ch-answer', 'ch-workspace']);
+    expect(r.route).toEqual(['ch-problem', 'ch-answer', 'ch-workspace', 'ch-next']);
     await page.locator('#cover .landing-chapter').nth(2).click();
     await page.waitForFunction(() => sections[current].id === 'ch-workspace', null, { timeout: 6000 });
   });
 
-  test('the counter counts ten core screens and says Appendix in the appendix', async ({ page }) => {
+  test('the counter counts twelve core screens and says Appendix in the appendix', async ({ page }) => {
     await open(page);
-    await expect(page.locator('#counter')).toHaveText('1 / 10');
+    await expect(page.locator('#counter')).toHaveText('1 / 12');
     await expect(page.locator('.nav-ch-btn[data-chid="reference"] .nav-ch-name')).toHaveText('Appendix');
     await page.evaluate(() => document.getElementById('appendix').scrollIntoView({ behavior: 'instant' }));
     await expect(page.locator('#counter')).toHaveText('Appendix', { timeout: 4000 });

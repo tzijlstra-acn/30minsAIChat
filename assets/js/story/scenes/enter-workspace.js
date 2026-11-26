@@ -1,9 +1,9 @@
-// Scene: enter-workspace (screen 10, the last of the core route)
+// Scene: enter-workspace (screen 09; the next steps chapter follows the product)
 // Causal story: a short doorway into the real product, not a simulation of it. The
 // wordmark appears, the role context and the current decisions load, the Workspace
 // reports ready, and a cue invites the presenter to open the live product. The five acts
 // the audience is about to see sit underneath. About two and a half seconds; Space skips
-// the start-up and then moves on to the appendix index, which is where the presenter
+// the start-up and then moves on to the next steps chapter, which is where the presenter
 // returns after the live demonstration. L opens the live product; F the captured fallback.
 SceneDirector.register('enter-workspace', function(container, manifest, reduced) {
   var S = window.StoryKit;

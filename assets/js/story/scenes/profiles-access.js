@@ -1,162 +1,132 @@
-// Scene: profiles-access (screen 08)
-// Causal story: every person gets one profile, built from the bank's identity system, and
-// the profile decides their screen. Pick a person. Left to right: 1 what comes from the
-// identity system (sign-in, the HR record, the access groups; joiners, movers and leavers
-// follow HR); 2 the profile in six levels, coarse to fine: role, scope, records, fields,
-// actions, delegation, each with where it comes from; 3 their screen: the menu (what is not
-// in the profile is locked), today's queue, what is in view and what is masked. Switching
-// person marks the levels that changed: Maya and Ben share a role, not a scope. Under it,
-// how the data knows where it belongs: tagged at the source, mapped once, inherited by new
-// records, checked at every read. Space steps through the people, then moves on.
+// Scene: profiles-access (screen 07)
+// Causal story: connected on day one; the role sets the screen. Smart profiling: pick a
+// role template (one per role, each used by many people). Left to right: 1 connected,
+// what the identity system says about the person who joins (sign-in, the HR record, the
+// access group); 2 the smart profile, built automatically: the role template, the scope
+// from HR, the masked fields; 3 their screen on day one, already shaped for the role: the
+// menu (what is not in the role is locked), today's queue, what is in view. Under it: the
+// profile follows HR the same day when someone joins, moves or leaves. Space steps through
+// the templates, then moves on; a click shows one at once.
 SceneDirector.register('profiles-access', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var P = D.profiles;
-  var W = 1040, H = 476;
-  var PEOPLE = { y: 0, w: 246, h: 46, step: 254 };
-  var COL = { label: 58, y: 78, h: 300 };
-  var IDM = { x: 16, w: 232 };
-  var PRO = { x: 274, w: 404 };
-  var SCR = { x: 704, w: 320 };
-  var DATA = { label: 394, y: 414, h: 58, w: 237, gap: 20 };
-  var INTRO = 1100;
+  var W = 1040, H = 462;
+  var TPL = { y: 0, w: 246, h: 52, step: 254 };
+  var STEP = { y: 64 };
+  var COL = { y: 100, h: 270 };
+  var C1 = { x: 16, w: 280 }, C2 = { x: 322, w: 330 }, C3 = { x: 678, w: 346 };
+  var LIFE = { y: 400, h: 52 };
+  var INTRO = 1000;
 
   var cv = null;
   var n = {};
   var tl = null;
   var done = false;
   var cur = P.order[0];
-  var prev = null;
 
-  function person(id) { for (var i = 0; i < P.people.length; i++) if (P.people[i].id === id) return P.people[i]; return P.people[0]; }
+  function tpl(id) { for (var i = 0; i < P.templates.length; i++) if (P.templates[i].id === id) return P.templates[i]; return P.templates[0]; }
   function instant() { return !!reduced || !!(window.SceneDirector && SceneDirector.isReduced && SceneDirector.isReduced()); }
 
-  // ── The fixed frame: people, the three columns and the data strip ──
+  // ── The fixed frame: the templates, the three steps and the lifecycle ──
   function build() {
     if (cv) cv.destroy();
     cv = S.canvas(container, W, H, { id: 'profiles-access', align: 'top' });
-    n = { cards: {}, cardList: [], chrome: [], data: [] };
+    n = { cards: {}, cardList: [], chrome: [] };
     done = false;
-    prev = null;
     var root = cv.el;
     var g = cv.svg;
 
-    P.people.forEach(function(x, i) {
-      var b = S.el('button', 'pa-person ts-hide ts-up', null, { left: 16 + i * PEOPLE.step, top: PEOPLE.y, width: PEOPLE.w, height: PEOPLE.h });
+    P.order.forEach(function(id, i) {
+      var t = tpl(id);
+      var b = S.el('button', 'pa-tpl ts-hide ts-up', null, { left: 16 + i * TPL.step, top: TPL.y, width: TPL.w, height: TPL.h });
       b.type = 'button';
       b.setAttribute('aria-pressed', 'false');
-      b.appendChild(S.el('span', 'pa-avatar', x.initials));
-      var t = S.el('span', 'pa-person-t');
-      var nm = S.el('span', 'pa-person-n');
-      nm.appendChild(S.el('span', null, x.name));
-      nm.appendChild(S.el('span', 'pa-person-s', x.scope));
-      t.appendChild(nm);
-      t.appendChild(S.el('span', 'pa-person-r', x.role));
-      b.appendChild(t);
-      b.addEventListener('click', function(e) { e.stopPropagation(); select(x.id, !instant()); });
+      b.appendChild(S.icon(t.icon, 'pa-tpl-i'));
+      var tx = S.el('span', 'pa-tpl-t');
+      tx.appendChild(S.el('span', 'pa-tpl-n', t.role));
+      tx.appendChild(S.el('span', 'pa-tpl-c', P.templatesLabel.replace('per role', '') .trim() + ' · ' + P.usedBy.replace('{n}', t.count)));
+      b.appendChild(tx);
+      b.addEventListener('click', function(e) { e.stopPropagation(); select(id, !instant()); });
       root.appendChild(b);
-      n.cards[x.id] = b;
+      n.cards[id] = b;
       n.cardList.push(b);
     });
 
-    [[IDM.x, IDM.w], [PRO.x, PRO.w], [SCR.x, SCR.w]].forEach(function(c, i) {
-      n.chrome.push(root.appendChild(S.el('div', 'ts-label ts-hide', P.cols[i], { left: c[0], top: COL.label, width: c[1] })));
+    [C1, C2, C3].forEach(function(c, i) {
+      var l = S.el('div', 'pa-step ts-hide', null, { left: c.x, top: STEP.y, width: c.w, height: 32 });
+      l.appendChild(S.el('div', 'ts-label', P.steps[i].k));
+      l.appendChild(S.el('div', 'pa-step-s', P.steps[i].sub));
+      root.appendChild(l);
+      n.chrome.push(l);
     });
-    // The tag sits on the data strip's label row, clear of the column labels
-    n.chrome.push(root.appendChild(S.el('div', 'ts-label rv-tag ts-hide', P.tag, { left: 624, top: DATA.label, width: 400 })));
+    n.chrome.push(root.appendChild(S.el('div', 'ts-label rv-tag ts-hide', P.tag, { left: 624, top: COL.y + COL.h + 8, width: 400 })));
 
-    n.idm = S.el('div', 'ts-obj ts-c-data pa-idm ts-hide ts-up', null, { left: IDM.x, top: COL.y, width: IDM.w, height: COL.h });
-    n.pro = S.el('div', 'ts-obj ts-c-ai pa-pro ts-hide ts-up', null, { left: PRO.x, top: COL.y, width: PRO.w, height: COL.h });
-    n.scr = S.el('div', 'ts-obj ts-c-proof pa-scr ts-hide ts-up', null, { left: SCR.x, top: COL.y, width: SCR.w, height: COL.h });
-    root.appendChild(n.idm);
-    root.appendChild(n.pro);
-    root.appendChild(n.scr);
+    n.c1 = S.el('div', 'ts-obj ts-c-data pa-col ts-hide ts-up', null, { left: C1.x, top: COL.y, width: C1.w, height: COL.h });
+    n.c2 = S.el('div', 'ts-obj ts-c-ai pa-col ts-hide ts-up', null, { left: C2.x, top: COL.y, width: C2.w, height: COL.h });
+    n.c3 = S.el('div', 'ts-obj ts-c-proof pa-scr ts-hide ts-up', null, { left: C3.x, top: COL.y, width: C3.w, height: COL.h });
+    root.appendChild(n.c1); root.appendChild(n.c2); root.appendChild(n.c3);
     var my = COL.y + COL.h / 2;
     n.joins = [
-      S.path(g, 'M' + (IDM.x + IDM.w + 3) + ' ' + my + ' L' + (PRO.x - 5) + ' ' + my, 'ts-s-data pa-join', cv.marker('data')),
-      S.path(g, 'M' + (PRO.x + PRO.w + 3) + ' ' + my + ' L' + (SCR.x - 5) + ' ' + my, 'ts-s-ai pa-join', cv.marker('ai'))
+      S.path(g, 'M' + (C1.x + C1.w + 3) + ' ' + my + ' L' + (C2.x - 5) + ' ' + my, 'ts-s-data pa-join', cv.marker('data')),
+      S.path(g, 'M' + (C2.x + C2.w + 3) + ' ' + my + ' L' + (C3.x - 5) + ' ' + my, 'ts-s-ai pa-join', cv.marker('ai'))
     ];
 
-    // How the data knows where it belongs
-    n.dataLabel = root.appendChild(S.el('div', 'ts-label ts-hide', P.data.label, { left: 16, top: DATA.label, width: 600 }));
-    P.data.steps.forEach(function(st, i) {
-      var x = 16 + i * (DATA.w + DATA.gap);
-      var b = S.el('div', 'ts-obj ts-c-neutral pa-data ts-hide ts-up', null, { left: x, top: DATA.y, width: DATA.w, height: DATA.h });
-      b.appendChild(S.icon(st.icon, 'pa-data-i'));
-      var t = S.el('div', 'pa-data-b');
-      t.appendChild(S.el('div', 'pa-data-k', st.k));
-      t.appendChild(S.el('div', 'pa-data-t', st.text));
-      b.appendChild(t);
-      root.appendChild(b);
-      n.data.push(b);
-      if (i < P.data.steps.length - 1) {
-        var a = S.el('div', 'ab-arrow pa-data-arr ts-hide', null, { left: x + DATA.w, top: DATA.y + DATA.h / 2 - 10, width: DATA.gap, height: 20 });
-        a.appendChild(S.icon('ti-chevron-right'));
-        root.appendChild(a);
-        n.data.push(a);
-      }
+    // It follows HR, the same day
+    n.life = S.el('div', 'ts-obj ts-c-neutral pa-life ts-hide ts-up', null, { left: 16, top: LIFE.y, width: 1008, height: LIFE.h });
+    n.life.appendChild(S.el('span', 'pa-life-k', P.lifecycle.label));
+    P.lifecycle.items.forEach(function(it) {
+      var c = S.el('span', 'pa-life-i');
+      c.appendChild(S.el('b', null, it[0]));
+      c.appendChild(S.el('span', null, it[1]));
+      n.life.appendChild(c);
     });
+    root.appendChild(n.life);
 
-    prepare(person(cur));
+    prepare(tpl(cur));
     tl = createTimeline(introSteps());
   }
 
-  // ── Fill the three columns for one person; marks the levels that changed ──
-  function prepare(x) {
-    var before = prev ? person(prev) : null;
-    P.people.forEach(function(y) {
-      var on = y.id === x.id;
-      n.cards[y.id].classList.toggle('is-active', on);
-      n.cards[y.id].setAttribute('aria-pressed', on ? 'true' : 'false');
+  // ── Fill the three steps for one role template ──
+  function prepare(t) {
+    P.order.forEach(function(id) {
+      var on = id === t.id;
+      n.cards[id].classList.toggle('is-active', on);
+      n.cards[id].setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     n.items = [];
 
-    n.idm.innerHTML = '';
-    P.idm.forEach(function(it) {
-      var b = S.el('div', 'pa-idm-row ts-hide');
-      var k = S.el('div', 'pa-idm-k');
-      k.appendChild(S.icon(it.icon, 'ts-ink'));
-      k.appendChild(S.el('span', null, it.k));
-      b.appendChild(k);
-      b.appendChild(S.el('div', 'pa-idm-v' + (it.id === 'groups' ? ' is-code' : ''), x.idm[it.id]));
-      n.idm.appendChild(b);
-      n.items.push(b);
-    });
+    n.c1.innerHTML = '';
+    var who = S.el('div', 'pa-joins ts-hide');
+    who.appendChild(S.el('span', 'pa-avatar', t.person.initials));
+    who.appendChild(S.el('span', null, P.joins.replace('{name}', t.person.name)));
+    n.c1.appendChild(who);
+    n.items.push(who);
+    P.idm.forEach(function(it) { n.items.push(n.c1.appendChild(row(it, t.idm[it.id], it.id === 'group'))); });
 
-    n.pro.innerHTML = '';
-    n.changed = [];
-    P.levels.forEach(function(l, i) {
-      var changed = !!before && before.levels[l.id] !== x.levels[l.id];
-      var r = S.el('div', 'pa-lvl ts-hide' + (changed ? ' is-changed' : ''));
-      r.setAttribute('data-level', l.id);
-      var k = S.el('div', 'pa-lvl-k');
-      k.appendChild(S.el('span', 'pa-lvl-t', (i + 1) + ' ' + l.label));
-      if (changed) k.appendChild(S.el('span', 'pa-lvl-c', P.changedLabel));
-      r.appendChild(k);
-      var v = S.el('div', 'pa-lvl-b');
-      v.appendChild(S.el('div', 'pa-lvl-v', x.levels[l.id]));
-      v.appendChild(S.el('div', 'pa-lvl-f', l.from));
-      r.appendChild(v);
-      n.pro.appendChild(r);
-      n.items.push(r);
-      if (changed) n.changed.push(l.id);
-    });
+    n.c2.innerHTML = '';
+    P.tpl.forEach(function(it) { n.items.push(n.c2.appendChild(row(it, t.tpl[it.id], false))); });
+    var auto = S.el('div', 'pa-auto ts-hide');
+    auto.appendChild(S.icon('ti-sparkles'));
+    auto.appendChild(S.el('span', null, P.auto));
+    n.c2.appendChild(auto);
+    n.items.push(auto);
 
-    // Their screen: the menu, the queue, what is in view and what is masked
-    n.scr.innerHTML = '';
+    // Their screen, day one
+    n.c3.innerHTML = '';
     var bar = S.el('div', 'pa-bar ts-hide');
     bar.appendChild(S.el('span', 'pa-bar-dot'));
     bar.appendChild(S.el('span', 'pa-bar-t', P.app));
     var me = S.el('span', 'pa-bar-me');
-    me.appendChild(S.el('span', 'pa-avatar is-small', x.initials));
-    me.appendChild(S.el('span', null, x.name));
+    me.appendChild(S.el('span', 'pa-avatar is-small', t.person.initials));
+    me.appendChild(S.el('span', null, t.person.name));
     bar.appendChild(me);
-    n.scr.appendChild(bar);
+    n.c3.appendChild(bar);
     n.items.push(bar);
     var body = S.el('div', 'pa-body');
     var menu = S.el('div', 'pa-menu ts-hide');
     P.menu.forEach(function(m, i) {
-      var on = x.menu[i];
+      var on = t.menu[i];
       var it = S.el('div', 'pa-menu-i' + (on ? '' : ' is-locked'));
       it.appendChild(S.icon(on ? m.icon : 'ti-lock'));
       it.appendChild(S.el('span', null, m.label));
@@ -168,20 +138,26 @@ SceneDirector.register('profiles-access', function(container, manifest, reduced)
     var main = S.el('div', 'pa-main');
     var today = S.el('div', 'pa-today ts-hide');
     today.appendChild(S.el('div', 'pa-k', P.todayLabel));
-    x.today.forEach(function(t, i) { today.appendChild(S.el('div', 'pa-tile' + (i === 0 ? ' is-first' : ''), t)); });
+    t.today.forEach(function(x, i) { today.appendChild(S.el('div', 'pa-tile' + (i === 0 ? ' is-first' : ''), x)); });
     main.appendChild(today);
     n.items.push(today);
-    var facts = S.el('div', 'pa-facts ts-hide');
-    [[P.inViewLabel, x.inView], [P.maskedLabel, x.masked]].forEach(function(f) {
-      var r = S.el('div', 'pa-fact');
-      r.appendChild(S.el('span', 'pa-k', f[0]));
-      r.appendChild(S.el('span', 'pa-fact-v', f[1]));
-      facts.appendChild(r);
-    });
-    main.appendChild(facts);
-    n.items.push(facts);
+    var view = S.el('div', 'pa-fact ts-hide');
+    view.appendChild(S.el('span', 'pa-k', P.inViewLabel));
+    view.appendChild(S.el('span', 'pa-fact-v', t.inView));
+    main.appendChild(view);
+    n.items.push(view);
     body.appendChild(main);
-    n.scr.appendChild(body);
+    n.c3.appendChild(body);
+  }
+
+  function row(spec, value, code) {
+    var b = S.el('div', 'pa-row ts-hide');
+    var k = S.el('div', 'pa-idm-k');
+    k.appendChild(S.icon(spec.icon, 'ts-ink'));
+    k.appendChild(S.el('span', null, spec.k));
+    b.appendChild(k);
+    b.appendChild(S.el('div', 'pa-idm-v' + (code ? ' is-code' : ''), value));
+    return b;
   }
 
   function complete() {
@@ -190,10 +166,10 @@ SceneDirector.register('profiles-access', function(container, manifest, reduced)
     S.complete(container);
   }
 
-  function personSteps(t0) {
+  function tplSteps(t0) {
     var steps = [];
-    n.items.forEach(function(el, i) { steps.push({ delay: t0 + 80 + i * 70, run: function() { S.on(el); } }); });
-    steps.push({ delay: t0 + 80 + n.items.length * 70 + 150, run: complete });
+    n.items.forEach(function(el, i) { steps.push({ delay: t0 + 80 + i * 80, run: function() { S.on(el); } }); });
+    steps.push({ delay: t0 + 80 + n.items.length * 80 + 150, run: complete });
     return steps;
   }
 
@@ -201,22 +177,21 @@ SceneDirector.register('profiles-access', function(container, manifest, reduced)
     var steps = [];
     n.cardList.forEach(function(c, i) { steps.push({ delay: 120 + i * 90, run: function() { S.on(c); } }); });
     steps.push({ delay: 450, run: function() { S.on(n.chrome); } });
-    steps.push({ delay: 550, run: function() { S.on(n.idm); } });
-    steps.push({ delay: 650, run: function() { S.on(n.joins[0]); S.on(n.pro); } });
-    steps.push({ delay: 750, run: function() { S.on(n.joins[1]); S.on(n.scr); } });
-    steps.push({ delay: 900, run: function() { S.on(n.dataLabel); S.on(n.data); } });
-    return steps.concat(personSteps(INTRO));
+    steps.push({ delay: 550, run: function() { S.on(n.c1); } });
+    steps.push({ delay: 650, run: function() { S.on(n.joins[0]); S.on(n.c2); } });
+    steps.push({ delay: 750, run: function() { S.on(n.joins[1]); S.on(n.c3); } });
+    steps.push({ delay: 900, run: function() { S.on(n.life); } });
+    return steps.concat(tplSteps(INTRO));
   }
 
-  // Show one person. The frame is shown at once if it was still coming in.
+  // Show one template. The frame is shown at once if it was still coming in.
   function select(id, animate) {
     if (!cv) return;
     if (tl) tl.destroy();
-    prev = cur;
     cur = id;
-    S.on(n.cardList); S.on(n.chrome); S.on([n.idm, n.pro, n.scr, n.dataLabel]); S.on(n.joins); S.on(n.data);
-    prepare(person(id));
-    tl = createTimeline(personSteps(0));
+    S.on(n.cardList); S.on(n.chrome); S.on([n.c1, n.c2, n.c3, n.life]); S.on(n.joins);
+    prepare(tpl(id));
+    tl = createTimeline(tplSteps(0));
     if (animate) { cv.setStatic(false); tl.play(); }
     else { cv.setStatic(true); tl.finish(); }
   }
@@ -228,7 +203,7 @@ SceneDirector.register('profiles-access', function(container, manifest, reduced)
     seek: function(p) { build(); cv.setStatic(true); tl.seek(p); },
     reset: function() { if (tl) tl.reset(); cur = P.order[0]; build(); },
     finish: function() { build(); cv.setStatic(true); tl.finish(); },
-    // Space: complete the intro first, then the next person in order, then move on
+    // Space: complete the intro first, then the next template in order, then move on
     advance: function() {
       if (!cv) return false;
       if (!done) {
@@ -246,13 +221,14 @@ SceneDirector.register('profiles-access', function(container, manifest, reduced)
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { if (tl) tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return P.cols.join('; ') + '. ' + P.people.map(function(x) {
-        return x.name + ', ' + x.role + ', ' + x.scope + '. ' + P.idm.map(function(it) { return it.k + ': ' + x.idm[it.id]; }).join('; ') + '. Profile: '
-          + P.levels.map(function(l) { return l.label + ', ' + x.levels[l.id].toLowerCase() + ' (' + l.from.toLowerCase() + ')'; }).join('; ') + '. Screen: '
-          + P.menu.filter(function(m, i) { return x.menu[i]; }).map(function(m) { return m.label; }).join(', ')
-          + (x.menu.indexOf(false) >= 0 ? '; locked: ' + P.menu.filter(function(m, i) { return !x.menu[i]; }).map(function(m) { return m.label; }).join(', ') : '')
-          + '. ' + P.todayLabel + ': ' + x.today.join(', ').toLowerCase() + '. ' + P.inViewLabel + ': ' + x.inView + '. ' + P.maskedLabel + ': ' + x.masked.toLowerCase() + '.';
-      }).join(' ') + ' ' + P.data.label + ': ' + P.data.steps.map(function(st) { return st.k.toLowerCase() + ', ' + st.text.toLowerCase(); }).join('; ') + '.';
+      return P.steps.map(function(s) { return s.k + ', ' + s.sub.toLowerCase(); }).join('; ') + '. ' + P.templates.map(function(t) {
+        return t.role + ', ' + P.usedBy.replace('{n}', t.count).toLowerCase() + '. ' + P.joins.replace('{name}', t.person.name) + ': '
+          + P.idm.map(function(it) { return it.k + ' ' + t.idm[it.id]; }).join('; ') + '. Smart profile: '
+          + P.tpl.map(function(it) { return it.k + ' ' + t.tpl[it.id]; }).join('; ') + '. Day one: '
+          + P.menu.filter(function(m, i) { return t.menu[i]; }).map(function(m) { return m.label; }).join(', ')
+          + (t.menu.indexOf(false) >= 0 ? '; locked: ' + P.menu.filter(function(m, i) { return !t.menu[i]; }).map(function(m) { return m.label; }).join(', ') : '')
+          + '. ' + P.todayLabel + ': ' + t.today.join(', ').toLowerCase() + '. ' + P.inViewLabel + ': ' + t.inView + '.';
+      }).join(' ') + ' ' + P.auto + '. ' + P.lifecycle.label + ': ' + P.lifecycle.items.map(function(x) { return x[0].toLowerCase() + ', ' + x[1].toLowerCase(); }).join('; ') + '.';
     },
     destroy: function() { if (tl) tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

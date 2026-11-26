@@ -272,3 +272,13 @@ From the owner's review: no core screen after Enter NFR Workspace; the screens a
 | 06 | `four-ways` rebuilt: each way of working (capabilities) is run by one kind of agent (`ways.agents`, keyed by capability id): retrieval, process, policy, principal, in rising judgement. Each column: the way, the agent and its job, one supplier example, why the person can trust the answer, and who decides. The 2 by 2 grid and its data are gone |
 | 09 | New `security` (data `security`): one request in six steps (sign in, ask, retrieve, process, answer, keep), each with its controls, encrypted between steps; the same supplier record as each of screen 08's people sees it (shown, summary, masked, not in scope). Target design |
 | 10 | Enter NFR Workspace moves to 10; the chapter 3 divider lists 08 to 10 |
+
+## 21. v20 changes (four chapters, twelve screens, release v46)
+
+| Change | Detail |
+|---|---|
+| 04 | Retitled in the pattern of 03: "Periodic reviews miss change. NFR needs it the same day." |
+| 06 | `four-ways` rebuilt again: the four ways are four ways in; the same four agents (`ways.agents`, a list) work beneath every one, each with what it did for one answer, why to trust it and who decides |
+| 07 | `profiles-access` rebuilt as smart profiling: one template per role (`profiles.templates`, the roles of screen 05) with how many people use it; connected, smart profile, day-one screen; joins, moves, leaves. `profiles.people` and `peopleOrder` stay for screen 08 |
+| 08 | `security` adds record tracking (`security.tracking.events`); two controls per step |
+| Chapter 4 | Next steps after the product, divider `ch-next`: 10 `three-layers` (moved; its run strip moved to 12), 11 new `six-months` (data `team`), 12 new `next-decision` (data `decide`). Space after screen 09 and the end of the walkthrough go to `ch-next` |

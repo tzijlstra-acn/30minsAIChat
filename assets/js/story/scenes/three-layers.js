@@ -1,22 +1,21 @@
-// Scene: three-layers (screen 07)
+// Scene: three-layers (screen 10, the first of next steps)
 // Causal story: from AI pilots to a Workspace that grows by module. Left, how most banks
 // start with AI today, layer by layer (each person their own AI, handoffs manual, each
 // pilot its own copy of the data): pilots that do not scale, share or prove control.
 // Right, NFR Workspace: set up once (identity and access, approved connectors, the
 // connected core, controls and audit), with a first team live in six months; then the
-// next team on the same core, then further teams, one at a time. Run it your way:
-// in-house, managed by Accenture, or start managed and move in-house.
+// next team on the same core, then further teams, one at a time. Screen 11 opens the first
+// six months; screen 12 is the decision on what comes next and who runs it.
 SceneDirector.register('three-layers', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var G = D.grow;
-  var W = 1040, H = 520;
+  var W = 1040, H = 410;
   var LEFT = { x: 16, y: 22, w: 300, h: 316 };
   var RIGHT = { x: 360, w: 664 };
   var MOD = { y: 44, h: 206, gap: 14 };
   var FOUND = { y: 270, h: 68 };
-  var RUN = { y: 360, h: 46 };
-  var NOTE = 426;
+  var NOTE = 360;
 
   var cv = null;
   var n = {};
@@ -93,13 +92,6 @@ SceneDirector.register('three-layers', function(container, manifest, reduced) {
     n.found.appendChild(fr);
     root.appendChild(n.found);
 
-    // Run it your way
-    n.run = S.el('div', 'ts-obj ts-c-human ts-soft qp-need tl2-run ts-hide ts-up', null, { left: 16, top: RUN.y, width: 1008, height: RUN.h });
-    n.run.appendChild(S.icon('ti-settings', 'ts-ink'));
-    n.run.appendChild(S.el('span', 'qp-need-k ts-ink', G.runLabel));
-    G.run.forEach(function(t) { n.run.appendChild(S.el('span', 'qp-chip', t)); });
-    root.appendChild(n.run);
-
     n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: NOTE, width: 1008 });
     n.note.appendChild(S.el('span', 'ah-note-strong', G.line[0]));
     n.note.appendChild(S.el('span', 'ts-text', G.line[1]));
@@ -119,9 +111,8 @@ SceneDirector.register('three-layers', function(container, manifest, reduced) {
     { delay: 1900, run: function() { S.on(n.mods[0]); S.on(n.drops[0]); } },
     { delay: 2600, run: function() { S.on(n.arrows[0]); S.on(n.mods[1]); S.on(n.drops[1]); } },
     { delay: 3200, run: function() { S.on(n.arrows[1]); S.on(n.mods[2]); S.on(n.drops[2]); } },
-    { delay: 3900, run: function() { S.on(n.run); } },
-    { delay: 4500, run: function() { S.on(n.note); } },
-    { delay: 5000, run: complete }
+    { delay: 3900, run: function() { S.on(n.note); } },
+    { delay: 4400, run: complete }
   ];
   var tl = createTimeline(steps);
 
@@ -139,7 +130,7 @@ SceneDirector.register('three-layers', function(container, manifest, reduced) {
       return G.todayLabel + ': ' + D.layers.map(function(l) { return l.label + ', ' + l.today.toLowerCase(); }).join('; ') + '. ' + G.todayResult + '. '
         + G.label + ': ' + G.foundation.label + ', ' + G.foundation.items.join(', ').toLowerCase() + '. '
         + G.modules.map(function(m) { return m.when + ': ' + m.label + ', ' + m.steps.join(', ').toLowerCase() + '; ' + m.get.toLowerCase(); }).join('. ') + '. '
-        + G.runLabel + ': ' + G.run.join(', ').toLowerCase() + '. ' + G.line.join(' ');
+        + G.line.join(' ');
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };
