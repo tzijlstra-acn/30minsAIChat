@@ -15,18 +15,19 @@
 
   var WORKSPACE_ENTRY = 'enter-workspace';
   var STORY_RETURN = 'method-plan';
-  var STORY_END = 'workshop-decision';
+  var STORY_END = 'enter-workspace';
   var FALLBACK = 'live-fallback';
 
   // Experience states for the story screens; the doorway and the fallback set their own
   var STATE_BY_SCREEN = {
     'cover': 'cover', 'work-arrives': 'work-arrives', 'chain-drift': 'chain-drift', 'assistance-here': 'assistance',
-    'role-views': 'roles', 'four-ways': 'four-ways', 'three-layers': 'three-layers', 'profiles-access': 'profiles'
+    'role-views': 'roles', 'four-ways': 'four-ways', 'three-layers': 'three-layers', 'profiles-access': 'profiles',
+    'ch-problem': 'chapter', 'ch-answer': 'chapter', 'ch-workspace': 'chapter'
   };
 
   // ── The experience state model: every state the deck can be in, in route order ──
   var STATES = [
-    'cover', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles',
+    'cover', 'chapter', 'work-arrives', 'assistance', 'chain-drift', 'roles', 'four-ways', 'three-layers', 'profiles',
     'entering-workspace', 'live-handoff', 'live-fallback', 'appendix'
   ];
 

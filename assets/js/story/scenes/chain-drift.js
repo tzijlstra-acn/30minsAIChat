@@ -1,49 +1,36 @@
 // Scene: chain-drift (screen 04)
-// Causal story: one internal change, followed link by link. The chain (obligation, risk,
-// control, evidence, self-assessment, sign-off) first shows what the record says: all
-// green. Then the change lands on the control, and the break travels both ways along the
-// chain: each link shows what is really happening, while its record still says green. The
-// timeline shows for how long: the record says effective for 97 days while supplier
-// accounts go unreviewed, until audit finds it; with NFR Workspace the same change is
-// flagged the same day and fixed before the sign-off. Then why it matters: exposure,
-// accountability and cost. The records match the roles of screen 05.
+// Causal story: a supplier changes, and the records do not. One change at a critical
+// supplier (Novalink moves its hosting to Basalt Cloud) opens the screen. Four records
+// follow, each in its own system: first what the record says, all green; then, row by
+// row, what is true now. Then when the bank finds out: the notice lands in a shared
+// mailbox on day 12, but today nobody joins it to the records, and an outage on day 110
+// shows it; with NFR Workspace the notice is read on day 12 and the rating is flagged.
+// The 98 days between are the information that was there but never joined.
 SceneDirector.register('chain-drift', function(container, manifest, reduced) {
   var S = window.StoryKit;
   var D = window.NFR_WORKSPACE_DEMO;
   var C = D.chain;
   var T = C.timeline;
-  var W = 1040, H = 500;
-  var TRIG = { y: 20, h: 46 };
-  var LINK = { y: 84, w: 156, h: 100 };
-  var TL = { title: 198, events: 216, lane: 232, laneH: 24, laneGap: 4, label: 16, labelW: 160, x: 186, w: 838 };
-  var AXIS = 316;
-  var WIN = { y: 336, h: 20 };
-  var CONS = { label: 366, y: 384, w: 330, h: 60, gap: 9 };
-  var NOTE = 456;
+  var W = 1040, H = 478;
+  var EV = { y: 20, h: 48 };
+  var COLS = { y: 86, label: { x: 16, w: 196 }, record: { x: 224, w: 384 }, truth: { x: 620, w: 404 } };
+  var ROW = { y: 108, h: 44, gap: 6 };
+  var TL = { title: 326, events: 344, lane: 362, laneH: 24, laneGap: 6, label: 16, labelW: 160, x: 186, w: 838 };
+  var AXIS = 424;
+  var WIN = { y: 444, h: 20 };
 
   var cv = null;
   var n = {};
   var done = false;
 
-  function linkX(i) { var gap = (W - 32 - C.links.length * LINK.w) / (C.links.length - 1); return 16 + i * (LINK.w + gap); }
   function dayX(d) { return TL.x + d / T.days * TL.w; }
   function laneY(i) { return TL.lane + i * (TL.laneH + TL.laneGap); }
-  // The order the break travels: the link hit first, then outwards, one step each way
-  function rippleOrder() {
-    var out = [[C.hit]];
-    for (var k = 1; k < C.links.length; k++) {
-      var step = [];
-      if (C.hit + k < C.links.length) step.push(C.hit + k);
-      if (C.hit - k >= 0) step.push(C.hit - k);
-      if (step.length) out.push(step);
-    }
-    return out;
-  }
+  function rowY(i) { return ROW.y + i * (ROW.h + ROW.gap); }
 
   function build() {
     if (cv) cv.destroy();
     cv = S.canvas(container, W, H, { id: 'chain-drift', refHeight: 520 });
-    n = { links: [], truth: [], joins: [], breaks: [], segs: [[], [], []], lanes: [], events: [], cons: [] };
+    n = { labels: [], records: [], truths: [], segs: [[], []], lanes: [], events: [] };
     done = false;
     var root = cv.el;
     var g = cv.svg;
@@ -51,50 +38,41 @@ SceneDirector.register('chain-drift', function(container, manifest, reduced) {
     n.label = root.appendChild(S.el('div', 'ts-label ts-hide', C.label, { left: 16, top: 0, width: 600 }));
     n.tag = root.appendChild(S.el('div', 'ts-label rv-tag ts-hide', C.tag, { left: 624, top: 0, width: 400 }));
 
-    // The change, and where it lands
-    n.trig = S.el('div', 'ts-obj ts-c-gap ts-soft cd2-trig ts-hide ts-pop', null, { left: 16, top: TRIG.y, width: 1008, height: TRIG.h });
-    n.trig.appendChild(S.icon(C.trigger.icon, 'cd2-trig-i ts-ink'));
-    n.trig.appendChild(S.el('span', 'cd2-trig-k ts-ink', C.trigger.k));
-    n.trig.appendChild(S.el('span', 'cd2-trig-t', C.trigger.text));
-    root.appendChild(n.trig);
-    var hx = linkX(C.hit) + LINK.w / 2;
-    n.drop = S.path(g, 'M' + hx + ' ' + (TRIG.y + TRIG.h + 2) + ' L' + hx + ' ' + (LINK.y - 4), 'ts-s-gap cd-arrow', cv.marker('gap'));
+    // The change at the supplier
+    n.ev = S.el('div', 'ts-obj ts-c-human ts-soft cd3-ev ts-hide ts-pop', null, { left: 16, top: EV.y, width: 1008, height: EV.h });
+    n.ev.appendChild(S.icon(C.event.icon, 'cd3-ev-i ts-ink'));
+    n.ev.appendChild(S.el('span', 'cd3-ev-k ts-ink', C.event.k));
+    n.ev.appendChild(S.el('span', 'cd3-ev-t', C.event.text));
+    root.appendChild(n.ev);
 
-    // The chain: each link with what its record says, and what is really happening
-    var cy = LINK.y + LINK.h / 2;
-    C.links.forEach(function(l, i) {
-      var x = linkX(i);
-      var b = S.el('div', 'ts-obj ts-c-neutral cd2-link ts-hide', null, { left: x, top: LINK.y, width: LINK.w, height: LINK.h });
-      b.appendChild(S.el('div', 'cd2-link-k', l.label));
-      b.appendChild(S.el('div', 'cd2-link-id', l.id));
-      var rec = S.el('div', 'cd2-rec');
-      rec.appendChild(S.el('span', 'cd2-rec-k', C.recordLabel));
-      rec.appendChild(S.el('span', 'cd2-rec-v', l.record));
-      b.appendChild(rec);
-      var t = S.el('div', 'cd2-true ts-hide');
-      t.appendChild(S.el('span', 'cd2-true-k', C.trueLabel + ':'));
-      t.appendChild(document.createTextNode(' ' + l.truth));
-      b.appendChild(t);
-      root.appendChild(b);
-      n.links.push(b);
-      n.truth.push(t);
-      if (i < C.links.length - 1) {
-        var x2 = linkX(i + 1);
-        var p = S.svg('path', { d: 'M' + (x + LINK.w + 3) + ' ' + cy + ' L' + (x2 - 3) + ' ' + cy }, 'ts-s-data cd-join');
-        g.appendChild(p);
-        n.joins.push(p);
-        var mark = S.el('div', 'cd-break ts-hide ts-pop', null, { left: (x + LINK.w + x2) / 2 - 9, top: cy - 9, width: 18, height: 18 });
-        mark.appendChild(S.icon('ti-unlink'));
-        root.appendChild(mark);
-        n.breaks.push(mark);
-      }
+    // What each record says, and what is true now
+    n.colRecord = root.appendChild(S.el('div', 'ts-label ts-ink ts-c-proof ts-hide', C.cols.record, { left: COLS.record.x, top: COLS.y, width: COLS.record.w }));
+    n.colTruth = root.appendChild(S.el('div', 'ts-label ts-ink ts-c-gap ts-hide', C.cols.truth, { left: COLS.truth.x, top: COLS.y, width: COLS.truth.w }));
+    C.rows.forEach(function(r, i) {
+      var y = rowY(i);
+      var l = S.el('div', 'cd3-row-l ts-hide', null, { left: COLS.label.x, top: y, width: COLS.label.w, height: ROW.h });
+      l.appendChild(S.el('span', 'cd3-row-t', r.label));
+      l.appendChild(S.el('span', 'cd3-row-s', r.system));
+      root.appendChild(l);
+      n.labels.push(l);
+      var rec = S.el('div', 'ts-obj ts-c-proof ts-soft cd3-cell ts-hide ts-left', null, { left: COLS.record.x, top: y, width: COLS.record.w, height: ROW.h });
+      rec.appendChild(S.icon('ti-circle-check', 'cd3-cell-i ts-ink'));
+      rec.appendChild(S.el('span', 'cd3-cell-t', r.record));
+      root.appendChild(rec);
+      n.records.push(rec);
+      var tr = S.el('div', 'ts-obj ts-c-gap ts-soft cd3-cell is-truth ts-hide ts-left', null, { left: COLS.truth.x, top: y, width: COLS.truth.w, height: ROW.h });
+      tr.appendChild(S.icon('ti-alert-triangle', 'cd3-cell-i ts-ink'));
+      tr.appendChild(S.el('span', 'cd3-cell-t', r.truth));
+      root.appendChild(tr);
+      n.truths.push(tr);
     });
 
-    // How long: what the record says, what is happening, and the same change with the Workspace
+    // When the bank finds out
     n.tlTitle = root.appendChild(S.el('div', 'ts-label ts-hide', T.label, { left: 16, top: TL.title, width: 600 }));
     T.events.forEach(function(e) {
       var x = dayX(e[0]);
-      var lab = S.el('div', 'cd2-ev ts-hide' + (e[0] === 0 ? ' is-start' : ''), e[1], e[0] === 0 ? { left: x, top: TL.events, width: 140 } : { left: x - 70, top: TL.events, width: 140 });
+      var right = x > TL.x + TL.w * 0.6;
+      var lab = S.el('div', 'cd2-ev ts-hide' + (right ? ' is-end' : ' is-start'), e[1], right ? { left: x - 300, top: TL.events, width: 300 } : { left: x, top: TL.events, width: 300 });
       root.appendChild(lab);
       var line = S.svg('path', { d: 'M' + x + ' ' + (TL.events + 15) + ' L' + x + ' ' + (AXIS - 1) }, 'ts-hide cd2-ev-line');
       g.appendChild(line);
@@ -108,7 +86,7 @@ SceneDirector.register('chain-drift', function(container, manifest, reduced) {
       ln.segs.forEach(function(sg) {
         var x0 = dayX(sg[0]), x1 = dayX(sg[1]);
         var b = S.el('div', 'cd2-seg ts-c-' + sg[2] + ' ts-hide', null, { left: x0 + 1, top: y, width: x1 - x0 - 2, height: TL.laneH });
-        b.appendChild(S.el('span', 'cd2-seg-t', sg[3]));
+        if (sg[3]) b.appendChild(S.el('span', 'cd2-seg-t', sg[3]));
         root.appendChild(b);
         n.segs[i].push(b);
       });
@@ -126,23 +104,6 @@ SceneDirector.register('chain-drift', function(container, manifest, reduced) {
     n.win = S.el('div', 'cd2-win ts-hide', null, { left: w0, top: WIN.y, width: w1 - w0, height: WIN.h });
     n.win.appendChild(S.el('span', 'cd2-win-t', T.window[2]));
     root.appendChild(n.win);
-
-    // Why it matters
-    n.consLabel = root.appendChild(S.el('div', 'ts-label ts-hide', C.mattersLabel, { left: 16, top: CONS.label, width: 600 }));
-    C.consequences.forEach(function(c, i) {
-      var b = S.el('div', 'ts-obj ts-c-gap cd-cons ts-hide ts-up', null, { left: 16 + i * (CONS.w + CONS.gap), top: CONS.y, width: CONS.w, height: CONS.h });
-      b.appendChild(S.icon(c.icon, 'cd-cons-icon ts-ink'));
-      var body = S.el('div', 'cd-cons-body');
-      body.appendChild(S.el('div', 'cd-cons-label', c.label));
-      body.appendChild(S.el('div', 'ts-text', c.text));
-      b.appendChild(body);
-      root.appendChild(b);
-      n.cons.push(b);
-    });
-    n.note = S.el('div', 'ah-note ts-hide', null, { left: 16, top: NOTE, width: 1008 });
-    n.note.appendChild(S.el('span', 'ah-note-strong', C.person));
-    n.note.appendChild(S.el('span', 'ts-text', C.line));
-    root.appendChild(n.note);
   }
 
   function complete() {
@@ -151,44 +112,23 @@ SceneDirector.register('chain-drift', function(container, manifest, reduced) {
     S.complete(container);
   }
 
-  function breakLink(i) {
-    n.links[i].classList.remove('ts-c-neutral');
-    n.links[i].classList.add('ts-c-gap', 'is-broken');
-    if (i === C.hit) n.links[i].classList.add('is-hit');
-    S.on(n.truth[i]);
-  }
-  function breakJoin(i) {
-    if (!n.joins[i]) return;
-    n.joins[i].setAttribute('class', 'ts-s-gap cd-join is-broken');
-    S.on(n.breaks[i]);
-  }
-
   var steps = [
     { delay: 150, run: function() { S.on([n.label, n.tag]); } },
-    { delay: 250, run: function() { S.on(n.links); S.on(n.joins); } },
-    { delay: 1000, run: function() { S.on(n.trig); } },
-    { delay: 1400, run: function() { S.on(n.drop); } }
+    { delay: 350, run: function() { S.on(n.ev); } },
+    { delay: 900, run: function() { S.on([n.colRecord]); S.on(n.labels); } }
   ];
-  rippleOrder().forEach(function(group, k) {
-    steps.push({ delay: 1700 + k * 220, run: function() {
-      group.forEach(function(i) {
-        breakLink(i);
-        // The join between this link and the one it came from
-        if (i > C.hit) breakJoin(i - 1);
-        if (i < C.hit) breakJoin(i);
-      });
-    } });
-  });
-  var t1 = 1700 + rippleOrder().length * 220 + 300;
+  // First the records, all green; then what is true now, row by row
+  C.rows.forEach(function(r, i) { steps.push({ delay: 1100 + i * 150, run: function() { S.on(n.records[i]); } }); });
+  steps.push({ delay: 1900, run: function() { S.on(n.colTruth); } });
+  C.rows.forEach(function(r, i) { steps.push({ delay: 2050 + i * 350, run: function() { S.on(n.truths[i]); } }); });
+  var t1 = 2050 + C.rows.length * 350 + 300;
   steps = steps.concat([
-    { delay: t1, run: function() { S.on(n.tlTitle); S.on(n.axis); S.on(n.ticks); S.on(n.events); S.on(n.lanes.slice(0, 2)); } },
-    { delay: t1 + 300, run: function() { S.on(n.segs[0]); } },
-    { delay: t1 + 700, run: function() { S.on(n.segs[1]); } },
-    { delay: t1 + 1100, run: function() { S.on(n.win); } },
-    { delay: t1 + 1600, run: function() { S.on(n.lanes[2]); S.on(n.segs[2]); } },
-    { delay: t1 + 2200, run: function() { S.on(n.consLabel); S.on(n.cons); } },
-    { delay: t1 + 2700, run: function() { S.on(n.note); } },
-    { delay: t1 + 3100, run: complete }
+    { delay: t1, run: function() { S.on(n.tlTitle); S.on(n.axis); S.on(n.ticks); S.on(n.lanes); } },
+    { delay: t1 + 250, run: function() { S.on(n.segs[0]); } },
+    { delay: t1 + 750, run: function() { S.on(n.events); } },
+    { delay: t1 + 1150, run: function() { S.on(n.win); } },
+    { delay: t1 + 1650, run: function() { S.on(n.segs[1]); } },
+    { delay: t1 + 2200, run: complete }
   ]);
   var tl = createTimeline(steps);
 
@@ -203,12 +143,11 @@ SceneDirector.register('chain-drift', function(container, manifest, reduced) {
     renderStatic: function() { build(); cv.setStatic(true); tl.finish(); },
     renderError: function() { tl.reset(); if (cv) cv.destroy(); S.restoreFallback(container); },
     getAccessibleSummary: function() {
-      return C.label + '. ' + C.trigger.k + ': ' + C.trigger.text + ' ' + C.links.map(function(l) {
-        return l.label + ' ' + l.id + ': the record says ' + l.record.toLowerCase() + '; really, ' + l.truth.charAt(0).toLowerCase() + l.truth.slice(1);
-      }).join('. ') + '. ' + T.label + ': ' + T.lanes.map(function(ln) {
-        return ln.label + ', ' + ln.segs.map(function(sg) { return sg[3].toLowerCase() + ' from day ' + sg[0] + ' to day ' + sg[1]; }).join(', then ');
-      }).join('. ') + '. ' + T.window[2] + '. ' + C.mattersLabel + ': ' + C.consequences.map(function(c) { return c.label.toLowerCase() + ', ' + c.text.toLowerCase(); }).join(' ')
-        + ' ' + C.person + ' ' + C.line;
+      return C.label + '. ' + C.event.k + ': ' + C.event.text + ' ' + C.rows.map(function(r) {
+        return r.label + ' (' + r.system + '): ' + C.cols.record.toLowerCase() + ', ' + r.record.toLowerCase() + '; ' + C.cols.truth.toLowerCase() + ', ' + r.truth.toLowerCase();
+      }).join('. ') + '. ' + T.label + ': ' + T.events.map(function(e) { return 'day ' + e[0] + ', ' + e[1].toLowerCase(); }).join('; ') + '. '
+        + T.lanes.map(function(ln) { return ln.label + ': ' + ln.segs.filter(function(sg) { return sg[3]; }).map(function(sg) { return sg[3].toLowerCase(); }).join(', then '); }).join('. ')
+        + '. ' + T.window[2] + '. ' + C.person + ' ' + C.line;
     },
     destroy: function() { tl.destroy(); if (cv) cv.destroy(); cv = null; container.innerHTML = ''; }
   };

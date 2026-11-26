@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Layout and platform tests -- NFR Workspace v6 (release v31, ten-screen core route)
+ * Layout and platform tests -- NFR Workspace v4 (release v31, ten-screen core route)
  * Run: npx playwright test tests/layout.spec.js
  * The suite's web server is node scripts/serve.js 8080 (see playwright.config.js).
  *
@@ -143,7 +143,7 @@ test('exactly 9 core screens, appendix excluded from the core route', async ({ p
   await gotoPage(page);
   const ids = await page.$$eval('section[data-route="core"]', (s) => s.map((x) => x.id));
   expect(ids).toEqual(CORE_SLIDES);
-  expect(await page.locator('#ref-room').getAttribute('data-route')).toBe('reference');
+  expect(await page.locator('#app-team').getAttribute('data-route')).toBe('reference');
 });
 
 test('counter total comes from the DOM', async ({ page }) => {
@@ -152,15 +152,10 @@ test('counter total comes from the DOM', async ({ page }) => {
   await expect(page.locator('#counter')).toHaveText('1 / 9');
 });
 
-test('nav bar has an Evidence Atlas button', async ({ page }) => {
-  await gotoPage(page);
-  await expect(page.locator('.nav button[title*="Evidence Atlas"]')).toBeAttached();
-});
-
 test('agenda lists the three chapters, the appendix and the quick jumps', async ({ page }) => {
   await gotoPage(page);
   const chapters = await page.$$eval('#agendaStory .agenda-ch-name', (e) => e.map((x) => x.textContent));
-  for (const c of ['THE SHIFT', 'THE MODEL', 'THE WORKSPACE', 'APPENDIX']) {
+  for (const c of ["TODAY'S PROBLEM", 'THE ANSWER', 'THE WORKSPACE', 'APPENDIX']) {
     expect(chapters).toContain(c);
   }
   for (const id of ['agendaLiveJump', 'agendaFallbackJump', 'agendaAppendixJump', 'agendaRoiJump']) await expect(page.locator('#' + id)).toBeAttached();
@@ -192,39 +187,6 @@ test('KnowledgeGraph and the icon registry are defined', async ({ page }) => {
   expect(await page.evaluate(() => typeof NFRIconRegistry)).toBe('object');
 });
 
-// ── EVIDENCE ATLAS ──
-test('Evidence Atlas renders its shell when the reference room is reached', async ({ page }) => {
-  await gotoPage(page);
-  await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
-  await expect(page.locator('#ref-room .ea-shell')).toBeVisible({ timeout: 8000 });
-});
-
-test('Evidence Atlas tabs carry ARIA roles and one selected tab', async ({ page }) => {
-  await gotoPage(page);
-  await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
-  await page.waitForSelector('#ref-room [role="tab"]', { timeout: 8000 });
-  const tabs = await page.$$eval('#ref-room [role="tab"]', (t) => t.map((x) => x.getAttribute('aria-selected')));
-  expect(tabs.length).toBe(10);
-  expect(tabs.filter((s) => s === 'true')).toHaveLength(1);
-  await expect(page.locator('#ref-room .ea-canvas[role="tabpanel"]')).toBeAttached();
-});
-
-test('Evidence Atlas rail is grouped by the five client questions', async ({ page }) => {
-  await gotoPage(page);
-  await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
-  await page.waitForSelector('#ref-room .ea-rail-group', { timeout: 8000 });
-  const groups = await page.$$eval('#ref-room .ea-rail-group', (g) => g.map((x) => x.textContent));
-  expect(groups).toEqual(['Process and journey', 'Architecture and models', 'Data and integration', 'Control and delivery', 'Economics and proof']);
-});
-
-test('Evidence Atlas hides its loading hint after init', async ({ page }) => {
-  await gotoPage(page);
-  await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
-  await page.waitForSelector('#ref-room .ea-shell', { timeout: 8000 });
-  const hint = page.locator('#ea-loading-hint');
-  if (await hint.count()) await expect(hint).toBeHidden();
-});
-
 // ── STATIC: BUILD, ASSETS, COPY ──
 test.describe('Static checks', () => {
   chromiumOnly();
@@ -243,7 +205,7 @@ test.describe('Static checks', () => {
   test('story manifest has three chapters and the nine core screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
     expect(m.version).toBe('43');
-    expect(m.chapters.map((c) => c.id)).toEqual(['shift', 'model', 'workspace']);
+    expect(m.chapters.map((c) => c.id)).toEqual(['problem', 'answer', 'workspace']);
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE_SLIDES);
   });
 

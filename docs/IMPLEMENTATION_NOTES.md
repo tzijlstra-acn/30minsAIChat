@@ -255,3 +255,12 @@ From the owner's review: no core screen after Enter NFR Workspace; the screens a
 | 08 | New `profiles-access` (data `profiles`): four synthetic people; what comes from the identity system; the profile in six levels (role, scope, records, fields, actions, delegation), the levels that changed from the person before marked; their screen (menu, queue, in view, masked); how the data knows where it belongs. Space steps through the people, then moves on |
 | 09 | Enter NFR Workspace is the last core screen. Space after it, and the end of the captured walkthrough, go to the appendix index |
 | Takeaways | Each core screen's strip is labelled Takeaway and states the core message in one sentence; a test checks none is cut off |
+
+## 19. v18 changes (chapters, dividers, screen 04, the appendix, release v44)
+
+| Change | Detail |
+|---|---|
+| Chapters | `problem` (Today's problem, 01 to 04), `answer` (The answer, 05 to 07), `workspace` (The Workspace, 08 and 09) |
+| Dividers | `ch-problem`, `ch-answer`, `ch-workspace`: sections with `data-route="divider"`, not counted as screens. Navigation fills each divider's screen list with the screens' own numbers and the progress strip; the landing buttons jump to the dividers. The answer's divider pairs each of today's problems with its answer |
+| 04 | `chain-drift` keeps its id; new content (`chain`): Novalink moves its hosting to Basalt Cloud; four records (contract, due diligence, risk rating, exit plan), what each says against what is true now; when the bank finds out (notice on day 12, outage on day 110; with NFR Workspace, day 12) |
+| Appendix | Sorted data and systems, control, value, delivery (keys 1 to 4). Removed: the old V4, V5, M1, M3, M4, M8, D5, D6, D7, S6, and the Evidence Atlas (`ref-room`, `evidence-atlas.js`, its nav button and index link). Renumbered without gaps: M2 to M1, M5 to M2, M6 to M3, M7 to M4, D8 to D5, D9 to D6; internal V6 to V4, S7 to S6, S8 to S7, S9 to S8 |

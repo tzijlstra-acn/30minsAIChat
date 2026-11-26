@@ -54,7 +54,8 @@ async function run() {
   async function key(k) { await page.keyboard.press(k); await page.waitForTimeout(250); }
 
   // The story, with the five captured acts where the live product would be shown
-  var core = await page.evaluate(function() { return sections.filter(function(x) { return x.dataset.route === 'core'; }).map(function(x) { return x.id; }); });
+  // The core screens and the chapter dividers, in story order
+  var core = await page.evaluate(function() { return sections.filter(function(x) { return x.dataset.route === 'core' || x.dataset.route === 'divider'; }).map(function(x) { return x.id; }); });
   for (var i = 0; i < core.length; i++) {
     await go(core[i]);
     await shot(core[i]);

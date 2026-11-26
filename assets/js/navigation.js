@@ -41,8 +41,10 @@ function buildDividers(){
     var at=sections.indexOf(d);
     if(list){
       // Only the screens that follow the divider (the landing precedes chapter one's divider)
+      // Each screen keeps its own number in the story (dividers are not counted)
+      var core=sections.filter(function(s){return s.dataset.route==='core';});
       list.innerHTML=sections.filter(function(s,si){return si>at&&s.dataset.route==='core'&&s.dataset.chapterId===d.dataset.chapterId;})
-        .map(function(s){return '<li><a href="#'+s.id+'" onclick="goToId(\''+s.id+'\');return false;">'+(s.dataset.navTitle||s.id)+'</a></li>';}).join('');
+        .map(function(s){var n=core.indexOf(s)+1;return '<li><a href="#'+s.id+'" data-n="'+(n<10?'0':'')+n+'" onclick="goToId(\''+s.id+'\');return false;">'+(s.dataset.navTitle||s.id)+'</a></li>';}).join('');
     }
     var prog=d.querySelector('[data-divider-progress]');
     if(prog){

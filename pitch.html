@@ -47,7 +47,6 @@
       <div class="counter" id="counter"></div>
     </div>
     <button class="nav-icon-btn" onclick="openAgenda()" title="Agenda (G)"><i class="ti ti-list"></i></button>
-    <button class="nav-icon-btn" onclick="goToId('ref-room')" title="Evidence Atlas (E)"><i class="ti ti-book"></i></button>
     <a class="nav-icon-btn" href="mailto:thomas.zijlstra@accenture.com?subject=NFR AI: next steps" title="Contact" style="text-decoration:none"><i class="ti ti-mail"></i></a>
     <button class="nav-icon-btn" id="keysBtn" title="Presenter keys (?)" aria-label="Presenter keys"><i class="ti ti-keyboard"></i></button>
     <button class="nav-icon-btn" id="safeModeBtn" title="Safe mode: final states, no animation" aria-label="Safe mode" aria-pressed="false"><i class="ti ti-player-stop"></i></button>
@@ -81,14 +80,14 @@
 <div class="toast" id="toast"></div>
 
 <!-- ==========================================================
-     CORE ROUTE -- NFR WORKSPACE (9 screens, three chapters; the live product follows screen 09)
+     CORE ROUTE -- NFR WORKSPACE (9 screens in three chapters, each opened by a divider; the live product follows screen 09)
      Four ways to work, three layers to scale. Bank-neutral and synthetic.
      Words render from assets/data/workspace-demo.js; case facts from tprm-case.js.
      Screens 06 to 09 are the Workspace application (data-kind="app").
 =========================================================== -->
 
 <!-- 01 · LANDING -->
-<section id="cover" data-slide data-route="core" data-kind="landing" data-scene="transition-cover" data-chapter-id="shift" data-chapter-title="THE SHIFT" data-nav-title="NFR Workspace: the future of NFR, coordinated">
+<section id="cover" data-slide data-route="core" data-kind="landing" data-scene="transition-cover" data-chapter-id="problem" data-chapter-title="TODAY'S PROBLEM" data-nav-title="NFR Workspace: the future of NFR, coordinated">
   <div class="inner landing">
     <div class="landing-main">
       <div class="landing-wordmark"><span class="ws-mark" aria-hidden="true"></span>NFR Workspace<span class="landing-wm-sub">The AI workspace for NFR</span></div>
@@ -108,11 +107,25 @@
   </div>
 </section>
 
-<!-- 02 · THE SHIFT: EVERY QUESTION CUTS ACROSS FIVE LEVELS -->
-<section id="work-arrives" data-slide data-route="core" data-scene="work-arrives" data-chapter-id="shift" data-chapter-title="THE SHIFT" data-nav-title="Every NFR question cuts across roles, systems and teams">
+<!-- CHAPTER 01 · TODAY'S PROBLEM (divider: not counted as a screen) -->
+<section id="ch-problem" data-slide data-route="divider" data-chapter-id="problem" data-chapter-title="TODAY&#39;S PROBLEM" data-chapter-num="01" data-nav-title="Chapter 01: Today&#39;s problem">
+  <div class="inner divider divider-problem">
+    <div class="divider-num" aria-hidden="true">01</div>
+    <div class="divider-body">
+      <div class="divider-eyebrow">Chapter 01 of 03</div>
+      <h2 class="divider-title">Today&#39;s problem</h2>
+      <p class="divider-question">Why NFR questions outgrow the tools banks use today.</p>
+      <ol class="divider-screens" data-divider-screens></ol>
+    </div>
+    <div class="divider-progress" data-divider-progress aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- 02 · TODAY'S PROBLEM: EVERY QUESTION CUTS ACROSS FIVE LEVELS -->
+<section id="work-arrives" data-slide data-route="core" data-scene="work-arrives" data-chapter-id="problem" data-chapter-title="TODAY'S PROBLEM" data-nav-title="Every NFR question cuts across roles, systems and teams">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE SHIFT &middot; 02</div></div>
+      <div class="screen-hdr-row"><div class="sec-tag">TODAY'S PROBLEM &middot; 02</div></div>
       <h2 class="slide-h">Every NFR question cuts across roles, systems and teams.</h2>
       <p class="slide-sub">Four everyday questions, five levels each: who asks, what, where the data lives, who helps, and how.</p>
     </div>
@@ -123,11 +136,11 @@
   </div>
 </section>
 
-<!-- 03 · THE SHIFT: STANDALONE AI SEES ONE SYSTEM -->
-<section id="assistance-here" data-slide data-route="core" data-scene="assistance-here" data-chapter-id="shift" data-chapter-title="THE SHIFT" data-nav-title="Standalone AI sees one system; NFR needs the whole picture">
+<!-- 03 · TODAY'S PROBLEM: STANDALONE AI SEES ONE SYSTEM -->
+<section id="assistance-here" data-slide data-route="core" data-scene="assistance-here" data-chapter-id="problem" data-chapter-title="TODAY'S PROBLEM" data-nav-title="Standalone AI sees one system; NFR needs the whole picture">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE SHIFT &middot; 03</div></div>
+      <div class="screen-hdr-row"><div class="sec-tag">TODAY'S PROBLEM &middot; 03</div></div>
       <h2 class="slide-h">Standalone AI sees one system. NFR needs the whole picture.</h2>
       <p class="slide-sub">Red marks what no assistant sees. The full answer needs all eight systems.</p>
     </div>
@@ -138,26 +151,46 @@
   </div>
 </section>
 
-<!-- 04 · THE SHIFT: ONE CHANGE BREAKS THE CHAIN WHILE THE RECORD STAYS GREEN -->
-<section id="chain-drift" data-slide data-route="core" data-scene="chain-drift" data-chapter-id="shift" data-chapter-title="THE SHIFT" data-nav-title="One change breaks the chain while the record stays green">
+<!-- 04 · TODAY'S PROBLEM: A SUPPLIER CHANGES, THE RECORDS DO NOT -->
+<section id="chain-drift" data-slide data-route="core" data-scene="chain-drift" data-chapter-id="problem" data-chapter-title="TODAY'S PROBLEM" data-nav-title="A supplier changes; your records do not">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE SHIFT &middot; 04</div></div>
-      <h2 class="slide-h">One change breaks the chain. The record stays green.</h2>
-      <p class="slide-sub">One internal change, followed link by link: what the record says, what is really happening, and for how long.</p>
+      <div class="screen-hdr-row"><div class="sec-tag">TODAY'S PROBLEM &middot; 04</div></div>
+      <h2 class="slide-h">A supplier changes. Your records do not.</h2>
+      <p class="slide-sub">Novalink moves its hosting to a subcontractor. Every record still says green until an outage, 110 days later.</p>
     </div>
     <div class="scene-stage" data-size="wide" data-scene-container>
-      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><image href="./assets/img/fallback/chain-drift.jpg?v=v41-6336116" x="0" y="0" width="1040" height="500"/></svg>
+      <svg data-scene-fallback viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><image href="./assets/img/fallback/chain-drift.jpg?v=v43-79aa087" x="0" y="0" width="1040" height="478"/></svg>
     </div>
-    <div class="scene-footer"><div class="scene-footer-insight">One change breaks the chain silently: the record stays green until audit finds the gap.</div></div>
+    <div class="scene-footer"><div class="scene-footer-insight">A supplier change leaves every record green; the notice was there on day 12, but nothing joined it.</div></div>
   </div>
 </section>
 
-<!-- 05 · THE MODEL: ONE CONNECTED PICTURE, A VIEW PER ROLE -->
-<section id="role-views" data-slide data-route="core" data-scene="role-views" data-chapter-id="model" data-chapter-title="THE MODEL" data-nav-title="From question to answer: how the information flows, per role">
+<!-- CHAPTER 02 · THE ANSWER (divider: not counted as a screen) -->
+<section id="ch-answer" data-slide data-route="divider" data-chapter-id="answer" data-chapter-title="THE ANSWER" data-chapter-num="02" data-nav-title="Chapter 02: The answer">
+  <div class="inner divider divider-answer">
+    <div class="divider-num" aria-hidden="true">02</div>
+    <div class="divider-body">
+      <div class="divider-eyebrow">Chapter 02 of 03</div>
+      <h2 class="divider-title">The answer</h2>
+      <p class="divider-question">How a connected AI workflow resolves these issues.</p>
+      <div class="divider-pairs" aria-label="Today&#39;s problem, and the answer">
+        <div class="divider-pairs-head"><span>Today&#39;s problem</span><span></span><span>The answer</span></div>
+        <div class="divider-pair"><span class="dp-was"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Every question cuts across roles, systems and teams</span><i class="ti ti-arrow-right dp-arrow" aria-hidden="true"></i><span class="dp-now"><i class="ti ti-circle-check" aria-hidden="true"></i>One connected picture, shaped for each role</span></div>
+        <div class="divider-pair"><span class="dp-was"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Each assistant sees one system</span><i class="ti ti-arrow-right dp-arrow" aria-hidden="true"></i><span class="dp-now"><i class="ti ti-circle-check" aria-hidden="true"></i>All eight systems, within the person&#39;s access</span></div>
+        <div class="divider-pair"><span class="dp-was"><i class="ti ti-alert-triangle" aria-hidden="true"></i>A supplier changes; your records do not</span><i class="ti ti-arrow-right dp-arrow" aria-hidden="true"></i><span class="dp-now"><i class="ti ti-circle-check" aria-hidden="true"></i>Read at the source, flagged the same day</span></div>
+      </div>
+      <ol class="divider-screens" data-divider-screens></ol>
+    </div>
+    <div class="divider-progress" data-divider-progress aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- 05 · THE ANSWER: ONE CONNECTED PICTURE, A VIEW PER ROLE -->
+<section id="role-views" data-slide data-route="core" data-scene="role-views" data-chapter-id="answer" data-chapter-title="THE ANSWER" data-nav-title="From question to answer: how the information flows, per role">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE MODEL &middot; 05</div><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-d3"><i class="ti ti-layout-grid" aria-hidden="true"></i>Deep dive: D3 what travels with a question</button><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-d9"><i class="ti ti-layout-grid" aria-hidden="true"></i>D9 access and audit</button></div>
+      <div class="screen-hdr-row"><div class="sec-tag">THE ANSWER &middot; 05</div><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-d3"><i class="ti ti-layout-grid" aria-hidden="true"></i>Deep dive: D3 what travels with a question</button><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-d6"><i class="ti ti-layout-grid" aria-hidden="true"></i>D6 access and audit</button></div>
       <h2 class="slide-h">From question to answer: how the information flows.</h2>
       <p class="slide-sub">Pick a role, then a depth: Light shows the screen, Medium the sources, Deep how each button runs.</p>
     </div>
@@ -168,11 +201,11 @@
   </div>
 </section>
 
-<!-- 06 · THE MODEL: FOUR WAYS TO WORK -->
-<section id="four-ways" data-slide data-route="core" data-scene="four-ways" data-chapter-id="model" data-chapter-title="THE MODEL" data-nav-title="Four ways of working; together, no question falls through">
+<!-- 06 · THE ANSWER: FOUR WAYS TO WORK -->
+<section id="four-ways" data-slide data-route="core" data-scene="four-ways" data-chapter-id="answer" data-chapter-title="THE ANSWER" data-nav-title="Four ways of working; together, no question falls through">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE MODEL &middot; 06</div><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-m1"><i class="ti ti-layout-grid" aria-hidden="true"></i>Deep dive: M1 which capability</button></div>
+      <div class="screen-hdr-row"><div class="sec-tag">THE ANSWER &middot; 06</div></div>
       <h2 class="slide-h">Four ways of working. Together, no question falls through.</h2>
       <p class="slide-sub">Each is strong where another stops: how standard the work is, and how often it comes.</p>
     </div>
@@ -183,11 +216,11 @@
   </div>
 </section>
 
-<!-- 07 · THE MODEL: THREE LAYERS -->
-<section id="three-layers" data-slide data-route="core" data-scene="three-layers" data-chapter-id="model" data-chapter-title="THE MODEL" data-nav-title="From AI pilots to a Workspace that grows by module">
+<!-- 07 · THE ANSWER: THREE LAYERS -->
+<section id="three-layers" data-slide data-route="core" data-scene="three-layers" data-chapter-id="answer" data-chapter-title="THE ANSWER" data-nav-title="From AI pilots to a Workspace that grows by module">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE MODEL &middot; 07</div><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-s3"><i class="ti ti-layout-grid" aria-hidden="true"></i>Deep dive: S3 what is reused</button><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-s6"><i class="ti ti-layout-grid" aria-hidden="true"></i>S6 scale across the portfolio</button></div>
+      <div class="screen-hdr-row"><div class="sec-tag">THE ANSWER &middot; 07</div><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-s3"><i class="ti ti-layout-grid" aria-hidden="true"></i>Deep dive: S3 what is reused</button></div>
       <h2 class="slide-h">From AI pilots to a Workspace that grows by module.</h2>
       <p class="slide-sub">Set up once in six months with one team, then add the next group on the same core.</p>
     </div>
@@ -198,11 +231,26 @@
   </div>
 </section>
 
+<!-- CHAPTER 03 · THE WORKSPACE (divider: not counted as a screen) -->
+<section id="ch-workspace" data-slide data-route="divider" data-chapter-id="workspace" data-chapter-title="THE WORKSPACE" data-chapter-num="03" data-nav-title="Chapter 03: The Workspace">
+  <div class="inner divider divider-workspace">
+    <div class="divider-num" aria-hidden="true">03</div>
+    <div class="divider-body">
+      <div class="divider-eyebrow">Chapter 03 of 03</div>
+      <h2 class="divider-title">The Workspace</h2>
+      <p class="divider-question">Each person gets their own Workspace. Then we open it.</p>
+      <ol class="divider-screens" data-divider-screens></ol>
+      <p class="divider-then"><i class="ti ti-player-play" aria-hidden="true"></i>Then the live product: one working day, five acts</p>
+    </div>
+    <div class="divider-progress" data-divider-progress aria-hidden="true"></div>
+  </div>
+</section>
+
 <!-- 08 · THE WORKSPACE: PROFILES AND ACCESS, FROM THE IDENTITY SYSTEM TO EACH SCREEN -->
 <section id="profiles-access" data-slide data-route="core" data-scene="profiles-access" data-chapter-id="workspace" data-chapter-title="THE WORKSPACE" data-nav-title="One profile per person: their screen, their data, their actions">
   <div class="inner scene-screen">
     <div class="screen-hdr">
-      <div class="screen-hdr-row"><div class="sec-tag">THE WORKSPACE &middot; 08</div><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-d9"><i class="ti ti-layout-grid" aria-hidden="true"></i>Deep dive: D9 entitlements and audit</button><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-d2"><i class="ti ti-layout-grid" aria-hidden="true"></i>D2 how the systems connect</button></div>
+      <div class="screen-hdr-row"><div class="sec-tag">THE WORKSPACE &middot; 08</div><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-d6"><i class="ti ti-layout-grid" aria-hidden="true"></i>Deep dive: D6 entitlements and audit</button><button type="button" class="ts-tech-link ts-apx-link" data-apx-link="appendix-d2"><i class="ti ti-layout-grid" aria-hidden="true"></i>D2 how the systems connect</button></div>
       <h2 class="slide-h">One profile per person: their screen, data and actions.</h2>
       <p class="slide-sub">Built from your identity system in six levels, from role down to a single field. Same role, different scope, different screen.</p>
     </div>
@@ -229,7 +277,7 @@
 </section>
 
 <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     APPENDIX (excluded from core counter): index, A to G, business case, prototype, Evidence Atlas, A1 to A6
+     APPENDIX (excluded from the core counter): index; four modules in the order buyers ask (data and systems, control, value, delivery); the product walkthrough; the team
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 
 <!-- APPENDIX INDEX · everything below the core route -->
@@ -242,126 +290,7 @@
   </div>
 </section>
 
-<!-- APPENDIX MODULE 1 · VALUE & ECONOMICS -->
-<section id="appendix-v1" data-slide data-route="reference" data-apx-page data-module="value" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="V1. Where should we start?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">Where should we start?</h2>
-    <p class="slide-sub">With a bounded journey where the value or risk significance is high and the data, method and ownership are ready enough to measure.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-v2" data-slide data-route="reference" data-apx-page data-module="value" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="V2. Where does value come from?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">Where does value come from?</h2>
-    <p class="slide-sub">Better connected evidence leads to fewer late surprises, less rework and faster decisions, which return capacity to challenge and remediation.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-v3" data-slide data-route="reference" data-apx-page data-module="value" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="V3. What are the unit economics?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">What are the unit economics?</h2>
-    <p class="slide-sub">Cost per case falls when preparation removes addressable work, net of exceptions and run cost. Change the inputs; the model recalculates.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-v4" data-slide data-route="reference" data-apx-page data-module="value" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="V4. Why do later journeys cost less?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">Why do later journeys cost less?</h2>
-    <p class="slide-sub">The first journey pays for shared foundations. Later journeys cost less where reuse is real, but each keeps its own domain work.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-v5" data-slide data-route="reference" data-apx-page data-module="value" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="V5. What does total cost include?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">What does total cost include?</h2>
-    <p class="slide-sub">Far more than model usage: integration, data quality, method evaluation, change and assurance carry most of the cost.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<!-- APPENDIX MODULE 2 · METHODS, CONTROL & ASSURANCE -->
-<section id="appendix-m1" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M1. Which capability handles which work?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">Which capability handles which work?</h2>
-    <p class="slide-sub">Six questions decide the path: recurrence, systems, materiality, action, method stability and monitoring.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-m2" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M2. Why small methods, not one large model?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">Why small methods, not one large model?</h2>
-    <p class="slide-sub">Each step does one job with a defined input, output and error rate, so it can be tested, challenged and reused.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-m3" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M3. Which methods exist?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">Which methods exist?</h2>
-    <p class="slide-sub">A catalogue of method pools, each a small chain of steps assembled per question.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-m4" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M4. What does each analysis function do?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">What does each analysis function do?</h2>
-    <p class="slide-sub">Five functions, each with allowed inputs, an expected output, a quality measure and a condition that escalates to a person.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-m5" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M5. How are methods evaluated and assured?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">How are methods evaluated and assured?</h2>
-    <p class="slide-sub">Each method is evaluated for its own task before use, then monitored in operation with named owners for incidents.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-m6" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M6. What belongs to AI, rules and people?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">What belongs to AI, rules and people?</h2>
-    <p class="slide-sub">AI prepares, deterministic rules constrain, and named people hold every material judgement.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-m7" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M7. How does governed write-back work?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">How does governed write-back work?</h2>
-    <p class="slide-sub">Every material action is resolved, checked, previewed, approved by name, executed by a governed connector, confirmed and recorded.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-m8" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M8. How does an ad hoc agent become managed capability?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">How does an ad hoc agent become managed capability?</h2>
-    <p class="slide-sub">Through gated stages, each with more ownership and review, with periodic revalidation and retirement built in.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<!-- APPENDIX MODULE 3 · DATA, KNOWLEDGE & SYSTEMS -->
+<!-- APPENDIX MODULE 1 · DATA & SYSTEMS -->
 <section id="appendix-d1" data-slide data-route="reference" data-apx-page data-module="data" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="D1. What sits between the experience and the systems?">
   <div class="inner apx-page">
     <div data-apx-chrome></div>
@@ -398,34 +327,7 @@
   </div>
 </section>
 
-<section id="appendix-d5" data-slide data-route="reference" data-apx-page data-module="data" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="D5. When does a knowledge graph add value?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">When does a knowledge graph add value?</h2>
-    <p class="slide-sub">When the question depends on multi-hop relationships across systems. For lists, lookups and single-system work it adds nothing.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-d6" data-slide data-route="reference" data-apx-page data-module="data" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="D6. What would the graph model contain?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">What would the graph model contain?</h2>
-    <p class="slide-sub">The entities NFR work already uses, joined by named relationships, each carrying its source, version and review status.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-d7" data-slide data-route="reference" data-apx-page data-module="data" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="D7. How is the graph built safely?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">How is the graph built safely?</h2>
-    <p class="slide-sub">Incrementally, starting from the first journey, with derived links treated as proposals until reviewed.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
-<section id="appendix-d8" data-slide data-route="reference" data-apx-page data-module="data" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="D8. How does a question become a visual answer?">
+<section id="appendix-d5" data-slide data-route="reference" data-apx-page data-module="data" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="D5. How does a question become a visual answer?">
   <div class="inner apx-page">
     <div data-apx-chrome></div>
     <h2 class="slide-h">How does a question become a visual answer?</h2>
@@ -434,7 +336,7 @@
   </div>
 </section>
 
-<section id="appendix-d9" data-slide data-route="reference" data-apx-page data-module="data" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="D9. How are entitlements, provenance and audit kept?">
+<section id="appendix-d6" data-slide data-route="reference" data-apx-page data-module="data" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="D6. How are entitlements, provenance and audit kept?">
   <div class="inner apx-page">
     <div data-apx-chrome></div>
     <h2 class="slide-h">How are entitlements, provenance and audit kept?</h2>
@@ -443,7 +345,72 @@
   </div>
 </section>
 
-<!-- APPENDIX MODULE 4 · DELIVERY, SCALE & CREDENTIALS -->
+<!-- APPENDIX MODULE 2 · CONTROL & ASSURANCE -->
+<section id="appendix-m1" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M1. Why small methods, not one large model?">
+  <div class="inner apx-page">
+    <div data-apx-chrome></div>
+    <h2 class="slide-h">Why small methods, not one large model?</h2>
+    <p class="slide-sub">Each step does one job with a defined input, output and error rate, so it can be tested, challenged and reused.</p>
+    <div class="apx-body" data-apx-body></div>
+  </div>
+</section>
+
+<section id="appendix-m2" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M2. How are methods evaluated and assured?">
+  <div class="inner apx-page">
+    <div data-apx-chrome></div>
+    <h2 class="slide-h">How are methods evaluated and assured?</h2>
+    <p class="slide-sub">Each method is evaluated for its own task before use, then monitored in operation with named owners for incidents.</p>
+    <div class="apx-body" data-apx-body></div>
+  </div>
+</section>
+
+<section id="appendix-m3" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M3. What belongs to AI, rules and people?">
+  <div class="inner apx-page">
+    <div data-apx-chrome></div>
+    <h2 class="slide-h">What belongs to AI, rules and people?</h2>
+    <p class="slide-sub">AI prepares, deterministic rules constrain, and named people hold every material judgement.</p>
+    <div class="apx-body" data-apx-body></div>
+  </div>
+</section>
+
+<section id="appendix-m4" data-slide data-route="reference" data-apx-page data-module="methods" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="M4. How does governed write-back work?">
+  <div class="inner apx-page">
+    <div data-apx-chrome></div>
+    <h2 class="slide-h">How does governed write-back work?</h2>
+    <p class="slide-sub">Every material action is resolved, checked, previewed, approved by name, executed by a governed connector, confirmed and recorded.</p>
+    <div class="apx-body" data-apx-body></div>
+  </div>
+</section>
+
+<!-- APPENDIX MODULE 3 · VALUE & ECONOMICS -->
+<section id="appendix-v1" data-slide data-route="reference" data-apx-page data-module="value" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="V1. Where should we start?">
+  <div class="inner apx-page">
+    <div data-apx-chrome></div>
+    <h2 class="slide-h">Where should we start?</h2>
+    <p class="slide-sub">With a bounded journey where the value or risk significance is high and the data, method and ownership are ready enough to measure.</p>
+    <div class="apx-body" data-apx-body></div>
+  </div>
+</section>
+
+<section id="appendix-v2" data-slide data-route="reference" data-apx-page data-module="value" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="V2. Where does value come from?">
+  <div class="inner apx-page">
+    <div data-apx-chrome></div>
+    <h2 class="slide-h">Where does value come from?</h2>
+    <p class="slide-sub">Better connected evidence leads to fewer late surprises, less rework and faster decisions, which return capacity to challenge and remediation.</p>
+    <div class="apx-body" data-apx-body></div>
+  </div>
+</section>
+
+<section id="appendix-v3" data-slide data-route="reference" data-apx-page data-module="value" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="V3. What are the unit economics?">
+  <div class="inner apx-page">
+    <div data-apx-chrome></div>
+    <h2 class="slide-h">What are the unit economics?</h2>
+    <p class="slide-sub">Cost per case falls when preparation removes addressable work, net of exceptions and run cost. Change the inputs; the model recalculates.</p>
+    <div class="apx-body" data-apx-body></div>
+  </div>
+</section>
+
+<!-- APPENDIX MODULE 4 · DELIVERY & OPERATING MODEL -->
 <section id="appendix-s1" data-slide data-route="reference" data-apx-page data-module="delivery" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="S1. What happens in the five-week qualification?">
   <div class="inner apx-page">
     <div data-apx-chrome></div>
@@ -489,15 +456,6 @@
   </div>
 </section>
 
-<section id="appendix-s6" data-slide data-route="reference" data-apx-page data-module="delivery" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="S6. How does it scale across the portfolio?">
-  <div class="inner apx-page">
-    <div data-apx-chrome></div>
-    <h2 class="slide-h">How does it scale across the portfolio?</h2>
-    <p class="slide-sub">From one question to a portfolio, one bounded step at a time, with reuse measured rather than assumed.</p>
-    <div class="apx-body" data-apx-body></div>
-  </div>
-</section>
-
 <!-- LIVE DEMONSTRATION FALLBACK: five acts captured from the product -->
 <section id="live-fallback" data-slide data-route="reference" data-scene="live-fallback" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="Product walkthrough, captured from the live product">
   <div class="inner scene-screen">
@@ -520,14 +478,6 @@
 
 
 <!-- EVIDENCE ATLAS -->
-<section id="ref-room" data-slide data-route="reference" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="Evidence Atlas" data-render="atlasMain" data-density="long">
-  <div class="inner" style="flex:1;min-height:0;padding:0;max-width:none;margin:0;width:100%;box-sizing:border-box;">
-    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;" aria-hidden="true" id="ea-loading-hint">
-      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.2);text-transform:uppercase;">Evidence Atlas</span>
-    </div>
-  </div>
-</section>
-
 <!-- APP-TEAM · TEAM & CREDENTIALS -->
 <section id="app-team" data-slide data-route="reference" data-density="long" data-chapter-id="reference" data-chapter-title="APPENDIX" data-nav-title="Team and credentials" data-render="team">
   <div class="inner">
@@ -556,7 +506,6 @@
 <script src="./assets/js/store.js?v=79aa087"></script>
 <script src="./assets/js/selectors.js?v=79aa087"></script>
 <script src="./assets/js/components.js?v=79aa087"></script>
-<script src="./assets/js/evidence-atlas.js?v=79aa087"></script>
 <script src="./assets/js/visuals.js?v=79aa087"></script>
 <script src="./assets/js/navigation.js?v=79aa087"></script>
 <script src="./assets/js/edge-rail.js?v=79aa087"></script>

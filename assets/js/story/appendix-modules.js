@@ -208,7 +208,7 @@
     return w;
   }
 
-  // C4, D8: numbered flow with human and record steps marked, and a control strip
+  // C4, D5: numbered flow with human and record steps marked, and a control strip
   V.flow = function(c, v) {
     var ol = el('ol', 'apx-flow' + (v.steps.length > 7 ? ' is-long' : ''));
     v.steps.forEach(function(s, i) {
@@ -468,7 +468,7 @@
     c.appendChild(chips(v.criteriaTitle, v.criteria, 'is-gate'));
   };
 
-  // M2: three kinds of step, and a worked example assembled from them
+  // M1: three kinds of step, and a worked example assembled from them
   V.methods = function(c, v) {
     var cols = el('div', 'apx-cols');
     var LBL = {};

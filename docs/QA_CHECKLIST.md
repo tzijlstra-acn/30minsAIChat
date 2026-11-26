@@ -28,14 +28,14 @@ Last full run: 372 passed, 0 failed on the five desktop projects (v43; see the r
 
 | # | Check | Status | How |
 |---|---|---|---|
-| 1 | Nine core screens, three chapters (4, 3, 2), counter 1 / 9, landing buttons to 01, 05, 08 | Pass | Automated |
+| 1 | Nine core screens, three chapters (4, 3, 2): Today's problem, The answer, The Workspace; each opened by a divider that is not counted (counter 1 / 9); landing buttons go to the dividers | Pass | Automated |
 | 2 | No mock of the product in the deck | Pass | Automated |
 | 3 | Enter NFR Workspace: four statuses, ends on the live cue, Space skips | Pass | Automated |
 | 4 | L opens the live product; `?live=` changes the URL | Pass | Automated |
 | 5 | After the demonstration, Space on screen 09 and the end of the captured fallback both continue to the appendix index | Pass | Automated |
-| 6 | Appendix: four domains (5, 8, 9, 6 pages), each page with question, answer, visual, implication, claim status, index, previous, next, main story; no v6 page ids left | Pass | Automated |
+| 6 | Appendix: four domains in the order buyers ask (data and systems 6, control 4, value 3, delivery 5 pages), codes without gaps, each page with question, answer, visual, implication, claim status, index, previous, next, main story; no v6 page ids left | Pass | Automated |
 | 7 | Keys: A, 1 to 4, M, Escape one level; browser Back returns from a page | Pass | Automated |
-| 8 | Seven deep links from four core screens into the matching pages | Pass | Automated |
+| 8 | Five deep links from three core screens into the matching pages | Pass | Automated |
 | 9 | V3 calculator recalculates deterministically and resets | Pass | Automated |
 | 10 | Safe mode, offline run, reset (0), state model covers every state the route reaches | Pass | Automated |
 | 11 | No console errors | Pass | Automated per viewport; visual QA and the PDF export report zero |

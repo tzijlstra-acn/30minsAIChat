@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * visual-qa -- repeatable screenshots of the v6 route, the captured fallback and the appendix.
+ * visual-qa -- repeatable screenshots of the v4 route, the captured fallback and the appendix.
  * Usage: node scripts/visual-qa.js [port] [out]      (default 8080, artifacts/visual-qa)
  * Start the server first: npm run serve
  *
@@ -43,10 +43,13 @@ async function run() {
     };
 
     // Every core screen, final state
-    var ids = await page.evaluate(function() { return sections.filter(function(x) { return x.dataset.route === 'core'; }).map(function(x) { return x.id; }); });
+    // Every core screen and chapter divider, final state
+    var ids = await page.evaluate(function() { return sections.filter(function(x) { return x.dataset.route === 'core' || x.dataset.route === 'divider'; }).map(function(x) { return x.id; }); });
     for (var i = 0; i < ids.length; i++) {
       await page.evaluate(function(id) { document.getElementById(id).scrollIntoView({ behavior: 'instant' }); }, ids[i]);
-      await page.waitForFunction(function(id) { return sections[current].id === id && SceneDirector.getState() === 'complete'; }, ids[i], { timeout: 10000 });
+      await page.waitForFunction(function(id) { var s = sections[current]; return s.id === id && (!s.dataset.scene || SceneDirector.getState() === 'complete'); }, ids[i], { timeout: 10000 });
+      // A divider has no scene: let its entrance finish
+      if (!(await page.evaluate(function() { return !!sections[current].dataset.scene; }))) await page.waitForTimeout(1200);
       await shot(ids[i]);
     }
 

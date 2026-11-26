@@ -381,6 +381,61 @@ test.describe('Profiles and access', () => {
   });
 });
 
+// ── CHAPTER DIVIDERS ──
+test.describe('Chapter dividers', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('three chapters, each opened by a divider that is not counted as a screen', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    const r = await page.evaluate(() => [...document.querySelectorAll('section[data-route="divider"]')].map((d) => ({ id: d.id, chapter: d.dataset.chapterId,
+      title: d.querySelector('.divider-title').textContent, question: d.querySelector('.divider-question').textContent,
+      screens: [...d.querySelectorAll('[data-divider-screens] a')].map((a) => a.dataset.n + ' ' + a.getAttribute('href')) })));
+    expect(r.map((d) => d.id)).toEqual(['ch-problem', 'ch-answer', 'ch-workspace']);
+    expect(r.map((d) => d.title)).toEqual(["Today's problem", 'The answer', 'The Workspace']);
+    expect(r[1].question).toBe('How a connected AI workflow resolves these issues.');
+    // Each lists its chapter's screens with their own numbers in the story
+    expect(r[0].screens).toEqual(['02 #work-arrives', '03 #assistance-here', '04 #chain-drift']);
+    expect(r[1].screens).toEqual(['05 #role-views', '06 #four-ways', '07 #three-layers']);
+    expect(r[2].screens).toEqual(['08 #profiles-access', '09 #enter-workspace']);
+    // The answer pairs each of today's problems with how it is resolved
+    await expect(page.locator('#ch-answer .divider-pair')).toHaveCount(3);
+    // Dividers are not screens: the counter still counts nine
+    await expect(page.locator('#counter')).toHaveText('1 / 9');
+  });
+
+  test('Space passes through each divider in story order', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await enter(page, 'cover');
+    await page.keyboard.press('Space');
+    await page.waitForFunction(() => sections[current].id === 'ch-problem', null, { timeout: 4000 });
+    await page.keyboard.press('Space');
+    await page.waitForFunction(() => sections[current].id === 'work-arrives', null, { timeout: 4000 });
+  });
+
+  for (const [w, h] of [[1366, 768], [1366, 650], [1024, 768], [1920, 1080]]) {
+    test('every divider fits one window at ' + w + 'x' + h, async ({ page }) => {
+      await page.setViewportSize({ width: w, height: h });
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await open(page);
+      for (const id of ['ch-problem', 'ch-answer', 'ch-workspace']) {
+        await page.evaluate((sid) => document.getElementById(sid).scrollIntoView({ behavior: 'instant' }), id);
+        await page.waitForFunction((sid) => sections[current].id === sid, id, { timeout: 4000 });
+        const r = await page.evaluate((sid) => {
+          const s = document.getElementById(sid);
+          const inner = s.querySelector('.inner.divider');
+          const b = s.getBoundingClientRect();
+          const out = [...inner.querySelectorAll('*')].filter((e) => { const q = e.getBoundingClientRect(); return q.height && (q.bottom > b.bottom + 1 || q.right > b.right + 1); }).map((e) => String(e.className).slice(0, 30));
+          return { overflow: s.scrollHeight > s.clientHeight + 2 || s.scrollWidth > s.clientWidth + 2, out: out.slice(0, 3) };
+        }, id);
+        expect(r.overflow, id + ' overflows at ' + w + 'x' + h).toBe(false);
+        expect(r.out, id + ' content outside the window at ' + w + 'x' + h).toEqual([]);
+      }
+    });
+  }
+});
+
 // ── LAYOUT AT SUPPORTED VIEWPORTS ──
 for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280, 720], [1920, 1080], [1024, 768]]) {
   const vp = w + 'x' + h;
@@ -678,8 +733,6 @@ test.describe('Copy and claims', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     for (const id of CORE) await enter(page, id);
-    await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
-    await page.waitForSelector('#ref-room .ea-shell', { timeout: 8000 });
     expect(external).toEqual([]);
   });
 });
@@ -688,14 +741,14 @@ test.describe('Copy and claims', () => {
 test.describe('Route', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('three chapters: the shift, the model, the Workspace', () => {
+  test("three chapters: today's problem, the answer, the Workspace", () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.chapters.map((c) => c.label)).toEqual(['THE SHIFT', 'THE MODEL', 'THE WORKSPACE']);
+    expect(m.chapters.map((c) => c.label)).toEqual(["TODAY'S PROBLEM", 'THE ANSWER', 'THE WORKSPACE']);
     const core = m.screens.filter((s) => s.route === 'core');
-    expect(core.map((s) => s.chapterId)).toEqual(['shift', 'shift', 'shift', 'shift', 'model', 'model', 'model', 'workspace', 'workspace']);
+    expect(core.map((s) => s.chapterId)).toEqual(['problem', 'problem', 'problem', 'problem', 'answer', 'answer', 'answer', 'workspace', 'workspace']);
   });
 
-  test('the landing is a landing, with one button per chapter that jumps to its first screen', async ({ page }) => {
+  test('the landing is a landing, with one button per chapter that jumps to its divider', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     const r = await page.evaluate(() => {
@@ -704,9 +757,9 @@ test.describe('Route', () => {
     });
     expect(r.kind).toBe('landing');
     expect(r.header).toBe(false);
-    expect(r.route).toEqual(['cover', 'role-views', 'profiles-access']);
+    expect(r.route).toEqual(['ch-problem', 'ch-answer', 'ch-workspace']);
     await page.locator('#cover .landing-chapter').nth(2).click();
-    await page.waitForFunction(() => sections[current].id === 'profiles-access', null, { timeout: 6000 });
+    await page.waitForFunction(() => sections[current].id === 'ch-workspace', null, { timeout: 6000 });
   });
 
   test('the counter counts nine core screens and says Appendix in the appendix', async ({ page }) => {
@@ -749,27 +802,22 @@ test.describe('Reference material', () => {
     await open(page);
     const ref = await page.$$eval('section[data-route="reference"]', (s) => s.map((x) => ({ id: x.id, chapter: x.dataset.chapterTitle })));
     const APX = require(path.join(ROOT, 'assets/data/appendix-modules.js'));
-    expect(ref.map((r) => r.id)).toEqual(['appendix'].concat(APX.pages.map((p) => p.id)).concat(['live-fallback', 'ref-room', 'app-team']));
+    expect(ref.map((r) => r.id)).toEqual(['appendix'].concat(APX.pages.map((p) => p.id)).concat(['live-fallback', 'app-team']));
     ref.forEach((r) => expect(r.chapter, r.id).toBe('APPENDIX'));
     const order = await page.$$eval('section[data-slide]', (s) => s.map((x) => x.dataset.route));
     expect(order.lastIndexOf('core')).toBeLessThan(order.indexOf('reference'));
   });
 
-  test('the retired pages are gone and the Evidence Atlas is reachable from the index only', async ({ page }) => {
+  test('the retired pages and the Evidence Atlas are gone', async ({ page }) => {
     await open(page);
     for (const id of ['business-case', 'workspace-live', 'app-rai', 'app-method', 'app-evidence', 'app-kpis', 'app-assumptions', 'appendix-capability-choice', 'appendix-runtime-reuse', 'appendix-proof-gates']) {
       await expect(page.locator('#' + id), id).toHaveCount(0);
     }
     await expect(page.locator('section[data-route="core"] [data-atlas-view]')).toHaveCount(0);
-    await expect(page.locator('#appendix .apx-extra[href="#ref-room"]')).toHaveCount(1);
-  });
-
-  test('the Evidence Atlas still opens and returns', async ({ page }) => {
-    await open(page);
-    await page.evaluate(() => document.getElementById('ref-room').scrollIntoView({ behavior: 'instant' }));
-    await page.waitForSelector('#ref-room .ea-shell', { timeout: 8000 });
-    await page.evaluate(() => EvidenceAtlas.switchView('economics'));
-    await expect(page.locator('#ref-room .ea-rail-btn.active')).toHaveText('Formulas and assumptions', { timeout: 8000 });
+    await expect(page.locator('#ref-room')).toHaveCount(0);
+    await expect(page.locator('#appendix .apx-extra[href="#ref-room"]')).toHaveCount(0);
+    // Ten pages retired in v18: the appendix keeps 18, numbered without gaps
+    for (const id of ['appendix-v5', 'appendix-d7', 'appendix-d8', 'appendix-d9', 'appendix-m5', 'appendix-m6', 'appendix-m7', 'appendix-m8', 'appendix-s6']) await expect(page.locator('#' + id), id).toHaveCount(0);
   });
 
   test('appendix copy stays consistent with the business-case rules', () => {

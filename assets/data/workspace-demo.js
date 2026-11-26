@@ -118,47 +118,37 @@
       note: ['Each assistant helps with its own slice.', "NFR Workspace brings every system's content into one picture, within the user's permissions."]
     },
 
-    // ── 04 The point: one change breaks the chain while the record stays green ──
-    // One internal change, followed link by link. Each link shows what the record says and
-    // what is really happening. The timeline shows how long the two differ today, and the
-    // same change with NFR Workspace (appendix D4 shows how). The records are the ones the
-    // roles of screen 05 see: OBL-12, R-21, CTL-0417, RCSA Q3 and the Q3 sign-off.
+    // ── 04 The point: a supplier changes, and the records do not ──
+    // One change at a critical supplier: Novalink moves its hosting to Basalt Cloud, a
+    // fourth party, and the notice lands in a shared mailbox on day 12. Four records still
+    // say what was true before: each row shows what the record says and what is true now.
+    // Then when the bank finds out: today in an outage on day 110; with NFR Workspace on
+    // day 12, when the notice is read and joined to the records. Novalink and Basalt Cloud
+    // are the ones the third-party risk manager sees on screen 05.
     chain: {
-      label: 'One change, followed link by link',
+      label: 'One change at a critical supplier',
       tag: 'Illustrative, synthetic records',
-      trigger: { k: 'Internal change, day 0', icon: 'ti-building', text: "Procurement moves supplier onboarding to a new sourcing tool. The access review still runs on the old tool's list." },
-      // The link the change hits first; the break then travels both ways along the chain
-      hit: 2,
-      recordLabel: 'Record says',
-      trueLabel: 'Really',
-      links: [
-        { label: 'Obligation', id: 'OBL-12', record: 'Met', truth: 'Relies on CTL-0417' },
-        { label: 'Risk', id: 'R-21', record: 'Covered', truth: 'Exposed since day 0' },
-        { label: 'Control', id: 'CTL-0417', record: 'Effective', truth: 'Reviews the old list' },
-        { label: 'Evidence', id: 'Review log', record: 'On file', truth: 'Misses 9 new accounts' },
-        { label: 'Self-assessment', id: 'RCSA Q3', record: 'Effective', truth: 'Rated on that log' },
-        { label: 'Sign-off', id: 'Q3 attestation', record: 'Signed', truth: 'Signed on old evidence' }
+      event: { k: 'Day 0', icon: 'ti-cloud', text: 'Novalink, a critical supplier, moves its hosting to Basalt Cloud. It says so in a notice, sent on day 12 to a shared mailbox.' },
+      cols: { record: 'What your records say', truth: 'What is true now' },
+      rows: [
+        { label: 'Contract', system: 'Contract repository', record: 'Novalink hosts the service itself', truth: 'Hosting subcontracted to Basalt Cloud' },
+        { label: 'Due diligence', system: 'Vendor management', record: 'Passed in March, no subcontractors', truth: 'Basalt Cloud has not been assessed' },
+        { label: 'Risk rating', system: 'Risk register', record: 'Medium', truth: 'Two critical services now on one provider' },
+        { label: 'Exit plan', system: 'Resilience plan', record: 'Tested and current', truth: 'Assumes hosting that no longer exists' }
       ],
       // Days 0 to 120. Each segment: [from, to, tone, text]
       timeline: {
-        label: 'How long the record stays green',
+        label: 'When the bank finds out',
         days: 120, ticks: [0, 30, 60, 90, 120], tick: 'Day {d}',
+        events: [[12, 'Notice lands in a shared mailbox'], [110, 'Outage: two critical services down']],
         lanes: [
-          { label: 'What the record says', segs: [[0, 97, 'proof', 'Effective'], [97, 120, 'gap', 'Finding']] },
-          { label: 'What is happening', segs: [[0, 97, 'gap', 'New supplier accounts go unreviewed'], [97, 120, 'human', 'Remediation']] },
-          { label: 'With NFR Workspace', segs: [[0, 80, 'ai', 'Flagged the same day, fixed before the sign-off'], [80, 120, 'proof', 'Signed on current evidence']] }
+          { label: 'Today', segs: [[0, 110, 'proof', 'Every record says green'], [110, 120, 'gap', 'Outage']] },
+          { label: 'With NFR Workspace', segs: [[0, 12, 'proof', ''], [12, 120, 'ai', 'Day 12: the notice is read, joined to the records, the rating flagged']] }
         ],
-        events: [[0, 'Tool moves'], [80, 'Q3 signed'], [97, 'Audit finds it']],
-        window: [0, 97, '97 days of false assurance']
+        window: [12, 110, '98 days: the information was there, but nothing joined it']
       },
-      mattersLabel: 'Why it matters',
-      consequences: [
-        { label: 'Exposure', icon: 'ti-alert-triangle', text: '9 supplier accounts with access nobody reviewed.' },
-        { label: 'Accountability', icon: 'ti-signature', text: 'The Head of Procurement signed Q3 on old evidence.' },
-        { label: 'Cost', icon: 'ti-weight', text: 'An audit finding, then the chain re-mapped by hand.' }
-      ],
-      person: 'The record shows the outcome, not the change.',
-      line: 'From outside, the same: a new rule such as DORA moves the chain from the top.'
+      person: 'The records show the past, not the change.',
+      line: 'The notice sat in a mailbox no assistant joins to the contract, the rating or the exit plan.'
     },
 
     // ── 05 The point: how the information flows, at the depth the audience wants ──

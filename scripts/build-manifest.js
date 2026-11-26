@@ -72,8 +72,8 @@ const manifest = {
   anchorJourney: 'Third-party risk, shown in the live product',
   liveProduct: 'NFR Workspace, standalone on port 3200',
   chapters: [
-    { id: 'shift', label: 'THE SHIFT' },
-    { id: 'model', label: 'THE MODEL' },
+    { id: 'problem', label: "TODAY'S PROBLEM" },
+    { id: 'answer', label: 'THE ANSWER' },
     { id: 'workspace', label: 'THE WORKSPACE' }
   ],
   screens: screens

@@ -28,241 +28,8 @@
   };
 
   var MODULES = [
-    // ───────────────────────────── 1 VALUE & ECONOMICS ─────────────────────────────
-    { id: 'value', key: '1', label: 'Value & Economics', icon: 'ti-chart-bar', kind: 'economic',
-      question: 'Is this worth funding, and where do we start?',
-      trigger: '"What is the business case?"',
-      pages: [
-        { id: 'appendix-v1', code: 'V1', kind: 'strategic', status: 'concept',
-          title: 'Where should we start?',
-          answer: 'With a bounded journey where the value or risk significance is high and the data, method and ownership are ready enough to measure.',
-          visual: { type: 'matrix',
-            x: 'Feasibility: data access, standardisation, write-back, named owner', y: 'Value and risk significance: volume, effort, evidence burden, change',
-            zones: [
-              { id: 'start', label: 'Start now', pos: 'tr' },
-              { id: 'prepare', label: 'Prepare data and process first', pos: 'tl' },
-              { id: 'human', label: 'Retain as human-led specialist work', pos: 'bl' },
-              { id: 'defer', label: 'Defer', pos: 'br' }
-            ],
-            items: [
-              { label: 'Third-party periodic review', x: 78, y: 80, pick: true },
-              { label: 'Control inventory rationalisation', x: 70, y: 70 },
-              { label: 'Issue remediation', x: 84, y: 60 },
-              { label: 'Control testing evidence', x: 62, y: 56 },
-              { label: 'Regulatory change impact', x: 34, y: 78 },
-              { label: 'RCSA challenge', x: 26, y: 62 },
-              { label: 'Incident assessment', x: 22, y: 30 },
-              { label: 'Management reporting', x: 80, y: 24 }
-            ] },
-          detail: [
-            { title: 'Scoring dimensions', items: ['Case volume', 'Human effort', 'Evidence burden', 'Frequency of change', 'Control or regulatory significance', 'Source-data accessibility', 'Decision standardisation', 'Write-back complexity', 'Named business owner', 'Measurable baseline'] },
-            { title: 'The questions risk functions bring', items: ['Show we meet a control framework, such as SOC 2', 'Review a control inventory before it moves to a new GRC platform', 'Reduce the control inventory by about a third', 'Understand what a new regulation adds to existing local requirements', 'Answer repeated control questionnaires from external parties', 'Make scenario analysis more meaningful', 'Show that key controls operate, not only that they are documented', 'Automate RCSA to meet a regulatory requirement', 'Improve control design'] }
-          ],
-          implication: 'Pick the first process from the top right: real value, a clear authority boundary and a measurable baseline.' },
-
-        { id: 'appendix-v2', code: 'V2', kind: 'economic', status: 'concept',
-          title: 'Where does value come from?',
-          answer: 'Better connected evidence leads to fewer late surprises, less rework and faster decisions, which return capacity to challenge and remediation.',
-          visual: { type: 'tree', root: 'Value of a controlled NFR process',
-            chain: ['Better connected evidence', 'Fewer missing items and late surprises', 'Less rework and faster decisions', 'More capacity for challenge and remediation'],
-            branches: [
-              { id: 'risk', label: 'Risk outcomes', icon: 'ti-shield-check', items: ['More complete and current evidence', 'Earlier detection of material change', 'Consistent policy and method', 'More complete decision trace', 'Fewer unsupported conclusions'] },
-              { id: 'operating', label: 'Operating performance', icon: 'ti-clock', items: ['Shorter cycle time', 'Fewer handoffs and follow-ups', 'Fewer overdue reviews', 'Faster escalation', 'Less rework'] },
-              { id: 'capacity', label: 'Capacity and economics', icon: 'ti-scale', items: ['Lower human touch time', 'Lower cost per prepared case', 'Capacity redirected to challenge', 'Reuse across later journeys'] }
-            ] },
-          detail: [
-            { title: 'Outside the base case', items: ['Avoided losses and avoided regulatory findings: shown as upside only, unless there is defensible evidence', 'Waiting time removed: reported as elapsed time, not converted into labour savings'] }
-          ],
-          implication: 'Lead with risk and operating outcomes; count capacity as hours returned to judgement.' },
-
-        { id: 'appendix-v3', code: 'V3', kind: 'economic', status: 'illustrative',
-          title: 'What are the unit economics?',
-          answer: 'Cost per case falls when preparation removes addressable work, net of exceptions and run cost. Change the inputs; the model recalculates.',
-          visual: { type: 'calculator' },
-          detail: [
-            { title: 'Assumptions and disclaimers', items: ['Every default is synthetic and illustrative; replace it with the client baseline before any proposal', 'Capacity, cycle time and control quality are kept apart, not added into one number', 'Waiting time removed is not converted into labour savings', 'Avoided losses and avoided findings are excluded from the base case', 'Payback is simple payback on recurring net benefit, before ramp and financing', 'Nothing here is regulatory or legal advice'] }
-          ],
-          implication: 'Fund the first process on measured capacity and operating benefit, then validate with client data in the qualification.' },
-
-        { id: 'appendix-v4', code: 'V4', kind: 'economic', status: 'illustrative',
-          title: 'Why do later journeys cost less?',
-          answer: 'The first journey pays for shared foundations. Later journeys cost less where reuse is real, but each keeps its own domain work.',
-          visual: { type: 'reuse', unit: 'EUR thousand, one-off',
-            bands: [
-              { id: 'foundation', label: 'Reusable foundation' },
-              { id: 'domain', label: 'Reusable NFR methods' },
-              { id: 'specific', label: 'Journey-specific work' }
-            ],
-            journeys: [
-              { label: 'Journey 1', foundation: 220, domain: 120, specific: 110 },
-              { label: 'Journey 2', foundation: 30, domain: 50, specific: 100 },
-              { label: 'Journey 3', foundation: 20, domain: 35, specific: 100 },
-              { label: 'Journey 4', foundation: 20, domain: 30, specific: 95 },
-              { label: 'Journey 5', foundation: 20, domain: 25, specific: 95 }
-            ] },
-          detail: [
-            { title: 'Reusable foundation', items: ['Identity and entitlement', 'Audit', 'Case and context contract', 'Connector framework', 'Visual-insight renderer', 'Evaluation framework', 'Human-approval component', 'Write-back service', 'Monitoring'] },
-            { title: 'Journey-specific', items: ['Data mapping', 'Methodology and rules', 'Role experience', 'Exceptions', 'Approval routing', 'Source-system actions', 'Evaluation set'] }
-          ],
-          implication: 'Scale comes from reusable services and methods, not from assuming every NFR process is the same.' },
-
-        { id: 'appendix-v5', code: 'V5', kind: 'economic', status: 'illustrative',
-          title: 'What does total cost include?',
-          answer: 'Far more than model usage: integration, data quality, method evaluation, change and assurance carry most of the cost.',
-          visual: { type: 'tco',
-            stacks: [
-              { label: 'One-off', items: [
-                { label: 'Source integration', w: 16 }, { label: 'Data-quality remediation', w: 16 }, { label: 'Method design and evaluation', w: 18 },
-                { label: 'Product and change management', w: 14 }, { label: 'Training and adoption', w: 12 }, { label: 'Security and architecture approval', w: 10 } ] },
-              { label: 'Recurring, per year', items: [
-                { label: 'Runtime and model usage', w: 9, highlight: true }, { label: 'Platform operations', w: 13 }, { label: 'Monitoring and assurance', w: 13 },
-                { label: 'Support and release management', w: 13 }, { label: 'Revalidation after policy or source changes', w: 12 }, { label: 'Data-quality ownership', w: 10 }, { label: 'Product ownership', w: 11 } ] }
-            ],
-            note: 'Block sizes are illustrative shares, not estimates.' },
-          detail: [],
-          implication: 'Token cost is one component of total cost, not the business case.' }
-      ] },
-
-    // ───────────────────────────── 2 METHODS, CONTROL & ASSURANCE ─────────────────────────────
-    { id: 'methods', key: '2', label: 'Methods, Control & Assurance', icon: 'ti-shield-check', kind: 'control',
-      question: 'How is the work done, judged and governed?',
-      trigger: '"What does the AI decide?"',
-      pages: [
-        { id: 'appendix-m1', code: 'M1', kind: 'control', status: 'target',
-          title: 'Which capability handles which work?',
-          answer: 'Six questions decide the path: recurrence, systems, materiality, action, method stability and monitoring.',
-          visual: { type: 'grid', corner: 'Question', columns: ['Ask', 'Use', 'Run', 'Create'],
-            products: ['Ask the records', 'Work Hub', 'Processes', 'Agents'],
-            rows: [
-              ['One-off or recurring?', 'One-off help', 'Recurring task', 'Recurring process', 'New or temporary need'],
-              ['Several systems?', 'Current context', 'The app\'s approved sources', 'Yes, across systems', 'Yes, selected sources'],
-              ['Material output?', 'No, a draft', 'Yes, with a decision', 'Yes, at the gates', 'Draft until reviewed'],
-              ['System action required?', 'No', 'Bounded task actions', 'Approved automated steps', 'Read and draft by default'],
-              ['Method stable and approved?', 'Not needed', 'Yes', 'Yes', 'Not yet'],
-              ['Persistent monitoring?', 'No', 'Task quality and control', 'Process, runtime and control', 'Scheduled runs, under review']
-            ] },
-          detail: [
-            { title: 'Governance follows authority', items: ['Ask: the user reviews the output', 'Use: a human gate at the material decision', 'Run: configured control gates and runtime monitoring', 'Create: inherited access, read and draft by default, review before publication'] }
-          ],
-          implication: 'Not every question needs an agent. Not every agent should become an application.' },
-
-        { id: 'appendix-m2', code: 'M2', kind: 'control', status: 'target',
-          title: 'Why small methods, not one large model?',
-          answer: 'Each step does one job with a defined input, output and error rate, so it can be tested, challenged and reused.',
-          visual: { type: 'methods',
-            types: [
-              { id: 'rule', label: 'Deterministic', items: ['Count', 'Join', 'Set difference', 'Threshold', 'Date logic'] },
-              { id: 'model', label: 'Narrow AI-assisted', items: ['Extract', 'Classify', 'Compare text', 'Map clauses', 'Draft'] },
-              { id: 'human', label: 'Human judgement', items: ['Materiality', 'Challenge', 'Risk acceptance', 'Treatment'] }
-            ],
-            exampleTitle: 'Worked example: which controls duplicate across our entities?',
-            example: [
-              { kind: 'model', label: 'Extract controls' },
-              { kind: 'model', label: 'Normalise descriptions' },
-              { kind: 'rule', label: 'Calculate similarity candidates' },
-              { kind: 'rule', label: 'Verify source and ownership' },
-              { kind: 'model', label: 'Challenge: duplicate or deliberate?' },
-              { kind: 'human', label: 'Human accepts, rejects or merges' },
-              { kind: 'rule', label: 'Finding with evidence and provenance' }
-            ] },
-          detail: [
-            { title: 'Why it matters', items: ['Model risk is judged step by step, not in one lump', 'The plan is visible: which steps ran, in what order, what each produced, where a person signed', 'The same blocks serve a new register or regulation in a different order'] }
-          ],
-          implication: 'Each step can be tested and challenged.' },
-
-        { id: 'appendix-m3', code: 'M3', kind: 'control', status: 'concept',
-          title: 'Which methods exist?',
-          answer: 'A catalogue of method pools, each a small chain of steps assembled per question.',
-          visual: { type: 'pools', pools: [
-            { label: 'Inventory reconciliation', purpose: 'Redundancy and harmonisation: the same control, twice', steps: ['Extract', 'Compare', 'Resolve', 'Judge'] },
-            { label: 'Description quality', purpose: 'Completeness and quality scoring against a standard', steps: ['Extract', 'Link', 'Score', 'Rewrite'] },
-            { label: 'Map and gap', purpose: 'Obligations, frameworks and policy against coverage', steps: ['Extract', 'Assess', 'Resolve', 'Draft'] },
-            { label: 'Assessment challenge', purpose: 'RCSA, ratings, evidence and rationale', steps: ['Extract', 'Compare', 'Challenge'] },
-            { label: 'Third-party and resilience signals', purpose: 'Deterioration, concentration and evidence freshness', steps: ['Extract', 'Compare', 'Rank', 'Explain'], live: true }
-          ] },
-          detail: [],
-          implication: 'A new question reuses the same blocks in a different order.' },
-
-        { id: 'appendix-m4', code: 'M4', kind: 'control', status: 'concept',
-          title: 'What does each analysis function do?',
-          answer: 'Five functions, each with allowed inputs, an expected output, a quality measure and a condition that escalates to a person.',
-          visual: { type: 'grid', corner: 'Function', columns: ['Allowed inputs', 'Expected output', 'Kind', 'Quality measure', 'Escalates when'],
-            rows: [
-              ['Extract', 'Source documents and records', 'Structured items with citations', 'AI-assisted, checked', 'Precision and recall', 'A source cannot be read or cited'],
-              ['Verify', 'An extracted item and its source', 'Confirmed or rejected link', 'Deterministic first', 'Citation correctness', 'The source does not support the claim'],
-              ['Judge', 'Verified items and the method', 'A proposed verdict with reasons', 'AI-assisted', 'Agreement with experts', 'Confidence is low or the case is material'],
-              ['Challenge', 'The proposed verdict', 'The strongest counter-argument', 'AI-assisted', 'Disagreement found', 'The counter-argument holds'],
-              ['Synthesise', 'Verdicts, evidence and gaps', 'A decision brief for the professional', 'AI-assisted, then human', 'Completeness of the brief', 'Reviewed before every decision']
-            ] },
-          detail: [],
-          implication: 'The functions prepare; the professional decides on what they prepare.' },
-
-        { id: 'appendix-m5', code: 'M5', kind: 'control', status: 'target',
-          title: 'How are methods evaluated and assured?',
-          answer: 'Each method is evaluated for its own task before use, then monitored in operation with named owners for incidents.',
-          visual: { type: 'groups', groups: [
-            { label: 'Method evaluation', icon: 'ti-file-check', items: ['Extraction precision and recall', 'Citation correctness', 'Relationship-mapping accuracy', 'Material-change detection recall', 'False positive rate'] },
-            { label: 'Human control', icon: 'ti-user-check', items: ['Human disagreement rate', 'Abstention appropriateness', 'Override reasons', 'Missed control gates'] },
-            { label: 'Reproducibility', icon: 'ti-refresh', items: ['Same input, same output', 'Complete audit replay', 'Model, prompt, rule and data versions'] },
-            { label: 'Runtime and outcomes', icon: 'ti-chart-line', items: ['Availability and latency', 'Cost and failed runs', 'Case completeness', 'Rework and cycle time'] }
-          ],
-            ownersTitle: 'Incident response and pause',
-            owners: [
-              ['Product owner', 'Pauses a capability and decides on restart'],
-              ['Platform owner', 'Operates the technical stop'],
-              ['Control owner', 'Confirms the manual fallback runs'],
-              ['Second line', 'Reviews the incident and the restart conditions']
-            ] },
-          detail: [
-            { title: 'Minimum before go-live', items: ['Explainable outputs with sources for every material statement', 'Immutable audit trail: inputs, outputs, versions, actor', 'Named owner for each capability', 'Tested on representative cases, with error analysis', 'Human override available at every gate', 'Manual fallback documented and rehearsed'] }
-          ],
-          implication: 'Assurance is an operating discipline with owners, not a launch checklist.' },
-
-        { id: 'appendix-m6', code: 'M6', kind: 'control', status: 'target',
-          title: 'What belongs to AI, rules and people?',
-          answer: 'AI prepares, deterministic rules constrain, and named people hold every material judgement.',
-          visual: { type: 'columns', columns: [
-            { id: 'ai', label: 'AI-assisted', icon: 'ti-wand', items: ['Retrieve and summarise evidence', 'Extract and compare information', 'Identify anomalies and changes', 'Draft findings and actions', 'Explain the sources'] },
-            { id: 'rules', label: 'Deterministic rules and services', icon: 'ti-route', items: ['Entitlements', 'Mandatory evidence checks', 'Thresholds and routing', 'Workflow state and approval routes', 'Write-back constraints and audit logging'] },
-            { id: 'human', label: 'Human authority', icon: 'ti-user-check', items: ['Challenge the evidence', 'Determine materiality', 'Approve the risk conclusion', 'Accept, reject or amend treatment', 'Approve material system changes'] }
-          ],
-            principlesTitle: 'Principles',
-            principles: ['Authority is not inferred from access', 'Approvals stay attributable to a named role', 'Shared evidence does not remove independent challenge', 'No silent write-back', 'Manual fallback stays available'] },
-          detail: [],
-          implication: 'AI prepares. Rules constrain. Professionals decide. Systems record.' },
-
-        { id: 'appendix-m7', code: 'M7', kind: 'control', status: 'demonstrated',
-          title: 'How does governed write-back work?',
-          answer: 'Every material action is resolved, checked, previewed, approved by name, executed by a governed connector, confirmed and recorded.',
-          visual: { type: 'flow',
-            steps: ['Recommendation', 'Target record resolved', 'User entitlement checked', 'Policy and action constraints checked', 'Before and after preview', 'Named approval', 'Connector executes', 'Source system confirms', 'Workspace state changes', 'Audit receipt issued'],
-            human: [5], record: [7, 8, 9],
-            stripTitle: 'When something fails',
-            strip: ['Connector fails: nothing changes; retry or manual fallback', 'Source rejects: shown to the user, case unchanged', 'Partial write: compensating action, then review', 'Duplicate request: idempotent, applied once', 'Approval expires: preview again'] },
-          detail: [],
-          implication: 'The source record changes only after the permitted human approves it.' },
-
-        { id: 'appendix-m8', code: 'M8', kind: 'control', status: 'target',
-          title: 'How does an ad hoc agent become managed capability?',
-          answer: 'Through gated stages, each with more ownership and review, with periodic revalidation and retirement built in.',
-          visual: { type: 'lifecycle',
-            stages: [
-              { label: 'Run once', points: ['Private', 'Explicit sources and permissions', 'Read, analyse and draft', 'Full trace'] },
-              { label: 'Personal agent', points: ['Reusable by its creator', 'Usage and value measured', 'No material write-back by default'] },
-              { label: 'Reviewed team template', points: ['Named owner', 'Approved data and actions', 'Tested output quality'] },
-              { label: 'Standard role app or automation', points: ['Stable process and control design', 'Formal release ownership', 'Approved write-back and escalation'] },
-              { label: 'Revalidation or retirement', points: ['On policy or source change', 'Access revoked when roles change', 'Unused agents expire'] }
-            ],
-            gatesTitle: 'Promotion gates',
-            gates: ['Recurrence', 'Materiality', 'Data sensitivity', 'Reliability', 'Named owner', 'Support model', 'Demonstrated value', 'Approved authority boundaries'],
-            retireTitle: 'Retirement',
-            retire: ['Superseded templates archived', 'Revalidated after source or policy change'] },
-          detail: [],
-          implication: 'Agility for the long tail, with a controlled path to standard capability and a way out.' }
-      ] },
-
-    // ───────────────────────────── 3 DATA, KNOWLEDGE & SYSTEMS ─────────────────────────────
-    { id: 'data', key: '3', label: 'Data, Knowledge & Systems', icon: 'ti-database', kind: 'technical',
+    // ── 1 DATA & SYSTEMS: how it works ──
+    { id: 'data', key: '1', label: 'Data & Systems', icon: 'ti-database', kind: 'technical',
       question: 'How does it connect, and where do the facts come from?',
       trigger: '"Is this replacing our GRC?"',
       pages: [
@@ -332,67 +99,7 @@
           detail: [],
           implication: 'The connected core is a semantic relationship layer. Authoritative records remain in their source systems.' },
 
-        { id: 'appendix-d5', code: 'D5', kind: 'technical', status: 'concept',
-          title: 'When does a knowledge graph add value?',
-          answer: 'When the question depends on multi-hop relationships across systems. For lists, lookups and single-system work it adds nothing.',
-          visual: { type: 'decision',
-            yes: { label: 'A graph adds value', items: ['Which critical services share an underlying fourth party?', 'Which controls and evidence does a new obligation affect?', 'Which incidents, issues, controls and actions cluster around one process?', 'Which attestations rely on a control with stale evidence?', 'Which decisions were based on a superseded policy version?'] },
-            no: { label: 'A graph may be unnecessary', items: ['Simple case lists', 'Direct record lookup', 'A single-system workflow', 'Basic aggregation', 'A temporary analysis with no reusable relationship model'] } },
-          detail: [],
-          implication: 'Use a graph for relationships and impact, not as a replacement for structured systems.' },
-
-        { id: 'appendix-d6', code: 'D6', kind: 'technical', status: 'concept',
-          title: 'What would the graph model contain?',
-          answer: 'The entities NFR work already uses, joined by named relationships, each carrying its source, version and review status.',
-          visual: { type: 'graph',
-            nodes: [
-              { id: 'le', label: 'Legal entity', x: 80, y: 40, g: 'org' },
-              { id: 'bu', label: 'Business unit', x: 80, y: 130, g: 'org' },
-              { id: 'proc', label: 'Process', x: 80, y: 220, g: 'org' },
-              { id: 'inc', label: 'Incident', x: 80, y: 310, g: 'event' },
-              { id: 'iss', label: 'Issue', x: 80, y: 400, g: 'event' },
-              { id: 'own', label: 'Owner', x: 520, y: 40, g: 'org' },
-              { id: 'tp', label: 'Third party', x: 520, y: 130, g: 'svc' },
-              { id: 'app', label: 'Application', x: 520, y: 220, g: 'svc' },
-              { id: 'ra', label: 'Risk acceptance', x: 520, y: 310, g: 'event' },
-              { id: 'ctl', label: 'Control', x: 520, y: 400, g: 'risk' },
-              { id: 'svc', label: 'Critical service', x: 300, y: 220, g: 'svc' },
-              { id: 'risk', label: 'Risk', x: 300, y: 310, g: 'risk' },
-              { id: 'act', label: 'Action', x: 300, y: 400, g: 'event' },
-              { id: 'fp', label: 'Fourth party', x: 740, y: 130, g: 'svc' },
-              { id: 'ev', label: 'Evidence', x: 740, y: 310, g: 'ev' },
-              { id: 'pol', label: 'Policy', x: 740, y: 400, g: 'risk' },
-              { id: 'dec', label: 'Decision', x: 920, y: 220, g: 'event' },
-              { id: 'test', label: 'Test', x: 920, y: 310, g: 'ev' },
-              { id: 'obl', label: 'Obligation', x: 920, y: 400, g: 'risk' }
-            ],
-            edges: [
-              ['le', 'bu', 'owned_by'], ['bu', 'proc', 'owns'], ['proc', 'svc', 'supports'], ['tp', 'svc', 'provided_by'],
-              ['tp', 'fp', 'depends_on'], ['svc', 'app', 'depends_on'], ['svc', 'risk', 'affected_by'], ['risk', 'ctl', 'mitigates'],
-              ['ctl', 'pol', 'applies_to'], ['pol', 'obl', 'supersedes'], ['ctl', 'ev', 'evidenced_by'], ['ev', 'test', 'tested_by'],
-              ['inc', 'risk', 'affected_by'], ['inc', 'iss', 'creates'], ['iss', 'act', 'closes'],
-              ['risk', 'ra', 'approved_by'], ['tp', 'own', 'owned_by'], ['dec', 'ev', 'evidenced_by']
-            ],
-            carries: ['Source system', 'Source record ID', 'Source version', 'Valid from and to', 'Ingestion date', 'Provenance', 'Classification', 'Ownership', 'Confidence if derived', 'Review status if inferred'] },
-          detail: [],
-          implication: 'The graph is a relationship layer; authoritative records stay in their source systems.' },
-
-        { id: 'appendix-d7', code: 'D7', kind: 'technical', status: 'concept',
-          title: 'How is the graph built safely?',
-          answer: 'Incrementally, starting from the first journey, with derived links treated as proposals until reviewed.',
-          visual: { type: 'phases', phases: [
-            { label: 'Stable identifiers', points: ['Master-data links', 'Critical entities mapped', 'Source record IDs'] },
-            { label: 'Curated relationships', points: ['Only what the first journey needs', 'Validated with business owners'] },
-            { label: 'Document-derived candidates', points: ['Extracted with confidence', 'Material or uncertain links reviewed'] },
-            { label: 'Events and versioning', points: ['React to source changes', 'Version every link'] },
-            { label: 'Quality and lineage', points: ['Quality monitoring', 'Impact analysis', 'Lineage checks'] }
-          ],
-            qualityTitle: 'Quality controls',
-            quality: ['Entity resolution precision', 'Orphan and duplicate detection', 'Invalid relationship checks', 'Provenance completeness', 'Source freshness', 'Confidence thresholds', 'Human validation of material derived links'] },
-          detail: [],
-          implication: 'Do not load all NFR data into a graph before a use case is proven.' },
-
-        { id: 'appendix-d8', code: 'D8', kind: 'technical', status: 'demonstrated',
+        { id: 'appendix-d5', code: 'D5', kind: 'technical', status: 'demonstrated',
           title: 'How does a question become a visual answer?',
           answer: 'Governed data services calculate the facts; a validated insight schema shapes the answer; the model helps interpret and explain.',
           visual: { type: 'pipeline',
@@ -408,7 +115,7 @@
           detail: [],
           implication: 'The model may interpret and explain. Governed data services calculate the facts.' },
 
-        { id: 'appendix-d9', code: 'D9', kind: 'technical', status: 'target',
+        { id: 'appendix-d6', code: 'D6', kind: 'technical', status: 'target',
           title: 'How are entitlements, provenance and audit kept?',
           answer: 'Identity flows to every query and action, read and write are separate permissions, and every answer and action carries its sources and versions.',
           visual: { type: 'flow',
@@ -420,8 +127,142 @@
           implication: 'The Workspace inherits and enforces access. It does not create new access.' }
       ] },
 
-    // ───────────────────────────── 4 DELIVERY, SCALE & CREDENTIALS ─────────────────────────────
-    { id: 'delivery', key: '4', label: 'Delivery, Scale & Credentials', icon: 'ti-stack-2', kind: 'delivery',
+    // ── 2 CONTROL & ASSURANCE: is it safe ──
+    { id: 'methods', key: '2', label: 'Control & Assurance', icon: 'ti-shield-check', kind: 'control',
+      question: 'How is the work done, judged and governed?',
+      trigger: '"What does the AI decide?"',
+      pages: [
+        { id: 'appendix-m1', code: 'M1', kind: 'control', status: 'target',
+          title: 'Why small methods, not one large model?',
+          answer: 'Each step does one job with a defined input, output and error rate, so it can be tested, challenged and reused.',
+          visual: { type: 'methods',
+            types: [
+              { id: 'rule', label: 'Deterministic', items: ['Count', 'Join', 'Set difference', 'Threshold', 'Date logic'] },
+              { id: 'model', label: 'Narrow AI-assisted', items: ['Extract', 'Classify', 'Compare text', 'Map clauses', 'Draft'] },
+              { id: 'human', label: 'Human judgement', items: ['Materiality', 'Challenge', 'Risk acceptance', 'Treatment'] }
+            ],
+            exampleTitle: 'Worked example: which controls duplicate across our entities?',
+            example: [
+              { kind: 'model', label: 'Extract controls' },
+              { kind: 'model', label: 'Normalise descriptions' },
+              { kind: 'rule', label: 'Calculate similarity candidates' },
+              { kind: 'rule', label: 'Verify source and ownership' },
+              { kind: 'model', label: 'Challenge: duplicate or deliberate?' },
+              { kind: 'human', label: 'Human accepts, rejects or merges' },
+              { kind: 'rule', label: 'Finding with evidence and provenance' }
+            ] },
+          detail: [
+            { title: 'Why it matters', items: ['Model risk is judged step by step, not in one lump', 'The plan is visible: which steps ran, in what order, what each produced, where a person signed', 'The same blocks serve a new register or regulation in a different order'] }
+          ],
+          implication: 'Each step can be tested and challenged.' },
+
+        { id: 'appendix-m2', code: 'M2', kind: 'control', status: 'target',
+          title: 'How are methods evaluated and assured?',
+          answer: 'Each method is evaluated for its own task before use, then monitored in operation with named owners for incidents.',
+          visual: { type: 'groups', groups: [
+            { label: 'Method evaluation', icon: 'ti-file-check', items: ['Extraction precision and recall', 'Citation correctness', 'Relationship-mapping accuracy', 'Material-change detection recall', 'False positive rate'] },
+            { label: 'Human control', icon: 'ti-user-check', items: ['Human disagreement rate', 'Abstention appropriateness', 'Override reasons', 'Missed control gates'] },
+            { label: 'Reproducibility', icon: 'ti-refresh', items: ['Same input, same output', 'Complete audit replay', 'Model, prompt, rule and data versions'] },
+            { label: 'Runtime and outcomes', icon: 'ti-chart-line', items: ['Availability and latency', 'Cost and failed runs', 'Case completeness', 'Rework and cycle time'] }
+          ],
+            ownersTitle: 'Incident response and pause',
+            owners: [
+              ['Product owner', 'Pauses a capability and decides on restart'],
+              ['Platform owner', 'Operates the technical stop'],
+              ['Control owner', 'Confirms the manual fallback runs'],
+              ['Second line', 'Reviews the incident and the restart conditions']
+            ] },
+          detail: [
+            { title: 'Minimum before go-live', items: ['Explainable outputs with sources for every material statement', 'Immutable audit trail: inputs, outputs, versions, actor', 'Named owner for each capability', 'Tested on representative cases, with error analysis', 'Human override available at every gate', 'Manual fallback documented and rehearsed'] }
+          ],
+          implication: 'Assurance is an operating discipline with owners, not a launch checklist.' },
+
+        { id: 'appendix-m3', code: 'M3', kind: 'control', status: 'target',
+          title: 'What belongs to AI, rules and people?',
+          answer: 'AI prepares, deterministic rules constrain, and named people hold every material judgement.',
+          visual: { type: 'columns', columns: [
+            { id: 'ai', label: 'AI-assisted', icon: 'ti-wand', items: ['Retrieve and summarise evidence', 'Extract and compare information', 'Identify anomalies and changes', 'Draft findings and actions', 'Explain the sources'] },
+            { id: 'rules', label: 'Deterministic rules and services', icon: 'ti-route', items: ['Entitlements', 'Mandatory evidence checks', 'Thresholds and routing', 'Workflow state and approval routes', 'Write-back constraints and audit logging'] },
+            { id: 'human', label: 'Human authority', icon: 'ti-user-check', items: ['Challenge the evidence', 'Determine materiality', 'Approve the risk conclusion', 'Accept, reject or amend treatment', 'Approve material system changes'] }
+          ],
+            principlesTitle: 'Principles',
+            principles: ['Authority is not inferred from access', 'Approvals stay attributable to a named role', 'Shared evidence does not remove independent challenge', 'No silent write-back', 'Manual fallback stays available'] },
+          detail: [],
+          implication: 'AI prepares. Rules constrain. Professionals decide. Systems record.' },
+
+        { id: 'appendix-m4', code: 'M4', kind: 'control', status: 'demonstrated',
+          title: 'How does governed write-back work?',
+          answer: 'Every material action is resolved, checked, previewed, approved by name, executed by a governed connector, confirmed and recorded.',
+          visual: { type: 'flow',
+            steps: ['Recommendation', 'Target record resolved', 'User entitlement checked', 'Policy and action constraints checked', 'Before and after preview', 'Named approval', 'Connector executes', 'Source system confirms', 'Workspace state changes', 'Audit receipt issued'],
+            human: [5], record: [7, 8, 9],
+            stripTitle: 'When something fails',
+            strip: ['Connector fails: nothing changes; retry or manual fallback', 'Source rejects: shown to the user, case unchanged', 'Partial write: compensating action, then review', 'Duplicate request: idempotent, applied once', 'Approval expires: preview again'] },
+          detail: [],
+          implication: 'The source record changes only after the permitted human approves it.' },
+
+      ] },
+
+    // ── 3 VALUE & ECONOMICS: is it worth it ──
+    { id: 'value', key: '3', label: 'Value & Economics', icon: 'ti-chart-bar', kind: 'economic',
+      question: 'Is this worth funding, and where do we start?',
+      trigger: '"What is the business case?"',
+      pages: [
+        { id: 'appendix-v1', code: 'V1', kind: 'strategic', status: 'concept',
+          title: 'Where should we start?',
+          answer: 'With a bounded journey where the value or risk significance is high and the data, method and ownership are ready enough to measure.',
+          visual: { type: 'matrix',
+            x: 'Feasibility: data access, standardisation, write-back, named owner', y: 'Value and risk significance: volume, effort, evidence burden, change',
+            zones: [
+              { id: 'start', label: 'Start now', pos: 'tr' },
+              { id: 'prepare', label: 'Prepare data and process first', pos: 'tl' },
+              { id: 'human', label: 'Retain as human-led specialist work', pos: 'bl' },
+              { id: 'defer', label: 'Defer', pos: 'br' }
+            ],
+            items: [
+              { label: 'Third-party periodic review', x: 78, y: 80, pick: true },
+              { label: 'Control inventory rationalisation', x: 70, y: 70 },
+              { label: 'Issue remediation', x: 84, y: 60 },
+              { label: 'Control testing evidence', x: 62, y: 56 },
+              { label: 'Regulatory change impact', x: 34, y: 78 },
+              { label: 'RCSA challenge', x: 26, y: 62 },
+              { label: 'Incident assessment', x: 22, y: 30 },
+              { label: 'Management reporting', x: 80, y: 24 }
+            ] },
+          detail: [
+            { title: 'Scoring dimensions', items: ['Case volume', 'Human effort', 'Evidence burden', 'Frequency of change', 'Control or regulatory significance', 'Source-data accessibility', 'Decision standardisation', 'Write-back complexity', 'Named business owner', 'Measurable baseline'] },
+            { title: 'The questions risk functions bring', items: ['Show we meet a control framework, such as SOC 2', 'Review a control inventory before it moves to a new GRC platform', 'Reduce the control inventory by about a third', 'Understand what a new regulation adds to existing local requirements', 'Answer repeated control questionnaires from external parties', 'Make scenario analysis more meaningful', 'Show that key controls operate, not only that they are documented', 'Automate RCSA to meet a regulatory requirement', 'Improve control design'] }
+          ],
+          implication: 'Pick the first process from the top right: real value, a clear authority boundary and a measurable baseline.' },
+
+        { id: 'appendix-v2', code: 'V2', kind: 'economic', status: 'concept',
+          title: 'Where does value come from?',
+          answer: 'Better connected evidence leads to fewer late surprises, less rework and faster decisions, which return capacity to challenge and remediation.',
+          visual: { type: 'tree', root: 'Value of a controlled NFR process',
+            chain: ['Better connected evidence', 'Fewer missing items and late surprises', 'Less rework and faster decisions', 'More capacity for challenge and remediation'],
+            branches: [
+              { id: 'risk', label: 'Risk outcomes', icon: 'ti-shield-check', items: ['More complete and current evidence', 'Earlier detection of material change', 'Consistent policy and method', 'More complete decision trace', 'Fewer unsupported conclusions'] },
+              { id: 'operating', label: 'Operating performance', icon: 'ti-clock', items: ['Shorter cycle time', 'Fewer handoffs and follow-ups', 'Fewer overdue reviews', 'Faster escalation', 'Less rework'] },
+              { id: 'capacity', label: 'Capacity and economics', icon: 'ti-scale', items: ['Lower human touch time', 'Lower cost per prepared case', 'Capacity redirected to challenge', 'Reuse across later journeys'] }
+            ] },
+          detail: [
+            { title: 'Outside the base case', items: ['Avoided losses and avoided regulatory findings: shown as upside only, unless there is defensible evidence', 'Waiting time removed: reported as elapsed time, not converted into labour savings'] }
+          ],
+          implication: 'Lead with risk and operating outcomes; count capacity as hours returned to judgement.' },
+
+        { id: 'appendix-v3', code: 'V3', kind: 'economic', status: 'illustrative',
+          title: 'What are the unit economics?',
+          answer: 'Cost per case falls when preparation removes addressable work, net of exceptions and run cost. Change the inputs; the model recalculates.',
+          visual: { type: 'calculator' },
+          detail: [
+            { title: 'Assumptions and disclaimers', items: ['Every default is synthetic and illustrative; replace it with the client baseline before any proposal', 'Capacity, cycle time and control quality are kept apart, not added into one number', 'Waiting time removed is not converted into labour savings', 'Avoided losses and avoided findings are excluded from the base case', 'Payback is simple payback on recurring net benefit, before ramp and financing', 'Nothing here is regulatory or legal advice'] }
+          ],
+          implication: 'Fund the first process on measured capacity and operating benefit, then validate with client data in the qualification.' },
+
+      ] },
+
+    // ── 4 DELIVERY & OPERATING MODEL: how we start ──
+    { id: 'delivery', key: '4', label: 'Delivery & Operating Model', icon: 'ti-stack-2', kind: 'delivery',
       question: 'How do we start, who runs it, and how does it grow?',
       trigger: '"What do we commit to first?"',
       pages: [
@@ -496,20 +337,6 @@
           detail: [],
           implication: 'Reusable methods and patterns are adapted to the target control and technology environment; nothing transfers unchanged.' },
 
-        { id: 'appendix-s6', code: 'S6', kind: 'delivery', status: 'concept',
-          title: 'How does it scale across the portfolio?',
-          answer: 'From one question to a portfolio, one bounded step at a time, with reuse measured rather than assumed.',
-          visual: { type: 'waves', waves: [
-            { label: 'One question', text: 'Qualified in five weeks' },
-            { label: 'One bounded journey', text: 'One live process in six months' },
-            { label: 'Reusable methods and connectors', text: 'Shared across adjacent journeys' },
-            { label: 'Multiple role apps', text: 'Standard apps, monitored agents, common automations' },
-            { label: 'Portfolio-wide NFR Workspace', text: 'Shared context across domains' }
-          ],
-            criteriaTitle: 'Constraints',
-            criteria: ['Modular domains', 'Isolated releases', 'Explicit ownership', 'No single uncontrolled failure domain', 'Measured reuse'] },
-          detail: [],
-          implication: 'Each step is earned by evidence from the one before.' }
       ] }
   ];
 
@@ -521,8 +348,7 @@
     index: { id: 'appendix', title: 'Appendix: four doors into the detail', sub: 'Open a door when a buyer asks. Each page answers one question and returns to the story.' },
     extras: [
       { id: 'live-fallback', label: 'Product walkthrough, captured from the live product', icon: 'ti-device-desktop' },
-      { id: 'app-team', label: 'Team and credentials', icon: 'ti-users' },
-      { id: 'ref-room', label: 'Reference library (Evidence Atlas)', icon: 'ti-book' }
+      { id: 'app-team', label: 'Team and credentials', icon: 'ti-users' }
     ]
   };
 
