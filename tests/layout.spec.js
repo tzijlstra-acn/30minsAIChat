@@ -229,10 +229,10 @@ test('Evidence Atlas hides its loading hint after init', async ({ page }) => {
 test.describe('Static checks', () => {
   chromiumOnly();
 
-  test('build fingerprint is v42', () => {
+  test('build fingerprint is v43', () => {
     const html = read('pitch.html');
-    expect(html).toMatch(/<meta name="nfr-build" content="v42-[0-9a-f]{7}">/);
-    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v42'/);
+    expect(html).toMatch(/<meta name="nfr-build" content="v43-[0-9a-f]{7}">/);
+    expect(html).toMatch(/window\.NFR_BUILD=\{release:'v43'/);
   });
 
   test('all local asset ?v= strings share one fingerprint', () => {
@@ -242,7 +242,7 @@ test.describe('Static checks', () => {
 
   test('story manifest has three chapters and the nine core screens', () => {
     const m = JSON.parse(read('assets/data/story-manifest.json'));
-    expect(m.version).toBe('42');
+    expect(m.version).toBe('43');
     expect(m.chapters.map((c) => c.id)).toEqual(['shift', 'model', 'workspace']);
     expect(m.screens.filter((s) => s.route === 'core').map((s) => s.id)).toEqual(CORE_SLIDES);
   });
