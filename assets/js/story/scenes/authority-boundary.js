@@ -16,9 +16,11 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
   var W = 1040, H = 470;
   var IN = { y: 0, h: 44 };
   var LANE = { y: 78, h: 168, w: 320, gap: 24 };
-  var PROG = { label: 264, y: 286, h: 74, w: 320, gap: 24 };
-  var KEEP = 376;
-  var NOTE = 418;
+  // Three aligned rows: when, the mix of who looks, what changes. The share a person decides
+  // keeps one column on every row
+  var PROG = { label: 264, y: 288, h: 26, gap: 7, lx: 16, lw: 124, bx: 146, bw: 610, cx: 772, cw: 252 };
+  var KEEP = 392;
+  var NOTE = 426;
   var TONES = ['proof', 'ai', 'human'];
 
   var cv = null;
@@ -30,7 +32,7 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
   function build() {
     if (cv) cv.destroy();
     cv = S.canvas(container, W, H, { id: 'authority-boundary', refHeight: 520 });
-    n = { lanes: [], drops: [], stages: [], arrows: [] };
+    n = { lanes: [], drops: [], stages: [] };
     done = false;
     var root = cv.el;
     var g = cv.svg;
@@ -62,40 +64,31 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
     });
 
     // How routine work moves to automation; the share a person decides stays the same
-    n.progLabel = S.el('div', 'ts-label ts-hide', Rt.progressLabel, { left: 16, top: PROG.label, width: 520 });
+    n.progLabel = S.el('div', 'ts-label ts-hide', Rt.progressLabel, { left: 16, top: PROG.label, width: 600 });
     root.appendChild(n.progLabel);
-    n.key = S.el('div', 'ab2-key ts-hide', null, { left: 524, top: PROG.label - 1, width: 500 });
-    Rt.lanes.forEach(function(l, j) {
-      var k = S.el('span', 'ab2-key-i ts-c-' + TONES[j]);
-      k.appendChild(S.el('span', 'ab2-key-sw'));
-      k.appendChild(S.el('span', null, l.label));
-      n.key.appendChild(k);
-    });
-    root.appendChild(n.key);
     Rt.stages.forEach(function(st, i) {
-      var x = laneX(i);
-      var b = S.el('div', 'ts-obj ts-c-neutral ab2-stage ts-hide ts-up', null, { left: x, top: PROG.y, width: PROG.w, height: PROG.h });
-      var hd = S.el('div', 'ab2-stage-head');
-      hd.appendChild(S.el('span', 'ab2-when', st.when));
-      hd.appendChild(S.el('span', 'ab2-stage-t', st.text));
-      b.appendChild(hd);
-      var mix = S.el('div', 'ab2-mix');
+      var y = PROG.y + i * (PROG.h + PROG.gap);
+      var row = [];
+      row.push(root.appendChild(S.el('div', 'ab3-when ts-hide', st.when, { left: PROG.lx, top: y, width: PROG.lw, height: PROG.h })));
+      var at = 0;
       st.mix.forEach(function(v, j) {
         if (!v) return;
-        var seg = S.el('span', 'ab2-seg ts-c-' + TONES[j]);
-        seg.style.flexGrow = String(v);
-        mix.appendChild(seg);
+        var x = PROG.bx + at / 100 * PROG.bw, w = v / 100 * PROG.bw - 3;
+        at += v;
+        var seg = S.el('div', 'ab3-seg ts-c-' + TONES[j] + ' ts-hide', null, { left: x, top: y, width: w, height: PROG.h });
+        // Named inside the bar where it fits, so the rows need no legend
+        if (w >= 110) seg.appendChild(S.el('span', 'ab3-seg-t', Rt.lanes[j].label));
+        root.appendChild(seg);
+        row.push(seg);
       });
-      b.appendChild(mix);
-      root.appendChild(b);
-      n.stages.push(b);
-      if (i < Rt.stages.length - 1) {
-        var a = S.el('div', 'ab-arrow ts-hide', null, { left: x + PROG.w, top: PROG.y + PROG.h / 2 - 10, width: PROG.gap, height: 20 });
-        a.appendChild(S.icon('ti-chevron-right'));
-        root.appendChild(a);
-        n.arrows.push(a);
-      }
+      row.push(root.appendChild(S.el('div', 'ab3-cap ts-hide', st.text, { left: PROG.cx, top: y, width: PROG.cw, height: PROG.h })));
+      n.stages.push(row);
     });
+    // The column a person decides, the same width on every row
+    var dx = PROG.bx + (100 - Rt.stages[0].mix[2]) / 100 * PROG.bw - 4;
+    var dh = Rt.stages.length * (PROG.h + PROG.gap) - PROG.gap + 8;
+    n.col = S.svg('rect', { x: dx, y: PROG.y - 4, width: PROG.bx + PROG.bw - dx + 2, height: dh, rx: 6 }, 'ts-hide ab3-col');
+    g.appendChild(n.col);
     n.keep = S.el('div', 'ab2-keep ts-hide', null, { left: 16, top: KEEP, width: 1008, height: 24 });
     n.keep.appendChild(S.icon('ti-user-check', 'ab2-keep-i'));
     n.keep.appendChild(S.el('span', 'ab2-keep-t', Rt.keep));
@@ -120,10 +113,10 @@ SceneDirector.register('authority-boundary', function(container, manifest, reduc
     { delay: 1000, run: function() { S.on(n.lanes[0]); } },
     { delay: 1400, run: function() { S.on(n.lanes[1]); } },
     { delay: 1800, run: function() { S.on(n.lanes[2]); } },
-    { delay: 2500, run: function() { S.on(n.progLabel); S.on(n.key); S.on(n.stages[0]); } },
-    { delay: 3000, run: function() { S.on(n.arrows[0]); S.on(n.stages[1]); } },
-    { delay: 3500, run: function() { S.on(n.arrows[1]); S.on(n.stages[2]); } },
-    { delay: 4100, run: function() { S.on(n.keep); } },
+    { delay: 2500, run: function() { S.on(n.progLabel); S.on(n.stages[0]); } },
+    { delay: 3000, run: function() { S.on(n.stages[1]); } },
+    { delay: 3500, run: function() { S.on(n.stages[2]); } },
+    { delay: 4000, run: function() { S.on(n.col); S.on(n.keep); } },
     { delay: 4600, run: function() { S.on(n.note); } },
     { delay: 5100, run: complete }
   ];

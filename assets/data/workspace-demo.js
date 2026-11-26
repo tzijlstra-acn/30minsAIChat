@@ -499,6 +499,7 @@
       ],
       measuredLabel: 'Measured as',
       growLabel: 'How value grows, gate by gate',
+      meterLabel: 'Value',
       steps: [
         { when: 'Week 0', label: 'Baseline', text: 'Measured on your own cases' },
         { when: 'Week 5', label: 'Qualified', text: 'First findings on your data' },

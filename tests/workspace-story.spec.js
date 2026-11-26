@@ -428,11 +428,14 @@ for (const [w, h] of [[1440, 900], [1366, 768], [1366, 650], [1600, 900], [1280,
           const footer = s.querySelector('.scene-footer') || s.querySelector('.landing-route');
           const f = footer.getBoundingClientRect();
           const sub = s.querySelector('.slide-sub');
+          // The takeaway under each screen is one line, never cut off
+          const take = s.querySelector('.scene-footer-insight');
           return { overflow: s.scrollWidth > s.clientWidth + 2, footerBottom: f.bottom, vh: window.innerHeight,
-            subClipped: sub ? sub.scrollWidth > sub.clientWidth + 1 : false };
+            subClipped: sub ? sub.scrollWidth > sub.clientWidth + 1 : false, takeCut: take ? take.scrollWidth > take.clientWidth + 1 : false };
         }, id);
         expect(r.overflow, id).toBe(false);
         expect(r.subClipped, id + ' subtitle clipped').toBe(false);
+        expect(r.takeCut, id + ' takeaway cut off').toBe(false);
         expect(r.footerBottom, id + ' footer below the viewport').toBeLessThanOrEqual(r.vh + 1);
       }
     });
