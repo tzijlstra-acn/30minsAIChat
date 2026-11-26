@@ -1,4 +1,4 @@
-# NFR Workspace pitch: QA checklist (release v41, presentable by any consultant v10)
+# NFR Workspace pitch: QA checklist (release v42, presentable by any consultant v10)
 
 Status as of 2026-11-25 on branch `feat/pitch-v8` (v9 work continues on it). The product side is checked in `nfr-workos` (`docs/DEMO_READINESS_AUDIT.md`, branch `feat/demo-readiness-v6`). "Automated" names the Playwright test or audit that covers an item.
 
@@ -7,11 +7,11 @@ npm run build:public && node scripts/build.js scan-repo
 npx playwright test --project=chromium --project=1366x768 --project=1440x900 --project=1920x1080 --project=1024x768
 npm run audit:all && python scripts/check-emdash.py && python scripts/lint-copy.py
 node scripts/serve.js 8190 dist     # then, against the public build:
-node scripts/visual-qa.js 8190 artifacts/visual-qa/v41
+node scripts/visual-qa.js 8190 artifacts/visual-qa/v42
 node scripts/export-fallback.js 8190
 ```
 
-Last full run: 362 passed, 0 failed on the five desktop projects (v41; see the release note at the end).
+Last full run: 363 passed, 0 failed on the five desktop projects (v42; see the release note at the end).
 
 ## 1. Meeting-survival tests (v7 plan)
 
@@ -74,6 +74,8 @@ Claim statuses: *Shown in the live product*, *Target design*, *Illustrative, syn
 - Claim review of the internal credentials (engagement lead) and of the indicative commercials (deal team, legal).
 
 ## Release note
+
+v42 (`v42-6338751`), 2026-11-26: screens 03 to 05 from the owner's review. What no assistant sees moves to 03; 04 follows one change link by link, with the 97 days the record stays green, the same change with NFR Workspace, and why it matters; 05 folds out Light, Medium and Deep per role, each button a versioned definition with its own systems, calculation, storage and write-back. Desktop matrix 363 passed, 0 failed. Audits, dash check, copy lint and term scan pass; both editions build. Against the public build: visual QA 56 screenshots at each of four sizes, 0 console errors; PDF fallback 61 pages, 0 console errors. Internal PDF 65 pages, 0 console errors, in internal/fallback/.
 
 v41 (`v41-6336116`), 2026-11-25: one storyline in fourteen screens. New cover positioning; 06 four ways in a grid with strengths and limits; 07 set up once and grow by module, in-house or managed; 09 four kinds of agent; 10 every owner told; 11 thresholds and earned automation; 12 value measured gate by gate; 13 three ways to bring it in (commercial models in the internal edition only); 14 the decision. Qualify-and-prove and experience retired. Desktop matrix 362 passed, 0 failed. Audits, dash check, copy lint and term scan pass; both editions build. Against the public build: visual QA 56 screenshots at each of four sizes, 0 console errors; PDF fallback 59 pages, 0 console errors. Internal PDF 63 pages, 0 console errors, in internal/fallback/.
 
